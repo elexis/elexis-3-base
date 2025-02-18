@@ -1,7 +1,5 @@
 package ch.elexis.global_inbox.ui;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String Activator_noInbox = ch.elexis.core.l10n.Messages.Activator_noInbox;
 	public static String InboxContentProvider_noInboxDefined = ch.elexis.core.l10n.Messages.InboxContentProvider_noInboxDefined;

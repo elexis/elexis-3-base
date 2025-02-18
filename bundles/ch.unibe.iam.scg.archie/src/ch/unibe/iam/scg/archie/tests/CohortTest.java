@@ -14,13 +14,12 @@ package ch.unibe.iam.scg.archie.tests;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import junit.framework.Assert;
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.unibe.iam.scg.archie.model.Cohort;
+import junit.framework.Assert;
+import junit.framework.JUnit4TestAdapter;
 
 /**
  * <p>

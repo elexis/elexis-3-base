@@ -1,19 +1,16 @@
 package ch.elexis.ebanking.parser;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
+
+import org.apache.commons.lang3.StringUtils;
 
 import camt.AccountNotification12;
 import camt.ActiveOrHistoricCurrencyAndAmount;
@@ -27,6 +24,10 @@ import camt.RemittanceInformation11;
 import camt.ReportEntry8;
 import camt.StructuredRemittanceInformation13;
 import camt.TransactionDates2;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 public class Camt054Parser {
 	/**

@@ -15,9 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -90,6 +87,8 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.views.controls.PagingComposite;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class InboxView extends ViewPart {
 

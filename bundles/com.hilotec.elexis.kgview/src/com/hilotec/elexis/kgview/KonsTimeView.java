@@ -1,7 +1,5 @@
 package com.hilotec.elexis.kgview;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -18,6 +16,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
+import jakarta.inject.Inject;
 
 public class KonsTimeView extends ViewPart implements IRefreshable {
 	public static final String ID = "com.hilotec.elexis.kgview.KonsTimeView";

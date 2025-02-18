@@ -13,6 +13,7 @@
 package at.medevit.elexis.gdt.handler.response;
 
 import org.apache.commons.lang3.StringUtils;
+
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6310;

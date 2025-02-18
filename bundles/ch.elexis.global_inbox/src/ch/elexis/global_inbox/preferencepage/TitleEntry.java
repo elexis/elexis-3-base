@@ -1,7 +1,8 @@
 package ch.elexis.global_inbox.preferencepage;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class TitleEntry {
 

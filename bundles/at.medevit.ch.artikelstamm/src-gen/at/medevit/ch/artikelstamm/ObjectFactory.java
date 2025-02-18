@@ -7,7 +7,7 @@
 
 package at.medevit.ch.artikelstamm;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

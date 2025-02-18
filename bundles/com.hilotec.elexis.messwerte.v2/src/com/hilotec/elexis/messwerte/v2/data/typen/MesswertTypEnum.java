@@ -13,25 +13,25 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
+import com.hilotec.elexis.messwerte.v2.data.Messwert;
+import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
+import com.hilotec.elexis.messwerte.v2.views.Messages;
+
 import ch.elexis.core.ui.selectors.ActiveControl;
 import ch.elexis.core.ui.selectors.ComboField;
 import ch.elexis.core.ui.selectors.TextField;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
-
-import com.hilotec.elexis.messwerte.v2.data.Messwert;
-import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
-import com.hilotec.elexis.messwerte.v2.views.Messages;
 
 /**
  * @author Antoine Kaufmann

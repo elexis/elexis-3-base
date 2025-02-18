@@ -22,7 +22,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
 import java.util.Properties;
 
-import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -34,6 +33,7 @@ import org.xml.sax.SAXException;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.framsteg.elexis.labor.teamw.beans.LabOrder;
+import jakarta.inject.Inject;
 
 public class MessageBuilder {
 

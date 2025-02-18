@@ -5,15 +5,10 @@ Bundle-SymbolicName: ch.elexis.notes;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.core.l10n,
- org.eclipse.ui,
- org.eclipse.ui.forms,
- org.eclipse.core.runtime,
- ch.rgw.utility;bundle-version="3.10.0",
- ch.elexis.core;bundle-version="3.10.0",
+Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.13.0",
  ch.elexis.core.data;bundle-version="3.10.0",
- ch.elexis.core.ui;bundle-version="3.10.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: javax.inject;version="1.0.0",
- org.jdom2.output;version="2.0.6"
+Import-Package: org.jdom2.output

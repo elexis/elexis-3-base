@@ -5,9 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
@@ -59,6 +56,8 @@ import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.parts.contentproposal.TitleContentProposalProvider;
 import ch.elexis.global_inbox.ui.parts.contentproposal.TitleControlContentAdapter;
 import ch.elexis.global_inbox.ui.parts.contentproposal.TitleEntryContentProposal;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class GlobalInboxEntryDetailPart {
 

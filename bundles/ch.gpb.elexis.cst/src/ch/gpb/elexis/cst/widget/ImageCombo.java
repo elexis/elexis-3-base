@@ -1,5 +1,7 @@
 package ch.gpb.elexis.cst.widget;
 
+import java.util.Arrays;
+
 /*******************************************************************************
  * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -18,8 +20,6 @@ package ch.gpb.elexis.cst.widget;
  *******************************************************************************/
 
 import org.apache.commons.lang3.StringUtils;
-import java.util.Arrays;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;

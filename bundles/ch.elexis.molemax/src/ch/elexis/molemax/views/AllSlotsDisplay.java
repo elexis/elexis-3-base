@@ -22,13 +22,12 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
-import ch.elexis.molemax.Messages;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.molemax.Messages;
 import ch.rgw.tools.TimeTool;
 
 public class AllSlotsDisplay extends Composite {

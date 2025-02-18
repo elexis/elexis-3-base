@@ -12,8 +12,6 @@
 
 package ch.elexis.icpc.views;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -25,6 +23,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.model.icpc.IcpcEncounter;
+import jakarta.inject.Inject;
 
 public class EncounterView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.encounterView"; //$NON-NLS-1$

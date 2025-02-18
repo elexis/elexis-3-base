@@ -5,11 +5,12 @@
 
 package ch.pharmed.phmprescriber;
 
-import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.pharmedsolutions.www.apothekenservice.Apotheken;

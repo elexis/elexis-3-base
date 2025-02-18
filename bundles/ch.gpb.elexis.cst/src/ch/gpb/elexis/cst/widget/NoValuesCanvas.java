@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.widget;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;

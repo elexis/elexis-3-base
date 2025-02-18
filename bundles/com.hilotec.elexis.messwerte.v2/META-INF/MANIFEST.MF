@@ -6,8 +6,8 @@ Bundle-Version: 3.13.0.qualifier
 Bundle-Activator: com.hilotec.elexis.messwerte.v2.Activator
 Bundle-Vendor: hilotec.com enhanced by medshare.net
 Require-Bundle: ch.elexis.core.l10n,
- ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  com.hilotec.elexis.pluginstatistiken;bundle-version="3.9.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
@@ -19,5 +19,4 @@ Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.util.commands,
  ch.elexis.core.findings.util.model,
  com.equo.chromium.swt,
- javax.inject;version="1.0.0",
  org.apache.commons.io;version="[2.15.0,3.0.0)"

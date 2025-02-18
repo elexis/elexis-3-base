@@ -5,5 +5,5 @@
 // Generiert: 2017.06.14 um 06:06:29 PM CEST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "urn:iso:std:iso:20022:tech:xsd:camt.054.001.06", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "urn:iso:std:iso:20022:tech:xsd:camt.054.001.06", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package camt;

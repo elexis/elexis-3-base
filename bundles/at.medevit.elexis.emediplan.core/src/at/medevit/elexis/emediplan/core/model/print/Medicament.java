@@ -13,9 +13,9 @@ package at.medevit.elexis.emediplan.core.model.print;
 import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.services.holder.MedicationServiceHolder;

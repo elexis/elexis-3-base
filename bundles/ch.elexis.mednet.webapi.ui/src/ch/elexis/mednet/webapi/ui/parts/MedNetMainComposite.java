@@ -2,7 +2,7 @@ package ch.elexis.mednet.webapi.ui.parts;
 
 import java.util.Stack;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.jface.dialogs.MessageDialog;

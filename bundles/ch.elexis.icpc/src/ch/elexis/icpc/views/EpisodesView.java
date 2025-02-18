@@ -12,8 +12,6 @@
 
 package ch.elexis.icpc.views;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
@@ -35,6 +33,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.icpc.KonsFilter;
 import ch.elexis.icpc.model.icpc.IcpcEpisode;
 import ch.elexis.icpc.service.IcpcModelServiceHolder;
+import jakarta.inject.Inject;
 
 public class EpisodesView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.episodesView"; //$NON-NLS-1$

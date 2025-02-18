@@ -12,13 +12,14 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.messages;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.TreeSet;
+
+import org.apache.commons.lang3.StringUtils;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 

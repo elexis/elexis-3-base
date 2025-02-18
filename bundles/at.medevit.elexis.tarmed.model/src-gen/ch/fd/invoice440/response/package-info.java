@@ -5,10 +5,8 @@
 // Generated on: 2015.01.21 at 02:51:03 PM CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.forum-datenaustausch.ch/invoice", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED, xmlns = {
-	@javax.xml.bind.annotation.XmlNs(prefix = "invoice", namespaceURI = "http://www.forum-datenaustausch.ch/invoice"),
-	@javax.xml.bind.annotation.XmlNs(prefix = "ds", namespaceURI = "http://www.w3.org/2000/09/xmldsig#"),
-	@javax.xml.bind.annotation.XmlNs(prefix = "xenc", namespaceURI = "http://www.w3.org/2001/04/xmlenc#")
-})
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.forum-datenaustausch.ch/invoice", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED, xmlns = {
+		@jakarta.xml.bind.annotation.XmlNs(prefix = "invoice", namespaceURI = "http://www.forum-datenaustausch.ch/invoice"),
+		@jakarta.xml.bind.annotation.XmlNs(prefix = "ds", namespaceURI = "http://www.w3.org/2000/09/xmldsig#"),
+		@jakarta.xml.bind.annotation.XmlNs(prefix = "xenc", namespaceURI = "http://www.w3.org/2001/04/xmlenc#") })
 package ch.fd.invoice440.response;
-

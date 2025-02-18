@@ -12,6 +12,11 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.ui;
 
+import static at.medevit.elexis.gdt.constants.GDTPreferenceConstants.CFG_GDT_CHARSET;
+import static at.medevit.elexis.gdt.constants.GDTPreferenceConstants.CFG_GDT_FILETRANSFER_DELETE_NON_GDT_FILES;
+import static at.medevit.elexis.gdt.constants.GDTPreferenceConstants.CFG_GDT_FILETRANSFER_SHORTNAME;
+import static at.medevit.elexis.gdt.constants.GDTPreferenceConstants.CFG_GDT_ID;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -23,7 +28,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
-import static at.medevit.elexis.gdt.constants.GDTPreferenceConstants.*;
 
 public class GDTPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 

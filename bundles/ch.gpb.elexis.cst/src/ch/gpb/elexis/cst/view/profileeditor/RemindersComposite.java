@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -54,11 +54,11 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.gpb.elexis.cst.Activator;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.data.CstStateItem;
 import ch.gpb.elexis.cst.data.CstStateItem.StateType;
 import ch.gpb.elexis.cst.dialog.CstReminderDialog;
-import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 
 public class RemindersComposite extends CstComposite implements HeartListener/* IActivationListener */ {

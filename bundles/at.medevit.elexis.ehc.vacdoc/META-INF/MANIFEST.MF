@@ -9,13 +9,13 @@ Service-Component:
  OSGI-INF/at.medevit.elexis.ehc.vacdoc.service.internal.ArtikelstammModelServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl.xml
 Bundle-ActivationPolicy: lazy
-Require-Bundle: at.medevit.elexis.impfplan;bundle-version="3.0.1",
- at.medevit.elexis.ehc.core;visibility:=reexport,
+Require-Bundle: at.medevit.elexis.impfplan;bundle-version="3.13.0",
+ at.medevit.elexis.ehc.core;bundle-version="3.13.0";visibility:=reexport,
  ch.elexis.core.data,
- ch.rgw.utility;bundle-version="3.1.0",
- ch.elexis.core,
+ ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.13.0",
  org.eclipse.core.jobs;bundle-version="3.5.200",
- info.elexis.target.hapi.fhir;bundle-version="5.4.2"
+ info.elexis.target.hl7.fhir.r4;bundle-version="7.2.3"
 Import-Package: at.medevit.ch.artikelstamm,
  ch.elexis.core.findings.util,
  ch.elexis.core.findings.util.fhir,

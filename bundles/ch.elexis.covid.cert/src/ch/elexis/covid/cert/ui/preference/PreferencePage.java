@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -41,6 +39,7 @@ import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.CertificatesService.Mode;
 import ch.elexis.covid.cert.ui.handler.CovidHandlerUtil;
 import ch.elexis.data.Leistungsblock;
+import jakarta.inject.Inject;
 
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage implements IWorkbenchPreferencePage {
 

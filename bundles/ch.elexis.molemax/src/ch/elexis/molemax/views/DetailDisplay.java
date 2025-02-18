@@ -38,11 +38,10 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
-import ch.elexis.core.ui.util.SWTHelper;
 
 public class DetailDisplay extends Composite {
 	private org.eclipse.swt.widgets.Tracker mouseTracker;

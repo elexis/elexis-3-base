@@ -3,8 +3,6 @@ package ch.elexis.global_inbox.ui.handler;
 
 import java.text.MessageFormat;
 
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -15,6 +13,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 import ch.elexis.global_inbox.ui.Messages;
+import jakarta.inject.Named;
 
 public class GlobalInboxEntryDeleteHandler {
 

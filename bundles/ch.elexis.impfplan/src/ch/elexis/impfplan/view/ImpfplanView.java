@@ -15,8 +15,6 @@ package ch.elexis.impfplan.view;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -52,6 +50,7 @@ import ch.elexis.impfplan.controller.VaccinationSorter;
 import ch.elexis.impfplan.model.Vaccination;
 import ch.elexis.impfplan.model.VaccinationType;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class ImpfplanView extends ViewPart implements IRefreshable {
 	private IAction addVacination, printVaccinations, removeVaccination;

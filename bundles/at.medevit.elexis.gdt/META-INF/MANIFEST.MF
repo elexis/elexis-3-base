@@ -5,9 +5,9 @@ Bundle-SymbolicName: at.medevit.elexis.gdt;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Activator: at.medevit.elexis.gdt.Activator
 Bundle-Vendor: medevit.at
-Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
- ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
+Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.base.ch.diagnosecodes;bundle-version="3.9.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
@@ -17,7 +17,5 @@ Export-Package: at.medevit.elexis.gdt.constants,
  at.medevit.elexis.gdt.interfaces,
  at.medevit.elexis.gdt.messages,
  at.medevit.elexis.gdt.tools
-Import-Package: javax.inject;version="1.0.0",
- org.apache.commons.io;version="2.6.0",
- org.apache.commons.io.monitor;version="2.6.0"
+Import-Package: org.apache.commons.io;version="2.18.0"
 Service-Component: OSGI-INF/at.medevit.elexis.gdt.StartupHandler.xml

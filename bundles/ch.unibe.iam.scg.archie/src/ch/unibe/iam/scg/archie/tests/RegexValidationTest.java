@@ -11,13 +11,12 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.tests;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.unibe.iam.scg.archie.model.RegexValidation;
+import junit.framework.JUnit4TestAdapter;
 
 /**
  * Tests RegexValidation class.

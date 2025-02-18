@@ -14,9 +14,6 @@ package ch.elexis.views;
 
 import java.time.format.DateTimeFormatter;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -43,6 +40,8 @@ import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class ComplementaryDetailDisplay implements IDetailDisplay {
 	private ScrolledForm form;

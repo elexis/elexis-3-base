@@ -3,15 +3,14 @@
  */
 package ch.elexis.base.ch.arzttarife.complementary.impl;
 
-import ch.elexis.base.ch.arzttarife.complementary.*;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+import ch.elexis.base.ch.arzttarife.complementary.ComplementaryFactory;
+import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 
 /**
  * <!-- begin-user-doc -->

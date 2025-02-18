@@ -3,8 +3,6 @@ package com.hilotec.elexis.kgview;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -38,6 +36,7 @@ import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
+import jakarta.inject.Inject;
 
 public class Therapieliste extends ViewPart implements IRefreshable {
 	final public static String ID = "com.hilotec.elexis.kgview.Therapieliste";

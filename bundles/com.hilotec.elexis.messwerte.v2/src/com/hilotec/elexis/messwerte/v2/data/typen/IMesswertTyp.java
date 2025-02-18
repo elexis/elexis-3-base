@@ -17,9 +17,9 @@ package com.hilotec.elexis.messwerte.v2.data.typen;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
-import ch.elexis.core.ui.selectors.ActiveControl;
-
 import com.hilotec.elexis.messwerte.v2.data.Messwert;
+
+import ch.elexis.core.ui.selectors.ActiveControl;
 
 public interface IMesswertTyp {
 	/**

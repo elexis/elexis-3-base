@@ -3,18 +3,16 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmedallowance.util;
 
-import ch.elexis.base.ch.arzttarife.tarmedallowance.*;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.ecore.EObject;
 
+import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
+import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notifier;
-
-import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->

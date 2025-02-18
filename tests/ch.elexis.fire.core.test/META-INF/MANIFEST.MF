@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: FIRE Core Test
 Bundle-SymbolicName: ch.elexis.fire.core.test
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: medevit.at
-Fragment-Host: ch.elexis.fire.core;bundle-version="1.0.0"
+Fragment-Host: ch.elexis.fire.core;bundle-version="3.13.0"
 Require-Bundle: org.junit;bundle-version="4.13.2",
  ch.elexis.core.model,
  ch.elexis.core.findings,
@@ -16,5 +16,4 @@ Automatic-Module-Name: ch.elexis.fire.core.test
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: ch.elexis.core.test.initializer,
  ch.elexis.data,
- ch.rgw.io,
- org.hl7.fhir.r4.model;version="[5.4.0,6.0.0]"
+ ch.rgw.io

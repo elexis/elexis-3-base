@@ -12,11 +12,12 @@
 
 package ch.elexis.base.befunde;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.data.interfaces.IDataAccess;

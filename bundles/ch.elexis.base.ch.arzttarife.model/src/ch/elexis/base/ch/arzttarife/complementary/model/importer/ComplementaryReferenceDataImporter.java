@@ -18,7 +18,10 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
@@ -74,7 +77,9 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 
 		CSVReader reader;
 		try {
-			reader = new CSVReader(new InputStreamReader(input, "ISO-8859-1"), ';');
+			reader = new CSVReaderBuilder(new InputStreamReader(input, "ISO-8859-1"))
+					.withCSVParser(new CSVParserBuilder().withSeparator(';').build()).build();
+
 			monitor.beginTask("Import Complementary", IProgressMonitor.UNKNOWN);
 
 			List<Object> imported = new ArrayList<>();
@@ -114,7 +119,7 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 				ConfigServiceHolder.get().get().set(REFERENCEDATA_COMPLEMENTARY_VERSION, newVersion);
 			}
 			return Status.OK_STATUS;
-		} catch (IOException uee) {
+		} catch (IOException | CsvValidationException uee) {
 			logger.error("Could not import complementary tarif", uee);
 			return Status.CANCEL_STATUS;
 		}

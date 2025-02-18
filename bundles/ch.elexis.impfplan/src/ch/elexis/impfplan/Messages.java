@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.impfplan;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AddVaccinationDialog_dateOnlyAbout = ch.elexis.core.l10n.Messages.AddVaccinationDialog_dateOnlyAbout;
 	public static String AddVaccinationDialog_enterVaccinationText = ch.elexis.core.l10n.Messages.AddVaccinationDialog_enterVaccinationText;

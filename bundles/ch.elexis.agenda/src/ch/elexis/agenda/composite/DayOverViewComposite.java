@@ -8,8 +8,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -49,6 +47,7 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
+import jakarta.inject.Inject;
 
 public class DayOverViewComposite extends Canvas implements PaintListener {
 

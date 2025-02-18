@@ -3,8 +3,6 @@ package at.medevit.elexis.agenda.ui.handler;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ISelection;
@@ -13,12 +11,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.dialog.HistoryDialog;
-import at.medevit.elexis.agenda.ui.model.Event;
 import at.medevit.elexis.agenda.ui.rcprap.StateHistoryFormatterUtil;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
+import jakarta.inject.Inject;
 
 public class ShowHistoryHandler {
 

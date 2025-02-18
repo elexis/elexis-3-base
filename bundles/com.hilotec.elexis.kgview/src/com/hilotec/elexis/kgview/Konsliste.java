@@ -1,7 +1,5 @@
 package com.hilotec.elexis.kgview;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -46,6 +44,7 @@ import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import jakarta.inject.Inject;
 
 /**
  * Einfache Konsultationsliste die aber auch auf Konsultationszeiten Ruecksicht

@@ -5,10 +5,10 @@
 
 package ch.pharmed.phmprescriber;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -58,6 +56,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.utils.CoreUtil;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class ImportEMediplanDialog extends TitleAreaDialog {
 	private final Medication medication;

@@ -17,8 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
+import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IImage;
 import ch.elexis.core.model.Identifiable;

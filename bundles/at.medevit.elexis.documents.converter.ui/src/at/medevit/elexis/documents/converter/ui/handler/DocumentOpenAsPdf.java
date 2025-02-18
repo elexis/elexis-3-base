@@ -3,8 +3,6 @@ package at.medevit.elexis.documents.converter.ui.handler;
 import java.io.File;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -18,6 +16,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.services.IDocumentConverter;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import jakarta.inject.Inject;
 
 public class DocumentOpenAsPdf extends AbstractHandler implements IHandler {
 

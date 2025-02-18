@@ -13,8 +13,6 @@
 
 package ch.elexis.base.befunde;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static final String BUNDLE_NAME = "ch.elexis.base.befunde.messages"; //$NON-NLS-1$
 

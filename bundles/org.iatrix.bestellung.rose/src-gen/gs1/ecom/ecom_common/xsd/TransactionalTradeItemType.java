@@ -11,15 +11,14 @@ package gs1.ecom.ecom_common.xsd;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import gs1.shared.shared_common.xsd.ColourType;
 import gs1.shared.shared_common.xsd.Description200Type;
 import gs1.shared.shared_common.xsd.QuantityType;
 import gs1.shared.shared_common.xsd.SizeType;
 import gs1.shared.shared_common.xsd.TradeItemClassificationType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**

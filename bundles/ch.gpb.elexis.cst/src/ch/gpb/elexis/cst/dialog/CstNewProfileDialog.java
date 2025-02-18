@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.data.Mandant;
-import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.Messages;
+import ch.gpb.elexis.cst.data.CstProfile;
 
 /**
  * @author daniel ludin ludin@swissonline.ch 27.06.2015

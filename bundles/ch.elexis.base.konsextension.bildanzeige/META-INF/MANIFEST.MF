@@ -15,5 +15,5 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.rgw.utility
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: org.jdom2;version="2.0.6"
+Import-Package: org.jdom2
 

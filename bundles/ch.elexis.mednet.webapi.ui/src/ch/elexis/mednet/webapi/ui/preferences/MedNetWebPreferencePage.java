@@ -1,6 +1,6 @@
 package ch.elexis.mednet.webapi.ui.preferences;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;

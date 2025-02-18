@@ -5,5 +5,5 @@
 // Generiert: 2025.01.23 um 10:57:07 AM CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.unece.cefact.namespaces.standardbusinessdocumentheader;

@@ -1,7 +1,5 @@
 package ch.elexis.extdoc;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ExterneDokumente_pop_menu = ch.elexis.core.l10n.Messages.ExterneDokumente_pop_menu;
 	public static String ExterneDokumente_delete_files = ch.elexis.core.l10n.Messages.ExterneDokumente_delete_files;

@@ -5,10 +5,9 @@ Bundle-SymbolicName: ch.elexis.base.ch.arzttarife;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.core.l10n,
- ch.rgw.utility;bundle-version="3.10.0",
- ch.elexis.core.data;bundle-version="3.10.0",
- ch.elexis.core.ui;bundle-version="3.10.0",
+Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0",
  ch.elexis.base.ch.ebanking;bundle-version="3.9.0",
  ch.elexis.core.ui.dbcheck;bundle-version="3.9.0",
@@ -22,17 +21,16 @@ Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.tarmedprefs,
  ch.elexis.views
 Bundle-ClassPath: .
-Import-Package: javax.inject,
- org.apache.commons.beanutils;version="1.9.4",
+Import-Package: org.apache.commons.beanutils;version="1.9.4",
  org.apache.commons.io;version="2.6.0",
  org.apache.commons.lang3;version="3.12.0",
  org.eclipse.ui.forms,
  org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets,
- org.jdom2;version="2.0.6",
- org.jdom2.input;version="2.0.6",
- org.jdom2.output;version="2.0.6",
- org.jdom2.transform;version="2.0.6"
+ org.jdom2,
+ org.jdom2.input,
+ org.jdom2.output,
+ org.jdom2.transform
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.adjuster.TarmedVerrechnebarAdjuster.xml,

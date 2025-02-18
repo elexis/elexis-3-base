@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -32,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.findings.codes.IValueSetService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.covid.cert.service.rest.model.RecoveryModel;
+import jakarta.inject.Inject;
 
 public class RecoveryModelDialog extends Dialog {
 

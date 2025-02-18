@@ -14,9 +14,9 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.8.0",
  at.medevit.ch.artikelstamm;bundle-version="3.9.0",
  at.medevit.atc_codes;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.persistence;version="2.2.3",
- javax.persistence.criteria;version="2.2.3",
- javax.xml.bind,
+Import-Package: jakarta.persistence;version="[3.2.0,4.0.0)",
+ jakarta.persistence.criteria;version="[3.2.0,4.0.0)",
+ jakarta.xml.bind;version="[4.0.0,5.0.0)",
  org.apache.commons.lang3;version="3.3.2"
 Export-Package: at.medevit.ch.artikelstamm.model,
  at.medevit.ch.artikelstamm.model.common.preference

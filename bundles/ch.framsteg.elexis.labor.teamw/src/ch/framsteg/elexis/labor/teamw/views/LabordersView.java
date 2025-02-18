@@ -24,7 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Properties;
 
-import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -54,12 +53,11 @@ import org.xml.sax.SAXException;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.framsteg.elexis.labor.teamw.beans.LabOrder;
 import ch.framsteg.elexis.labor.teamw.workers.MessageBuilder;
 import ch.framsteg.elexis.labor.teamw.workers.Transmitter;
+import jakarta.inject.Inject;
 
 public class LabordersView extends ViewPart implements IRefreshable {
 

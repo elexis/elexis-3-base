@@ -1,7 +1,5 @@
 package at.medevit.elexis.loinc.ui.parts;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -24,6 +22,7 @@ import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import jakarta.inject.Inject;
 
 public class LoincCodeSelectorFactory extends CodeSelectorFactory {
 	SelectorPanelProvider slp;

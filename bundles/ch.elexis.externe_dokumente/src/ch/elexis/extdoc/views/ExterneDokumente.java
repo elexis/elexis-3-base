@@ -25,8 +25,6 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -101,7 +99,8 @@ import ch.elexis.extdoc.util.Email;
 import ch.elexis.extdoc.util.ListFiles;
 import ch.elexis.extdoc.util.MatchPatientToPath;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.TimeTool;;
+import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;;
 
 /**
  * Diese Ansicht zeigt externe Dokumente an. Die Dokumente liegen in einem

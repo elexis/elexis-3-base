@@ -7,9 +7,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.DocumentBuilder;
@@ -46,6 +43,9 @@ import gs1.shared.shared_common.xsd.Description1000Type;
 import gs1.shared.shared_common.xsd.DocumentStatusEnumerationType;
 import gs1.shared.shared_common.xsd.ExtensionType;
 import gs1.shared.shared_common.xsd.QuantityType;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
 
 public class Gs1OrderXmlGenerator {
 

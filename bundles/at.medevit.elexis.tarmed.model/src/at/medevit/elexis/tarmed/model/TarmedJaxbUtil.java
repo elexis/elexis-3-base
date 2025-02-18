@@ -3,13 +3,6 @@ package at.medevit.elexis.tarmed.model;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
@@ -20,6 +13,12 @@ import org.w3c.dom.Document;
 
 import ch.fd.invoice440.request.RequestType;
 import ch.fd.invoice440.response.ResponseType;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.PropertyException;
+import jakarta.xml.bind.Unmarshaller;
 
 public class TarmedJaxbUtil {
 	private static Logger log = LoggerFactory.getLogger(TarmedJaxbUtil.class);

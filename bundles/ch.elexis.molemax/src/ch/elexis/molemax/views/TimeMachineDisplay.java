@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 public class TimeMachineDisplay extends ScrolledComposite {

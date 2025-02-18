@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.stickynotes;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String Preferences_BackgroundColor = ch.elexis.core.l10n.Messages.Preferences_BackgroundColor;
 	public static String Preferences_ForegroundColor = ch.elexis.core.l10n.Messages.Core_TextColour;

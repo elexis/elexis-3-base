@@ -17,7 +17,7 @@ package ch.framsteg.elexis.covercard.config;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.jface.preference.PreferencePage;
 

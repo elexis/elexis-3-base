@@ -23,7 +23,6 @@
     <module>ch.elexis.importer.aeskulap.core</module>
     <module>ch.elexis.importer.aeskulap.ui</module>
     <module>at.gruber.elexis.mythic22</module>
-    <module>org.apache.solr</module>
     <module>ch.elexis.base.solr</module>
     <module>ch.elexis.base.solr.ui</module>
     <module>at.medevit.elexis.corona123</module>

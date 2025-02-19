@@ -26,11 +26,6 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>ch.rgw.utility.tests</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>ch.elexis.ebanking.qr.test</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>

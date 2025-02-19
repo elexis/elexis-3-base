@@ -8,9 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Import-Package: com.opencsv;version="3.10.0",
  com.opencsv.exceptions;version="[5.9.0,6.0.0)"
-Require-Bundle: ch.elexis.core.l10n,
- ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.core.importer.div,
  ch.elexis.core.services,
  ch.elexis.core;bundle-version="3.13.0"

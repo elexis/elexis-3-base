@@ -11,5 +11,6 @@ Require-Bundle: org.junit,
  ch.elexis.core.test;bundle-version="3.9.0",
  ch.elexis.core.l10n;bundle-version="3.9.0",
  ch.elexis.core.jpa.datasource;bundle-version="3.9.0"
-Import-Package: org.jdom2.filter
+Import-Package: org.apache.logging.log4j;version="[2.20.0,3.0.0)",
+ org.jdom2.filter
 Export-Package: ch.elexis.base.ch.migel.test

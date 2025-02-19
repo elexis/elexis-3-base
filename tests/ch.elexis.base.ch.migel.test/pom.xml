@@ -31,16 +31,6 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>es.gogo.shell</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>org.apache.felix.gogo.shell.contribution</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>ch.elexis.core.test.logging</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
@@ -157,7 +147,6 @@
           <testClass>ch.elexis.base.ch.migel.test.AllMigelImporterTests</testClass>
           <showEclipseLog>true</showEclipseLog>
           <argLine>-Delexis.test.mode=true -Dorg.apache.poi.util.POILogger=org.apache.commons.logging.impl.NoOpLog</argLine>
-          <skipTests>true</skipTests>
           <dependencies>
             <dependency>
               <type>eclipse-plugin</type>

@@ -1,7 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class CustomExclusions {
 			if (blob.isPresent()) {
 
 				StringReader stringReader = new StringReader(blob.get().getStringContent());
-				CSVParser csvParser = new CSVParserBuilder().withSeparator(';').withQuoteChar('"').build();
+				CSVParser csvParser = new CSVParserBuilder().withSeparator(',').withQuoteChar('"').build();
 				try (CSVReader reader = new CSVReaderBuilder(stringReader).withCSVParser(csvParser).build()) {
 					List<String[]> lines = reader.readAll();
 					for (String[] strings : lines) {

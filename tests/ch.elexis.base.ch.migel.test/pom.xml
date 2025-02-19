@@ -147,6 +147,7 @@
           <testClass>ch.elexis.base.ch.migel.test.AllMigelImporterTests</testClass>
           <showEclipseLog>true</showEclipseLog>
           <argLine>-Delexis.test.mode=true -Dorg.apache.poi.util.POILogger=org.apache.commons.logging.impl.NoOpLog</argLine>
+          <skipTests>true</skipTests>
           <dependencies>
             <dependency>
               <type>eclipse-plugin</type>

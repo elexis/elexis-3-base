@@ -21,10 +21,10 @@ Require-Bundle: ch.elexis.core;bundle-version="3.13.0",
  ch.elexis.core.services,
  ch.elexis.core.findings.util,
  at.medevit.ch.artikelstamm,
- info.elexis.target.hl7.fhir.r4;bundle-version="7.2.3",
  ch.elexis.core.findings;bundle-version="3.13.0",
  ch.elexis.core.documents,
- ch.elexis.omnivore.model
+ ch.elexis.omnivore.model,
+ info.elexis.target.hapi.fhir;bundle-version="7.2.3"
 Automatic-Module-Name: ch.elexis.mednet.webapi.core
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .

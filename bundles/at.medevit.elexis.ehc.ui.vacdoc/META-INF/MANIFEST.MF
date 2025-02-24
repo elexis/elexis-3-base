@@ -8,12 +8,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
  ch.elexis.core.data;bundle-version="3.13.0",
  ch.elexis.core.ui;bundle-version="3.13.0",
- info.elexis.target.hl7.fhir.r4;bundle-version="7.2.3",
  at.medevit.elexis.ehc.vacdoc;bundle-version="3.13.0",
  at.medevit.elexis.ehc.ui;bundle-version="3.13.0",
  at.medevit.elexis.impfplan,
  at.medevit.elexis.ehc.core,
- at.medevit.elexis.outbox;bundle-version="3.13.0"
+ at.medevit.elexis.outbox;bundle-version="3.13.0",
+ info.elexis.target.hapi.fhir;bundle-version="7.2.3"
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.findings.util,
  ch.elexis.core.findings.util.fhir,

@@ -9,10 +9,10 @@ Require-Bundle: ch.elexis.core.data,
  ch.elexis.core.ui.e4;bundle-version="3.13.0",
  ch.elexis.mednet.webapi.core;bundle-version="3.13.0",
  ch.elexis.core.findings.util;bundle-version="3.13.0",
- info.elexis.target.hl7.fhir.r4;bundle-version="7.2.3",
  ch.elexis.core.findings,
  ch.elexis.core.ui.icons,
- ch.elexis.core.ui.documents
+ ch.elexis.core.ui.documents,
+ info.elexis.target.hapi.fhir;bundle-version="7.2.3"
 Automatic-Module-Name: ch.elexis.mednet.webapi.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.mednet.webapi.ui.Activator

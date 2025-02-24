@@ -9,7 +9,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.elexis.core.services;bundle-version="3.13.0",
  ch.elexis.core;bundle-version="3.13.0",
- info.elexis.target.hl7.fhir.r4;bundle-version="7.2.3"
+ info.elexis.target.hapi.fhir;bundle-version="7.2.3"
 Service-Component: OSGI-INF/ch.elexis.fire.core.internal.FIREService.xml,
  OSGI-INF/ch.elexis.fire.core.task.FIREExportIdentifiedRunnableFactory.xml
 Import-Package: ch.elexis.core.findings,

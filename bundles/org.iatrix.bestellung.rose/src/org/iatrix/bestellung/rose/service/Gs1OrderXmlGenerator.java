@@ -27,10 +27,14 @@ import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusine
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import ch.elexis.core.l10n.Messages;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.IOrderEntry;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.exchange.ArticleUtil;
 import ch.elexis.core.ui.exchange.XChangeException;
+import ch.elexis.core.ui.views.BestellView;
 import gs1.ecom.ecom_common.xsd.EcomEntityIdentificationType;
 import gs1.ecom.ecom_common.xsd.OrderLogisticalInformationType;
 import gs1.ecom.ecom_common.xsd.OrderTypeCodeType;
@@ -52,6 +56,12 @@ public class Gs1OrderXmlGenerator {
 	public String createOrderXml(IOrder order) throws XChangeException {
 		if (order == null || order.getEntries().isEmpty()) {
 			throw new XChangeException("The order is empty."); //$NON-NLS-1$
+		}
+		String supplier = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, null);
+		String selDialogTitle = Messages.OrderSupplierNotDefined;
+		IContact roseSupplier = BestellView.resolveDefaultSupplier(supplier, selDialogTitle);
+		if (roseSupplier == null) {
+			throw new XChangeException(Messages.OrderSupplierNotDefined);
 		}
 
 		try {
@@ -142,6 +152,11 @@ public class Gs1OrderXmlGenerator {
 
 			int lineNumber = 1;
 			for (IOrderEntry entry : order.getEntries()) {
+				IContact artSupplier = entry.getProvider();
+
+				if (!roseSupplier.equals(artSupplier)) {
+					continue;
+				}
 				OrderLineItemType lineItem = factory.createOrderLineItemType();
 				lineItem.setLineItemNumber(BigInteger.valueOf(lineNumber++));
 
@@ -159,9 +174,8 @@ public class Gs1OrderXmlGenerator {
 					throw new IllegalArgumentException("Invalid GTIN length: " + gtin.length()); //$NON-NLS-1$
 				}
 
-
 				if (entry.getArticle().getAtcCode() != null && !entry.getArticle().getAtcCode().isEmpty()) {
-					String pharmacode = entry.getArticle().getAtcCode();
+					String pharmacode = ArticleUtil.getPharmaCode(entry.getArticle());
 					if (pharmacode.matches("\\d{7}")) { //$NON-NLS-1$
 						AdditionalTradeItemIdentificationType additionalTradeId = new AdditionalTradeItemIdentificationType();
 						additionalTradeId.setValue(pharmacode);

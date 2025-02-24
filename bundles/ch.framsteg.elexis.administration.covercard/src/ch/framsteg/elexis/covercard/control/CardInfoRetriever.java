@@ -15,7 +15,6 @@
 package ch.framsteg.elexis.covercard.control;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -23,7 +22,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Properties;
 
-import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.client.ClientProtocolException;
@@ -44,6 +42,7 @@ import ch.framsteg.elexis.covercard.dao.JDOMCardInfoDocument;
 import ch.framsteg.elexis.covercard.exceptions.BlockedCardException;
 import ch.framsteg.elexis.covercard.exceptions.InvalidCardException;
 import ch.framsteg.elexis.covercard.exceptions.UnsupportedCardException;
+import jakarta.inject.Inject;
 
 public class CardInfoRetriever {
 

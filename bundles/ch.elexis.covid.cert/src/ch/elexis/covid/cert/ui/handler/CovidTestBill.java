@@ -4,8 +4,6 @@ package ch.elexis.covid.cert.ui.handler;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -22,6 +20,7 @@ import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ICoverageService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import jakarta.inject.Inject;
 
 public class CovidTestBill {
 

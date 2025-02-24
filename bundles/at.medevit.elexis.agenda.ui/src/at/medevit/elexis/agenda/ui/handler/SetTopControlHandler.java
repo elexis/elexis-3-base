@@ -1,8 +1,5 @@
 package at.medevit.elexis.agenda.ui.handler;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -10,6 +7,8 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.view.AgendaView;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class SetTopControlHandler {
 

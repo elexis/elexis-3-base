@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.LabResultConstants;
@@ -70,7 +72,7 @@ public class LabResultFile extends AbstractCsvImportFile<LabResult> implements I
 				setProperties(labResult, line);
 			}
 			return true;
-		} catch (IOException e) {
+		} catch (IOException | CsvValidationException e) {
 			LoggerFactory.getLogger(getClass()).error("Error importing file", e);
 		} finally {
 			close();

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.util;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.Collator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 

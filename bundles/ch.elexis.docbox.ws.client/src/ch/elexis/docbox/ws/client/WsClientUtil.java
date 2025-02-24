@@ -11,23 +11,23 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.docbox.ws.cdachservicesv2.CDACHServicesV2;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 public class WsClientUtil {
 
@@ -64,8 +64,8 @@ public class WsClientUtil {
 
 	public static boolean checkAccess(CDACHServicesV2 port) {
 		{
-			javax.xml.ws.Holder<java.lang.Boolean> _checkAccess_success = new javax.xml.ws.Holder<java.lang.Boolean>();
-			javax.xml.ws.Holder<java.lang.String> _checkAccess_message = new javax.xml.ws.Holder<java.lang.String>();
+			jakarta.xml.ws.Holder<java.lang.Boolean> _checkAccess_success = new jakarta.xml.ws.Holder<java.lang.Boolean>();
+			jakarta.xml.ws.Holder<java.lang.String> _checkAccess_message = new jakarta.xml.ws.Holder<java.lang.String>();
 			port.checkAccess(_checkAccess_success, _checkAccess_message);
 
 			logger.debug("checkAccess._checkAccess_success=" + _checkAccess_success.value);

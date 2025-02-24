@@ -1,8 +1,8 @@
 package ch.gpb.elexis.cst.dialog;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.IColorProvider;

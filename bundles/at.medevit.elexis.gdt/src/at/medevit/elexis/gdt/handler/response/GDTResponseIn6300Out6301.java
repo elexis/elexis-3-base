@@ -23,7 +23,6 @@ import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6300;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6301;
 import at.medevit.elexis.gdt.tools.GDTSatzNachrichtHelper;
-import at.medevit.elexis.gdt.ui.GDTPreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.util.Log;

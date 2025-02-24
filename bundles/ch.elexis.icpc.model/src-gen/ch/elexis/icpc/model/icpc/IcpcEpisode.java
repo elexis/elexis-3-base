@@ -2,12 +2,13 @@
  */
 package ch.elexis.icpc.model.icpc;
 
+import java.util.List;
+
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithExtInfo;
-import java.util.List;
 
 /**
  * <!-- begin-user-doc -->

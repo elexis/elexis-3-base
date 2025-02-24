@@ -2,11 +2,11 @@ package com.hilotec.elexis.kgview.medikarte;
 
 import java.util.Comparator;
 
+import com.hilotec.elexis.kgview.data.FavMedikament;
+
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
-
-import com.hilotec.elexis.kgview.data.FavMedikament;
 
 /**
  * Comparator fuer Medikamentenkarteeintraege (Prescription)

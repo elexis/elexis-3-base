@@ -9,9 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,6 +34,8 @@ import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IStoreToStringContribution;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model")
 public class ArtikelstammModelService extends AbstractModelService

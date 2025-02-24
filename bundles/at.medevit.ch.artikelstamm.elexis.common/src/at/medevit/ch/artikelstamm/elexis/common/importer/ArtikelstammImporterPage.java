@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -51,6 +49,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class ArtikelstammImporterPage extends ImporterPage {
 

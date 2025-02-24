@@ -3,16 +3,15 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmedallowance.util;
 
-import ch.elexis.base.ch.arzttarife.tarmedallowance.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 
+import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
+import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-
-import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->

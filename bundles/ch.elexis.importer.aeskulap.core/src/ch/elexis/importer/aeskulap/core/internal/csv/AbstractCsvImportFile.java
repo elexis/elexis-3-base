@@ -9,7 +9,10 @@ import java.io.InputStream;
 
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.data.Xid;
@@ -53,9 +56,10 @@ public abstract class AbstractCsvImportFile<T> {
 
 	public abstract Type getType();
 
-	public String[] getNextLine() throws IOException {
+	public String[] getNextLine() throws IOException, CsvValidationException {
 		if (reader == null) {
-			reader = new CSVReader(new FileReader(csvFile), ',', '"');
+			reader = new CSVReaderBuilder(new FileReader(csvFile))
+					.withCSVParser(new CSVParserBuilder().withSeparator(',').withQuoteChar('"').build()).build();
 			String[] firstLine = reader.readNext();
 			// file is empty
 			if (firstLine == null || firstLine.length == 0) {

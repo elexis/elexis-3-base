@@ -11,9 +11,9 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.commands;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;

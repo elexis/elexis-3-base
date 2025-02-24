@@ -19,8 +19,6 @@ import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -49,6 +47,7 @@ import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
+import jakarta.inject.Inject;
 
 /**
  * Import des Tarmed-Tarifsystems aus der Datenbank der ZMT. We use Gerry

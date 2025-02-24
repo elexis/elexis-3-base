@@ -1,8 +1,9 @@
 package ch.elexis.base.befunde.findings.migrator.messwert;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.services.holder.ConfigServiceHolder;

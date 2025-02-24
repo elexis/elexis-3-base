@@ -1,7 +1,5 @@
 package at.medevit.elexis.agenda.ui.function;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -14,6 +12,7 @@ import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import jakarta.inject.Inject;
 
 public class PdfFunction extends BrowserFunction {
 

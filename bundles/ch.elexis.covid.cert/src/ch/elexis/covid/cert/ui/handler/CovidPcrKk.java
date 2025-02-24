@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -20,6 +18,7 @@ import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
+import jakarta.inject.Inject;
 
 public class CovidPcrKk {
 

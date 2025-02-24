@@ -3,8 +3,6 @@ package at.medevit.elexis.agenda.ui.function;
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 
-import javax.inject.Inject;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -23,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
+
+import jakarta.inject.Inject;
 
 public class ScreenshotFunction extends BrowserFunction {
 	private static final Logger logger = LoggerFactory.getLogger(ScreenshotFunction.class);

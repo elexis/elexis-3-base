@@ -15,11 +15,13 @@
 
 package ch.elexis.impfplan.controller;
 
+import java.util.List;
+
+
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.impfplan.model.Vaccination;
 import ch.elexis.impfplan.model.VaccinationType;
-import java.util.*;
 
 public final class ImpfplanController {
 

@@ -1,7 +1,7 @@
 package at.medevit.elexis.tarmed.model;
 
 public class Constants {
-	public static final String JAXB_HEADER_KEY = "com.sun.xml.bind.xmlHeaders"; //$NON-NLS-1$
+	public static final String JAXB_HEADER_KEY = "org.glassfish.jaxb.xmlHeaders"; //$NON-NLS-1$
 	public static final String DEFAULT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 	public static final String SCHEMA_LOCATION = "schemaLocation"; //$NON-NLS-1$
 	public static final String DEFAULT_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance"; //$NON-NLS-1$

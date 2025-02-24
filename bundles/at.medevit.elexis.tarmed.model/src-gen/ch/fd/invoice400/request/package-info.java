@@ -5,6 +5,6 @@
 // Generated on: 2015.03.18 at 01:35:39 PM CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.xmlData.ch/xmlInvoice/XSD", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.xmlData.ch/xmlInvoice/XSD", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package ch.fd.invoice400.request;
 

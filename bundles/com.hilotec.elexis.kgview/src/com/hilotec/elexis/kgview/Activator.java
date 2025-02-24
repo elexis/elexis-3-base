@@ -13,13 +13,12 @@
 
 package com.hilotec.elexis.kgview;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;

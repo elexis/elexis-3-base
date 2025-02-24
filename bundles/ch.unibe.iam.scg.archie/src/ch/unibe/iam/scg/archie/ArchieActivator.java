@@ -11,11 +11,11 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;

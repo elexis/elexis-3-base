@@ -1,7 +1,8 @@
 package ch.elexis.base.ch.arzttarife.rfe.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;

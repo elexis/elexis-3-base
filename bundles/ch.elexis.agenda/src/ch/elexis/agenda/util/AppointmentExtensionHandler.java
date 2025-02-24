@@ -1,12 +1,12 @@
 package ch.elexis.agenda.util;
 
 
-import ch.elexis.core.model.IAppointment;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class AppointmentExtensionHandler {
 

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -26,12 +26,12 @@ import org.eclipse.swt.widgets.Label;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstAbstract;
 import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.data.LabItemWrapper;
 import ch.gpb.elexis.cst.data.MinimaxValue;
-import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 import ch.gpb.elexis.cst.widget.DisplayOnceCanvas;
 import ch.gpb.elexis.cst.widget.MinimaxCanvas;

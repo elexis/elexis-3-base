@@ -17,7 +17,10 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
@@ -44,7 +47,8 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 		validFrom = getValidFromVersion(newVersion).toLocalDate();
 
 		try {
-			CSVReader reader = new CSVReader(new InputStreamReader(input, "UTF-8"), ';');
+			CSVReader reader = new CSVReaderBuilder(new InputStreamReader(input, "UTF-8"))
+					.withCSVParser(new CSVParserBuilder().withSeparator(';').build()).build();
 			monitor.beginTask("Importiere Ernährungsberatung", 100);
 			String[] line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
@@ -60,7 +64,7 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 
 			monitor.done();
 			return Status.OK_STATUS;
-		} catch (IOException uee) {
+		} catch (IOException | CsvValidationException uee) {
 			LoggerFactory.getLogger(getClass()).error("Could not import nutrition tarif", uee);
 			return Status.CANCEL_STATUS;
 		}

@@ -5,8 +5,6 @@ import static com.hilotec.elexis.kgview.text.KGTextTemplateRequirement.TT_MEDICA
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -49,6 +47,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
+import jakarta.inject.Inject;
 
 public class MedikarteView extends ViewPart implements IRefreshable {
 	public static final String ID = "com.hilotec.elexis.kgview.MedikarteView";

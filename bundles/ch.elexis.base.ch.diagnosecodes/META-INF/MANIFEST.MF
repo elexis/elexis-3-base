@@ -16,8 +16,7 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.findings.ui;bundle-version="3.9.0",
  ch.elexis.base.ch.icd10;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.inject,
- org.apache.commons.lang3;version="3.7.0"
+Import-Package: org.apache.commons.lang3;version="3.7.0"
 Service-Component: OSGI-INF/ch.elexis.base.ch.diagnosecodes.coding.DatabaseICD10CodingContribution.xml,
  OSGI-INF/ch.elexis.base.ch.diagnosecodes.service.ICD10ModelServiceHolder.xml,
  OSGI-INF/ch.elexis.base.ch.diagnosecodes.service.CodeElementServiceHolder.xml

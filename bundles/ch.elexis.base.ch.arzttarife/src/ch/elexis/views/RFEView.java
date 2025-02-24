@@ -15,8 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -42,6 +40,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
+import jakarta.inject.Inject;
 
 public class RFEView extends ViewPart {
 	Table longTable, shortTable, mediumTable;

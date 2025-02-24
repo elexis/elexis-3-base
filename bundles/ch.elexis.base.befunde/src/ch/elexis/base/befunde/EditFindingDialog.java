@@ -10,12 +10,12 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;

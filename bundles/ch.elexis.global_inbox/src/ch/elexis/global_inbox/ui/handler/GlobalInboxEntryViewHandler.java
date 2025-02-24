@@ -1,6 +1,9 @@
 
 package ch.elexis.global_inbox.ui.handler;
 
+import java.io.File;
+
+import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -11,12 +14,7 @@ import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.Messages;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
-
-import java.io.File;
-
-import javax.inject.Named;
-
-import org.eclipse.e4.core.di.annotations.CanExecute;
+import jakarta.inject.Named;
 
 public class GlobalInboxEntryViewHandler {
 

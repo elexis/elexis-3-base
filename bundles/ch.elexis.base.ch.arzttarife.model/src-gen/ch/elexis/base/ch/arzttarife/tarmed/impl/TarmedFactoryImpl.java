@@ -3,18 +3,20 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmed.impl;
 
-import ch.elexis.base.ch.arzttarife.tarmed.*;
-
-import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion;
-import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedFactory;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation;
 
 /**
  * <!-- begin-user-doc -->

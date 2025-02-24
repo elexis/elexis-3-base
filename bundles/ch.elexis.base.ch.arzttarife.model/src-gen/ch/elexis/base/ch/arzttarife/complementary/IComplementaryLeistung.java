@@ -3,10 +3,11 @@
  */
 package ch.elexis.base.ch.arzttarife.complementary;
 
+import java.time.LocalDate;
+
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.WithAssignableId;
-import java.time.LocalDate;
 
 
 /**

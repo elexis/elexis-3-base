@@ -12,12 +12,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-
 import gs1.ecom.ecom_common.xsd.AcceptableOverAllocationType;
 import gs1.ecom.ecom_common.xsd.AdministrativeUnitType;
 import gs1.ecom.ecom_common.xsd.AllowanceChargeType;
@@ -43,6 +37,11 @@ import gs1.shared.shared_common.xsd.Description200Type;
 import gs1.shared.shared_common.xsd.Description500Type;
 import gs1.shared.shared_common.xsd.ExtensionType;
 import gs1.shared.shared_common.xsd.QuantityType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**

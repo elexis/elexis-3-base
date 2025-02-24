@@ -11,9 +11,9 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.tests;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Test;
+
+import junit.framework.JUnit4TestAdapter;
 
 /**
  * Tests that assertions are enabled in the currently set java compiler. Make

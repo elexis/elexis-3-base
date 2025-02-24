@@ -7,12 +7,13 @@
  ********************************************************/
 package ch.elexis.labor.medics.v2.util;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.rgw.io.FileTool;
 

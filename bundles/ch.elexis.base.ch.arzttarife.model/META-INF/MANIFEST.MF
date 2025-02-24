@@ -49,8 +49,9 @@ Require-Bundle: ch.elexis.core.l10n,
 Bundle-ActivationPolicy: lazy
 Import-Package: com.healthmarketscience.jackcess;version="4.0.0",
  com.opencsv;version="3.10.0",
- javax.persistence;version="2.2.3",
- javax.persistence.criteria;version="2.2.3",
+ com.opencsv.exceptions;version="[5.9.0,6.0.0)",
+ jakarta.persistence;version="[3.2.0,4.0.0)",
+ jakarta.persistence.criteria;version="[3.2.0,4.0.0)",
  org.apache.commons.io;version="2.5.0",
  org.apache.commons.lang3;version="3.12.0",
  org.apache.commons.lang3.math;version="3.12.0"

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;

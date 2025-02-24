@@ -3,15 +3,14 @@
  */
 package ch.elexis.base.ch.arzttarife.pandemie.impl;
 
-import ch.elexis.base.ch.arzttarife.pandemie.*;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+import ch.elexis.base.ch.arzttarife.pandemie.PandemieFactory;
+import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 
 /**
  * <!-- begin-user-doc -->

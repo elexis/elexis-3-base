@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +40,7 @@ import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class ObservationMigrator {
 

@@ -20,13 +20,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import jakarta.inject.Inject;
 
 public class TimeStampCreator {
 

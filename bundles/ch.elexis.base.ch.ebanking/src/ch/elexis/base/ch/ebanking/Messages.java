@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.base.ch.ebanking;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ESRFile_ExceptionParsing = ch.elexis.core.l10n.Messages.ESRFile_ExceptionParsing;
 	public static String ESRFile_cannot_read_esr = ch.elexis.core.l10n.Messages.ESRFile_cannot_read_esr;

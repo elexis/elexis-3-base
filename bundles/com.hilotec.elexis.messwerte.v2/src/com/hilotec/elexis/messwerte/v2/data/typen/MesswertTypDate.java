@@ -19,13 +19,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
-import ch.elexis.core.ui.selectors.ActiveControl;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.rgw.tools.TimeTool;
-
 import com.hilotec.elexis.messwerte.v2.data.Messwert;
 import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
+
+import ch.elexis.core.ui.selectors.ActiveControl;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.rgw.tools.TimeTool;
 
 /**
  * @author Patrick Chaubert

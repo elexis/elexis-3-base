@@ -54,32 +54,40 @@ public final class MedicationElement {
 		c.appendChild(doc.createTextNode(md.getDose()));
 		p.appendChild(c);
 
-		c = doc.createElement("DoseTableHeader"); //$NON-NLS-1$
-		Element hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
-		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Morning));
-		c.appendChild(hi);
-		hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
-		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Midday));
-		c.appendChild(hi);
-		hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
-		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Evening));
-		c.appendChild(hi);
-		hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
-		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Night));
-		c.appendChild(hi);
-		p.appendChild(c);
+		if (md.getDose() != null && !md.getDose().isEmpty()) {
+	        c = doc.createElement("DoseTableHeader"); //$NON-NLS-1$
+	        Element hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
+	        hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Morning));
+	        c.appendChild(hi);
 
-		c = doc.createElement("DoseTableBody"); //$NON-NLS-1$
-		for (String i : md.getDoseArray()) {
-			Element di = doc.createElement("DoseItem"); //$NON-NLS-1$
-			di.appendChild(doc.createTextNode(i));
-			c.appendChild(di);
+	        hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
+	        hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Midday));
+	        c.appendChild(hi);
+
+	        hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
+	        hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Evening));
+	        c.appendChild(hi);
+
+	        hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
+	        hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Night));
+	        c.appendChild(hi);
+	        p.appendChild(c);
+
+	        c = doc.createElement("DoseTableBody"); //$NON-NLS-1$
+	        for (String i : md.getDoseArray()) {
+	            Element di = doc.createElement("DoseItem"); //$NON-NLS-1$
+	            di.appendChild(doc.createTextNode(i));
+	            c.appendChild(di);
+	        }
+	        p.appendChild(c);
+	    }
+
+		String dosageInstructions = md.getDosageInstructions();
+		if (dosageInstructions != null && !dosageInstructions.trim().isEmpty()) {
+			c = doc.createElement("DosageInstructions"); //$NON-NLS-1$
+			c.appendChild(doc.createTextNode(dosageInstructions));
+			p.appendChild(c);
 		}
-		p.appendChild(c);
-
-		c = doc.createElement("DosageInstructions"); //$NON-NLS-1$
-		c.appendChild(doc.createTextNode(md.getDosageInstructions()));
-		p.appendChild(c);
 
 		c = doc.createElement("PrescriptionDate"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getPrescriptionDate()));

@@ -70,34 +70,64 @@
 					Preis:&#160;CHF&#160;
 					<xsl:value-of select="Price" />
 				</fo:block>
-				<fo:table table-layout="fixed" border-width="1pt" border-style="solid">
-					<fo:table-header>
-						<fo:table-row>
-							<xsl:for-each select="DoseTableHeader/HeaderItem">
-								<fo:table-cell border-width="1pt" border-style="solid">
-									<fo:block>
-										<xsl:value-of select="." />
-									</fo:block>
-								</fo:table-cell>
-							</xsl:for-each>
-						</fo:table-row>
-					</fo:table-header>
-					<fo:table-body>
-						<fo:table-row>
-							<xsl:for-each select="DoseTableBody/DoseItem">
-								<fo:table-cell border-width="1pt" border-style="solid">
-									<fo:block>
-										<xsl:value-of select="." />
-									</fo:block>
-								</fo:table-cell>
-							</xsl:for-each>
-						</fo:table-row>
-					</fo:table-body>
-				</fo:table>
-				<fo:block>
-					Einnahmeinstruktionen:&#160;
-					<xsl:value-of select="DosageInstructions" />
-				</fo:block>
+				 <xsl:choose>
+            <xsl:when test="Dose/@Freetext = 'true'">
+                <fo:table>
+                    <fo:table-header border-width="1pt" border-style="solid">
+                        <fo:table-row>
+                            <fo:table-cell border-width="1pt" border-style="solid">
+                                <fo:block>
+                                    Dosierung
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-header>
+                    <fo:table-body border-width="1pt" border-style="solid">
+                        <fo:table-row>
+                            <fo:table-cell border-width="1pt" border-style="solid">
+                                <fo:block>
+                                    <xsl:value-of select="Dose" />
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-body>
+                </fo:table>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="DoseTableHeader/HeaderItem and DoseTableBody/DoseItem">
+                    <fo:table>
+                        <fo:table-header border-width="1pt" border-style="solid">
+                            <fo:table-row>
+                                <xsl:for-each select="DoseTableHeader/HeaderItem">
+                                    <fo:table-cell border-width="1pt" border-style="solid">
+                                        <fo:block>
+                                            <xsl:value-of select="." />
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </xsl:for-each>
+                            </fo:table-row>
+                        </fo:table-header>
+                        <fo:table-body border-width="1pt" border-style="solid">
+                            <fo:table-row>
+                                <xsl:for-each select="DoseTableBody/DoseItem">
+                                    <fo:table-cell border-width="1pt" border-style="solid">
+                                        <fo:block>
+                                            <xsl:value-of select="." />
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </xsl:for-each>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                </xsl:if>
+                <xsl:if test="DosageInstructions">
+                    <fo:block space-before="5pt">
+                        Einnahmeinstruktionen:&#160;
+                        <xsl:value-of select="DosageInstructions" />
+                    </fo:block>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
 			</fo:block>
 		</xsl:for-each>
 	</xsl:template>

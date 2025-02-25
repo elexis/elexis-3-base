@@ -64,7 +64,16 @@ public final class ArticlesElement {
 			String dosageInstructions = signature.getComment();
 			if (StringUtils.isNotBlank(dosageInstructions)) {
 				appendChildWithText(doc, articleElement, "DosageInstructions", dosageInstructions); //$NON-NLS-1$
-				appendDoseTable(doc, articleElement, signature);
+			}
+			if (signature.getFreeText() != null && !signature.getFreeText().isEmpty()) {
+				Element dose = doc.createElement("Dose"); //$NON-NLS-1$
+				dose.setAttribute("Freetext", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				dose.appendChild(doc.createTextNode(signature.getFreeText()));
+				articleElement.appendChild(dose);
+			} else {
+				if (signature.getSignatureAsDosisString() != null && !signature.getSignatureAsDosisString().isEmpty()) {
+					appendDoseTable(doc, articleElement, signature);
+				}
 			}
 		}
 		return articleElement;
@@ -80,7 +89,7 @@ public final class ArticlesElement {
 		Element doseTableBody = doc.createElement("DoseTableBody"); //$NON-NLS-1$
 		String[] doses = { signature.getMorning(), signature.getNoon(), signature.getEvening(), signature.getNight() };
 		for (String dose : doses) {
-			appendChildWithText(doc, doseTableBody, "DoseItem", dose != null ? dose : ""); //$NON-NLS-1$
+			appendChildWithText(doc, doseTableBody, "DoseItem", dose != null ? dose : StringUtils.EMPTY); //$NON-NLS-1$
 		}
 		articleElement.appendChild(doseTableBody);
 	}

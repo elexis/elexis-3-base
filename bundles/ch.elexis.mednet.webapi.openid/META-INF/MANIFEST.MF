@@ -6,4 +6,4 @@ Bundle-Vendor: ch.elexis
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: ch.elexis.mednet.webapi.core;bundle-version="1.0.0"
 Automatic-Module-Name: ch.elexis.mednet.webapi.openid
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17

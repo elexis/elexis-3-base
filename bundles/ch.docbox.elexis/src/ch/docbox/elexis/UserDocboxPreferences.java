@@ -184,6 +184,16 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		oldAppointmentsPharmaVisits = isAppointmentsPharmaVisits();
 		oldAppointmentsTerminvereinbarung = isAppointmentsTerminvereinbarung();
 		oldAppointmentsBereich = getAppointmentsBereich();
+<<<<<<< HEAD
+=======
+		oldUseHCard = useHCard();
+		oldUseProxy = useProxy();
+		oldProxyHost = getProxyHost();
+		oldProxyPort = getProxyPort();
+
+		// oldSecretKey = getSha1DocboxSecretKey();
+		oldSecretKey = "";
+>>>>>>> ac405911c (Removed unused references)
 
 		boolean enableForMandant = AccessControlServiceHolder.get().evaluate(EvACE.of(IUser.class, Right.UPDATE));
 

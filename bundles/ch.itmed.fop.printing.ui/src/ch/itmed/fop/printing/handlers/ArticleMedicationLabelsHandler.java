@@ -159,7 +159,8 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	}
 
 	private static Optional<String> getDosageInstructions(IArticle article) {
-		return MedicationServiceHolder.get().getDefaultSignature(article).map(IArticleDefaultSignature::getComment);
+		return MedicationServiceHolder.get().getDefaultSignature(article)
+				.map(IArticleDefaultSignature::getSignatureAsDosisString);
 	}
 
 	private Optional<IPrescription> findPrescriptionByBilledId(String billedId, List<IPrescription> prescriptions) {

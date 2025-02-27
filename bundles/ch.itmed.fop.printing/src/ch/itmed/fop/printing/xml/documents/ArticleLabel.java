@@ -63,7 +63,8 @@ public class ArticleLabel {
 		if (signatureOpt.isPresent()) {
 			IArticleDefaultSignature signature = signatureOpt.get();
 			String dosageInstructions = signature.getComment();
-			if (StringUtils.isNotBlank(dosageInstructions)) {
+			String signatureAsDosisString = signature.getSignatureAsDosisString();
+			if (StringUtils.isNotBlank(dosageInstructions) || StringUtils.isNotBlank(signatureAsDosisString)) {
 				page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_MEDIC_LABEL);
 				PageProperties.setCurrentDate(page);
 			}

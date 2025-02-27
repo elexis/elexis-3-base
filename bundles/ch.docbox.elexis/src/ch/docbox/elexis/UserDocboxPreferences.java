@@ -196,7 +196,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		oldProxyHost = getProxyHost();
 		oldProxyPort = getProxyPort();
 
-		oldSecretKey = getSha1DocboxSecretKey();
+		// oldSecretKey = getSha1DocboxSecretKey();
+		oldSecretKey = "";
 
 		boolean enableForMandant = AccessControlServiceHolder.get().evaluate(EvACE.of(IUser.class, Right.UPDATE));
 
@@ -494,9 +495,10 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI, directoryhCardEditor.getStringValue());
-		if (showSha1SecretKey) {
-			ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY, secretkeyFieldEditor.getStringValue());
-		}
+		// if (showSha1SecretKey) {
+		// ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
+		// secretkeyFieldEditor.getStringValue());
+		// }
 
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
@@ -506,9 +508,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			setUseHCard(buttonUseHCard.getSelection());
 		}
 
-		if (buttonUseProxy.getSelection() != oldUseProxy) {
-			setUseProxy(buttonUseProxy.getSelection());
-		}
+		// if (buttonUseProxy.getSelection() != oldUseProxy) {
+		// setUseProxy(buttonUseProxy.getSelection());
+		// }
 
 		setProxyHost(proxyHostFieldEditor.getStringValue());
 		setProxyPort(proxyPortFieldEditor.getStringValue());

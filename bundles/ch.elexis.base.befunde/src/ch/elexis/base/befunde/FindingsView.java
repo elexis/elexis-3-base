@@ -412,4 +412,16 @@ public class FindingsView extends ViewPart implements IRefreshable {
 	public void refresh() {
 		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
+
+	public void selectTab(String tabName) {
+		for (CTabItem item : ctabs.getItems()) {
+			if (item.getText().equalsIgnoreCase(tabName)) {
+				ctabs.setSelection(item);
+				FindingsPage page = (FindingsPage) item.getControl();
+				page.setPatient(ElexisEventDispatcher.getSelectedPatient());
+				break;
+			}
+		}
+	}
+
 }

@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.extensions.Service;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -31,6 +29,7 @@ import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
 import ch.rgw.tools.Result;
+import jakarta.inject.Inject;
 
 public class CovidAntigenSz {
 

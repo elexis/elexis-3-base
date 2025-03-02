@@ -3,18 +3,16 @@
  */
 package ch.elexis.base.ch.arzttarife.occupational.util;
 
-import ch.elexis.base.ch.arzttarife.occupational.*;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.ecore.EObject;
 
+import ch.elexis.base.ch.arzttarife.occupational.IOccupationalLeistung;
+import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notifier;
-
-import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->

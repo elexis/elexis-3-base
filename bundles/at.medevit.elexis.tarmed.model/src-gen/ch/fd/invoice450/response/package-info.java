@@ -5,5 +5,5 @@
 // Generiert: 2020.05.20 um 02:13:04 PM CEST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.forum-datenaustausch.ch/invoice", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.forum-datenaustausch.ch/invoice", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package ch.fd.invoice450.response;

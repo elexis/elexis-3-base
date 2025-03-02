@@ -17,11 +17,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
-import ch.elexis.core.ui.util.SWTHelper;
 
 public class BaseSelectorDialog extends TitleAreaDialog {
 	List list;

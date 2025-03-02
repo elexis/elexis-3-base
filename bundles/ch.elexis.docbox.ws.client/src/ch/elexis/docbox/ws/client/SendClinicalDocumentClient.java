@@ -10,11 +10,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.JAXBException;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
-
 import org.hl7.v3.ClinicalDocumentType;
 import org.hl7.v3.POCDMT000040ClinicalDocument;
 import org.slf4j.Logger;
@@ -22,6 +17,10 @@ import org.slf4j.LoggerFactory;
 
 import ch.docbox.ws.cdachservicesv2.CDACHServicesV2;
 import ch.docbox.ws.cdachservicesv2.CDACHServicesV2_Service;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
 
 public class SendClinicalDocumentClient {
 
@@ -30,9 +29,9 @@ public class SendClinicalDocumentClient {
 	private CDACHServicesV2_Service service;
 	private CDACHServicesV2 port;
 
-	private javax.xml.ws.Holder<java.lang.Boolean> success = new javax.xml.ws.Holder<java.lang.Boolean>();
-	private javax.xml.ws.Holder<java.lang.String> message = new javax.xml.ws.Holder<java.lang.String>();
-	private javax.xml.ws.Holder<java.lang.String> documentId = new javax.xml.ws.Holder<java.lang.String>();
+	private jakarta.xml.ws.Holder<java.lang.Boolean> success = new jakarta.xml.ws.Holder<java.lang.Boolean>();
+	private jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
+	private jakarta.xml.ws.Holder<java.lang.String> documentId = new jakarta.xml.ws.Holder<java.lang.String>();
 
 	public SendClinicalDocumentClient() {
 		service = new CDACHServicesV2_Service();

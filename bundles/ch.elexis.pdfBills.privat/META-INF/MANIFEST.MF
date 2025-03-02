@@ -6,18 +6,17 @@ Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.pdfBills.private
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.pdfBills;bundle-version="3.9.0",
- ch.elexis.core;bundle-version="3.10.0",
+Require-Bundle: ch.elexis.core;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
+ ch.elexis.pdfBills;bundle-version="3.9.0",
  ch.elexis.core.services;bundle-version="3.10.0",
- ch.elexis.base.ch.arzttarife;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.10.0",
- org.eclipse.ui
+ ch.elexis.base.ch.arzttarife;bundle-version="3.9.0"
 Import-Package: ch.elexis.base.ch.ebanking.esr,
  ch.elexis.core.data.activator,
  ch.elexis.core.data.interfaces,
  ch.elexis.core.data.util,
  ch.elexis.data,
  ch.elexis.ebanking.qr,
- org.jdom2;version="2.0.6",
- org.jdom2.output;version="2.0.6"
+ org.jdom2,
+ org.jdom2.output
 Bundle-ActivationPolicy: lazy

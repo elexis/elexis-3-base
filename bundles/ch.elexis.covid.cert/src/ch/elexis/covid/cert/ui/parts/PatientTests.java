@@ -9,9 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -74,6 +71,8 @@ import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.RevokeModel;
 import ch.elexis.covid.cert.ui.handler.CovidHandlerUtil;
 import ch.rgw.tools.Result;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 public class PatientTests {
 

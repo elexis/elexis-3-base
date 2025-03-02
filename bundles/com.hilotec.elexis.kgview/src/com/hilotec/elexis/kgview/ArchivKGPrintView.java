@@ -1,11 +1,13 @@
 package com.hilotec.elexis.kgview;
 
-import org.apache.commons.lang3.StringUtils;
 import static com.hilotec.elexis.kgview.text.KGTextTemplateRequirement.TT_ARCHIV_KG;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+
+import com.hilotec.elexis.kgview.data.KonsData;
 
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
@@ -15,8 +17,6 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
-
-import com.hilotec.elexis.kgview.data.KonsData;
 
 public class ArchivKGPrintView extends ViewPart {
 	public static final String ID = "com.hilotec.elexis.kgview.ArvchivKGPrintView";

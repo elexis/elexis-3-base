@@ -2,8 +2,6 @@ package ch.elexis.dialogs;
 
 import java.time.LocalDateTime;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -21,6 +19,7 @@ import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import jakarta.inject.Inject;
 
 public class AppointmentDialog extends Dialog {
 

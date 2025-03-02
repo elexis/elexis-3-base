@@ -1,6 +1,5 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.rgw.tools.TimeTool;
 

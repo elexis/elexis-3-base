@@ -2,8 +2,8 @@ package ch.elexis.base.ch.icd10.importer;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 public class EntityUtil {
 

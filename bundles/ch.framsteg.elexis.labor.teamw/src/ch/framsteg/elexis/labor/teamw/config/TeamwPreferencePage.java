@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -43,6 +41,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.framsteg.elexis.labor.teamw.composites.CompositeBuilder;
 import ch.framsteg.elexis.labor.teamw.utilities.HashGenerator;
 import ch.framsteg.elexis.labor.teamw.views.LabordersView;
+import jakarta.inject.Inject;
 
 public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

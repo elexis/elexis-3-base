@@ -180,9 +180,9 @@ public class DocboxTerminvereinbarungAction extends DocboxAction {
 		log.log("makeReferral ended...", Log.DEBUGMSG);
 
 		byte[] _addReferral_attachment = new byte[0];
-		javax.xml.ws.Holder<java.lang.Boolean> _addReferral_success = new javax.xml.ws.Holder<java.lang.Boolean>();
-		javax.xml.ws.Holder<java.lang.String> _addReferral_message = new javax.xml.ws.Holder<java.lang.String>();
-		javax.xml.ws.Holder<java.lang.String> _addReferral_documentID = new javax.xml.ws.Holder<java.lang.String>();
+		jakarta.xml.ws.Holder<java.lang.Boolean> _addReferral_success = new jakarta.xml.ws.Holder<java.lang.Boolean>();
+		jakarta.xml.ws.Holder<java.lang.String> _addReferral_message = new jakarta.xml.ws.Holder<java.lang.String>();
+		jakarta.xml.ws.Holder<java.lang.String> _addReferral_documentID = new jakarta.xml.ws.Holder<java.lang.String>();
 
 		CDACHServices port = UserDocboxPreferences.getPort();
 

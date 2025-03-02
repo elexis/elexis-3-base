@@ -3,21 +3,18 @@
  */
 package ch.elexis.base.ch.arzttarife.pandemie.util;
 
-import ch.elexis.base.ch.arzttarife.pandemie.*;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.ecore.EObject;
 
+import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
+import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.model.IService;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithAssignableId;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notifier;
-
-import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->

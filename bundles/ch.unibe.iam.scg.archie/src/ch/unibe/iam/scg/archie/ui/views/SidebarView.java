@@ -13,8 +13,6 @@ package ch.unibe.iam.scg.archie.ui.views;
 
 import java.util.TreeMap;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -39,6 +37,7 @@ import ch.unibe.iam.scg.archie.actions.NewStatisticsAction;
 import ch.unibe.iam.scg.archie.controller.ProviderManager;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.ui.DetailsPanel;
+import jakarta.inject.Inject;
 
 /**
  * <p>

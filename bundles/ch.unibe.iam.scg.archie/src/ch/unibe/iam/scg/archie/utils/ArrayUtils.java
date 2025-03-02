@@ -11,8 +11,9 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Method;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>

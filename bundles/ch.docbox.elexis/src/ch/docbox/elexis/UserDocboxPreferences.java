@@ -24,8 +24,6 @@ import java.util.Optional;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +67,8 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.docbox.ws.client.WsClientConfig;
 import ch.elexis.docbox.ws.client.WsClientUtil;
 import ch.swissmedicalsuite.HCardBrowser;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
 
 /**
  * User specific settings: Case defaults
@@ -277,7 +277,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 					box.setMessage(Messages.UserDocboxPreferences_NoSecretKey);
 					box.open();
 				} else {
-					javax.xml.ws.Holder<java.lang.String> message = new javax.xml.ws.Holder<java.lang.String>();
+					jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
 					boolean isOk = performConnectionTest(message);
 					MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
 							(isOk ? SWT.ICON_WORKING : SWT.ICON_ERROR));
@@ -588,8 +588,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		this.initialize();
 	}
 
-	public boolean performConnectionTest(javax.xml.ws.Holder<java.lang.String> message) {
-		javax.xml.ws.Holder<java.lang.Boolean> _checkAccess_success = new javax.xml.ws.Holder<java.lang.Boolean>();
+	public boolean performConnectionTest(jakarta.xml.ws.Holder<java.lang.String> message) {
+		jakarta.xml.ws.Holder<java.lang.Boolean> _checkAccess_success = new jakarta.xml.ws.Holder<java.lang.Boolean>();
 		try {
 			CDACHServices port = getPort();
 			port.checkAccess(_checkAccess_success, message);

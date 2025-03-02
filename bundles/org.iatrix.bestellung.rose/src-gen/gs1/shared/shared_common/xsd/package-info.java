@@ -5,5 +5,5 @@
 // Generiert: 2025.01.23 um 10:57:07 AM CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "urn:gs1:shared:shared_common:xsd:3")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "urn:gs1:shared:shared_common:xsd:3")
 package gs1.shared.shared_common.xsd;

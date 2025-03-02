@@ -3,8 +3,6 @@ package at.medevit.elexis.agenda.ui.menu;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -20,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import jakarta.inject.Inject;
 
 public class SetStatusContributionItem {
 

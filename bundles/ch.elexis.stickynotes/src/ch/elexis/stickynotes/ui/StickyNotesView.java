@@ -13,8 +13,6 @@
 
 package ch.elexis.stickynotes.ui;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -46,6 +44,7 @@ import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.elexis.stickynotes.Messages;
 import ch.elexis.stickynotes.data.StickyNote;
+import jakarta.inject.Inject;
 
 public class StickyNotesView extends ViewPart implements IRefreshable, HeartListener {
 	private ScrolledForm form;

@@ -6,6 +6,6 @@ Bundle-Version: 3.13.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: ch.elexis.ebanking.parser
 Bundle-Vendor: elexis.ch
-Import-Package: javax.xml.bind,
- javax.xml.bind.annotation
+Import-Package: jakarta.xml.bind,
+ jakarta.xml.bind.annotation
 Require-Bundle: org.apache.commons.lang3;bundle-version="3.12.0"

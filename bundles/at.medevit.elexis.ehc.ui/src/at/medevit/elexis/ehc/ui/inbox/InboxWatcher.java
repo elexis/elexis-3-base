@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -45,6 +43,7 @@ import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import jakarta.inject.Inject;
 
 public class InboxWatcher {
 	private static Logger logger = LoggerFactory.getLogger(InboxWatcher.class);

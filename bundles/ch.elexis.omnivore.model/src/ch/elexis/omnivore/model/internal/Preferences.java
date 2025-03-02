@@ -1,9 +1,10 @@
 package ch.elexis.omnivore.model.internal;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFS;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 

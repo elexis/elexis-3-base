@@ -3,10 +3,14 @@
  */
 package ch.elexis.base.ch.arzttarife.complementary.impl;
 
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryFactory;
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
-
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
 import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
 import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
@@ -14,28 +18,17 @@ import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
-
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
-
 import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
 import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
 import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
-
 import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
-
 import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
 import ch.elexis.core.model.ModelPackage;
-
 import ch.elexis.core.types.TypesPackage;
-
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EPackage;
-
-import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
  * <!-- begin-user-doc -->

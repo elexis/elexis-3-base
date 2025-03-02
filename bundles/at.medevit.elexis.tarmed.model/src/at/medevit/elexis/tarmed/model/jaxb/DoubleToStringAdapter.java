@@ -1,14 +1,13 @@
 package at.medevit.elexis.tarmed.model.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import ch.rgw.tools.XMLTool;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class DoubleToStringAdapter extends XmlAdapter<String, Double> {
 
 	@Override
 	public Double unmarshal(String value) throws Exception {
-		return (javax.xml.bind.DatatypeConverter.parseDouble(value));
+		return (jakarta.xml.bind.DatatypeConverter.parseDouble(value));
 	}
 
 	@Override

@@ -6,12 +6,11 @@ Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: netzkonzept.ch
 Automatic-Module-Name: ch.netzkonzept.elexis.medidata
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
- ch.elexis.base.ch.arzttarife;bundle-version="3.9.0",
- org.jdom2;bundle-version="1.1.1"
+Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
+ ch.elexis.base.ch.arzttarife;bundle-version="3.9.0"
 Import-Package: com.google.gson;version="2.8.9",
-  org.jdom2;version="2.0.6"
+ org.jdom2
 Export-Package: ch.netzkonzept.elexis.medidata.config,
  ch.netzkonzept.elexis.medidata.output,
  ch.netzkonzept.elexis.medidata.receive

@@ -3,17 +3,17 @@
  */
 package ch.elexis.base.ch.arzttarife.complementary.util;
 
-import ch.elexis.base.ch.arzttarife.complementary.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 
+import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
+import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithAssignableId;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-
-import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->

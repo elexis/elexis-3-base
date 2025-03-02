@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -28,6 +26,7 @@ import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Konsultation;
+import jakarta.inject.Inject;
 
 public class CovidAttestSz {
 

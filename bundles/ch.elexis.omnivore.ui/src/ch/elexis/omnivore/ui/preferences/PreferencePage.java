@@ -13,7 +13,6 @@
 
 package ch.elexis.omnivore.ui.preferences;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
 import static ch.elexis.omnivore.PreferenceConstants.DATE_MODIFIABLE;
 import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Default;
@@ -28,6 +27,7 @@ import static ch.elexis.omnivore.PreferenceConstants.PREF_SRC_PATTERN;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFS;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;

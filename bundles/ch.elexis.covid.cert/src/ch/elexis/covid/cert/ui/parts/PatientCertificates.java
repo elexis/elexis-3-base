@@ -7,9 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -76,6 +73,8 @@ import ch.elexis.covid.cert.ui.dialogs.TestModelDialog;
 import ch.elexis.covid.cert.ui.dialogs.VaccinationModelDialog;
 import ch.elexis.covid.cert.ui.handler.CovidHandlerUtil;
 import ch.rgw.tools.Result;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class PatientCertificates {

@@ -3,12 +3,11 @@ package at.medevit.elexis.agenda.ui.xml;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "period")
 public class Period implements Comparable<Period> {

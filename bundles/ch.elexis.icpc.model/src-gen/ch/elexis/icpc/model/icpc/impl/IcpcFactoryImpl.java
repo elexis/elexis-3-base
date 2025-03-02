@@ -2,15 +2,14 @@
  */
 package ch.elexis.icpc.model.icpc.impl;
 
-import ch.elexis.icpc.model.icpc.*;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+import ch.elexis.icpc.model.icpc.IcpcFactory;
+import ch.elexis.icpc.model.icpc.IcpcPackage;
 
 /**
  * <!-- begin-user-doc -->

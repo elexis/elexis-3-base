@@ -18,9 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.artikel_ch.data.service.MiGelCodeElementService;
 import ch.elexis.base.ch.migel.ui.MiGelImporter;
+import ch.elexis.core.exceptions.AccessControlException;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
@@ -209,6 +211,12 @@ public class MigelCsvDataImporter extends AbstractReferenceDataImporter implemen
 			return Status.OK_STATUS;
 		} catch (IOException e1) {
 			log.error("Exception {} while running import", e1.getMessage());
+		} catch (CsvValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AccessControlException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return Status.CANCEL_STATUS;
 	}

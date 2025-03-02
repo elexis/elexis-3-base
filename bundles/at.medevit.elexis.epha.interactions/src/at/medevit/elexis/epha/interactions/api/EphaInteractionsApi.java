@@ -1,6 +1,5 @@
 package at.medevit.elexis.epha.interactions.api;
 
-import org.apache.commons.lang3.StringUtils;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -9,12 +8,8 @@ import java.util.Locale;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientConfig;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +18,11 @@ import com.google.gson.GsonBuilder;
 
 import at.medevit.elexis.epha.interactions.api.model.AdviceResponse;
 import at.medevit.elexis.epha.interactions.api.model.Substance;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 
 public class EphaInteractionsApi {
 

@@ -12,8 +12,6 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.ui;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.MenuManager;
@@ -42,6 +40,7 @@ import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class GDTProtokollView extends ViewPart implements IRefreshable {
 

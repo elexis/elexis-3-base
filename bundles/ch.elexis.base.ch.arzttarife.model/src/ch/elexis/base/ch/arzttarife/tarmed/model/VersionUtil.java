@@ -1,7 +1,8 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;

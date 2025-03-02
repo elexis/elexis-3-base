@@ -2,11 +2,11 @@
  */
 package ch.elexis.base.ch.labortarif;
 
-import ch.elexis.core.model.ModelPackage;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
+
+import ch.elexis.core.model.ModelPackage;
 
 /**
  * <!-- begin-user-doc -->

@@ -5,18 +5,14 @@ Bundle-SymbolicName: org.iatrix.messwerte;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Activator: org.iatrix.messwerte.Activator
 Bundle-Vendor: org.iatrix
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.ui.forms,
- ch.elexis.core;bundle-version="3.2.0",
- ch.rgw.utility;bundle-version="3.0.0",
- org.slf4j.api,
- ch.elexis.core.data,
- ch.elexis.core.ui,
+Require-Bundle: org.eclipse.ui.forms,
+ ch.elexis.core;bundle-version="3.13.0",
+ ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.core.ui.icons
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: ch.elexis.core.services.holder,
- javax.inject;version="1.0.0",
  org.eclipse.e4.core.di.annotations;version="1.6.0",
  org.eclipse.e4.ui.model.application.ui.basic

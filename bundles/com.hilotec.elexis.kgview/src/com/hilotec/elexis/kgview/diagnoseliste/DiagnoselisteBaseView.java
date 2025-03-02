@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -59,6 +58,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.rgw.tools.StringTool;
+import jakarta.inject.Inject;
 
 /*
  * Helper class to draw multiline tree items, kind of ugly, but according

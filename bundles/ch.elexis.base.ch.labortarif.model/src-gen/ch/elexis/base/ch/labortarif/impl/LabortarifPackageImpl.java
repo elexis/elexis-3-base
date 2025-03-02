@@ -2,20 +2,17 @@
  */
 package ch.elexis.base.ch.labortarif.impl;
 
-import ch.elexis.base.ch.labortarif.ILaborLeistung;
-import ch.elexis.base.ch.labortarif.LabortarifFactory;
-import ch.elexis.base.ch.labortarif.LabortarifPackage;
-
-import ch.elexis.core.model.ModelPackage;
-
-import ch.elexis.core.types.TypesPackage;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
+import ch.elexis.base.ch.labortarif.ILaborLeistung;
+import ch.elexis.base.ch.labortarif.LabortarifFactory;
+import ch.elexis.base.ch.labortarif.LabortarifPackage;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.types.TypesPackage;
 
 /**
  * <!-- begin-user-doc -->

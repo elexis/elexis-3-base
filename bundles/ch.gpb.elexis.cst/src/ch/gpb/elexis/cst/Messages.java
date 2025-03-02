@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.gpb.elexis.cst;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AnzeigeOptionsComposite_lblWoSindMeine_text = ch.elexis.core.l10n.Messages.AnzeigeOptionsComposite_lblWoSindMeine_text;
 	public static String Button_MoveDown = ch.elexis.core.l10n.Messages.Core_Down;

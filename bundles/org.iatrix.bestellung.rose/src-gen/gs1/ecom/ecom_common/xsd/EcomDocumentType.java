@@ -8,13 +8,12 @@
 
 package gs1.ecom.ecom_common.xsd;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
-
 import gs1.ecom.order.xsd.OrderType;
 import gs1.shared.shared_common.xsd.DocumentType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java-Klasse für EcomDocumentType complex type.

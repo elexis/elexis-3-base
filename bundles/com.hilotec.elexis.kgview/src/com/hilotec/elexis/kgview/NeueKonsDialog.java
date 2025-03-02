@@ -1,8 +1,8 @@
 package com.hilotec.elexis.kgview;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -13,15 +13,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.hilotec.elexis.kgview.data.KonsData;
+import com.tiff.common.ui.datepicker.DatePickerCombo;
+
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.TimeTool.TimeFormatException;
-
-import com.hilotec.elexis.kgview.data.KonsData;
-import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class NeueKonsDialog extends TitleAreaDialog {
 

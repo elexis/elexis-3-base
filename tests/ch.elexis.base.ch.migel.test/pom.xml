@@ -7,11 +7,8 @@
     <artifactId>ch.elexis.base.tests</artifactId>
     <version>3.13.0-SNAPSHOT</version>
   </parent>
-  
   <artifactId>ch.elexis.base.ch.migel.test</artifactId>
-  <packaging>eclipse-test-plugin</packaging>  
-  <version>3.13.0-SNAPSHOT</version>
-
+  <packaging>eclipse-test-plugin</packaging>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -29,27 +26,107 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>ch.elexis.core.test.context</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>ch.elexis.core.logging.default_configuration</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>ch.elexis.base.ch.migel</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>ch.elexis.base.ch.migel.test</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>ch.qos.logback.slf4j</id>
+                <id>ch.elexis.core.test.logging</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.swt.nl_fr</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.ui.workbench.nl_fr</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.jetty.ee10.osgi.alpn.fragment</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.swt.nl_de</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.swt.nl_it</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.e4.ui.workbench.swt.nl_it</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.jface.nl_it</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.ui.workbench.nl_de</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.jface.nl_de</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.ui.nl_de</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.e4.ui.workbench.swt.nl_fr</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.e4.ui.workbench.renderers.swt.nl_it</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.ui.nl_fr</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.e4.ui.workbench.renderers.swt.nl_de</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.ui.workbench.nl_it</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.jface.nl_fr</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.e4.ui.workbench.renderers.swt.nl_fr</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.e4.ui.workbench.swt.nl_de</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.ui.nl_it</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>
@@ -67,26 +144,14 @@
         <version>${tycho.version}</version>
         <configuration>
           <useUIHarness>false</useUIHarness>
-		  <printBundles>true</printBundles>
-		  <application>ch.elexis.core.application.ElexisApp</application>
-		  <listEntry value="/ch.elexis.base.ch.migel.test/src/ch/elexis/base/ch/migel/test/AllMigelImporterTests.java"/>
+          <testClass>ch.elexis.base.ch.migel.test.AllMigelImporterTests</testClass>
           <showEclipseLog>true</showEclipseLog>
-          <argLine>-Delexis.test.mode=true -Dorg.eclipse.gemini.refreshBundles=false</argLine>
-		  <skipTests>true</skipTests>
+          <argLine>-Delexis.test.mode=true -Dorg.apache.poi.util.POILogger=org.apache.commons.logging.impl.NoOpLog</argLine>
+          <skipTests>true</skipTests>
           <dependencies>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.osgi.util.measurement</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.math3</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.equinox.event</artifactId>
+              <artifactId>org.eclipse.e4.core.di.extensions</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -111,17 +176,12 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.osgi.services</artifactId>
+              <artifactId>org.eclipse.e4.core.services</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.commons-dcom.eclipsesource.jaxrs.consumer2</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.equinox.registry</artifactId>
+              <artifactId>ch.qos.logback.core</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -131,27 +191,27 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>info.elexis.target.jaxws.core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>org.apache.commons.lang3</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>com.google.guava</artifactId>
+              <artifactId>org.jdom.2</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.core.commands</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.el-api</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.eclipse.persistence.jpa</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>jakarta.ws.rs-api</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -171,47 +231,22 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.osgi.service.jdbc</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.glassfish.hk2.osgi-resource-locator</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>org.apache.felix.gogo.shell</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.osgi.util.promise</artifactId>
+              <artifactId>org.eclipse.e4.ui.bindings</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>ch.qos.logback.slf4j</artifactId>
+              <artifactId>org.eclipse.emf.ecore.change</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.felix.gogo.runtime</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.apache.geronimo.specs.geronimo-jta_1.1_spec</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.equinox.console</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.osgi.service.jndi</artifactId>
+              <artifactId>org.eclipse.nebula.widgets.nattable.extension.nebula</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -221,17 +256,402 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.workbench.renderers.swt</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.fasterxml.jackson.core.jackson-core</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.model.workbench</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.sun.jna</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.batik.i18n</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.xmlgraphics</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.batik.constants</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.angus.jakarta.mail</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.sun.jna.platform</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.collections</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.collections</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.google.guava.failureaccess</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.persistence.asm</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.emf.databinding</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.keycloak.keycloak-adapter-spi</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.pde.junit.runtime</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.core.di.extensions.supplier</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.keycloak.keycloak-adapter-core</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.jface.databinding</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.poi.ooxml</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.core.databinding.observable</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.equinox.event</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.commons-beanutils</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.workbench.swt</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.equinox.app</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.ws.rs-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.commons-codec</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.jdt.junit4.runtime</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.fasterxml.jackson.core.jackson-annotations</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.commons-io</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.nebula.widgets.cdatetime</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.glassfish.jersey.core.jersey-common</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.core.expressions</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.core.commands</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.emf.common</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.annotation-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.dialogs</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.httpcomponents.httpclient</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.aries.spifly.dynamic.bundle</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.nebula.cwt</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.core.databinding.property</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.hamcrest</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.event</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.workbench3</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.postgresql.jdbc</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.mail-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.core.di.annotations</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.ui.workbench</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.nebula.widgets.tablecombo</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.objectweb.asm.tree.analysis</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.cm</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.css.swt.theme</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.jface</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.batik.util</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.google.gson</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.persistence.core</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.commons-dbcp2</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.ui.forms</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.equinox.registry</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.objectweb.asm.util</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.google.guava</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.commons-compress</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.xml.bind-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.services</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.enterprise.lang-model</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.component.annotations</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>com.equo.chromium</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.widgets</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.text</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.glassfish.hk2.osgi-resource-locator</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.persistence.extension</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.util.promise</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.felix.gogo.runtime</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.equinox.console</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jcl.over.slf4j</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.keycloak.keycloak-core</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.osgi.util.xml</artifactId>
+              <artifactId>com.healthmarketscience.jackcess</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>com.healthmarketscience.jackcess</artifactId>
+              <artifactId>ch.qos.logback.classic</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.ui.workbench</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -246,32 +666,17 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.collections</artifactId>
+              <artifactId>org.glassfish.jersey.ext.jersey-proxy-client</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.glassfish.jersey.core.jersey-client</artifactId>
+              <artifactId>org.eclipse.osgi</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.osgi.util</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.logging</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.persistence.asm</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.codec</artifactId>
+              <artifactId>org.objectweb.asm.tree</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -281,27 +686,17 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.pde.junit.runtime</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.core.contenttype</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.gemini.jpa</artifactId>
+              <artifactId>org.eclipse.orbit.xml-apis-ext</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.poi.ooxml</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.slf4j.api</artifactId>
+              <artifactId>org.apache.logging.log4j.api</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -311,22 +706,12 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>jakarta.persistence</artifactId>
+              <artifactId>jakarta.interceptor-api</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.commons-beanutils</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.equinox.app</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.jdt.junit4.runtime</artifactId>
+              <artifactId>jakarta.activation-api</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -336,12 +721,7 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>jaxb-api</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>bcprov</artifactId>
+              <artifactId>org.eclipse.e4.ui.workbench.addons.swt</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -351,7 +731,17 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.e4.emf.xpath</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.junit</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>bcprov</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -361,12 +751,32 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>jakarta.enterprise.cdi-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.equinox.common</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.glassfish.jersey.core.jersey-common</artifactId>
+              <artifactId>org.eclipse.help</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>slf4j.osgi</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.persistence-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>slf4j.api</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -381,12 +791,7 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>ch.qos.logback.core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.osgi</artifactId>
+              <artifactId>org.eclipse.e4.core.contexts</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -396,32 +801,27 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.emf.common</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.jdt.junit.runtime</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>ch.qos.logback.classic</artifactId>
+              <artifactId>org.eclipse.urischeme</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>javax.activation</artifactId>
+              <artifactId>org.apache.batik.css</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.httpcomponents.httpclient</artifactId>
+              <artifactId>com.fasterxml.jackson.core.jackson-databind</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.jaxen</artifactId>
+              <artifactId>org.eclipse.e4.ui.css.swt</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -431,22 +831,42 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.poi.ooxml.schemas</artifactId>
+              <artifactId>org.eclipse.e4.ui.di</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.postgresql.jdbc</artifactId>
+              <artifactId>log4j.over.slf4j</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.glassfish.hk2.external.jakarta.inject</artifactId>
+              <artifactId>org.eclipse.swt</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.osgi.util.position</artifactId>
+              <artifactId>org.eclipse.core.databinding</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.nebula.widgets.nattable.core</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.inject.jakarta.inject-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.nebula.widgets.richtext</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.objectweb.asm.commons</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -456,17 +876,7 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>javax.annotation</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.hamcrest.core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.commons-compress</artifactId>
+              <artifactId>org.osgi.service.component</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -476,47 +886,42 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.glassfish.jersey.core.jersey-client</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>jakarta.transaction-api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.ui</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.keycloak.keycloak-common</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.commons-io</artifactId>
+              <artifactId>org.eclipse.e4.core.di</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>com.google.gson</artifactId>
+              <artifactId>org.eclipse.core.databinding.beans</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.persistence.antlr</artifactId>
+              <artifactId>org.objectweb.asm</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.jdom2</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.persistence.core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>com.opencsv</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-			  <artifactId>ch.elexis.core.importer.div</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-			  <artifactId>ch.elexis.core.hl7.v2x</artifactId>
+              <artifactId>org.eclipse.e4.ui.css.core</artifactId>
               <version>0.0.0</version>
             </dependency>
           </dependencies>
@@ -537,8 +942,8 @@
               <autoStart>true</autoStart>
             </bundle>
             <bundle>
-              <id>ch.elexis.base.ch.migel.test</id>
-              <level>4</level>
+              <id>ch.qos.logback.core</id>
+              <level>2</level>
               <autoStart>true</autoStart>
             </bundle>
             <bundle>
@@ -547,8 +952,38 @@
               <autoStart>true</autoStart>
             </bundle>
             <bundle>
-              <id>org.eclipse.gemini.jpa</id>
-              <level>3</level>
+              <id>org.eclipse.angus.jakarta.mail</id>
+              <level>2</level>
+              <autoStart>true</autoStart>
+            </bundle>
+            <bundle>
+              <id>org.eclipse.equinox.event</id>
+              <level>1</level>
+              <autoStart>true</autoStart>
+            </bundle>
+            <bundle>
+              <id>org.glassfish.jersey.core.jersey-common</id>
+              <level>2</level>
+              <autoStart>true</autoStart>
+            </bundle>
+            <bundle>
+              <id>org.apache.aries.spifly.dynamic.bundle</id>
+              <level>1</level>
+              <autoStart>true</autoStart>
+            </bundle>
+            <bundle>
+              <id>jakarta.mail-api</id>
+              <level>2</level>
+              <autoStart>true</autoStart>
+            </bundle>
+            <bundle>
+              <id>ch.qos.logback.classic</id>
+              <level>2</level>
+              <autoStart>true</autoStart>
+            </bundle>
+            <bundle>
+              <id>org.eclipse.osgi</id>
+              <level>1</level>
               <autoStart>true</autoStart>
             </bundle>
             <bundle>
@@ -561,10 +996,9 @@
               <level>2</level>
               <autoStart>true</autoStart>
             </bundle>
-			com.opencsv
             <bundle>
-              <id>org.eclipse.osgi</id>
-              <level>-1</level>
+              <id>org.glassfish.jersey.core.jersey-client</id>
+              <level>2</level>
               <autoStart>true</autoStart>
             </bundle>
           </bundleStartLevel>

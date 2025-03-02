@@ -1,8 +1,9 @@
 package com.hilotec.elexis.kgview.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.HashSet;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Anwender;

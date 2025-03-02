@@ -1,9 +1,6 @@
 
 package ch.elexis.global_inbox.ui.handler;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -15,6 +12,8 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class AutoSelectPatientHandler {
 

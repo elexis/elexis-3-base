@@ -1,6 +1,5 @@
 package ch.elexis.base.ch.labortarif.model.importer;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -12,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;

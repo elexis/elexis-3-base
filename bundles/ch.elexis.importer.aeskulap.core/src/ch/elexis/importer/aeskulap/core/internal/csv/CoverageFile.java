@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.model.IBillingSystem;
 import ch.elexis.core.model.ICoverage;
@@ -193,7 +195,7 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 				monitor.worked(1);
 			}
 			return true;
-		} catch (IOException e) {
+		} catch (IOException | CsvValidationException e) {
 			LoggerFactory.getLogger(getClass()).error("Error importing file", e);
 		} finally {
 			close();

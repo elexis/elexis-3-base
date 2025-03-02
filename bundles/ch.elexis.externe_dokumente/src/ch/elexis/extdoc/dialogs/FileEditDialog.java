@@ -13,29 +13,32 @@
 
 package ch.elexis.extdoc.dialogs;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
-import ch.elexis.extdoc.Messages;
-import ch.elexis.extdoc.util.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
+
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.extdoc.Messages;
+import ch.elexis.extdoc.util.MatchPatientToPath;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 public class FileEditDialog extends TitleAreaDialog {
 	private static final int WIDGET_SPACE = 20;

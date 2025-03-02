@@ -1,7 +1,9 @@
 package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDateTime;
+
 import com.equo.chromium.swt.Browser;
+
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;

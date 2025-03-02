@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -45,6 +43,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Money;
+import jakarta.inject.Inject;
 
 public class MiGelImporter extends ImporterPage {
 	boolean bDelete = false;

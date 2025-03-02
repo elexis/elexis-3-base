@@ -1,9 +1,8 @@
 package ch.framsteg.elexis.labor.teamw.workers;
 
-import javax.inject.Inject;
-
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import jakarta.inject.Inject;
 
 public class Anonymizer {
 

@@ -10,6 +10,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
@@ -93,7 +95,7 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 					monitor.worked(1);
 				}
 				return true;
-			} catch (IOException e) {
+			} catch (IOException | CsvValidationException e) {
 				LoggerFactory.getLogger(getClass()).error("Error importing file", e);
 			} catch (ElexisException e) {
 				LoggerFactory.getLogger(getClass()).error("Error saving file", e);

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -19,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;

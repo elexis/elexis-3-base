@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Haftnotizen
 Bundle-SymbolicName: ch.elexis.stickynotes;singleton:=true
 Bundle-Version: 3.13.0.qualifier
-Import-Package: javax.inject
 Bundle-Vendor: elexis.info
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.elexis.core.l10n,

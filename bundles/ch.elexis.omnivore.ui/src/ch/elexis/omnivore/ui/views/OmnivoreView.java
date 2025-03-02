@@ -22,9 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -121,6 +118,8 @@ import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.util.UiUtils;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * A class do receive documents by drag&drop. Documents are imported into the

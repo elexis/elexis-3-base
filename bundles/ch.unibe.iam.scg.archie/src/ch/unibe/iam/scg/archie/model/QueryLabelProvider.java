@@ -11,10 +11,10 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Currency;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;

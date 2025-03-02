@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;

@@ -95,6 +95,29 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 				}
 			}
 		});
+
+		migrationBtn = new Button(getFieldEditorParent().getParent(), SWT.PUSH);
+		migrationBtn.setText("ArchivKG Migration");
+		migrationBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent se) {
+				ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+				try {
+					progressDialog.run(true, false, new IRunnableWithProgress() {
+						@Override
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException, InterruptedException {
+							ArchivKGMigrator migrator = new ArchivKGMigrator();
+							migrator.migrate(monitor);
+						}
+					});
+				} catch (InvocationTargetException | InterruptedException e) {
+					MessageDialog.openError(getShell(), "ArchivKG konvertieren",
+							"Fehler beim migrieren der Konsultationen.");
+					LoggerFactory.getLogger(getClass()).error("Error migrating encounters", e);
+				}
+			}
+		});
 	}
 
 	/**

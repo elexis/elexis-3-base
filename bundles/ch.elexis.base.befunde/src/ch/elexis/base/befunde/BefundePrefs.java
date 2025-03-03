@@ -10,9 +10,9 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -33,8 +33,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;

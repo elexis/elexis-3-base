@@ -11,9 +11,6 @@ package ch.docbox.elexis;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -81,6 +78,8 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * Displays the documents downloaded from docbox (doctrans)

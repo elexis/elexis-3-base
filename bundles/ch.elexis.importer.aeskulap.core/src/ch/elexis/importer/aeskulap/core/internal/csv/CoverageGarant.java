@@ -8,6 +8,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import ch.elexis.data.Kontakt;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 
@@ -46,7 +48,7 @@ public class CoverageGarant extends AbstractCsvImportFile<Kontakt> implements IA
 			while ((line = getNextLine()) != null) {
 				garantKurzBezMap.put(line[0], line);
 			}
-		} catch (IOException e) {
+		} catch (IOException | CsvValidationException e) {
 			LoggerFactory.getLogger(getClass()).error("Error importing file", e);
 		} finally {
 			close();

@@ -11,31 +11,25 @@
  *******************************************************************************/
 package ch.elexis.extdoc.util;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.program.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Patient;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
-import ch.elexis.core.text.model.Samdas;
-import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("deprecation")
 public class Email {

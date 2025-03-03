@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.widget;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,14 +18,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
-import ch.gpb.elexis.cst.data.ValueFinding;
 import ch.gpb.elexis.cst.Messages;
+import ch.gpb.elexis.cst.data.ValueFinding;
 import ch.gpb.elexis.cst.service.CstService;
 
 public class CstVorwertCanvas extends CstCanvas {

@@ -13,6 +13,7 @@
 package net.medshare.connector.aerztekasse.data;
 
 import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;

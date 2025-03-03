@@ -8,15 +8,14 @@
 
 package gs1.ecom.ecom_common.xsd;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-
 import gs1.shared.shared_common.xsd.CodeType;
 import gs1.shared.shared_common.xsd.Description500Type;
 import gs1.shared.shared_common.xsd.IncotermsCodeType;
 import gs1.shared.shared_common.xsd.NonBinaryLogicEnumerationType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java-Klasse für DeliveryTermsType complex type.

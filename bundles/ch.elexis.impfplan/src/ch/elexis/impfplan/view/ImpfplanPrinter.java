@@ -11,12 +11,12 @@
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.impfplan.text.ImpfplanTextTemplateRequirement.TT_VACCINATIONS;
 
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

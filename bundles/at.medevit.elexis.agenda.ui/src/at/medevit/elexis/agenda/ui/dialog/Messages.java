@@ -1,7 +1,5 @@
 package at.medevit.elexis.agenda.ui.dialog;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static final String BUNDLE_NAME = "at.medevit.elexis.agenda.ui.dialog.messages"; //$NON-NLS-1$
 	public static String AgendaUI_WeeklySeries_week_year = ch.elexis.core.l10n.Messages.AgendaUI_WeeklySeries_week_year;

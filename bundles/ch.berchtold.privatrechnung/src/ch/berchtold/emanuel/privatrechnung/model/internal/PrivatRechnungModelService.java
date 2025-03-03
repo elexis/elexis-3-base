@@ -2,8 +2,6 @@ package ch.berchtold.emanuel.privatrechnung.model.internal;
 
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -22,6 +20,7 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IStoreToStringContribution;
 import ch.elexis.core.services.IXidService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import jakarta.persistence.EntityManager;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.berchtold.emanuel.privatrechnung.model")
 public class PrivatRechnungModelService extends AbstractModelService

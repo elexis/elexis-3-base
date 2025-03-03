@@ -11,13 +11,14 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.ui.util.Log;
 import ch.unibe.iam.scg.archie.ArchieActivator;

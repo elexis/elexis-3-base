@@ -11,11 +11,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Artikel;
-
 import com.hilotec.elexis.kgview.Preferences;
 import com.hilotec.elexis.kgview.data.FavMedikament;
+
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Artikel;
 
 /**
  * Dialog um einen Eintrag in der Liste der favorisierten Medikamente anzupassen

@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabMapping;
@@ -56,7 +58,7 @@ public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAesk
 				setProperties(labItem, line);
 			}
 			return true;
-		} catch (IOException e) {
+		} catch (IOException | CsvValidationException e) {
 			LoggerFactory.getLogger(getClass()).error("Error importing file", e);
 		} finally {
 			close();

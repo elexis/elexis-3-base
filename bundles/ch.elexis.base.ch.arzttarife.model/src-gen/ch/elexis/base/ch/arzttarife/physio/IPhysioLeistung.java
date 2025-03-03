@@ -3,8 +3,9 @@
  */
 package ch.elexis.base.ch.arzttarife.physio;
 
-import ch.elexis.core.model.IBillable;
 import java.time.LocalDate;
+
+import ch.elexis.core.model.IBillable;
 
 
 /**

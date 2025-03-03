@@ -11,9 +11,6 @@
  *******************************************************************************/
 package ch.elexis.views;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
@@ -28,6 +25,8 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class PandemieDetailDisplay implements IDetailDisplay {
 	Form form;

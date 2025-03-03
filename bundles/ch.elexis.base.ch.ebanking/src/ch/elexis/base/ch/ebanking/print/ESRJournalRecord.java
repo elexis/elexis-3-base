@@ -1,7 +1,7 @@
 package ch.elexis.base.ch.ebanking.print;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import ch.elexis.base.ch.ebanking.model.IEsrRecord;
 

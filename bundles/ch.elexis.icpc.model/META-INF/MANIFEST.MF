@@ -12,10 +12,10 @@ Export-Package: ch.elexis.icpc.model.icpc,
  ch.elexis.icpc.model.icpc.impl,
  ch.elexis.icpc.model.icpc.util
 Require-Bundle: ch.elexis.core.l10n,
- ch.elexis.core.jpa.entities;bundle-version="3.9.0",
- ch.elexis.core.jpa;bundle-version="3.9.0",
- ch.elexis.core;bundle-version="3.9.0";visibility:=reexport,
- ch.elexis.core.services;bundle-version="3.9.0"
+ ch.elexis.core.jpa.entities;bundle-version="3.13.0",
+ ch.elexis.core.jpa;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.13.0";visibility:=reexport,
+ ch.elexis.core.services;bundle-version="3.13.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.icpc.model.internal.service.IcpcModelService.xml,
  OSGI-INF/ch.elexis.icpc.model.internal.importer.IcpcReferenceDataImporter.xml,
@@ -23,8 +23,8 @@ Service-Component: OSGI-INF/ch.elexis.icpc.model.internal.service.IcpcModelServi
  OSGI-INF/ch.elexis.icpc.model.internal.service.CodeElementContribution.xml,
  OSGI-INF/ch.elexis.icpc.model.internal.service.IcpcModelServiceHolder.xml
 Import-Package: com.healthmarketscience.jackcess;version="4.0.0",
- javax.persistence;version="2.2.3",
- javax.persistence.criteria;version="2.2.3",
+ jakarta.persistence;version="[3.2.0,4.0.0)",
+ jakarta.persistence.criteria;version="[3.2.0,4.0.0)",
  org.apache.commons.io;version="2.6.0",
  org.apache.commons.lang3;version="3.12.0",
  org.apache.commons.lang3.math;version="3.12.0"

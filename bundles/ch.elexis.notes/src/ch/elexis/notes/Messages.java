@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.notes;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AddLinkDialog_addLinkDialogMessage = ch.elexis.core.l10n.Messages.AddLinkDialog_addLinkDialogMessage;
 	public static String AddLinkDialog_addLinkDialogTitle = ch.elexis.core.l10n.Messages.AddLinkDialog_addLinkDialogTitle;

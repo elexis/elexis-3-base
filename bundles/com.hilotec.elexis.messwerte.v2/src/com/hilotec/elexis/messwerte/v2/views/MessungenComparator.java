@@ -17,9 +17,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 
-import ch.rgw.tools.TimeTool;
-
 import com.hilotec.elexis.messwerte.v2.data.Messung;
+
+import ch.rgw.tools.TimeTool;
 
 public class MessungenComparator extends ViewerComparator {
 

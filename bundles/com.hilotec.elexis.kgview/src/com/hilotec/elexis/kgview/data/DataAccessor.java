@@ -1,12 +1,20 @@
 package com.hilotec.elexis.kgview.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.hilotec.elexis.kgview.ArchivKG;
+import com.hilotec.elexis.kgview.Preferences;
+import com.hilotec.elexis.kgview.diagnoseliste.DiagnoselisteItem;
+import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator;
+import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator.Sortierung;
+import com.hilotec.elexis.kgview.medikarte.MedikarteHelpers;
 
 import ch.elexis.core.data.interfaces.IDataAccess;
 import ch.elexis.data.Konsultation;
@@ -15,13 +23,6 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
-
-import com.hilotec.elexis.kgview.ArchivKG;
-import com.hilotec.elexis.kgview.Preferences;
-import com.hilotec.elexis.kgview.diagnoseliste.DiagnoselisteItem;
-import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator;
-import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator.Sortierung;
-import com.hilotec.elexis.kgview.medikarte.MedikarteHelpers;
 
 public class DataAccessor implements IDataAccess {
 	private static final String[] fields = { "JetzigesLeiden", "JetzigesLeidenICPC", "AllgStatus", "LokStatus",

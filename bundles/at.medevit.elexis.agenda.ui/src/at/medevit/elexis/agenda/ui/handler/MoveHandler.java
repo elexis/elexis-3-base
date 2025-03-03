@@ -2,8 +2,6 @@ package at.medevit.elexis.agenda.ui.handler;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -14,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
 import ch.elexis.core.model.IPeriod;
+import jakarta.inject.Inject;
 
 public class MoveHandler {
 

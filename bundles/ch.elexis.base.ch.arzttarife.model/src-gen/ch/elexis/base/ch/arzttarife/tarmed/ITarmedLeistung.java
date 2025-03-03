@@ -3,11 +3,11 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmed;
 
-import ch.elexis.core.model.IBillable;
-import ch.elexis.core.model.IMandator;
-import ch.elexis.core.model.IService;
 import java.time.LocalDate;
 import java.util.List;
+
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IService;
 
 
 /**

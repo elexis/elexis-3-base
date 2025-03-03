@@ -1,9 +1,9 @@
 package at.medevit.elexis.agenda.ui.rcprap;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;

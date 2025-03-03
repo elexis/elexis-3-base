@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import javax.inject.Inject;
-
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -37,6 +35,7 @@ import ch.elexis.mednet.webapi.core.fhir.resources.PatientResource;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.AdjustBundleIdentifiers;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.JsonManipulator;
+import jakarta.inject.Inject;
 
 public class PatientFetcher {
 

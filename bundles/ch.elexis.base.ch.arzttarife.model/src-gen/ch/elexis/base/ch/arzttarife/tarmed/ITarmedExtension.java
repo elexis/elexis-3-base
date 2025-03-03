@@ -3,10 +3,11 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmed;
 
+import java.util.Map;
+
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithExtInfo;
-import java.util.Map;
 
 
 /**

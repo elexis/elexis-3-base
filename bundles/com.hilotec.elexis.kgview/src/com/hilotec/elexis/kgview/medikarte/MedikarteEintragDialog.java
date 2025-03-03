@@ -1,8 +1,8 @@
 package com.hilotec.elexis.kgview.medikarte;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -15,13 +15,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.hilotec.elexis.kgview.Preferences;
+import com.hilotec.elexis.kgview.data.FavMedikament;
+
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
-
-import com.hilotec.elexis.kgview.Preferences;
-import com.hilotec.elexis.kgview.data.FavMedikament;
 
 /**
  * Dialog um einen Eintrag in der Liste der favorisierten Medikamente anzupassen

@@ -13,7 +13,6 @@ Export-Package: ch.unibe.iam.scg.archie.annotations,
  ch.unibe.iam.scg.archie.ui,
  ch.unibe.iam.scg.archie.ui.widgets,
  ch.unibe.iam.scg.archie.utils
-Import-Package: javax.inject
 Bundle-Vendor: designchuchi.ch
 Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui.icons,

@@ -78,7 +78,7 @@ public class DirectoryWatcher implements FileAlterationListener {
 		// Need to iterate through all registered directories
 		for (File directory : directories) {
 			List<File> files = (List<File>) FileUtils.listFiles(directory, null, false);
-			Collections.sort(files, new DateTimeAscending());
+			Collections.sort(files, Comparator.comparingLong(File::lastModified));
 
 			for (Iterator<File> iterator = files.iterator(); iterator.hasNext();) {
 				File file = iterator.next();
@@ -146,18 +146,4 @@ public class DirectoryWatcher implements FileAlterationListener {
 	public void onStop(FileAlterationObserver arg0) {
 	}
 
-	/**
-	 * We need to order the files in ascending order according to their creation
-	 * dateTime.
-	 */
-	private final class DateTimeAscending implements Comparator<File> {
-		@Override
-		public int compare(File arg0, File arg1) {
-			if (FileUtils.isFileNewer(arg0, arg1))
-				return 1;
-			if (FileUtils.isFileOlder(arg1, arg0))
-				return -1;
-			return 0;
-		}
-	}
 }

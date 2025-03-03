@@ -15,9 +15,6 @@ import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.ws.Holder;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -63,6 +60,8 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.ws.Holder;
 
 public class DocboxBackgroundJob extends Job {
 

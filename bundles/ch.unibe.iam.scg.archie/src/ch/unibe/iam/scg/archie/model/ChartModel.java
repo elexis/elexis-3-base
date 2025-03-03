@@ -12,6 +12,7 @@
 package ch.unibe.iam.scg.archie.model;
 
 import org.apache.commons.lang3.StringUtils;
+
 import ch.unibe.iam.scg.archie.utils.ArrayUtils;
 
 /**

@@ -2,8 +2,9 @@
  */
 package ch.elexis.base.ch.labortarif;
 
-import ch.elexis.core.model.IBillable;
 import java.time.LocalDate;
+
+import ch.elexis.core.model.IBillable;
 
 /**
  * <!-- begin-user-doc -->

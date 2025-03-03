@@ -13,10 +13,10 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
-import org.apache.commons.lang3.StringUtils;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;

@@ -11,10 +11,10 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.charts;
 
-import org.apache.commons.lang3.StringUtils;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.widgets.Composite;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;

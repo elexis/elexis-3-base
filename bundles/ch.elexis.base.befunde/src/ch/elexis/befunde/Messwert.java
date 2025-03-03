@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.base.befunde.Messages;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;

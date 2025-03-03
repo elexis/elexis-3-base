@@ -10,8 +10,6 @@
  ******************************************************************************/
 package ch.elexis.views;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -29,6 +27,7 @@ import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
+import jakarta.inject.Inject;
 
 public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 	private static FieldDescriptor<?>[] fields = {

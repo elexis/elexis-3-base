@@ -10,8 +10,9 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.gpb.elexis.cst.service.CstService;
 

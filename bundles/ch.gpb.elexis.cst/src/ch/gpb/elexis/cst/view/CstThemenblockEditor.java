@@ -10,12 +10,12 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -81,12 +81,6 @@ import ch.elexis.data.LabItem;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.gpb.elexis.cst.Activator;
-import ch.gpb.elexis.cst.data.CstAbstract;
-import ch.gpb.elexis.cst.data.CstGroup;
-import ch.gpb.elexis.cst.data.LabItemWrapper;
-import ch.gpb.elexis.cst.dialog.CstCategoryDialog;
-import ch.gpb.elexis.cst.dialog.CstLabItemSelectionDialog;
-import ch.gpb.elexis.cst.dialog.ThemenblockDetailDialog;
 /*
  * This sample class demonstrates how to plug-in a new workbench view. The view
  * shows data obtained from the model. The sample creates a dummy model on the
@@ -102,6 +96,12 @@ import ch.gpb.elexis.cst.dialog.ThemenblockDetailDialog;
  * <p>
  */
 import ch.gpb.elexis.cst.Messages;
+import ch.gpb.elexis.cst.data.CstAbstract;
+import ch.gpb.elexis.cst.data.CstGroup;
+import ch.gpb.elexis.cst.data.LabItemWrapper;
+import ch.gpb.elexis.cst.dialog.CstCategoryDialog;
+import ch.gpb.elexis.cst.dialog.CstLabItemSelectionDialog;
+import ch.gpb.elexis.cst.dialog.ThemenblockDetailDialog;
 
 /**
  *

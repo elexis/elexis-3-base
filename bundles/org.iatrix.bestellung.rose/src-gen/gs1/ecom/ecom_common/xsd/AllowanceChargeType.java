@@ -10,17 +10,16 @@ package gs1.ecom.ecom_common.xsd;
 
 import java.math.BigInteger;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-
 import gs1.shared.shared_common.xsd.AllowanceChargeTypeCodeType;
 import gs1.shared.shared_common.xsd.AllowanceOrChargeEnumerationType;
 import gs1.shared.shared_common.xsd.AmountType;
 import gs1.shared.shared_common.xsd.MeasurementType;
 import gs1.shared.shared_common.xsd.MultiDescription70Type;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java-Klasse für AllowanceChargeType complex type.

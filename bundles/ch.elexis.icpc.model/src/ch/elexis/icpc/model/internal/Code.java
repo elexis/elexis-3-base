@@ -1,10 +1,10 @@
 package ch.elexis.icpc.model.internal;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import ch.elexis.core.jpa.entities.ICPCCode;

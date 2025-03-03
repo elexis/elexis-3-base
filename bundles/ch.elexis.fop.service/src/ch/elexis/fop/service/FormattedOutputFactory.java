@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.elexis.fop.service;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,6 +18,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;

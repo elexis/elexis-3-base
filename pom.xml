@@ -40,10 +40,10 @@
 	</organization>
 	<properties>
 		<elexis.target>2025-03-java21</elexis.target>
-		<git.core.branch>f26018</git.core.branch>
+		<git.core.branch>master</git.core.branch>
 		<formatterConfigFile>
 			https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
-		<tycho.version>4.0.11</tycho.version>
+		<tycho.version>4.0.12</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
 		<buildplan.plugin.version>1.5</buildplan.plugin.version>

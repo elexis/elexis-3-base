@@ -5,11 +5,10 @@ Bundle-SymbolicName: at.medevit.elexis.loinc.ui;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Activator: at.medevit.elexis.loinc.ui.Activator
 Bundle-Vendor: medevit.at
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
- at.medevit.elexis.loinc;bundle-version="3.9.0"
+Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
+ at.medevit.elexis.loinc;bundle-version="3.13.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/loincConsumer.xml
 Export-Package: at.medevit.elexis.loinc.ui.dialogs
-Import-Package: javax.inject

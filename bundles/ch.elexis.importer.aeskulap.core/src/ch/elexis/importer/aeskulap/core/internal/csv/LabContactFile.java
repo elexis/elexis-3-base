@@ -8,6 +8,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import ch.elexis.data.Labor;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
@@ -53,7 +55,7 @@ public class LabContactFile extends AbstractCsvImportFile<Labor> implements IAes
 				monitor.worked(1);
 			}
 			return true;
-		} catch (IOException e) {
+		} catch (IOException | CsvValidationException e) {
 			LoggerFactory.getLogger(getClass()).error("Error importing file", e);
 		} finally {
 			close();

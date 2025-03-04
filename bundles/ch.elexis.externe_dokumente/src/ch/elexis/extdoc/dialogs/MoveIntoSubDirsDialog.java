@@ -12,10 +12,11 @@
 
 package ch.elexis.extdoc.dialogs;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Iterator;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -23,9 +24,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.util.MatchPatientToPath;
-import ch.elexis.core.ui.util.SWTHelper;
 
 public class MoveIntoSubDirsDialog extends Action {
 	private static Logger logger = null;

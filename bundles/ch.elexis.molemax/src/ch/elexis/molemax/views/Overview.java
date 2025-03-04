@@ -13,8 +13,6 @@ package ch.elexis.molemax.views;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -47,6 +45,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 /**
  * This is the view that shows 4x3 images<br>

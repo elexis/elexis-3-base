@@ -2,21 +2,21 @@
  */
 package ch.elexis.icpc.model.icpc.util;
 
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.ecore.EObject;
+
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithExtInfo;
-
-import ch.elexis.icpc.model.icpc.*;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notifier;
-
-import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
-import org.eclipse.emf.ecore.EObject;
+import ch.elexis.icpc.model.icpc.IcpcCode;
+import ch.elexis.icpc.model.icpc.IcpcEncounter;
+import ch.elexis.icpc.model.icpc.IcpcEpisode;
+import ch.elexis.icpc.model.icpc.IcpcPackage;
 
 /**
  * <!-- begin-user-doc -->

@@ -1,8 +1,9 @@
 package ch.elexis.base.ch.icd10;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.jpa.entities.ICD10;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;

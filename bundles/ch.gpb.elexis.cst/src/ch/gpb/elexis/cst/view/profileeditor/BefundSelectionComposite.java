@@ -10,10 +10,10 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

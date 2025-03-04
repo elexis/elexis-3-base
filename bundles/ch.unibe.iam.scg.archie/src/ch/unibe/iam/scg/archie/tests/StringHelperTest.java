@@ -11,12 +11,11 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.tests;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 import ch.unibe.iam.scg.archie.utils.StringHelper;
+import junit.framework.JUnit4TestAdapter;
 
 /**
  * Test the utility class for strings.

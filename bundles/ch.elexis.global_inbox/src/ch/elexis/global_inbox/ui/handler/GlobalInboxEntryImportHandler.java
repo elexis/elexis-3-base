@@ -8,9 +8,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -37,6 +34,8 @@ import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.Constants;
 import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 import ch.elexis.omnivore.data.AutomaticBilling;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class GlobalInboxEntryImportHandler {
 

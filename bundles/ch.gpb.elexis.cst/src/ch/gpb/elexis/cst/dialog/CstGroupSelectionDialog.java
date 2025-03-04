@@ -10,10 +10,10 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.dialog;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -39,8 +39,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
-import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.Messages;
+import ch.gpb.elexis.cst.data.CstGroup;
 
 /**
  * @author daniel ludin ludin@swissonline.ch 27.06.2015

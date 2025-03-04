@@ -2,8 +2,6 @@ package com.hilotec.elexis.kgview;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -29,6 +27,7 @@ import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
 import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.rgw.tools.StringTool;
+import jakarta.inject.Inject;
 
 public abstract class KonsDataFView extends SimpleTextFView implements IRefreshable {
 	protected final String dbfield;

@@ -20,8 +20,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -74,6 +72,7 @@ import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class MessungenUebersichtV21 extends ViewPart implements IRefreshable {
 

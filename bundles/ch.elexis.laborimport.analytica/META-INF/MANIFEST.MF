@@ -5,16 +5,10 @@ Bundle-SymbolicName: ch.elexis.laborimport.analytica;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.core.l10n,
- ch.rgw.utility,
- org.eclipse.core.runtime,
- org.eclipse.ui,
- org.eclipse.ui.forms,
+Require-Bundle: ch.elexis.core.ui;bundle-version="3.13.0",
+ ch.elexis.core.data;bundle-version="3.13.0",
  ch.ngiger.utilities.comm,
- ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0",
- org.slf4j.api
+ ch.elexis.core.ui.importer.div;bundle-version="3.2.0"
 Bundle-ClassPath: .
 Export-Package: ch.elexis.laborimport.analytica
 Bundle-RequiredExecutionEnvironment: JavaSE-21

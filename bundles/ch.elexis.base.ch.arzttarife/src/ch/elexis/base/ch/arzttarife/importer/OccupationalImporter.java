@@ -16,8 +16,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
@@ -37,6 +35,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class OccupationalImporter extends ImporterPage {
 

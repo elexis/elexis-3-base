@@ -8,12 +8,14 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: rsc/wsdl/,
  .
-Require-Bundle: info.elexis.target.jaxws.core;bundle-version="4.1.0",
- ch.rgw.utility;bundle-version="3.9.100",
- ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.services;bundle-version="3.9.0"
+Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.services;bundle-version="3.13.0",
+ info.elexis.target.jaxws.core;bundle-version="4.0.3"
 Export-Package: ch.elexis.docbox.ws.client
-Import-Package: javax.xml.bind,
- javax.xml.bind.annotation,
- javax.xml.bind.annotation.adapters,
+Import-Package: jakarta.xml.ws.handler;version="[4.0.0,5.0.0)",
+ jakarta.xml.ws.handler.soap;version="[4.0.0,5.0.0)",
+ jakarta.xml.bind,
+ jakarta.xml.bind.annotation,
+ jakarta.xml.bind.annotation.adapters,
  org.apache.commons.codec.binary;version="1.14.0"

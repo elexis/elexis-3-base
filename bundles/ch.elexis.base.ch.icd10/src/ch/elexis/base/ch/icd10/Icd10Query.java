@@ -1,9 +1,8 @@
 package ch.elexis.base.ch.icd10;
 
-import javax.persistence.EntityManager;
-
 import ch.elexis.core.jpa.model.adapter.AbstractModelQuery;
 import ch.elexis.core.services.IQuery;
+import jakarta.persistence.EntityManager;
 
 public class Icd10Query<T> extends AbstractModelQuery<T> implements IQuery<T> {
 

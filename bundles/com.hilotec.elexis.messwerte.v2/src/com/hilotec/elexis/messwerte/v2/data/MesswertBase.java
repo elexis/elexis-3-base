@@ -14,15 +14,24 @@
 
 package com.hilotec.elexis.messwerte.v2.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+
+import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypBool;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypCalc;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypData;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypDate;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypEnum;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypNum;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypStr;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -36,15 +45,6 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Script;
 import ch.rgw.tools.Log;
 import ch.rgw.tools.TimeTool;
-
-import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypBool;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypCalc;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypData;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypDate;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypEnum;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypNum;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypStr;
 
 /**
  * Abstrakte Basisklasse fuer die einzelnen Messwerttypen

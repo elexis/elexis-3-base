@@ -3,8 +3,6 @@ package com.hilotec.elexis.kgview.medikarte;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -41,6 +39,7 @@ import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import jakarta.inject.Inject;
 
 /**
  * Liste der Favorisierten Medikamente anzeigen. Bietet die Möglichkeit zu

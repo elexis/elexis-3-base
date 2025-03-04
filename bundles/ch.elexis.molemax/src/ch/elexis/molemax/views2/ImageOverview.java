@@ -1,8 +1,6 @@
 
 package ch.elexis.molemax.views2;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -33,6 +31,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
+import jakarta.inject.Inject;
 
 public class ImageOverview extends ViewPart implements IRefreshable {
 

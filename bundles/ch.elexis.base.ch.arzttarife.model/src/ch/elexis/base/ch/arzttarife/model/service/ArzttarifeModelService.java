@@ -1,7 +1,5 @@
 package ch.elexis.base.ch.arzttarife.model.service;
 
-import javax.persistence.EntityManager;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -13,6 +11,7 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
+import jakarta.persistence.EntityManager;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.arzttarife.model")
 public class ArzttarifeModelService extends AbstractModelService implements IModelService {

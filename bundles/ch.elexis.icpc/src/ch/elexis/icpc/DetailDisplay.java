@@ -12,9 +12,6 @@
 
 package ch.elexis.icpc;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
@@ -29,6 +26,8 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.icpc.model.icpc.IcpcCode;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class DetailDisplay implements IDetailDisplay {
 	Text tLang, tICD, tCriteria, tInclude, tExclude, tConsider, tNote;

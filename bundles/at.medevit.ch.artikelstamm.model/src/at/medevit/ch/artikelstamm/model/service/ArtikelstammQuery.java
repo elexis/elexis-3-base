@@ -1,9 +1,8 @@
 package at.medevit.ch.artikelstamm.model.service;
 
-import javax.persistence.EntityManager;
-
 import ch.elexis.core.jpa.model.adapter.AbstractModelQuery;
 import ch.elexis.core.services.IQuery;
+import jakarta.persistence.EntityManager;
 
 public class ArtikelstammQuery<T> extends AbstractModelQuery<T> implements IQuery<T> {
 

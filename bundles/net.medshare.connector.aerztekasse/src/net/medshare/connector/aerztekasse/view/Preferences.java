@@ -12,13 +12,10 @@
  *******************************************************************************/
 package net.medshare.connector.aerztekasse.view;
 
-import org.apache.commons.lang3.StringUtils;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 
-import net.medshare.connector.aerztekasse.Messages;
-import net.medshare.connector.aerztekasse.data.AerztekasseSettings;
-
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,6 +32,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import net.medshare.connector.aerztekasse.Messages;
+import net.medshare.connector.aerztekasse.data.AerztekasseSettings;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 

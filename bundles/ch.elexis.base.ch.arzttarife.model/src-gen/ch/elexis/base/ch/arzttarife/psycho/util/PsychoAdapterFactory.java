@@ -3,18 +3,16 @@
  */
 package ch.elexis.base.ch.arzttarife.psycho.util;
 
-import ch.elexis.base.ch.arzttarife.psycho.*;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.ecore.EObject;
 
+import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notifier;
-
-import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->

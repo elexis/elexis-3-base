@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.xml.bind.JAXB;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -33,6 +32,7 @@ import org.w3c.dom.Document;
 
 import ch.elexis.fop.service.FormattedOutputFactory;
 import ch.elexis.fop.service.XSLTUtil;
+import jakarta.xml.bind.JAXB;
 
 public class DomToMimeType {
 	private static Logger logger = LoggerFactory.getLogger(DomToMimeType.class);

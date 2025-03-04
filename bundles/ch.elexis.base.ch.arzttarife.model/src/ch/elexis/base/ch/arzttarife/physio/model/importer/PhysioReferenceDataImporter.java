@@ -16,7 +16,10 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
@@ -43,7 +46,8 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter i
 		validFrom = getValidFromVersion(newVersion).toLocalDate();
 
 		try {
-			CSVReader reader = new CSVReader(new InputStreamReader(input, "ISO-8859-1"), ';');
+			CSVReader reader = new CSVReaderBuilder(new InputStreamReader(input, "ISO-8859-1"))
+					.withCSVParser(new CSVParserBuilder().withSeparator(';').build()).build();
 			monitor.beginTask("Importiere Physio", 100);
 			String[] line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
@@ -57,7 +61,7 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter i
 
 			monitor.done();
 			return Status.OK_STATUS;
-		} catch (IOException uee) {
+		} catch (IOException | CsvValidationException uee) {
 			LoggerFactory.getLogger(getClass()).error("Could not import physio tarif", uee);
 			return Status.CANCEL_STATUS;
 		}

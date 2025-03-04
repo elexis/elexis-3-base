@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ESR_bad_user_defin = ch.elexis.core.l10n.Messages.ESR_bad_user_defin;
 	public static String ESR_errorMark = ch.elexis.core.l10n.Messages.ESR_errorMark;

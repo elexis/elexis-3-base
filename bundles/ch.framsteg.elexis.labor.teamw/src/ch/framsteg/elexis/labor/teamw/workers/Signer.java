@@ -28,10 +28,9 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import jakarta.inject.Inject;
 
 public class Signer {
 

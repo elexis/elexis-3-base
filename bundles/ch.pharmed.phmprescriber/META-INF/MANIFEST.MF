@@ -5,8 +5,8 @@ Bundle-SymbolicName: ch.pharmed.phmprescriber;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: ch.pharmed
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0"
+Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0"
 Export-Package: ch.pharmed.phmprescriber
 Automatic-Module-Name: ch.pharmed.phmprescriber
 Import-Package: com.google.zxing;version="3.4.1",
@@ -14,8 +14,8 @@ Import-Package: com.google.zxing;version="3.4.1",
  com.google.zxing.common;version="3.4.1",
  com.google.zxing.oned;version="3.4.1",
  com.google.zxing.qrcode;version="3.4.1",
- javax.jws;version="2.1.0",
- javax.jws.soap;version="2.1.0",
- javax.xml.bind,
- javax.xml.bind.annotation,
- javax.xml.ws;version="2.3.3"
+ jakarta.xml.bind;version="[4.0.0,5.0.0)",
+ jakarta.xml.bind.annotation;version="[4.0.0,5.0.0)",
+ jakarta.jws;version="2.1.0",
+ jakarta.jws.soap;version="2.1.0",
+ jakarta.xml.ws;version="2.3.3"

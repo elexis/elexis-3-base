@@ -6,11 +6,11 @@ Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: elexis.info
 Automatic-Module-Name: ch.elexis.base.solr
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: org.apache.solr;bundle-version="8.6.3",
- ch.rgw.utility;bundle-version="3.9.0",
- ch.elexis.core;bundle-version="3.9.0",
- ch.elexis.core.model;bundle-version="3.9.0",
- ch.elexis.core.services;bundle-version="3.9.0",
+Require-Bundle: org.apache.solr.solrj;bundle-version="9.8.0",
+ ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.13.0",
+ ch.elexis.core.model;bundle-version="3.13.0",
+ ch.elexis.core.services;bundle-version="3.13.0",
  ch.elexis.omnivore.model;bundle-version="3.9.0",
  ch.elexis.core.tasks;bundle-version="3.9.0",
  ch.elexis.core.spotlight;bundle-version="3.9.0"

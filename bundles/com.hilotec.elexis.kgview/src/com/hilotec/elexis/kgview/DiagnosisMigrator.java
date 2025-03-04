@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.hilotec.elexis.kgview.diagnoseliste.DiagnoselisteItem;
@@ -29,6 +27,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class DiagnosisMigrator {
 

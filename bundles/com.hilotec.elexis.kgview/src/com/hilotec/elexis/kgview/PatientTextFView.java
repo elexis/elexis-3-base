@@ -1,7 +1,5 @@
 package com.hilotec.elexis.kgview;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -13,6 +11,7 @@ import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
+import jakarta.inject.Inject;
 
 public abstract class PatientTextFView extends SimpleTextFView implements IRefreshable {
 	protected final String dbfield;

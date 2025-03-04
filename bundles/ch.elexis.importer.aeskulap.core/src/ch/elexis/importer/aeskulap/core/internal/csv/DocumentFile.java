@@ -9,6 +9,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
@@ -85,7 +87,7 @@ public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IA
 					monitor.worked(1);
 				}
 				return true;
-			} catch (IOException e) {
+			} catch (IOException | CsvValidationException e) {
 				LoggerFactory.getLogger(getClass()).error("Error importing file", e);
 			} catch (ElexisException e) {
 				LoggerFactory.getLogger(getClass()).error("Error saving file", e);

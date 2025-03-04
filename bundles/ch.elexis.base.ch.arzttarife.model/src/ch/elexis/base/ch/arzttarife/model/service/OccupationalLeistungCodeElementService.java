@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
@@ -23,6 +20,8 @@ import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IStoreToStringContribution;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 
 @Component
 public class OccupationalLeistungCodeElementService

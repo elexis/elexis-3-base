@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -119,6 +117,7 @@ import ch.gpb.elexis.cst.view.profileeditor.TemplateComposite;
 import ch.gpb.elexis.cst.view.profileeditor.TherapieVorschlagComposite;
 //import ch.gpb.elexis.cst.widget.ResultatPartEffektiv;
 //import ch.gpb.elexis.cst.widget.ResultatPartMinimax;
+import jakarta.inject.Inject;
 
 /**
  *

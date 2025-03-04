@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.ui.UiDesk;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.dialog.ProfileOverview;
-import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 
 public class AnzeigeOptionsComposite extends CstComposite {

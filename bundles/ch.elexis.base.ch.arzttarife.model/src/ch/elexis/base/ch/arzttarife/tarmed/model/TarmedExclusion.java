@@ -1,8 +1,9 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;

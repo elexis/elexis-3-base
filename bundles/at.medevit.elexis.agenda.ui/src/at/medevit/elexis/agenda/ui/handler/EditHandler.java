@@ -2,8 +2,6 @@ package at.medevit.elexis.agenda.ui.handler;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.dialogs.Dialog;
@@ -17,6 +15,7 @@ import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 import ch.elexis.dialogs.AppointmentDialog;
+import jakarta.inject.Inject;
 
 public class EditHandler {
 

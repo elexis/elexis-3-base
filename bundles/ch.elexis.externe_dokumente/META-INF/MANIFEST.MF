@@ -5,11 +5,10 @@ Bundle-SymbolicName: ch.elexis.externe_dokumente;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.core.l10n,
- ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0"
+ ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0"
 Bundle-Vendor: iatrix.org
 Export-Package: ch.elexis.extdoc.util
-Import-Package: javax.inject
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Service-Component: OSGI-INF/ch.elexis.extdoc.omnivore.DocumentStoreHolder.xml

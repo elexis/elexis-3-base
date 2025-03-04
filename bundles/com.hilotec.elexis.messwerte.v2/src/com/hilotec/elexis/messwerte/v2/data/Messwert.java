@@ -16,12 +16,12 @@ package com.hilotec.elexis.messwerte.v2.data;
 
 import org.eclipse.swt.widgets.Label;
 
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.PersistentObject;
-
 import com.hilotec.elexis.messwerte.v2.Activator;
 import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
 import com.hilotec.elexis.messwerte.v2.views.Messages;
+
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.PersistentObject;
 
 /**
  * @author Antoine Kaufmann

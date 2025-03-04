@@ -12,8 +12,6 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.views;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -27,6 +25,7 @@ import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
 import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
 import ch.unibe.iam.scg.archie.ui.ResultPanel;
+import jakarta.inject.Inject;
 
 /**
  * <p>

@@ -12,14 +12,15 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.tools;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
+import at.medevit.elexis.gdt.constants.GDTConstants;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.TimeTool.TimeFormatException;
-import at.medevit.elexis.gdt.constants.GDTConstants;
 
 /**
  * Hilfsklasse für die Behandlung von GDT Satzarten {@link GDTConstants}

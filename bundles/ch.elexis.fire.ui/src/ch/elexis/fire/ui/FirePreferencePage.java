@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import javax.inject.Inject;
-
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,6 +28,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.fire.core.IFIREService;
 import ch.elexis.fire.core.task.FIREExportTaskDescriptor;
 import ch.elexis.fire.ui.export.internal.AutomaticExportTask;
+import jakarta.inject.Inject;
 
 public class FirePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.externe_dokumente;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ExterneDokumente_Concerns = ch.elexis.core.l10n.Messages.ExterneDokumente_Concerns;
 	public static String ExterneDokumente_OpenFileTip = ch.elexis.core.l10n.Messages.ExterneDokumente_OpenFileTip;

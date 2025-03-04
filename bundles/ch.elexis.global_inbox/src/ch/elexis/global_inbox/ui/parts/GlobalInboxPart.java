@@ -3,9 +3,6 @@ package ch.elexis.global_inbox.ui.parts;
 import java.io.File;
 import java.io.IOException;
 
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -35,6 +32,8 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.Constants;
 import ch.elexis.global_inbox.ui.Messages;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 public class GlobalInboxPart {
 

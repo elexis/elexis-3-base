@@ -12,7 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.LoggerFactory;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
@@ -34,10 +38,13 @@ public class CustomExclusions {
 	private static synchronized void init() {
 		if (customExclusions == null) {
 			customExclusions = new ConcurrentHashMap<String, List<ITarmedKumulation>>();
-			
-			Optional<IBlob> blob = CoreModelServiceHolder.get().load(TARMED_CUSTOM_EXCLUSIONS_ID , IBlob.class);
+
+			Optional<IBlob> blob = CoreModelServiceHolder.get().load(TARMED_CUSTOM_EXCLUSIONS_ID, IBlob.class);
 			if (blob.isPresent()) {
-				try (CSVReader reader = new CSVReader(new StringReader(blob.get().getStringContent()), ',', '"')) {
+
+				StringReader stringReader = new StringReader(blob.get().getStringContent());
+				CSVParser csvParser = new CSVParserBuilder().withSeparator(',').withQuoteChar('"').build();
+				try (CSVReader reader = new CSVReaderBuilder(stringReader).withCSVParser(csvParser).build()) {
 					List<String[]> lines = reader.readAll();
 					for (String[] strings : lines) {
 						List<ITarmedKumulation> list = customExclusions.get(strings[0]);
@@ -47,7 +54,7 @@ public class CustomExclusions {
 						list.add(new CustomExclusion(strings[0], strings[1], strings[2]));
 						customExclusions.put(strings[0], list);
 					}
-				} catch (IOException e) {
+				} catch (IOException | CsvException e) {
 					LoggerFactory.getLogger(CustomExclusions.class).error("Exception reading custom exclusions", e);
 				}
 			}

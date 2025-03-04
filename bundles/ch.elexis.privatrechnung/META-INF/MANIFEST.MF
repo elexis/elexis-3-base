@@ -18,8 +18,7 @@ Service-Component: OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnu
  OSGI-INF/ch.elexis.privatrechnung.model.PrivatModelServiceHolder.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: com.opencsv;version="3.10.0",
- javax.inject;version="1.0.0",
- javax.persistence,
- javax.persistence.criteria;version="2.2.3",
+ jakarta.persistence;version="[3.2.0,4.0.0)",
+ jakarta.persistence.criteria;version="[3.2.0,4.0.0)",
  org.apache.commons.lang3;version="3.12.0"
 

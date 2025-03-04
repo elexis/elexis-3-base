@@ -14,8 +14,6 @@ package ch.unibe.iam.scg.archie.ui.views;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -44,6 +42,7 @@ import ch.unibe.iam.scg.archie.ui.charts.AgeHistogrammChart;
 import ch.unibe.iam.scg.archie.ui.charts.ConsultationMoneyChart;
 import ch.unibe.iam.scg.archie.ui.charts.ConsultationNumberChart;
 import ch.unibe.iam.scg.archie.ui.charts.PatientsConsHistChart;
+import jakarta.inject.Inject;
 
 /**
  * <p>

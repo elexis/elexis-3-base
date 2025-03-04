@@ -15,8 +15,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
@@ -52,6 +50,7 @@ import ch.elexis.core.ui.views.IRefreshable;
 import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
+import jakarta.inject.Inject;
 
 /**
  * The eclipse View for the notes. Contains a master-Part (NotesList) and a

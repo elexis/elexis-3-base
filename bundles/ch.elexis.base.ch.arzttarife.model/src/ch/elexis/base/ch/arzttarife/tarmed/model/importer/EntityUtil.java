@@ -3,11 +3,10 @@ package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaQuery;
-
 import ch.elexis.base.ch.arzttarife.model.service.EntityManagerHolder;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 public class EntityUtil {
 

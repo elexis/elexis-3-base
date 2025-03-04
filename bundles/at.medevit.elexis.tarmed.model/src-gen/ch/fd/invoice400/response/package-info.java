@@ -5,9 +5,9 @@
 // Generated on: 2015.03.13 at 12:17:21 PM MEZ 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.xmlData.ch/xmlInvoice/XSD", xmlns = {
-	@javax.xml.bind.annotation.XmlNs(prefix = "invoice", namespaceURI = "http://www.xmlData.ch/xmlInvoice/XSD"),
-	@javax.xml.bind.annotation.XmlNs(prefix = "xsi", namespaceURI = "http://www.w3.org/2001/XMLSchema-instance")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.xmlData.ch/xmlInvoice/XSD", xmlns = {
+		@jakarta.xml.bind.annotation.XmlNs(prefix = "invoice", namespaceURI = "http://www.xmlData.ch/xmlInvoice/XSD"),
+		@jakarta.xml.bind.annotation.XmlNs(prefix = "xsi", namespaceURI = "http://www.w3.org/2001/XMLSchema-instance")
 })
 package ch.fd.invoice400.response;
 

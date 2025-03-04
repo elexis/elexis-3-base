@@ -5,7 +5,6 @@
 
 package ch.pharmed.phmprescriber;
 
-import org.apache.commons.lang3.StringUtils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -25,6 +24,8 @@ import java.text.AttributedString;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;

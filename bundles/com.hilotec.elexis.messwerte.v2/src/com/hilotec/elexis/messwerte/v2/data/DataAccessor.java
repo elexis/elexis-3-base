@@ -19,14 +19,14 @@ package com.hilotec.elexis.messwerte.v2.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
+import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypData;
+
 import ch.elexis.core.data.interfaces.IDataAccess;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
-
-import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
-import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypData;
 
 public class DataAccessor implements IDataAccess {
 	MessungKonfiguration config;

@@ -18,8 +18,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import javax.xml.bind.JAXB;
-import javax.xml.bind.JAXBException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -38,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.fop.service.FormattedOutputFactory;
 import ch.elexis.fop.service.JaxbUtil;
 import ch.elexis.fop.service.XSLTUtil;
+import jakarta.xml.bind.JAXB;
+import jakarta.xml.bind.JAXBException;
 
 public class JaxbToMimeType {
 	private static Logger logger = LoggerFactory.getLogger(JaxbToMimeType.class);

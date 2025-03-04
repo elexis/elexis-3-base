@@ -12,9 +12,6 @@
 
 package ch.elexis.privatrechnung.views;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
@@ -27,6 +24,8 @@ import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.privatrechnung.model.IPrivatLeistung;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * An IDetailDisplay must be able to create and manage a form that can display

@@ -12,9 +12,6 @@
 
 package ch.elexis.base.ch.labortarif_2009.ui;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,6 +26,8 @@ import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class DetailDisplay implements IDetailDisplay {
 	Form form;

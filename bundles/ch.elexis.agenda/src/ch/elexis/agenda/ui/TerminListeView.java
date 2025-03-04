@@ -19,8 +19,6 @@ import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -61,6 +59,7 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.dialogs.AppointmentDialog;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class TerminListeView extends ViewPart implements IRefreshable {
 	public static final String ID = "ch.elexis.agenda.Terminliste";

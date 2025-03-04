@@ -3,28 +3,16 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Webapi
 Bundle-SymbolicName: ch.elexis.mednet.webapi.ui;singleton:=true
 Bundle-Vendor: elexis.ch
-Bundle-Version: 1.0.0.qualifier
-Import-Package: ca.uhn.fhir;version="[5.4.0,6.0.0)",
- ch.elexis.core.findings,
- ch.elexis.core.ui,
- ch.elexis.core.ui.documents.composites,
- ch.elexis.core.ui.icons,
- ch.elexis.data,
- javax.validation;version="[2.0.0,3.0.0)",
- org.apache.http;version="[4.4.0,5.0.0)",
- org.apache.http.client;version="[4.5.0,5.0.0)",
- org.apache.http.client.fluent;version="[4.5.0,5.0.0)",
- org.apache.http.entity;version="[4.4.0,5.0.0)",
- org.eclipse.wb.swt
-Require-Bundle: org.eclipse.ui,
- org.apache.commons.commons-io,
- com.google.gson,
+Bundle-Version: 3.13.0.qualifier
+Require-Bundle: ch.elexis.core.data,
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.core.ui.e4;bundle-version="3.13.0",
- info.elexis.target.hapi.fhir;bundle-version="5.4.2",
- org.apache.httpcomponents.httpclient,
- ch.elexis.mednet.webapi.core,
+ ch.elexis.mednet.webapi.core;bundle-version="3.13.0",
  ch.elexis.core.findings.util;bundle-version="3.13.0",
- org.eclipse.osgi.services
+ ch.elexis.core.findings,
+ ch.elexis.core.ui.icons,
+ ch.elexis.core.ui.documents,
+ info.elexis.target.hapi.fhir;bundle-version="7.2.3"
 Automatic-Module-Name: ch.elexis.mednet.webapi.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.mednet.webapi.ui.Activator
@@ -33,3 +21,11 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Service-Component: OSGI-INF/ch.elexis.mednet.webapi.ui.MednetAuthUi.xml,
  OSGI-INF/ch.elexis.mednet.webapi.ui.handler.ImportOmnivoreUtil.xml,
  OSGI-INF/ch.elexis.mednet.webapi.ui.preferences.MedNetWebPreferencePage.xml
+Import-Package: com.google.gson;version="[2.11.0,3.0.0)",
+ com.google.gson.reflect;version="[2.11.0,3.0.0)",
+ org.apache.commons.io;version="[2.16.0,3.0.0)",
+ org.apache.http.client;version="[4.5.0,5.0.0)",
+ org.apache.http.client.fluent;version="[4.5.0,5.0.0)",
+ org.apache.http.entity;version="[4.4.0,5.0.0)",
+ org.eclipse.ui.preferences,
+ org.eclipse.wb.swt

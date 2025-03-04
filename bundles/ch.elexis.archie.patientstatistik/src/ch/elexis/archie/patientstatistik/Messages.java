@@ -12,8 +12,6 @@
 
 package ch.elexis.archie.patientstatistik;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String VerrechnungsStatistikView_AllFiles = ch.elexis.core.l10n.Messages.VerrechnungsStatistikView_AllFiles;
 	public static String VerrechnungsStatistikView_AMOUNT = ch.elexis.core.l10n.Messages.VerrechnungsStatistikView_AMOUNT;

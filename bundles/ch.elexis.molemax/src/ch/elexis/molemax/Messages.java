@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.molemax;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AllSlotsDisplay_back = ch.elexis.core.l10n.Messages.AllSlotsDisplay_back;
 	public static String AllSlotsDisplay_front = ch.elexis.core.l10n.Messages.AllSlotsDisplay_front;

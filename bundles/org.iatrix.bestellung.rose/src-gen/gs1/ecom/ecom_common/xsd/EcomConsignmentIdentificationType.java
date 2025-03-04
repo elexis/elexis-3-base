@@ -11,11 +11,10 @@ package gs1.ecom.ecom_common.xsd;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import gs1.shared.shared_common.xsd.AdditionalConsignmentIdentificationType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java-Klasse für Ecom_ConsignmentIdentificationType complex type.

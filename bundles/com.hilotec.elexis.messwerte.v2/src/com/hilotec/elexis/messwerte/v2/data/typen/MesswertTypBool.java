@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
+import com.hilotec.elexis.messwerte.v2.data.Messwert;
+import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
+
 import ch.elexis.core.ui.selectors.ActiveControl;
 import ch.elexis.core.ui.selectors.BooleanField;
 import ch.elexis.core.ui.selectors.TextField;
-
-import com.hilotec.elexis.messwerte.v2.data.Messwert;
-import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
 
 /**
  * @author Antoine Kaufmann

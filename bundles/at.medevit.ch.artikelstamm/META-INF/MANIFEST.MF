@@ -10,7 +10,7 @@ Bundle-Vendor: medevit.at
 Bundle-ClassPath: lib/,
  .
 Bundle-ActivationPolicy: lazy
-Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
- ch.elexis.core;bundle-version="3.9.0"
-Import-Package: javax.xml.bind,
- javax.xml.bind.annotation
+Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.13.0"
+Import-Package: jakarta.xml.bind,
+ jakarta.xml.bind.annotation

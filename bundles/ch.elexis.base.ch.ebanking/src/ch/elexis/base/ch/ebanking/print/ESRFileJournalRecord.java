@@ -3,8 +3,8 @@ package ch.elexis.base.ch.ebanking.print;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;

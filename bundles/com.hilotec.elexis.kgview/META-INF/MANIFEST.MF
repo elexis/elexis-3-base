@@ -4,8 +4,8 @@ Bundle-Name: Hilotec_KG
 Bundle-SymbolicName: com.hilotec.elexis.kgview;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.icpc;bundle-version="3.2.0",
  ch.elexis.icpc.model;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
@@ -13,5 +13,4 @@ Bundle-Vendor: hilotec.com
 Bundle-Activator: com.hilotec.elexis.kgview.Activator
 Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.migration,
- ch.elexis.core.findings.util.model,
- javax.inject
+ ch.elexis.core.findings.util.model

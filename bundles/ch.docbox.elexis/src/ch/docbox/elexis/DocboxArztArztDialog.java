@@ -206,9 +206,9 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		final String message = textMessage.getText();
 		final String filename = "ueberweisung.pdf";
 		final String[] attachments = listAttachments.getItems();
-		final javax.xml.ws.Holder<java.lang.Boolean> success = new javax.xml.ws.Holder<java.lang.Boolean>();
-		final javax.xml.ws.Holder<java.lang.String> errorMessage = new javax.xml.ws.Holder<java.lang.String>();
-		final javax.xml.ws.Holder<java.lang.String> documentId = new javax.xml.ws.Holder<java.lang.String>();
+		final jakarta.xml.ws.Holder<java.lang.Boolean> success = new jakarta.xml.ws.Holder<java.lang.Boolean>();
+		final jakarta.xml.ws.Holder<java.lang.String> errorMessage = new jakarta.xml.ws.Holder<java.lang.String>();
+		final jakarta.xml.ws.Holder<java.lang.String> documentId = new jakarta.xml.ws.Holder<java.lang.String>();
 
 		if (comboDoctor.getSelectionIndex() == -1) {
 			MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_ERROR);

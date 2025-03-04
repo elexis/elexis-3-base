@@ -11,11 +11,12 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.annotations;
 
-import org.apache.commons.lang3.StringUtils;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.unibe.iam.scg.archie.ui.widgets.TextWidget;
 import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;

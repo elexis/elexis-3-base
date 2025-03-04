@@ -12,9 +12,6 @@ package at.medevit.ch.artikelstamm.elexis.common.ui;
 
 import java.util.Date;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.typed.PojoProperties;
@@ -48,6 +45,8 @@ import ch.elexis.core.ui.util.ZeroDefaultIntegerStringConverter;
 import ch.elexis.core.ui.util.ZeroDefaultStringIntegerConverter;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.core.ui.views.controls.StockDetailComposite;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class DetailDisplay implements IDetailDisplay {
 

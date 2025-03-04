@@ -6,8 +6,6 @@ import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
@@ -58,6 +56,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 /**
  * Helper-Klasse fuers automatische scrollen mit anpassbarer Geschwindigkeit.

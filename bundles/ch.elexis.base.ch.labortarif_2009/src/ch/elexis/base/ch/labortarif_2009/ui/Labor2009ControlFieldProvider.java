@@ -13,8 +13,6 @@ package ch.elexis.base.ch.labortarif_2009.ui;
 
 import java.time.LocalDate;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 
@@ -26,6 +24,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
+import jakarta.inject.Inject;
 
 public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 

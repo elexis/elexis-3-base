@@ -12,9 +12,6 @@
  *******************************************************************************/
 package ch.elexis.base.ch.migel.ui;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -35,6 +32,8 @@ import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.rgw.tools.Money;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class MiGelDetailDisplay implements IDetailDisplay {
 

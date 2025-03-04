@@ -14,13 +14,10 @@
  *******************************************************************************/
 package ch.framsteg.elexis.labor.teamw.workers;
 
-import java.awt.Desktop;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,7 +42,6 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Transmitter {

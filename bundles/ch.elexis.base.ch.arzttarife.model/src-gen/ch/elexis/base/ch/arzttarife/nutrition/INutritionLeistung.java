@@ -3,9 +3,9 @@
  */
 package ch.elexis.base.ch.arzttarife.nutrition;
 
-import ch.elexis.core.model.IBillable;
-
 import java.time.LocalDate;
+
+import ch.elexis.core.model.IBillable;
 
 /**
  * <!-- begin-user-doc -->

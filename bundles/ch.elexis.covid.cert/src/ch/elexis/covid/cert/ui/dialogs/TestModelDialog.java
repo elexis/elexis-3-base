@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -41,6 +39,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.TestInfo;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
+import jakarta.inject.Inject;
 
 public class TestModelDialog extends Dialog {
 

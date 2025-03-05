@@ -22,4 +22,8 @@
          id="org.iatrix.bestellung.rose"
          version="0.0.0"/>
 
+   <plugin
+         id="org.iatrix.bestellung.rose.id"
+         version="0.0.0"/>
+
 </feature>

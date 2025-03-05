@@ -5,6 +5,7 @@
 
 package org.iatrix.bestellung.rose;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,15 @@ public class RosePreferences extends FieldEditorPreferencePage implements IWorkb
 		}
 		addField(new KontaktFieldEditor(new ConfigServicePreferenceStore(Scope.GLOBAL), Constants.CFG_ROSE_SUPPLIER,
 				"Lieferant", getFieldEditorParent()));
-	}
+
+		InputStream properties = getClass().getResourceAsStream("/rsc/id.properties");
+			if (properties == null) {
+				addField(new StringFieldEditor(Constants.CFG_ROSE_CLIENT_SECRET_NAME, "Client ID",
+						getFieldEditorParent()));
+				addField(new StringFieldEditor(Constants.CFG_ROSE_CLIENT_SECRET, "Client Secret",
+						getFieldEditorParent()));
+			}
+		}
 
 	@Override
 	protected Control createContents(Composite parent) {

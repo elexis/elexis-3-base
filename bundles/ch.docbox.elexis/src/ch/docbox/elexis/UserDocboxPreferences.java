@@ -212,15 +212,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 		addField(passwordFieldEditor);
 
-		if (showSha1SecretKey) {
-			secretkeyFieldEditor = new StringFieldEditor(WsClientConfig.USR_SECRETKEY,
-					Messages.UserDocboxPreferences_SecretKey, getFieldEditorParent());
-			secretkeyFieldEditor.getTextControl(getFieldEditorParent()).setEchoChar('*'); // $NON-NLS-1$
-			secretkeyFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
-			addField(secretkeyFieldEditor);
-		}
-
 		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
 		buttonUseHCard.setText(Messages.UserDocboxPreferences_UseHCard);
 		buttonUseHCard.setSelection(useHCard());
@@ -232,25 +223,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		directoryhCardEditor.setEnabled(enableForMandant, getFieldEditorParent());
 
 		addField(directoryhCardEditor);
-
-		buttonUseProxy = new Button(getFieldEditorParent(), SWT.CHECK);
-		buttonUseProxy.setText(Messages.UserDocboxPreferences_UseProxy);
-		buttonUseProxy.setSelection(useProxy());
-		buttonUseProxy.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
-		buttonUseProxy.setEnabled(enableForMandant);
-
-		proxyHostFieldEditor = new StringFieldEditor(USR_PROXYHOST, Messages.UserDocboxPreferences_UseProxyHost,
-				getFieldEditorParent());
-		addField(proxyHostFieldEditor);
-		proxyHostFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
-		proxyPortFieldEditor = new StringFieldEditor(USR_PROXYPORT, Messages.UserDocboxPreferences_UseProxyPort,
-				getFieldEditorParent());
-		addField(proxyPortFieldEditor);
-		proxyPortFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
-		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
-				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
 		Button docboxConnectionTestButton = new Button(getFieldEditorParent(), SWT.PUSH);
 		docboxConnectionTestButton.addSelectionListener(new SelectionAdapter() {
@@ -267,16 +239,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 							secretkeyFieldEditor.getStringValue());
 				}
 				setUseHCard(buttonUseHCard.getSelection());
-				setUseProxy(buttonUseProxy.getSelection());
-				setProxyHost(proxyHostFieldEditor.getStringValue());
-				setProxyPort(proxyPortFieldEditor.getStringValue());
 
-				if (getSha1DocboxSecretKey() == null || StringUtils.EMPTY.equals(getSha1DocboxSecretKey())) {
-					MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_ERROR);
-					box.setText(Messages.UserDocboxPreferences_NoSecretKeyTitle);
-					box.setMessage(Messages.UserDocboxPreferences_NoSecretKey);
-					box.open();
-				} else {
+
 					jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
 					boolean isOk = performConnectionTest(message);
 					MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
@@ -284,7 +248,15 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 					box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
 					box.setMessage(message.value);
 					box.open();
-				}
+				
+
+				javax.xml.ws.Holder<java.lang.String> message = new javax.xml.ws.Holder<java.lang.String>();
+				boolean isOk = performConnectionTest(message);
+				MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
+						(isOk ? SWT.ICON_WORKING : SWT.ICON_ERROR));
+				box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
+				box.setMessage(message.value);
+				box.open();
 			}
 		});
 
@@ -613,8 +585,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static boolean hasValidDocboxCredentials() {
 		return ((!StringUtils.EMPTY.equals(getDocboxLoginID(true))
-				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()) // $NON-NLS-1$
-				&& !StringUtils.EMPTY.equals(getSha1DocboxSecretKey());
+				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()); // $NON-NLS-1$
 	}
 
 	@Override

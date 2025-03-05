@@ -24,6 +24,9 @@ public interface Constants {
 	public static final String CFG_ASAS_PROXY_PORT = CFG_BASE + "/asas_port";
 	public static final String CFG_ROSE_SUPPLIER = CFG_BASE + "/supplier";
 
+	public static final String CFG_ROSE_CLIENT_SECRET = CFG_BASE + "/client_id_prod";
+	public static final String CFG_ROSE_CLIENT_SECRET_NAME = CFG_BASE + "/client_secret_prod";
+
 	public static final String DEFAULT_ROSE_CLIENT_NUMBER = StringUtils.EMPTY;
 
 	/* actually not significant... */

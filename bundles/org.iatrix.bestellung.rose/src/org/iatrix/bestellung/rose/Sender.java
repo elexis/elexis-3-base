@@ -3,6 +3,7 @@ package org.iatrix.bestellung.rose;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import org.iatrix.bestellung.rose.service.XmlValidator;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IOrder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
@@ -69,12 +71,16 @@ public class Sender implements IDataSender {
 			if (properties != null) {
 				Properties idProps = new Properties();
 				idProps.load(properties);
-				return idProps.getProperty("client_id_prod");
+				String secret = idProps.getProperty("client_id_prod");
+				if (StringUtils.isNotEmpty(secret)) {
+					return secret;
+				}
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e);
 		}
-		return StringUtils.EMPTY;
+		String prefString = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET, null);
+		return Objects.toString(prefString, StringUtils.EMPTY);
 	}
 
 	private String getClientSecret() {
@@ -82,11 +88,15 @@ public class Sender implements IDataSender {
 			if (properties != null) {
 				Properties idProps = new Properties();
 				idProps.load(properties);
-				return idProps.getProperty("client_secret_prod");
+				String secret = idProps.getProperty("client_secret_prod");
+				if (StringUtils.isNotEmpty(secret)) {
+					return secret;
+				}
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e);
 		}
-		return StringUtils.EMPTY;
+		String prefString = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET, null);
+		return Objects.toString(prefString, StringUtils.EMPTY);
 	}
 }

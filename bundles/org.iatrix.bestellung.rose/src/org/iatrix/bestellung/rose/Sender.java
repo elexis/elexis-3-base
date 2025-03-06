@@ -3,7 +3,6 @@ package org.iatrix.bestellung.rose;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -79,8 +78,7 @@ public class Sender implements IDataSender {
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e);
 		}
-		String prefString = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET, null);
-		return Objects.toString(prefString, StringUtils.EMPTY);
+		return ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET_NAME, StringUtils.EMPTY);
 	}
 
 	private String getClientSecret() {
@@ -96,7 +94,6 @@ public class Sender implements IDataSender {
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e);
 		}
-		String prefString = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET, null);
-		return Objects.toString(prefString, StringUtils.EMPTY);
+		return ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET_APIKEY, StringUtils.EMPTY);
 	}
 }

@@ -55,7 +55,7 @@ public class RosePreferences extends FieldEditorPreferencePage implements IWorkb
 			if (properties == null) {
 				addField(new StringFieldEditor(Constants.CFG_ROSE_CLIENT_SECRET_NAME, "Client ID",
 						getFieldEditorParent()));
-				addField(new StringFieldEditor(Constants.CFG_ROSE_CLIENT_SECRET, "Client Secret",
+				addField(new StringFieldEditor(Constants.CFG_ROSE_CLIENT_SECRET_APIKEY, "Client Secret",
 						getFieldEditorParent()));
 			}
 		}

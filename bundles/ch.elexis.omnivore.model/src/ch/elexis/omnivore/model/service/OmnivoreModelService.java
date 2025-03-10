@@ -79,6 +79,7 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 			String id = split[1];
 			Class<? extends EntityWithId> clazz = ElexisTypeMap.get(className);
 			if (clazz != null) {
+				@SuppressWarnings("resource")
 				EntityManager em = (EntityManager) entityManager.getEntityManager();
 				EntityWithId dbObject = em.find(clazz, id);
 				return Optional.ofNullable(adapterFactory.getModelAdapter(dbObject, null, false).orElse(null));

@@ -223,6 +223,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 						loginIdFieldEditor.getStringValue());
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 
+<<<<<<< HEAD
 				jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
 				boolean isOk = performConnectionTest(message);
 				MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
@@ -230,6 +231,16 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
 				box.setMessage(message.value);
 				box.open();
+=======
+
+					jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
+					boolean isOk = performConnectionTest(message);
+					MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
+							(isOk ? SWT.ICON_WORKING : SWT.ICON_ERROR));
+					box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
+					box.setMessage(message.value);
+					box.open();
+>>>>>>> c859fb9f6 (Temporary changes to Docbox in order to replace legacy key authentication)
 			}
 		});
 
@@ -440,7 +451,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	public static String getDocboxBrowserUrl() {
 		String host = getBrowserHost(); // $NON-NLS-1$
 		String cgibin = "cgi-bin"; //$NON-NLS-1$
-		return "https://" + host + "/" + cgibin + "/WebObjects/docbox.woa/wa/default"; //$NON-NLS-1$//$NON-NLS-2$
+		return "https://" + host + "/" + cgibin + "/WebObjects/docbox.woa/wa/default"; //$NON-NLS-3$ //$NON-NLS-2$
+		// return "https://" + host + "/" + cgibin +
+		// "/WebObjects/docbox.woa/ws/CDACHServicesV2"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public static String getDocboxServiceUrl() {
@@ -466,6 +479,20 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
 		}
 
+<<<<<<< HEAD
+=======
+		if (buttonUseHCard.getSelection() != oldUseHCard) {
+			setUseHCard(buttonUseHCard.getSelection());
+		}
+
+		// if (buttonUseProxy.getSelection() != oldUseProxy) {
+		// setUseProxy(buttonUseProxy.getSelection());
+		// }
+
+		// setProxyHost(proxyHostFieldEditor.getStringValue());
+		// setProxyPort(proxyPortFieldEditor.getStringValue());
+
+>>>>>>> c859fb9f6 (Temporary changes to Docbox in order to replace legacy key authentication)
 		if (hasAgendaPlugin()) {
 			if (!oldAppointmentsBereich.equals(getSelectedAgendaBereich())) {
 				setAppointmentsBereich(getSelectedAgendaBereich());

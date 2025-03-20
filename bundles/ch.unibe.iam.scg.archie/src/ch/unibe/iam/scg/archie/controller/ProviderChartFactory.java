@@ -161,17 +161,31 @@ public class ProviderChartFactory {
 		int[] rows = this.model.getRows();
 
 		for (int i = 0; i < rows.length; i++) {
-			double value = 0.0;
 			int rowIndex = rows[i];
+
+			if (keys[rowIndex] == null || values[rowIndex] == null) {
+				continue;
+			}
+			double value = 0.0;
 
 			if (values[rowIndex] instanceof Money) {
 				value = ((Money) values[rowIndex]).doubleValue();
+			} else if (values[rowIndex] instanceof Number) {
+				value = ((Number) values[rowIndex]).doubleValue();
 			} else {
-				value = new Double(values[rowIndex].toString());
+				String valString = values[rowIndex].toString().trim();
+				if (!valString.isEmpty()) {
+					value = Double.parseDouble(valString);
+				} else {
+					continue;
+				}
 			}
-			pieDataset.setValue(keys[rowIndex].toString(), value);
+			String key = keys[rowIndex].toString().trim();
+			if (key.isEmpty()) {
+				continue;
+			}
+			pieDataset.setValue(key, value);
 		}
-
 		return pieDataset;
 	}
 

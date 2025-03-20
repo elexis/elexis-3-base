@@ -14,17 +14,26 @@ package ch.unibe.iam.scg.archie.controller;
 import java.util.List;
 
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 import ch.unibe.iam.scg.archie.model.ColumnSorterAdapter;
 import ch.unibe.iam.scg.archie.model.DataSet;
+import ch.unibe.iam.scg.archie.model.LeistungsstatistikViewerComparator;
 
 /**
  * <p>
@@ -94,6 +103,88 @@ public class TableFactory {
 	}
 
 	/**
+	 * Creates a TreeViewer from the given DataSet. The method supports two
+	 * modes: a grouped view by (service), where data is displayed
+	 * hierarchically with expandable parent nodes, or a flat view without
+	 * grouping.
+	 *
+	 * The table columns are generated dynamically based on the DataSet
+	 * headings. Additionally, column sorting is enabled for each column.
+	 *
+	 * @param parent
+	 *            Composite that holds the TreeViewer.
+	 * @param dataset
+	 *            DataSet providing the headings and content.
+	 * @param labelProvider
+	 *            Label provider used to render each cell.
+	 * @param contentProvider
+	 *            Content provider supplying the data structure.
+	 * @param groupBy
+	 *            If true, the data will be grouped by Leistung (hierarchical
+	 *            view) and an arrow column is added for expand/collapse. If
+	 *            false, the data is shown flat without grouping.
+	 * @return Configured TreeViewer instance.
+	 */
+	public TreeViewer createTreeFromData(final Composite parent, final DataSet dataset,
+			final ILabelProvider labelProvider, final IContentProvider contentProvider, boolean groupBy) {
+
+		// Create base Tree widget with scrolling and selection behavior
+		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
+		tree.setHeaderVisible(true);
+		tree.setLinesVisible(true);
+
+		// Set layout manager for column resizing
+		TreeColumnLayout treeLayout = new TreeColumnLayout();
+		parent.setLayout(treeLayout);
+
+		// Create columns dynamically based on headings
+		createTreeColumns(tree, treeLayout, dataset.getHeadings(), groupBy);
+
+		// Create TreeViewer and set content & label providers
+		TreeViewer treeViewer = new TreeViewer(tree);
+		LeistungenTreeContentProvider contentProv = new LeistungenTreeContentProvider(groupBy);
+		contentProv.refreshDataSet(dataset);
+		treeViewer.setContentProvider(contentProv);
+		treeViewer.setLabelProvider(new LeistungenTreeLabelProvider(groupBy));
+
+		// Enable sorting via comparator
+		LeistungsstatistikViewerComparator comparator = new LeistungsstatistikViewerComparator();
+		treeViewer.setComparator(comparator);
+		treeViewer.setInput(dataset);
+
+		// Add column sorters
+		TreeColumn[] cols = treeViewer.getTree().getColumns();
+
+		// Adjust start index if arrow column is present
+		int startIndex = groupBy ? 1 : 0;
+
+		for (int i = startIndex; i < cols.length; i++) {
+			TreeColumn tc = cols[i];
+			final int index = i - startIndex; // Normalize index (exclude arrow
+												// column if present)
+
+			// Add selection listener for sorting
+			tc.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					// Preserve expanded state during sorting
+					TreePath[] expandedPaths = treeViewer.getExpandedTreePaths();
+
+					// Update comparator and refresh viewer
+					comparator.setColumn(index);
+					treeViewer.getTree().setSortDirection(comparator.getDirection());
+					treeViewer.getTree().setSortColumn(tc);
+					treeViewer.refresh();
+
+					treeViewer.setExpandedTreePaths(expandedPaths);
+				}
+			});
+		}
+
+		return treeViewer;
+	}
+
+	/**
 	 * Creates the table based on the DataProvider passed to this function.
 	 *
 	 * @param parent   Composite that holds the table.
@@ -152,6 +243,48 @@ public class TableFactory {
 		TableColumn[] cols = viewer.getTable().getColumns();
 		for (int i = 0; i < cols.length; i++) {
 			cols[i].addSelectionListener(new ColumnSorterAdapter(viewer, i));
+		}
+	}
+
+	/**
+	 * Creates all TreeColumns (incl. optional arrow column) and configures the
+	 * layout.
+	 *
+	 * @param tree
+	 *            Tree Widget
+	 * @param treeLayout
+	 *            Layout for the columns
+	 * @param headings
+	 *            Column headings from the dataset
+	 * @param groupBy
+	 *            Controls whether the arrow column is required
+	 */
+	private void createTreeColumns(Tree tree, TreeColumnLayout treeLayout, List<String> headings,
+			boolean groupBy) {
+
+		// Optional: First column for Expand/Collapse
+		if (groupBy) {
+			TreeColumn arrowColumn = new TreeColumn(tree, SWT.NONE);
+			arrowColumn.setText("");
+			arrowColumn.setWidth(30);
+			arrowColumn.setResizable(false);
+			treeLayout.setColumnData(arrowColumn, new ColumnPixelData(30, false));
+		}
+
+		// Data columns
+		for (int i = 0; i < headings.size(); i++) {
+			TreeColumn column = new TreeColumn(tree, SWT.NONE);
+			column.setText(headings.get(i));
+			column.setMoveable(true);
+
+			// Layout varies depending on column
+			if (i == 0) {
+				treeLayout.setColumnData(column, new ColumnWeightData(0, 300, true));
+			} else if (i == 1) {
+				treeLayout.setColumnData(column, new ColumnWeightData(0, 100, true));
+			} else {
+				treeLayout.setColumnData(column, new ColumnWeightData(1));
+			}
 		}
 	}
 }

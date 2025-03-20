@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -65,7 +66,10 @@ public class PDFWriter {
 			for (Object[] row : data) {
 				Row<PDPage> dataRow = table.createRow(10f);
 				for (Object obj : row) {
-					String text = obj.toString();
+					String text = StringUtils.EMPTY;
+					if (obj != null) {
+						text = obj.toString();
+					}
 					String cleanText = cleanText(text);
 					Cell<PDPage> cell = dataRow.createCell((100.0f / row.length), cleanText);
 					cell.setFont(PDType1Font.HELVETICA);

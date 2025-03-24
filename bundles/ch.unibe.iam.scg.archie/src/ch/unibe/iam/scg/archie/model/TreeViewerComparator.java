@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 
-public class LeistungsstatistikViewerComparator extends ViewerComparator {
+public class TreeViewerComparator extends ViewerComparator {
 
 	private static final int DESCENDING = 1;
 	private int columnIndex = 0;

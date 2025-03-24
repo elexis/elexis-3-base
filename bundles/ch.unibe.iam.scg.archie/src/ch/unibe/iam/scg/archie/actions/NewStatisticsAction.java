@@ -22,9 +22,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -36,8 +37,11 @@ import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.controller.ChartModelManager;
 import ch.unibe.iam.scg.archie.controller.ProviderManager;
 import ch.unibe.iam.scg.archie.controller.TableFactory;
+import ch.unibe.iam.scg.archie.controller.TableManager;
+import ch.unibe.iam.scg.archie.controller.TreeFactory;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.model.DataSet;
+import ch.unibe.iam.scg.archie.model.DatasetTableColumnSorter;
 import ch.unibe.iam.scg.archie.model.SetDataException;
 import ch.unibe.iam.scg.archie.ui.ParametersPanel;
 import ch.unibe.iam.scg.archie.ui.ProviderInformatioPanel;
@@ -181,23 +185,28 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 						results.showEmptyMessage();
 					} else {
 
-						TableFactory tableFactory = TableFactory.getInstance();
-						TreeViewer treeViewer;
-						if (provider.getClass().getName()
-								.equals("at.medevit.medelexis.buchhaltung.provider.Leistungsstatistik")) {
-							treeViewer = tableFactory.createTreeFromData(results, dataset, provider.getLabelProvider(),
-									provider.getContentProvider(), true);
-						} else {
-							treeViewer = tableFactory.createTreeFromData(results, dataset, provider.getLabelProvider(),
-									provider.getContentProvider(), false);
-						}
-							treeViewer.setInput(dataset);
-							MenuManager menuManager = new MenuManager();
-							Menu menu = menuManager.createContextMenu(treeViewer.getTree());
-							treeViewer.getTree().setMenu(menu);
-							NewStatisticsAction.this.view.getSite().registerContextMenu(menuManager, treeViewer);
-							NewStatisticsAction.this.view.getSite().setSelectionProvider(treeViewer);
 
+						// add selection menu
+						MenuManager menuManager = new MenuManager();
+						StructuredViewer viewer;
+						if (provider.isTree()) {
+							TreeFactory treeFactory = TreeFactory.getInstance();
+							viewer = treeFactory.createTreeFromData(results, dataset, provider, true);
+							viewer.setInput(dataset);
+						} else {
+							TableFactory tableFactory = TableFactory.getInstance();
+							viewer = tableFactory.createTableFromData(results, dataset, provider.getLabelProvider(),
+									provider.getContentProvider());
+
+							new DatasetTableColumnSorter((Table) viewer.getControl(), dataset);
+							TableManager.getInstance().setTable((Table) viewer.getControl());
+						}
+						// add column dataset sorter and add table to the
+						// manager
+						Menu menu = menuManager.createContextMenu(viewer.getControl());
+						viewer.getControl().setMenu(menu);
+						NewStatisticsAction.this.view.getSite().registerContextMenu(menuManager, viewer);
+						NewStatisticsAction.this.view.getSite().setSelectionProvider(viewer);
 					}
 
 					// remove old chart models

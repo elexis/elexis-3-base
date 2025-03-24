@@ -5,11 +5,11 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-public class LeistungenTreeLabelProvider extends LabelProvider implements ITableLabelProvider {
+public class TreeLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	private boolean groupBy;
 
-	public LeistungenTreeLabelProvider(boolean groupBy) {
+	public TreeLabelProvider(boolean groupBy) {
 		this.groupBy = groupBy;
 	}
 

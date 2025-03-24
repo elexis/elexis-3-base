@@ -9,14 +9,14 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import ch.unibe.iam.scg.archie.model.DataSet;
 
-public class LeistungenTreeContentProvider implements ITreeContentProvider {
+public class TreeContentProvider implements ITreeContentProvider {
 
 	private Map<String, List<Comparable<?>[]>> groupedRows = new LinkedHashMap<>();
 	private DataSet cachedDataSet;
 	private List<Comparable<?>[]> flatRows = new ArrayList<>();
 	private boolean groupBy;
 
-	public LeistungenTreeContentProvider(boolean groupBy) {
+	public TreeContentProvider(boolean groupBy) {
 		this.groupBy = groupBy;
 	}
 

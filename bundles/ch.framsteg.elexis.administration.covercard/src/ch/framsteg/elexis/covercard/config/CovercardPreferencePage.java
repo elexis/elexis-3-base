@@ -44,8 +44,8 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	private static final String PLUGIN_DESCRIPTION = "HIN Card Plugin (Public License)";
 
 	private static final String CARD_READER_TYPE = "label.covercard.prefs.cardreader.type.group";
-	private static final String MAGNET_READER = "label.covercard.prefs.cardreader.type.magnet";
-	private static final String CHIP_READER = "label.covercard.prefs.cardreader.type.chip";
+	private static final String MAGNET_READER_LABEL = "label.covercard.prefs.cardreader.type.magnet";
+	private static final String CHIP_READER_LABEL = "label.covercard.prefs.cardreader.type.chip";
 	private static final String CARD_READER_CORRECTION = "label.covercard.prefs.cardreader.input.group";
 	private static final String CARD_READER_REGEX = "label.covercard.prefs.cardreader.input.regex";
 	private static final String HIN_CONFIGURATION = "label.covercard.prefs.hin.group";
@@ -66,17 +66,17 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	private static final String KEY_OAUTH_NAME = "key.proxy.oauth.client.name";
 	private static final String KEY_OAUTH_ID = "key.proxy.oauth.client.id";
 	private static final String KEY_TOKEN_GROUP = "key.proxy.oauth.client.token.group";
-	private static final String KEY_PROXY_SERVER = "key.proxy.server";
-	private static final String KEY_PROXY_PORT = "key.proxy.port";
 	private static final String KEY_INSURED_NUMBER = "key.covercard.insured.number";
 	private static final String KEY_CARD_NUMBER = "key.covercard.card.number";
+	private static final String KEY_CARD_TYPE = "card.type";
+	private static final String KEY_CARD_TYPE_MAGNET = "card.type.magnet";
+	private static final String KEY_CARD_TYPE_CHIP = "card.type.chip";
 	private static final String KEY_INSURED_PERSON_NUMBER = "key.covercard.insured.person.number";
 	private static final String HIN_URL = "hin.url";
 	private static final String HIN_XML_PARAMETER = "hin.xml.parameter";
-	private static final String HIN_PROXY_SERVER = "hin.proxy.server";
-	private static final String HIN_PROXY_PORT = "hin.proxy.port";
 	private static final String REGEX_PATTERN = "cardreader.regex.pattern";
 	private static final String KEY_REGEX_PATTERN = "key.cardreader.regex.pattern";
+	private String cardType = "";
 
 	private Properties applicationProperties;
 	private Properties messagesProperties;
@@ -144,13 +144,38 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		cardTypeGroup.setLayoutData(cardGroupGridData);
 
 		btnMagnet = new Button(cardTypeGroup, SWT.RADIO);
-		btnMagnet.setText(getMessagesProperties().getProperty(MAGNET_READER));
-		btnMagnet.setSelection(true);
-		btnMagnet.setEnabled(false);
+		btnMagnet.setText(getMessagesProperties().getProperty(MAGNET_READER_LABEL));
+		btnMagnet.setEnabled(true);
+
+		if (configService.get(getApplicationProperties().getProperty(KEY_CARD_TYPE), "")
+				.equalsIgnoreCase(getApplicationProperties().getProperty(KEY_CARD_TYPE_MAGNET))) {
+			btnMagnet.setSelection(true);
+			cardType = getApplicationProperties().getProperty(KEY_CARD_TYPE_MAGNET);
+		}
+
+		btnMagnet.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				cardType = getApplicationProperties().getProperty(KEY_CARD_TYPE_MAGNET);
+			}
+		});
 
 		btnChip = new Button(cardTypeGroup, SWT.RADIO);
-		btnChip.setText(getMessagesProperties().getProperty(CHIP_READER));
-		btnChip.setEnabled(false);
+		btnChip.setText(getMessagesProperties().getProperty(CHIP_READER_LABEL));
+		btnChip.setEnabled(true);
+
+		if (configService.get(getApplicationProperties().getProperty(KEY_CARD_TYPE), "")
+				.equalsIgnoreCase(getApplicationProperties().getProperty(KEY_CARD_TYPE_CHIP))) {
+			btnChip.setSelection(true);
+			cardType = getApplicationProperties().getProperty(KEY_CARD_TYPE_CHIP);
+		}
+
+		btnChip.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				cardType = getApplicationProperties().getProperty(KEY_CARD_TYPE_CHIP);
+			}
+		});
 
 		GridLayout cardConfigGroupLayout = new GridLayout();
 		cardConfigGroupLayout.numColumns = 2;
@@ -326,7 +351,7 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	}
 
 	public boolean performOk() {
-
+		configService.set(getApplicationProperties().getProperty(KEY_CARD_TYPE), cardType);
 		configService.set(getApplicationProperties().getProperty(KEY_URL), txtUrl.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_XML_PARAMETER), txtMrParameter.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_OAUTH_NAME), txtHinOauthName.getText());

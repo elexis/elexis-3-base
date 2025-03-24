@@ -214,6 +214,9 @@ public class SearchView extends ViewPart implements IRefreshable {
 	private static final String KEY_XML_PARAMETER = "key.parameter.xml";
 	private static final String KEY_PROXY_SERVER = "key.proxy.server";
 	private static final String KEY_PROXY_PORT = "key.proxy.port";
+	private static final String KEY_CARD_TYPE = "card.type";
+	private static final String KEY_CARD_TYPE_MAGNET = "card.type.magnet";
+	private static final String KEY_CARD_TYPE_CHIP = "card.type.chip";
 
 	private static final String KEY_REGEX_PATTERN = "key.cardreader.regex.pattern";
 
@@ -268,6 +271,9 @@ public class SearchView extends ViewPart implements IRefreshable {
 
 	@Override
 	public void createPartControl(Composite parent) {
+
+		System.out.println(getApplicationProperties().getProperty(KEY_CARD_TYPE));
+
 
 		GridLayout rootLayout = new GridLayout();
 		rootLayout.numColumns = 1;
@@ -505,6 +511,13 @@ public class SearchView extends ViewPart implements IRefreshable {
 						&& !(Xid.getDomain("www.xid.ch/framsteg/covercard/insured-number") == null)
 						&& !(Xid.getDomain("www.xid.ch/framsteg/covercard/card-number") == null)
 						&& !(Xid.getDomain("www.xid.ch/framsteg/covercard/insured-person-number") == null)) {
+
+
+
+					if (configService.get(getApplicationProperties().getProperty(KEY_CARD_TYPE), "")
+							.equalsIgnoreCase(getApplicationProperties().getProperty(KEY_CARD_TYPE_CHIP))) {
+
+					}
 
 					String searchString = txtCardNr.getText();
 					String patternString = configService.get(getApplicationProperties().getProperty(KEY_REGEX_PATTERN),

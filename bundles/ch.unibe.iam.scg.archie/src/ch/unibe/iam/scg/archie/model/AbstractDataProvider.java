@@ -18,9 +18,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import ch.elexis.core.ui.util.Log;
 import ch.unibe.iam.scg.archie.ArchieActivator;
+import ch.unibe.iam.scg.archie.controller.TreeContentProvider;
+import ch.unibe.iam.scg.archie.controller.TreeLabelProvider;
 
 /**
  * <p>
@@ -56,6 +59,7 @@ public abstract class AbstractDataProvider extends Job {
 
 	private ILabelProvider labelProvider;
 	private IStructuredContentProvider contentProvider;
+	private ITreeContentProvider treeContentProvider;
 
 	/**
 	 * Public constructor.
@@ -148,6 +152,7 @@ public abstract class AbstractDataProvider extends Job {
 		return this.dataSet;
 	}
 
+
 	/**
 	 * Initializes content and label providers and sets them accordingly. This is a
 	 * generic method using two default providers for labels and content. Every
@@ -159,6 +164,14 @@ public abstract class AbstractDataProvider extends Job {
 
 		this.setContentProvider(content);
 		this.setLabelProvider(label);
+		if (isTree()) {
+			TreeContentProvider treeContent = new TreeContentProvider(true);
+			treeContent.refreshDataSet(this.dataSet);
+			this.setTreeContentProvider(treeContent);
+
+			TreeLabelProvider treeLabel = new TreeLabelProvider(true);
+			this.setLabelProvider(treeLabel);
+		}
 	}
 
 	/**
@@ -179,5 +192,33 @@ public abstract class AbstractDataProvider extends Job {
 	 */
 	protected void setContentProvider(IStructuredContentProvider contentProvider) {
 		this.contentProvider = contentProvider;
+	}
+
+	/**
+	 * Override in subclass if TreeViewer is to be used.
+	 * 
+	 * @return true if TreeViewer is required.
+	 */
+	public boolean isTree() {
+		return false;
+	}
+
+	/**
+	 * Sets the TreeContentProvider for this data provider.
+	 *
+	 * @param treeContentProvider
+	 *            The TreeContentProvider instance.
+	 */
+	protected void setTreeContentProvider(ITreeContentProvider treeContentProvider) {
+		this.treeContentProvider = treeContentProvider;
+	}
+
+	/**
+	 * Returns the TreeContentProvider, if applicable.
+	 * 
+	 * @return ITreeContentProvider or null
+	 */
+	public ITreeContentProvider getTreeContentProvider() {
+		return this.treeContentProvider;
 	}
 }

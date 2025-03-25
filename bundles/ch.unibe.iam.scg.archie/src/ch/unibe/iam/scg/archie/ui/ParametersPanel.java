@@ -130,15 +130,23 @@ public class ParametersPanel extends Composite {
 		int maxWidth = 0;
 		for (AbstractWidget field : this.widgetMap.values()) {
 			Label label = field.getLabel();
-			int width = label.getBounds().width;
-			maxWidth = (width > maxWidth) ? width : maxWidth;
+			String labelText = label.getText();
+			if (!labelText.equals("Leistungen")) {
+				int width = label.getBounds().width;
+				maxWidth = Math.max(width, maxWidth);
+			}
 		}
 
-		// set all labels to that max width
 		for (AbstractWidget field : this.widgetMap.values()) {
 			Label label = field.getLabel();
 			GridData data = new GridData();
-			data.widthHint = maxWidth;
+
+			if (label.getText().equals("Leistungen")) {
+				data.widthHint = 320;
+			} else {
+				data.widthHint = maxWidth;
+			}
+
 			label.setLayoutData(data);
 		}
 		this.layout();

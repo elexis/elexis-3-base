@@ -22,9 +22,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -37,6 +38,7 @@ import ch.unibe.iam.scg.archie.controller.ChartModelManager;
 import ch.unibe.iam.scg.archie.controller.ProviderManager;
 import ch.unibe.iam.scg.archie.controller.TableFactory;
 import ch.unibe.iam.scg.archie.controller.TableManager;
+import ch.unibe.iam.scg.archie.controller.TreeFactory;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.model.DataSet;
 import ch.unibe.iam.scg.archie.model.DatasetTableColumnSorter;
@@ -182,21 +184,27 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 					if (dataset.isEmpty()) {
 						results.showEmptyMessage();
 					} else {
-						// create result table
-						TableFactory tableFactory = TableFactory.getInstance();
-						TableViewer viewer = tableFactory.createTableFromData(results, dataset,
-								provider.getLabelProvider(), provider.getContentProvider());
 
-						// add column dataset sorter and add table to the
-						// manager
-						new DatasetTableColumnSorter(viewer.getTable(), dataset);
-						TableManager.getInstance().setTable(viewer.getTable());
 
 						// add selection menu
 						MenuManager menuManager = new MenuManager();
-						Menu menu = menuManager.createContextMenu(viewer.getTable());
-						viewer.getTable().setMenu(menu);
+						StructuredViewer viewer;
+						if (provider.isTree()) {
+							TreeFactory treeFactory = TreeFactory.getInstance();
+							viewer = treeFactory.createTreeFromData(results, dataset, provider, true);
+							viewer.setInput(dataset);
+						} else {
+							TableFactory tableFactory = TableFactory.getInstance();
+							viewer = tableFactory.createTableFromData(results, dataset, provider.getLabelProvider(),
+									provider.getContentProvider());
 
+							new DatasetTableColumnSorter((Table) viewer.getControl(), dataset);
+							TableManager.getInstance().setTable((Table) viewer.getControl());
+						}
+						// add column dataset sorter and add table to the
+						// manager
+						Menu menu = menuManager.createContextMenu(viewer.getControl());
+						viewer.getControl().setMenu(menu);
 						NewStatisticsAction.this.view.getSite().registerContextMenu(menuManager, viewer);
 						NewStatisticsAction.this.view.getSite().setSelectionProvider(viewer);
 					}

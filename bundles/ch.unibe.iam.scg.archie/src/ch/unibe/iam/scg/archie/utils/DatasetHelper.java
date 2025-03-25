@@ -82,8 +82,10 @@ public class DatasetHelper {
 	 */
 	public static final boolean isMoneyColumn(final DataSet dataset, final int columnIndex) {
 		Comparable<?>[] col = dataset.getColumn(columnIndex);
-		if (col.length >= 1) {
-			return col[0] instanceof Money;
+		for (Comparable<?> cell : col) {
+			if (cell instanceof Money) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -120,11 +122,16 @@ public class DatasetHelper {
 	 *         else.
 	 */
 	public static final boolean isNumericColumn(final DataSet dataset, final int columnIndex) {
-		Comparable<?>[] col = dataset.getColumn(columnIndex);
-		if (col.length >= 1) {
-			return StringHelper.isNumeric(col[0].toString());
-		}
-		return false;
+	    Comparable<?>[] col = dataset.getColumn(columnIndex);
+	    if (col == null || col.length == 0) {
+	        return false;
+	    }
+	    for (Comparable<?> cell : col) {
+	        if (cell != null && StringHelper.isNumeric(cell.toString())) {
+				return true;
+	        }
+	    }
+	    return false;
 	}
 
 	/**

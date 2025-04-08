@@ -99,6 +99,7 @@
     <module>ch.elexis.connect.sysmex</module>
     <module>ch.elexis.docbox.ws.client</module>
     <module>ch.elexis.ebanking</module>
+    <module>ch.elexis.estudio.clustertec</module>
     <module>ch.elexis.externe_dokumente</module>
     <module>ch.elexis.fire.core</module>
     <module>ch.elexis.fire.ui</module>

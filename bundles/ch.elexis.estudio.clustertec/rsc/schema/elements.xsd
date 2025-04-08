@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://estudio.clustertec.ch/schemas/order" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://estudio.clustertec.ch/schemas/order" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:appinfo>elements.xsd, © Clustertec AG - Order Web Service, 2005-2020 (Beat De Martin)</xs:appinfo>
+	</xs:annotation>
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:element name="patientOrder">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="product" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="titlePatient" type="string50" use="optional"/>
+			<xs:attribute name="titleCodePatient" type="titleCode" use="optional"/>
+			<xs:attribute name="lastNamePatient" type="string50" use="required"/>
+			<xs:attribute name="firstNamePatient" type="string50" use="required"/>
+			<xs:attribute name="birthdayPatient" type="xs:date" use="required"/>
+			<xs:attribute name="sexPatient" type="sex" use="required"/>
+			<xs:attribute name="patientNr" type="string15" use="required"/>
+			<xs:attribute name="firstNamePrescriptor" type="string50" use="required"/>
+			<xs:attribute name="lastNamePrescriptor" type="string50" use="required"/>
+			<xs:attribute name="clientNrPrescriptor" type="string6" use="required"/>
+			<xs:attribute name="eanNrPrescriptor" type="eanId" use="required"/>
+			<xs:attribute name="firstNameSubstitutedPrescriptor" type="string50" use="optional"/>
+			<xs:attribute name="lastNameSubstitutedPrescriptor" type="string50" use="optional"/>
+			<xs:attribute name="clientNrSubstitutedPrescriptor" type="string6" use="optional"/>
+			<xs:attribute name="eanNrSubstitutedPrescriptor" type="eanId" use="optional"/>
+			<xs:attribute name="customText" type="string250" use="optional"/>
+			<xs:attribute name="orderNumber" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="product">
+		<xs:complexType>
+			<xs:attribute name="pharmacode" type="pharmaCode" use="required"/>
+			<xs:attribute name="eanId" type="eanId" use="optional"/>
+			<xs:attribute name="description" type="string50" use="optional">
+				<xs:annotation>
+					<xs:documentation>Artikelbezeichnung</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="quantity" type="positiveInteger3" use="required">
+				<xs:annotation>
+					<xs:documentation>Bestellmenge</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="positionType" type="positionType" use="required"/>
+			<xs:attribute name="changedByFirstName" type="string50" use="optional"/>
+			<xs:attribute name="changedByLastName" type="string50" use="optional"/>
+			<xs:attribute name="changedByClientNr" type="string6" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="patientOrderB2C">
+		<xs:complexType>
+			<xs:attribute name="patientOrderFlag" type="xs:boolean" use="required"/>
+			<xs:attribute name="id" type="string10" use="required"/>
+			<xs:attribute name="mobileNr" type="string50" use="optional"/>
+			<xs:attribute name="lastNamePatient" type="string50" use="optional"/>
+			<xs:attribute name="firstNamePatient" type="string50" use="optional"/>
+			<xs:attribute name="birthdayPatient" type="xs:date" use="optional"/>
+			<xs:attribute name="patientNr" type="string15" use="optional"/>
+			<xs:attribute name="vendor" type="string50" use="optional"/>
+			<xs:attribute name="instanceId" type="string50" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -3,9 +3,23 @@ package ch.elexis.estudio.clustertec;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import ch.clustertec.estudio.schemas.order.Order;
 import ch.clustertec.estudio.schemas.order.OrderResponse;
@@ -26,13 +40,37 @@ public class ClustertecJaxbUtil {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(OrderResponse.class);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			Object unmarshalObj = unmarshaller.unmarshal(inStream);
 
-			if (unmarshalObj instanceof OrderResponse) {
-				OrderResponse request = (OrderResponse) unmarshalObj;
-				return request;
+			// Parse the XML and remove the xsi:type attribute
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new InputSource(inStream));
+			Element root = document.getDocumentElement();
+
+			// Remove the xsi:type attribute
+			NamedNodeMap attributes = root.getAttributes();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Node attribute = attributes.item(i);
+				if (attribute.getNodeName().equals("xsi:type")) {
+					attributes.removeNamedItem(attribute.getNodeName());
+				}
 			}
-		} catch (JAXBException e) {
+			// Remove the xmlns:xsi declaration
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Node attribute = attributes.item(i);
+				if (attribute.getNodeName().equals("xmlns:xsi")) {
+					attributes.removeNamedItem(attribute.getNodeName());
+				}
+			}
+
+			// Add the namespace to the order-response element
+			root.setAttribute("xmlns", "http://estudio.clustertec.ch/schemas/order");
+
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			StringWriter writer = new StringWriter();
+			transformer.transform(new DOMSource(document), new StreamResult(writer));
+
+			return (OrderResponse) unmarshaller.unmarshal(new StreamSource(new StringReader(writer.toString())));
+		} catch (Exception e) {
 			log.error("Unmarshalling OrderResponse failed", e); //$NON-NLS-1$
 		}
 		return null;

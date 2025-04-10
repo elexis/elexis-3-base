@@ -23,6 +23,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IStoreToStringService;
@@ -43,11 +44,14 @@ public class GlobalInboxEntryFactory {
 	@Reference
 	private IConfigService configService;
 
+	@Reference
+	private IAccessControlService accessControl;
+
 	private static List<Function> extensionFileHandlers = new ArrayList<Function>();
 
 	@Activate
 	public void activate() {
-		AccessControlServiceHolder.get().doPrivileged(() -> {
+		accessControl.doPrivileged(() -> {
 			String giDirSetting = GlobalInboxUtil.getDirectory("NOTSET", configService); //$NON-NLS-1$
 			if ("NOTSET".equals(giDirSetting)) { //$NON-NLS-1$
 				File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$

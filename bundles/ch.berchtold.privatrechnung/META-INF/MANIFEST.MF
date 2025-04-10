@@ -20,6 +20,6 @@ Import-Package: com.opencsv;version="3.10.0",
  javax.persistence;version="2.2.3",
  javax.persistence.criteria;version="2.2.3",
  org.apache.commons.lang3;version="3.12.0"
-Service-Component: OSGI-INF/ch.berchtold.emanuel.privatrechnung.model.internal.PrivatRechnungModelService.xml,
- OSGI-INF/ch.berchtold.emanuel.privatrechnung.model.PrivatModelServiceHolder.xml,
- OSGI-INF/ch.berchtold.emanuel.privatrechnung.model.internal.PrivatRechnungCodeElementServiceContribution.xml
+Service-Component: OSGI-INF/ch.berchtold.emanuel.privatrechnung.model.PrivatModelServiceHolder.xml,
+ OSGI-INF/ch.berchtold.emanuel.privatrechnung.model.internal.PrivatRechnungCodeElementServiceContribution.xml,
+ OSGI-INF/ch.berchtold.emanuel.privatrechnung.model.internal.PrivatRechnungModelService.xml

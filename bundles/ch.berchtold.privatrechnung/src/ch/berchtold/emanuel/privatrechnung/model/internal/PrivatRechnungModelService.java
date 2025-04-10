@@ -16,12 +16,12 @@ import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.model.adapter.AbstractModelService;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IStoreToStringContribution;
 import ch.elexis.core.services.IXidService;
-import ch.elexis.core.services.holder.AccessControlServiceHolder;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.berchtold.emanuel.privatrechnung.model")
 public class PrivatRechnungModelService extends AbstractModelService
@@ -38,11 +38,14 @@ public class PrivatRechnungModelService extends AbstractModelService
 	@Reference
 	private EventAdmin eventAdmin;
 
+	@Reference
+	private IAccessControlService accessControl;
+
 	@Activate
 	public void activate() {
 		adapterFactory = PrivatRechnungModelAdapterFactory.getInstance();
 
-		AccessControlServiceHolder.get().doPrivileged(() -> {
+		accessControl.doPrivileged(() -> {
 			xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung", XidConstants.ASSIGNMENT_LOCAL);
 		});
 	}

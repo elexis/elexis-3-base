@@ -4,6 +4,7 @@
       <provide interface="ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory"/>
    </service>
    <reference bind="setExtensionFileHandler" cardinality="0..n" interface="java.util.function.Function" name="ExtensionFileHandler" policy="dynamic" policy-option="greedy" target="(service.name=ch.elexis.global_inbox.extensionfilehandler)" unbind="unsetExtensionFileHandler"/>
+   <reference cardinality="1..1" field="accessControl" interface="ch.elexis.core.services.IAccessControlService" name="accessControl"/>
    <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
    <reference cardinality="1..1" field="modelService" interface="ch.elexis.core.services.IModelService" name="modelService" target="(service.model.name=ch.elexis.core.model)"/>
    <reference cardinality="1..1" field="storeToStringService" interface="ch.elexis.core.services.IStoreToStringService" name="storeToStringService"/>

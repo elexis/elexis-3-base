@@ -31,11 +31,6 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>org.apache.felix.gogo.shell.contribution</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>ch.elexis.base.ch.arzttarife.test</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>

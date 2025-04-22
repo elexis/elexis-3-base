@@ -75,8 +75,9 @@ public class DocboxView extends ViewPart {
 	public void setHome() {
 		if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 			// https://www.docbox.ch/cgi-bin/WebObjects/docbox.woa/wa/default?loginId=LOGIN_ID&ts=TIMESTAMP&sig=GENERATED_SIGNATURE
+			// System.out.println(getDoboxLoginUrl() + getSSOLoginParams("MainWelcome"));
+			// System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)));
 			System.out.println(getDoboxLoginUrl() + getSSOLoginParams("MainWelcome"));
-			System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)));
 			browser.setUrl(getDoboxLoginUrl() + getSSOLoginParams("MainWelcome"));
 
 		} else {

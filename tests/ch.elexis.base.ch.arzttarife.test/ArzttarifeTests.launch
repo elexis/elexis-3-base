@@ -142,12 +142,8 @@
         <setEntry value="org.eclipse.e4.ui.workbench.addons.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.cocoa@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_de@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_de@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench3@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench@default:default"/>
@@ -168,8 +164,6 @@
         <setEntry value="org.eclipse.jetty.ee10.osgi.alpn.fragment@default:false"/>
         <setEntry value="org.eclipse.jface.databinding@default:default"/>
         <setEntry value="org.eclipse.jface.nl_de@default:false"/>
-        <setEntry value="org.eclipse.jface.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.jface.nl_it@default:false"/>
         <setEntry value="org.eclipse.jface.notifications@default:default"/>
         <setEntry value="org.eclipse.jface@default:default"/>
         <setEntry value="org.eclipse.nebula.cwt@default:default"/>
@@ -191,23 +185,15 @@
         <setEntry value="org.eclipse.swt.cocoa.macosx.aarch64@default:false"/>
         <setEntry value="org.eclipse.swt.gtk.linux.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.nl_de@default:false"/>
-        <setEntry value="org.eclipse.swt.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
         <setEntry value="org.eclipse.swtchart@default:default"/>
         <setEntry value="org.eclipse.ui.cocoa@default:false"/>
         <setEntry value="org.eclipse.ui.forms@default:default"/>
         <setEntry value="org.eclipse.ui.nl_de@default:false"/>
-        <setEntry value="org.eclipse.ui.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.ui.nl_it@default:false"/>
         <setEntry value="org.eclipse.ui.views.nl_de@default:false"/>
-        <setEntry value="org.eclipse.ui.views.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.ui.views.nl_it@default:false"/>
         <setEntry value="org.eclipse.ui.views.properties.tabbed@default:default"/>
         <setEntry value="org.eclipse.ui.views@default:default"/>
         <setEntry value="org.eclipse.ui.workbench.nl_de@default:false"/>
-        <setEntry value="org.eclipse.ui.workbench.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.ui.workbench.nl_it@default:false"/>
         <setEntry value="org.eclipse.ui.workbench@default:default"/>
         <setEntry value="org.eclipse.ui@default:default"/>
         <setEntry value="org.eclipse.urischeme@default:default"/>
@@ -288,10 +274,7 @@
         <setEntry value="ch.elexis.core.webdav@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.elexis.ebanking@default:default"/>
-        <setEntry value="ch.medelexis.medication.ui@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="es.gogo.shell@default:false"/>
-        <setEntry value="org.apache.felix.gogo.shell.contribution@default:false"/>
         <setEntry value="org.iatrix.help.wiki@default:default"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>

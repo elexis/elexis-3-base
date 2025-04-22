@@ -291,7 +291,6 @@
         <setEntry value="ch.medelexis.medication.ui@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
         <setEntry value="es.gogo.shell@default:false"/>
-        <setEntry value="info.elexis.server.core.logging@default:false"/>
         <setEntry value="org.apache.felix.gogo.shell.contribution@default:false"/>
         <setEntry value="org.iatrix.help.wiki@default:default"/>
     </setAttribute>

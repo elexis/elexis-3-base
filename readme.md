@@ -1,13 +1,6 @@
 <a href="https://gitlab.medelexis.ch/elexis/elexis-3-base/commits/master"><img alt="build status" src="https://gitlab.medelexis.ch/elexis/elexis-3-base/badges/master/pipeline.svg" /></a>
 
 Elexis Base contains bundles that can be installed using the <a href="https://gitlab.medelexis.ch/elexis/elexis-3-core">Elexis</a> application.
-Using these bundles directly might not be what you want.
-
-# Elexis Base as binary package
-If you want to install Elexis Base as precompile package you can get it from:
-- [Windows](http://download.elexis.info/elexis/3.10/products/Elexis3-win32.win32.x86_64.zip)
-- [Apple OS X](http://download.elexis.info/elexis/3.10/products/Elexis3-macosx.cocoa.x86_64.zip)
-- [Linux](http://download.elexis.info/elexis/3.10/products/Elexis3-linux.gtk.x86_64.zip)
 
 # Elexis Base from source 
 If you want to follow the ongoing commits:

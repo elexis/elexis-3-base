@@ -281,7 +281,6 @@
         <setEntry value="ch.elexis.core.ui.dbcheck@default:default"/>
         <setEntry value="ch.elexis.core.ui.e4@default:default"/>
         <setEntry value="ch.elexis.core.ui.icons@default:default"/>
-        <setEntry value="ch.elexis.core.ui.importer.div.native64@default:false"/>
         <setEntry value="ch.elexis.core.ui.importer.div@default:default"/>
         <setEntry value="ch.elexis.core.ui.laboratory@default:default"/>
         <setEntry value="ch.elexis.core.ui.medication@default:default"/>

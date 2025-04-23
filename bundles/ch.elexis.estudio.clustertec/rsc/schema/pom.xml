@@ -26,11 +26,12 @@
                     <!--<xjbSources>
                         <xjbSource>src/main/resources/global.xjb</xjbSource>
                     </xjbSources>-->
-<!--                    <laxSchemaValidation>true</laxSchemaValidation>
--->                    <sources>
-                        <source>orderResponse.xsd</source>
-                        <source>order.xsd</source>
-                        <source>patient_order.xsd</source>
+                    <laxSchemaValidation>true</laxSchemaValidation>
+                    <sources>
+                        <source>order/orderResponse.xsd</source>
+                        <source>order/order.xsd</source>
+                        <source>order/patient_order.xsd</source>
+                        <source>prescription/prescription.xsd</source>
                     </sources>
                     <outputDirectory>${basedir}/../../src-gen/</outputDirectory>
                     <clearOutputDir>true</clearOutputDir>

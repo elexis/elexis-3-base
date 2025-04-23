@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://estudio.clustertec.ch/schemas/prescription" xmlns="http://estudio.clustertec.ch/schemas/prescription" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:appinfo>types.xsd, © Clustertec AG - Prescription Web Service, 2005 (Beat De Martin)</xs:appinfo>
+	</xs:annotation>
+	<xs:simpleType name="titleCode">
+		<xs:annotation>
+			<xs:documentation>
+				0 = keine Anrede, 1 = Herr, 2 = Frau
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1" />
+			<xs:maxInclusive value="3" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="langCode">
+		<xs:annotation>
+			<xs:documentation>1 = de, 2 = fr, 3 = it</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="sex">
+		<xs:annotation>
+			<xs:documentation>1 = m, 2 = f</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="billingType">
+		<xs:annotation>
+			<xs:documentation>1 = Verrechnung an Versicherung, 2 = Verrechnung an Patient, 3 = Verrechnung an Arzt, 4 = Verrechnung an Rechnungsadresse</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="deliveryType">
+		<xs:annotation>
+			<xs:documentation>
+				1 = Lieferung an Patient, 2 = Lieferung an Arzt, 3 =
+				Lieferung an Lieferadresse
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1" />
+			<xs:maxInclusive value="3" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="eanId">
+		<xs:restriction base="xs:long">
+			<!-- xs:pattern value="76[0-9]{11}"/ -->
+			<xs:pattern value="[0-9]{13}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="pharmaCode">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="7"/>
+			<xs:maxLength value="7"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="positiveInteger1">
+		<xs:restriction base="xs:int">
+			<xs:maxLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="positiveInteger2">
+		<xs:restriction base="xs:int">
+			<xs:maxLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="positiveInteger3">
+		<xs:restriction base="xs:int">
+			<xs:maxLength value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="positiveInteger7">
+		<xs:restriction base="xs:int">
+			<xs:minLength value="7"/>
+			<xs:maxLength value="7"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string2">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string6">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string7">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="7"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string9">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="9"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string10">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string12">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="12"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string15">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="15"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string20">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string25">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="25"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string30">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string32">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="32"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string50">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string60">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="60"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string80">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="80"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string120">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="120"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

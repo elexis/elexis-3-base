@@ -23,6 +23,7 @@ import org.xml.sax.InputSource;
 
 import ch.clustertec.estudio.schemas.order.Order;
 import ch.clustertec.estudio.schemas.order.OrderResponse;
+import ch.clustertec.estudio.schemas.prescription.Prescription;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -117,5 +118,24 @@ public class ClustertecJaxbUtil {
 			log.error("Error setting marshall properties - concerns XML with schema [" + schemaLocation + "]", propE); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return marshaller;
+	}
+
+	public static String marshalPrescription(Prescription clustertecPrescription) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		marshalPrescription(clustertecPrescription, out);
+		return new String(out.toByteArray());
+	}
+
+	public static boolean marshalPrescription(Prescription clustertecPrescription, OutputStream outStream) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(Prescription.class);
+			Marshaller marshaller = initMarshaller(jaxbContext,
+					"http://estudio.clustertec.ch/schemas/prescription.xsd");
+			marshaller.marshal(clustertecPrescription, outStream);
+			return true;
+		} catch (JAXBException e) {
+			log.error("Marshalling Order failed", e); //$NON-NLS-1$
+			return false;
+		}
 	}
 }

@@ -67,37 +67,4 @@ public class ClustertecOrderFactory {
 		}
 		return StringUtils.leftPad(StringUtils.defaultString(ret), 7, "0");
 	}
-
-//	String pharmacode = ArticleUtil.getPharmaCode(artikel);
-//	String eanId = ArticleUtil.getEan(artikel);
-//	String description = artikel.getName();
-//	int quantity = item.getAmount();
-//
-//	if (StringTool.isNothing(pharmacode) || StringTool.isNothing(eanId) || StringTool.isNothing(description)
-//			|| quantity < 1) {
-//
-//		StringBuffer msg = new StringBuffer();
-//		msg.append("Der Artikel " + PersistentObject.checkNull(description) + " (Pharma-Code "
-//				+ PersistentObject.checkNull(pharmacode) + ") ist nicht korrekt konfiguriert: ");
-//		if (StringTool.isNothing(pharmacode)) {
-//			msg.append("Ungültiger Pharmacode. ");
-//		}
-//		if (StringTool.isNothing(eanId)) {
-//			msg.append("Ungültiger EAN-Code. ");
-//		}
-//		if (quantity < 1) {
-//			msg.append("Ungültige Anzahl. ");
-//		}
-//		msg.append("Bitte korrigieren Sie diese Fehler.");
-//
-//		SWTHelper.alert("Fehlerhafter Artikel", msg.toString());
-//
-//		throw new XChangeException("Fehlerhafter Artikel: Pharamcode: " + pharmacode + ", EAN: " + eanId
-//				+ ", Name: " + description + ", Anzahl: " + quantity);
-//	}
-//
-//	sb.append("<product" + " pharmacode=\"" + escapeXmlAttribute(pharmacode) + "\"" + " eanId=\""
-//			+ escapeXmlAttribute(eanId) + "\"" + " description=\"" + escapeXmlAttribute(description) + "\""
-//			+ " quantity=\"" + quantity + "\"" + " positionType=\"1\"" + "/>" + XML_NEWLINE);
-
 }

@@ -4,12 +4,16 @@ Bundle-Name: estudio clustertec
 Bundle-SymbolicName: ch.elexis.estudio.clustertec
 Bundle-Version: 1.0.0.qualifier
 Export-Package: ch.clustertec.estudio.schemas.order,
+ ch.clustertec.estudio.schemas.prescription,
  ch.elexis.estudio.clustertec
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.estudio.clustertec
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: ch.elexis.core.data.interfaces,
+Import-Package: ch.elexis.core.constants,
+ ch.elexis.core.data.interfaces,
  ch.elexis.core.model,
+ ch.elexis.core.model.format,
+ ch.elexis.core.types,
  jakarta.xml.bind;version="[4.0.0,5.0.0)",
  jakarta.xml.bind.annotation;version="[4.0.0,5.0.0)",
  org.slf4j;version="[1.7.0,2.0.0)"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://estudio.clustertec.ch/schemas/order" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://estudio.clustertec.ch/schemas/order" elementFormDefault="qualified">
-	<xs:include schemaLocation="http://estudio.clustertec.ch/schemas/order/types.xsd"/>
-	<xs:include schemaLocation="http://estudio.clustertec.ch/schemas/order/elements.xsd"/>
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:include schemaLocation="elements.xsd"/>
 	<xs:annotation>
 		<xs:appinfo>patient_order.xsd, © Clustertec AG - Patient order, 2010-2020 (Beat De Martin)</xs:appinfo>
 	</xs:annotation>

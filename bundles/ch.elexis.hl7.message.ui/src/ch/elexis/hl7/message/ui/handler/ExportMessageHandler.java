@@ -1,9 +1,6 @@
 package ch.elexis.hl7.message.ui.handler;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +18,7 @@ import ch.elexis.core.ui.dialogs.ChoiceDialog;
 import ch.elexis.hl7.message.core.IHL7MessageService;
 import ch.elexis.hl7.message.ui.preference.PreferenceUtil;
 import ch.elexis.hl7.message.ui.preference.Receiver;
+import ch.elexis.hl7.util.HL7Helper;
 
 public class ExportMessageHandler extends AbstractHandler implements IHandler {
 
@@ -68,7 +66,7 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 			List<String> validationResult = MessageServiceHolder.getService().validateContext(messageTyp, context);
 			if (validationResult.isEmpty()) {
 				String message = MessageServiceHolder.getService().getMessage(messageTyp, context);
-				MessageUtil.export(messageTyp, message, getEncoding(message));
+				MessageUtil.export(messageTyp, message, HL7Helper.getEncoding(message));
 			} else {
 				StringBuilder sb = new StringBuilder(
 						"Für die Generierung der Message vom Typ [" + messageTyp + "] fehlt folgende Auswahl.\n\n");
@@ -100,21 +98,5 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 			return false;
 		}
 		return true;
-	}
-
-	private String getEncoding(String message) {
-		BufferedReader reader = new BufferedReader(new StringReader(message));
-		String firstline;
-		try {
-			firstline = reader.readLine();
-			if (firstline.startsWith("MSH")) { //$NON-NLS-1$
-				if (firstline.contains("8859-1") || firstline.contains("8859/1")) { //$NON-NLS-1$ //$NON-NLS-2$
-					return StandardCharsets.ISO_8859_1.name();
-				}
-			}
-		} catch (IOException e) {
-			// ignore and use utf-8
-		}
-		return StandardCharsets.UTF_8.name();
 	}
 }

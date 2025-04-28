@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -53,10 +55,13 @@ import jakarta.xml.bind.Marshaller;
 
 public class Gs1OrderXmlGenerator {
 
+	private List<IOrderEntry> exportedEntries = new ArrayList<>();
+
 	public String createOrderXml(IOrder order) throws XChangeException {
 		if (order == null || order.getEntries().isEmpty()) {
 			throw new XChangeException("The order is empty."); //$NON-NLS-1$
 		}
+		exportedEntries.clear();
 		String supplier = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, null);
 		String selDialogTitle = Messages.OrderSupplierNotDefined;
 		IContact roseSupplier = BestellView.resolveDefaultSupplier(supplier, selDialogTitle);
@@ -157,6 +162,7 @@ public class Gs1OrderXmlGenerator {
 				if (!roseSupplier.equals(artSupplier)) {
 					continue;
 				}
+				exportedEntries.add(entry);
 				OrderLineItemType lineItem = factory.createOrderLineItemType();
 				lineItem.setLineItemNumber(BigInteger.valueOf(lineNumber++));
 
@@ -214,5 +220,9 @@ public class Gs1OrderXmlGenerator {
 			}
 		}
 		return number;
+	}
+
+	public List<IOrderEntry> getExportedEntries() {
+		return exportedEntries;
 	}
 }

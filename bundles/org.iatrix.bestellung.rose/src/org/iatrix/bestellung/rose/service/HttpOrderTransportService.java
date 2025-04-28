@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -29,6 +30,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import ch.elexis.core.l10n.Messages;
+import ch.elexis.core.model.IOrderEntry;
+import ch.elexis.core.model.OrderEntryState;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.exchange.XChangeException;
 
 public class HttpOrderTransportService {
@@ -73,7 +77,7 @@ public class HttpOrderTransportService {
 		}
 	}
 
-	public void sendOrderRequest(String xml, String token) throws XChangeException {
+	public void sendOrderRequest(String xml, String token, List<IOrderEntry> entriesToMark) throws XChangeException {
 		try {
 			URL url = getUrl(Constants.ORDER_URL, Constants.ORDER_URL_TEST);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -107,6 +111,10 @@ public class HttpOrderTransportService {
 			if (responseCode != 200) {
 				throw new XChangeException(
 						"Error sending the order: HTTP " + responseCode + " - " + response.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			for (IOrderEntry entry : entriesToMark) {
+				entry.setState(OrderEntryState.ORDERED);
+				CoreModelServiceHolder.get().save(entry);
 			}
 
 			String landingPage = extractLandingPageUrl(response.toString());

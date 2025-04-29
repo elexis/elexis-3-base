@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -28,6 +30,7 @@ import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.IOrderEntry;
+import ch.elexis.core.model.OrderEntryState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.exchange.ArticleUtil;
 import ch.elexis.core.ui.exchange.XChangeException;
@@ -53,10 +56,13 @@ import jakarta.xml.bind.Marshaller;
 
 public class Gs1OrderXmlGenerator {
 
+	private List<IOrderEntry> exportedEntries = new ArrayList<>();
+
 	public String createOrderXml(IOrder order) throws XChangeException {
 		if (order == null || order.getEntries().isEmpty()) {
 			throw new XChangeException("The order is empty."); //$NON-NLS-1$
 		}
+		exportedEntries.clear();
 		String supplier = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, null);
 		String selDialogTitle = Messages.OrderSupplierNotDefined;
 		IContact roseSupplier = BestellView.resolveDefaultSupplier(supplier, selDialogTitle);
@@ -105,9 +111,15 @@ public class Gs1OrderXmlGenerator {
 			OrderType orderType = factory.createOrderType();
 
 			EcomEntityIdentificationType entityId = new EcomEntityIdentificationType();
-			entityId.setEntityIdentification(UUID.nameUUIDFromBytes(order.getId().getBytes()).toString());
+			boolean hasOrderedEntries = order.getEntries().stream()
+					.anyMatch(e -> e.getState() != null && (e.getState().equals(OrderEntryState.ORDERED)
+							|| e.getState().equals(OrderEntryState.PARTIAL_DELIVER)));
+			if (hasOrderedEntries) {
+				entityId.setEntityIdentification(UUID.randomUUID().toString());
+			} else {
+				entityId.setEntityIdentification(UUID.nameUUIDFromBytes(order.getId().getBytes()).toString());
+			}
 			orderType.setOrderIdentification(entityId);
-
 			OrderTypeCodeType orderTypeCode = new OrderTypeCodeType();
 			orderTypeCode.setValue(Constants.ORDER_TYPE_CODE);
 			orderType.setOrderTypeCode(orderTypeCode);
@@ -152,11 +164,15 @@ public class Gs1OrderXmlGenerator {
 
 			int lineNumber = 1;
 			for (IOrderEntry entry : order.getEntries()) {
+				if (entry.getState() != OrderEntryState.OPEN) {
+					continue;
+				}
 				IContact artSupplier = entry.getProvider();
 
 				if (!roseSupplier.equals(artSupplier)) {
 					continue;
 				}
+				exportedEntries.add(entry);
 				OrderLineItemType lineItem = factory.createOrderLineItemType();
 				lineItem.setLineItemNumber(BigInteger.valueOf(lineNumber++));
 
@@ -214,5 +230,9 @@ public class Gs1OrderXmlGenerator {
 			}
 		}
 		return number;
+	}
+
+	public List<IOrderEntry> getExportedEntries() {
+		return exportedEntries;
 	}
 }

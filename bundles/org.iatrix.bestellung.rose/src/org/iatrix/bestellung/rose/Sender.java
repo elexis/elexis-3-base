@@ -52,6 +52,10 @@ public class Sender implements IDataSender {
 
 	@Override
 	public boolean canHandle(Class<? extends PersistentObject> clazz) {
+		if (ch.elexis.core.model.IOrder.class.isAssignableFrom(clazz)) {
+			xmlGenerator.setForceRandomId(true);
+			return true;
+		}
 		return clazz.equals(ch.elexis.data.Bestellung.class);
 	}
 

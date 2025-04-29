@@ -30,6 +30,7 @@ import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.IOrderEntry;
+import ch.elexis.core.model.OrderEntryState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.exchange.ArticleUtil;
 import ch.elexis.core.ui.exchange.XChangeException;
@@ -56,6 +57,11 @@ import jakarta.xml.bind.Marshaller;
 public class Gs1OrderXmlGenerator {
 
 	private List<IOrderEntry> exportedEntries = new ArrayList<>();
+	private boolean forceRandomId = false;
+
+	public void setForceRandomId(boolean forceRandom) {
+		this.forceRandomId = forceRandom;
+	}
 
 	public String createOrderXml(IOrder order) throws XChangeException {
 		if (order == null || order.getEntries().isEmpty()) {
@@ -110,7 +116,12 @@ public class Gs1OrderXmlGenerator {
 			OrderType orderType = factory.createOrderType();
 
 			EcomEntityIdentificationType entityId = new EcomEntityIdentificationType();
-			entityId.setEntityIdentification(UUID.nameUUIDFromBytes(order.getId().getBytes()).toString());
+			if (forceRandomId) {
+				entityId.setEntityIdentification(UUID.randomUUID().toString());
+				forceRandomId = false;
+			} else {
+				entityId.setEntityIdentification(UUID.nameUUIDFromBytes(order.getId().getBytes()).toString());
+			}
 			orderType.setOrderIdentification(entityId);
 
 			OrderTypeCodeType orderTypeCode = new OrderTypeCodeType();
@@ -157,6 +168,9 @@ public class Gs1OrderXmlGenerator {
 
 			int lineNumber = 1;
 			for (IOrderEntry entry : order.getEntries()) {
+				if (entry.getState() != OrderEntryState.OPEN) {
+					continue;
+				}
 				IContact artSupplier = entry.getProvider();
 
 				if (!roseSupplier.equals(artSupplier)) {

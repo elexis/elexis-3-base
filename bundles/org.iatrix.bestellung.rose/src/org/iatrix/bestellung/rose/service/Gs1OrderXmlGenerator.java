@@ -57,11 +57,6 @@ import jakarta.xml.bind.Marshaller;
 public class Gs1OrderXmlGenerator {
 
 	private List<IOrderEntry> exportedEntries = new ArrayList<>();
-	private boolean forceRandomId = false;
-
-	public void setForceRandomId(boolean forceRandom) {
-		this.forceRandomId = forceRandom;
-	}
 
 	public String createOrderXml(IOrder order) throws XChangeException {
 		if (order == null || order.getEntries().isEmpty()) {
@@ -116,14 +111,15 @@ public class Gs1OrderXmlGenerator {
 			OrderType orderType = factory.createOrderType();
 
 			EcomEntityIdentificationType entityId = new EcomEntityIdentificationType();
-			if (forceRandomId) {
+			boolean hasOrderedEntries = order.getEntries().stream()
+					.anyMatch(e -> e.getState() != null && (e.getState().equals(OrderEntryState.ORDERED)
+							|| e.getState().equals(OrderEntryState.PARTIAL_DELIVER)));
+			if (hasOrderedEntries) {
 				entityId.setEntityIdentification(UUID.randomUUID().toString());
-				forceRandomId = false;
 			} else {
 				entityId.setEntityIdentification(UUID.nameUUIDFromBytes(order.getId().getBytes()).toString());
 			}
 			orderType.setOrderIdentification(entityId);
-
 			OrderTypeCodeType orderTypeCode = new OrderTypeCodeType();
 			orderTypeCode.setValue(Constants.ORDER_TYPE_CODE);
 			orderType.setOrderTypeCode(orderTypeCode);

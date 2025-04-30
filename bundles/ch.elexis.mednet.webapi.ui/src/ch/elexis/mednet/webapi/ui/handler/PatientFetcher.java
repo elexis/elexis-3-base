@@ -36,7 +36,6 @@ import ch.elexis.mednet.webapi.core.fhir.resources.BundleResource;
 import ch.elexis.mednet.webapi.core.fhir.resources.PatientResource;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.AdjustBundleIdentifiers;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
-import ch.elexis.mednet.webapi.core.fhir.resources.util.JsonManipulator;
 
 public class PatientFetcher {
 
@@ -210,14 +209,6 @@ public class PatientFetcher {
 	    AdjustBundleIdentifiers.adjustBundleIdentifiers(patientOverviewBundle);
 
 		String bundleJsonString = ModelUtil.getFhirJson(patientOverviewBundle);
-
-		JsonManipulator manipulator = new JsonManipulator();
-		try {
-			bundleJsonString = manipulator.adjustDocumentReference(bundleJsonString);
-		} catch (IOException e) {
-			logger.error("Error when customizing the JSON: ", e);
-			return null;
-		}
 	    JsonObject payload = new JsonObject();
 	    payload.addProperty("contentType", "FHIR");
 		JsonObject contentJson = JsonParser.parseString(bundleJsonString).getAsJsonObject();

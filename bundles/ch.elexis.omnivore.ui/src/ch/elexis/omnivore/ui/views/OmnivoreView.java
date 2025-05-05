@@ -695,7 +695,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				if (filename != null) {
 					final IDocumentHandle handle = UiUtils.assimilate(filename);
 					viewer.refresh();
-					if (handle.getContentLength() < 1) {
+					if (handle != null && handle.getContentLength() < 1) {
 						SWTHelper.showError(Messages.OmnivoreView_importActionToolTip,
 								"Beim Import ist eine Fehler aufgetreten. Bitte überprüfen sie die omnivore Einstellungen, bzw. freien Speicherplatz.");
 						OmnivoreModelServiceHolder.get().remove(handle);

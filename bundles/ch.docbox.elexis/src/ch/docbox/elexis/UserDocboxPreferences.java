@@ -82,28 +82,16 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	private StringFieldEditor loginIdFieldEditor;
 	private StringFieldEditor passwordFieldEditor;
-	private StringFieldEditor secretkeyFieldEditor;
-	private StringFieldEditor proxyPortFieldEditor;
-	private StringFieldEditor proxyHostFieldEditor;
-
 	private DirectoryFieldEditor directoryFieldEditor;
-	private DirectoryFieldEditor directoryhCardEditor;
 	private Button buttonAgendaSettingsPerUser;
 
 	private Combo agendaBereichCombo;
 	private Button buttonGetAppointmentsEmergencyService;
 	private Button buttonGetAppointmentsPharmaVisits;
 	private Button buttonGetAppointmentsTerminvereinbarung;
-
-	private Button buttonUseHCard;
-
-	private Button buttonUseProxy;
-
 	private Button buttonClearDocboxInbox;
 
 	private String bereiche[];
-
-	static private boolean showSha1SecretKey = true;
 
 	protected static Log log = Log.get("UserDocboxPreferences"); //$NON-NLS-1$
 
@@ -111,47 +99,10 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		return getDocboxLoginID(true) != null && getDocboxLoginID(true).startsWith(WsClientConfig.TESTLOGINIDPREFIX);
 	}
 
-	public static String getSSOSignature(String ts, boolean old) {
-
-		String username = getDocboxLoginID(false);
-
-		String sha1Password = getSha1DocboxPassword();
-		String sha1SecretKey = getSha1DocboxSecretKey();
-
-		String message = username + ":" + ts + ":" + sha1Password; //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			// get an hmac_sha1 key from the raw key bytes
-			SecretKeySpec signingKey;
-			signingKey = new SecretKeySpec(sha1SecretKey.getBytes("UTF-8"), "HmacSHA1"); //$NON-NLS-1$//$NON-NLS-2$
-
-			// get an hmac_sha1 Mac instance and initialize with the signing key
-			Mac mac = Mac.getInstance("HmacSHA1");//$NON-NLS-1$
-			mac.init(signingKey);
-
-			// compute the hmac on input data bytes
-			byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8")); //$NON-NLS-1$
-
-			// base64-encode the hmac
-			// If desired, convert the digest into a string
-			byte[] base64 = Base64.encodeBase64(rawHmac);
-			return new String(base64);
-		} catch (java.security.NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public static String getSSOSignature(String ts) {
 		String username = getDocboxLoginID(false);
-		String sha1Password = getSha1DocboxPassword();
-		String password = "1Uc6H4!e";
-		String basicUser = "framsteg-gmbh_elexis_7247D69F";
-
-		String message = username + ":" + ts + ":" + toHex(sha1(password));
+		String basicUser = WsClientConfig.getDocboxBasicUser();
+		String message = username + ":" + ts + ":" + getSha1DocboxPassword();
 		Mac mac;
 		try {
 			mac = Mac.getInstance("HmacSHA1");
@@ -214,15 +165,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	public boolean oldAppointmentsPharmaVisits;
 	public boolean oldAppointmentsTerminvereinbarung;
 	public String oldAppointmentsBereich;
-	public boolean oldIsDocboxTest;
-	public boolean oldUseHCard;
-	public boolean oldUseProxy;
-	public String oldSecretKey;
-
-	public String proxyPort;
-	public String proxyHost;
-	public String oldProxyPort;
-	public String oldProxyHost;
 
 	public static final String NOPASSWORD = "***NONE***"; //$NON-NLS-1$
 
@@ -242,12 +184,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		oldAppointmentsPharmaVisits = isAppointmentsPharmaVisits();
 		oldAppointmentsTerminvereinbarung = isAppointmentsTerminvereinbarung();
 		oldAppointmentsBereich = getAppointmentsBereich();
-		oldUseHCard = useHCard();
-		oldUseProxy = useProxy();
-		oldProxyHost = getProxyHost();
-		oldProxyPort = getProxyPort();
-
-		oldSecretKey = getSha1DocboxSecretKey();
 
 		boolean enableForMandant = AccessControlServiceHolder.get().evaluate(EvACE.of(IUser.class, Right.UPDATE));
 
@@ -263,43 +199,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 		addField(passwordFieldEditor);
 
-		if (showSha1SecretKey) {
-			secretkeyFieldEditor = new StringFieldEditor(WsClientConfig.USR_SECRETKEY,
-					Messages.UserDocboxPreferences_SecretKey, getFieldEditorParent());
-			secretkeyFieldEditor.getTextControl(getFieldEditorParent()).setEchoChar('*'); // $NON-NLS-1$
-			secretkeyFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
-			addField(secretkeyFieldEditor);
-		}
-
-		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
-		buttonUseHCard.setText(Messages.UserDocboxPreferences_UseHCard);
-		buttonUseHCard.setSelection(useHCard());
-		buttonUseHCard.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
-		buttonUseHCard.setEnabled(enableForMandant);
-
-		directoryhCardEditor = new DirectoryFieldEditor(USR_DEFDOCBOXPATHHCARDAPI,
-				Messages.UserDocboxPreferences_PathHCardAPI, getFieldEditorParent());
-		directoryhCardEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
-		addField(directoryhCardEditor);
-
-		buttonUseProxy = new Button(getFieldEditorParent(), SWT.CHECK);
-		buttonUseProxy.setText(Messages.UserDocboxPreferences_UseProxy);
-		buttonUseProxy.setSelection(useProxy());
-		buttonUseProxy.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
-		buttonUseProxy.setEnabled(enableForMandant);
-
-		proxyHostFieldEditor = new StringFieldEditor(USR_PROXYHOST, Messages.UserDocboxPreferences_UseProxyHost,
-				getFieldEditorParent());
-		addField(proxyHostFieldEditor);
-		proxyHostFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
-		proxyPortFieldEditor = new StringFieldEditor(USR_PROXYPORT, Messages.UserDocboxPreferences_UseProxyPort,
-				getFieldEditorParent());
-		addField(proxyPortFieldEditor);
-		proxyPortFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
 		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
 				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
@@ -313,14 +212,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID,
 						loginIdFieldEditor.getStringValue());
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
-				if (showSha1SecretKey && secretkeyFieldEditor != null) {
-					ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
-							secretkeyFieldEditor.getStringValue());
-				}
-				setUseHCard(buttonUseHCard.getSelection());
-				setUseProxy(buttonUseProxy.getSelection());
-				setProxyHost(proxyHostFieldEditor.getStringValue());
-				setProxyPort(proxyPortFieldEditor.getStringValue());
 
 				jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
 				boolean isOk = performConnectionTest(message);
@@ -329,7 +220,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
 				box.setMessage(message.value);
 				box.open();
-				// }
 			}
 		});
 
@@ -457,9 +347,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static String getDocboxLoginID(boolean prefixed) {
 		String loginId = ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBXLOGINID, StringUtils.EMPTY);
-		if (!prefixed && loginId.startsWith(WsClientConfig.TESTLOGINIDPREFIX)) {
-			loginId = loginId.substring(WsClientConfig.TESTLOGINIDPREFIX.length());
-		}
 		return loginId;
 	}
 
@@ -476,7 +363,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	 */
 	public static String getSha1DocboxSecretKey() {
 		String docboxSha1SecretKey = StringUtils.EMPTY;
-		showSha1SecretKey = false;
 		if (isDocboxTest()) {
 			return CDACHServicesClient.getSHA1("docboxtest");
 		}
@@ -489,7 +375,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		} catch (Exception e) {
 			docboxSha1SecretKey = CDACHServicesClient
 					.getSHA1(ConfigServiceHolder.getMandator(WsClientConfig.USR_SECRETKEY, StringUtils.EMPTY));
-			showSha1SecretKey = true;
 		}
 		return docboxSha1SecretKey;
 	}
@@ -566,25 +451,10 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, loginIdFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
-		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI, directoryhCardEditor.getStringValue());
-		if (showSha1SecretKey) {
-			ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY, secretkeyFieldEditor.getStringValue());
-		}
 
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
 		}
-
-		if (buttonUseHCard.getSelection() != oldUseHCard) {
-			setUseHCard(buttonUseHCard.getSelection());
-		}
-
-		if (buttonUseProxy.getSelection() != oldUseProxy) {
-			setUseProxy(buttonUseProxy.getSelection());
-		}
-
-		setProxyHost(proxyHostFieldEditor.getStringValue());
-		setProxyPort(proxyPortFieldEditor.getStringValue());
 
 		if (hasAgendaPlugin()) {
 			if (!oldAppointmentsBereich.equals(getSelectedAgendaBereich())) {
@@ -619,11 +489,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, oldLoginId);
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, oldSha1Password);
-		ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY, oldSecretKey);
-		setUseHCard(oldUseHCard);
-		setUseProxy(oldUseProxy);
-		setProxyHost(oldProxyHost);
-		setProxyPort(oldProxyPort);
 
 		return true;
 	}
@@ -659,9 +524,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	public static boolean hasValidDocboxCredentials() {
 		return ((!StringUtils.EMPTY.equals(getDocboxLoginID(true))
 				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())));
-		// && !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()) //
-		// $NON-NLS-1$
-		// && !StringUtils.EMPTY.equals(getSha1DocboxSecretKey());
 	}
 
 	@Override
@@ -747,11 +609,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	public static synchronized CDACHServices getPort() {
-		System.setProperty("jna.library.path", UserDocboxPreferences.getPathHCardAPI());
-		if (UserDocboxPreferences.useProxy()) {
-			System.setProperty("https.proxyHost", UserDocboxPreferences.getProxyHost());
-			System.setProperty("https.proxyPort", UserDocboxPreferences.getProxyPort());
-		}
 		CDACHServices_Service serviceClient = new CDACHServices_Service();
 		if (UserDocboxPreferences.useHCard()) {
 			new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false), null).setProxyPort();
@@ -776,27 +633,4 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 						|| UserDocboxPreferences.isAppointmentsEmergencyService()
 						|| UserDocboxPreferences.isAppointmentsTerminvereinbarung());
 	}
-
-	public static String getProxyHost() {
-		if (CoreHub.getLoggedInContact() == null || !ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			return StringUtils.EMPTY;
-		}
-		return ConfigServiceHolder.getMandator(USR_PROXYHOST, StringUtils.EMPTY); // $NON-NLS-1$
-	}
-
-	public static void setProxyHost(String proxyHost) {
-		ConfigServiceHolder.setMandator(USR_PROXYHOST, proxyHost); // $NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	public static String getProxyPort() {
-		if (CoreHub.getLoggedInContact() == null || !ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			return StringUtils.EMPTY;
-		}
-		return ConfigServiceHolder.getMandator(USR_PROXYPORT, StringUtils.EMPTY); // $NON-NLS-1$
-	}
-
-	public static void setProxyPort(String proxyPort) {
-		ConfigServiceHolder.setMandator(USR_PROXYPORT, proxyPort); // $NON-NLS-1$ //$NON-NLS-2$
-	}
-
 }

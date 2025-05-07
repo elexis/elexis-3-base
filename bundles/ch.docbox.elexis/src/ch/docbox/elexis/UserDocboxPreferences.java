@@ -99,7 +99,12 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		return getDocboxLoginID(true) != null && getDocboxLoginID(true).startsWith(WsClientConfig.TESTLOGINIDPREFIX);
 	}
 
+<<<<<<< HEAD
 	public static String getSSOSignature(String ts) {
+=======
+	public static String getSSOSignature(String ts, boolean old) {
+
+>>>>>>> 3d29ff127 (Added basic authentication)
 		String username = getDocboxLoginID(false);
 		String basicUser = WsClientConfig.getDocboxBasicUser();
 		String message = username + ":" + ts + ":" + getSha1DocboxPassword();
@@ -122,6 +127,35 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		return null;
 	}
 
+<<<<<<< HEAD
+=======
+	public static String getSSOSignature(String ts) {
+		String username = getDocboxLoginID(false);
+		String sha1Password = getSha1DocboxPassword();
+		String password = "1Uc6H4!e";
+		String basicUser = "framsteg-gmbh_elexis_7247D69F";
+
+		String message = username + ":" + ts + ":" + toHex(sha1(password));
+		Mac mac;
+		try {
+			mac = Mac.getInstance("HmacSHA1");
+			mac.init(new SecretKeySpec(toHex(sha1(basicUser)).getBytes("UTF-8"), "HmacSHA1"));
+			Base64 base64 = new Base64();
+			return new String(base64.encode(mac.doFinal(message.getBytes("UTF-8"))));
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+>>>>>>> 3d29ff127 (Added basic authentication)
 	// Helper method to obtain SHA1 hash
 	static byte[] sha1(String text) {
 		try {
@@ -191,9 +225,13 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		oldProxyHost = getProxyHost();
 		oldProxyPort = getProxyPort();
 
+<<<<<<< HEAD
 		// oldSecretKey = getSha1DocboxSecretKey();
 		oldSecretKey = "";
 >>>>>>> ac405911c (Removed unused references)
+=======
+		oldSecretKey = getSha1DocboxSecretKey();
+>>>>>>> 3d29ff127 (Added basic authentication)
 
 		boolean enableForMandant = AccessControlServiceHolder.get().evaluate(EvACE.of(IUser.class, Right.UPDATE));
 
@@ -209,6 +247,48 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 		addField(passwordFieldEditor);
 
+<<<<<<< HEAD
+		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
+				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+=======
+		if (showSha1SecretKey) {
+			secretkeyFieldEditor = new StringFieldEditor(WsClientConfig.USR_SECRETKEY,
+					Messages.UserDocboxPreferences_SecretKey, getFieldEditorParent());
+			secretkeyFieldEditor.getTextControl(getFieldEditorParent()).setEchoChar('*'); // $NON-NLS-1$
+			secretkeyFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
+
+			addField(secretkeyFieldEditor);
+		}
+
+		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
+		buttonUseHCard.setText(Messages.UserDocboxPreferences_UseHCard);
+		buttonUseHCard.setSelection(useHCard());
+		buttonUseHCard.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
+		buttonUseHCard.setEnabled(enableForMandant);
+
+		directoryhCardEditor = new DirectoryFieldEditor(USR_DEFDOCBOXPATHHCARDAPI,
+				Messages.UserDocboxPreferences_PathHCardAPI, getFieldEditorParent());
+		directoryhCardEditor.setEnabled(enableForMandant, getFieldEditorParent());
+
+		addField(directoryhCardEditor);
+>>>>>>> 3d29ff127 (Added basic authentication)
+
+		buttonUseProxy = new Button(getFieldEditorParent(), SWT.CHECK);
+		buttonUseProxy.setText(Messages.UserDocboxPreferences_UseProxy);
+		buttonUseProxy.setSelection(useProxy());
+		buttonUseProxy.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
+		buttonUseProxy.setEnabled(enableForMandant);
+
+		proxyHostFieldEditor = new StringFieldEditor(USR_PROXYHOST, Messages.UserDocboxPreferences_UseProxyHost,
+				getFieldEditorParent());
+		addField(proxyHostFieldEditor);
+		proxyHostFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
+
+		proxyPortFieldEditor = new StringFieldEditor(USR_PROXYPORT, Messages.UserDocboxPreferences_UseProxyPort,
+				getFieldEditorParent());
+		addField(proxyPortFieldEditor);
+		proxyPortFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
+
 		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
 				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
@@ -222,8 +302,20 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID,
 						loginIdFieldEditor.getStringValue());
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
+<<<<<<< HEAD
 
 <<<<<<< HEAD
+=======
+				if (showSha1SecretKey && secretkeyFieldEditor != null) {
+					ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
+							secretkeyFieldEditor.getStringValue());
+				}
+				setUseHCard(buttonUseHCard.getSelection());
+				setUseProxy(buttonUseProxy.getSelection());
+				setProxyHost(proxyHostFieldEditor.getStringValue());
+				setProxyPort(proxyPortFieldEditor.getStringValue());
+
+>>>>>>> 3d29ff127 (Added basic authentication)
 				jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
 				boolean isOk = performConnectionTest(message);
 				MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
@@ -231,6 +323,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
 				box.setMessage(message.value);
 				box.open();
+<<<<<<< HEAD
 =======
 
 					jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
@@ -241,6 +334,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 					box.setMessage(message.value);
 					box.open();
 >>>>>>> c859fb9f6 (Temporary changes to Docbox in order to replace legacy key authentication)
+=======
+				// }
+>>>>>>> 3d29ff127 (Added basic authentication)
 			}
 		});
 
@@ -451,9 +547,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	public static String getDocboxBrowserUrl() {
 		String host = getBrowserHost(); // $NON-NLS-1$
 		String cgibin = "cgi-bin"; //$NON-NLS-1$
-		return "https://" + host + "/" + cgibin + "/WebObjects/docbox.woa/wa/default"; //$NON-NLS-3$ //$NON-NLS-2$
-		// return "https://" + host + "/" + cgibin +
-		// "/WebObjects/docbox.woa/ws/CDACHServicesV2"; //$NON-NLS-1$//$NON-NLS-2$
+		return "https://" + host + "/" + cgibin + "/WebObjects/docbox.woa/wa/default"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public static String getDocboxServiceUrl() {
@@ -474,6 +568,13 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, loginIdFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
+<<<<<<< HEAD
+=======
+		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI, directoryhCardEditor.getStringValue());
+		if (showSha1SecretKey) {
+			ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY, secretkeyFieldEditor.getStringValue());
+		}
+>>>>>>> 3d29ff127 (Added basic authentication)
 
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
@@ -485,12 +586,12 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			setUseHCard(buttonUseHCard.getSelection());
 		}
 
-		// if (buttonUseProxy.getSelection() != oldUseProxy) {
-		// setUseProxy(buttonUseProxy.getSelection());
-		// }
+		if (buttonUseProxy.getSelection() != oldUseProxy) {
+			setUseProxy(buttonUseProxy.getSelection());
+		}
 
-		// setProxyHost(proxyHostFieldEditor.getStringValue());
-		// setProxyPort(proxyPortFieldEditor.getStringValue());
+		setProxyHost(proxyHostFieldEditor.getStringValue());
+		setProxyPort(proxyPortFieldEditor.getStringValue());
 
 >>>>>>> c859fb9f6 (Temporary changes to Docbox in order to replace legacy key authentication)
 		if (hasAgendaPlugin()) {
@@ -561,6 +662,12 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	public static boolean hasValidDocboxCredentials() {
 		return ((!StringUtils.EMPTY.equals(getDocboxLoginID(true))
 				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())));
+<<<<<<< HEAD
+=======
+		// && !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()) //
+		// $NON-NLS-1$
+		// && !StringUtils.EMPTY.equals(getSha1DocboxSecretKey());
+>>>>>>> 3d29ff127 (Added basic authentication)
 	}
 
 	@Override

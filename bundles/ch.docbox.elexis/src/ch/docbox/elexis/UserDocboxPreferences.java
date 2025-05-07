@@ -16,6 +16,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -109,7 +111,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		return getDocboxLoginID(true) != null && getDocboxLoginID(true).startsWith(WsClientConfig.TESTLOGINIDPREFIX);
 	}
 
-	public static String getSSOSignature(String ts) {
+	public static String getSSOSignature(String ts, boolean old) {
 
 		String username = getDocboxLoginID(false);
 
@@ -141,6 +143,55 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static String getSSOSignature(String ts) {
+		String username = getDocboxLoginID(false);
+		String sha1Password = getSha1DocboxPassword();
+		String password = "1Uc6H4!e";
+		String basicUser = "framsteg-gmbh_elexis_7247D69F";
+
+		String message = username + ":" + ts + ":" + toHex(sha1(password));
+		Mac mac;
+		try {
+			mac = Mac.getInstance("HmacSHA1");
+			mac.init(new SecretKeySpec(toHex(sha1(basicUser)).getBytes("UTF-8"), "HmacSHA1"));
+			Base64 base64 = new Base64();
+			return new String(base64.encode(mac.doFinal(message.getBytes("UTF-8"))));
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// Helper method to obtain SHA1 hash
+	static byte[] sha1(String text) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA");
+			md.update(text.getBytes("UTF-8"));
+			return md.digest();
+		} catch (final Exception e) {
+			return null;
+			// Error
+		}
+	}
+
+	// Helper method to convert bytes to Hexadecimal form
+	private static String toHex(final byte[] v) {
+		char[] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		String out = "";
+
+		for (final byte element : v) {
+			out = out + hex[(element >> 4) & 0xF] + hex[element & 0xF];
+		}
+		return out;
 	}
 
 	public static final String ID = "ch.docbox.elexis.UserDocboxPreferences";//$NON-NLS-1$
@@ -196,8 +247,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		oldProxyHost = getProxyHost();
 		oldProxyPort = getProxyPort();
 
-		// oldSecretKey = getSha1DocboxSecretKey();
-		oldSecretKey = "";
+		oldSecretKey = getSha1DocboxSecretKey();
 
 		boolean enableForMandant = AccessControlServiceHolder.get().evaluate(EvACE.of(IUser.class, Right.UPDATE));
 
@@ -213,6 +263,15 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 		addField(passwordFieldEditor);
 
+		if (showSha1SecretKey) {
+			secretkeyFieldEditor = new StringFieldEditor(WsClientConfig.USR_SECRETKEY,
+					Messages.UserDocboxPreferences_SecretKey, getFieldEditorParent());
+			secretkeyFieldEditor.getTextControl(getFieldEditorParent()).setEchoChar('*'); // $NON-NLS-1$
+			secretkeyFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
+
+			addField(secretkeyFieldEditor);
+		}
+
 		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
 		buttonUseHCard.setText(Messages.UserDocboxPreferences_UseHCard);
 		buttonUseHCard.setSelection(useHCard());
@@ -224,6 +283,25 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		directoryhCardEditor.setEnabled(enableForMandant, getFieldEditorParent());
 
 		addField(directoryhCardEditor);
+
+		buttonUseProxy = new Button(getFieldEditorParent(), SWT.CHECK);
+		buttonUseProxy.setText(Messages.UserDocboxPreferences_UseProxy);
+		buttonUseProxy.setSelection(useProxy());
+		buttonUseProxy.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
+		buttonUseProxy.setEnabled(enableForMandant);
+
+		proxyHostFieldEditor = new StringFieldEditor(USR_PROXYHOST, Messages.UserDocboxPreferences_UseProxyHost,
+				getFieldEditorParent());
+		addField(proxyHostFieldEditor);
+		proxyHostFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
+
+		proxyPortFieldEditor = new StringFieldEditor(USR_PROXYPORT, Messages.UserDocboxPreferences_UseProxyPort,
+				getFieldEditorParent());
+		addField(proxyPortFieldEditor);
+		proxyPortFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
+
+		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
+				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
 		Button docboxConnectionTestButton = new Button(getFieldEditorParent(), SWT.PUSH);
 		docboxConnectionTestButton.addSelectionListener(new SelectionAdapter() {
@@ -240,15 +318,18 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 							secretkeyFieldEditor.getStringValue());
 				}
 				setUseHCard(buttonUseHCard.getSelection());
+				setUseProxy(buttonUseProxy.getSelection());
+				setProxyHost(proxyHostFieldEditor.getStringValue());
+				setProxyPort(proxyPortFieldEditor.getStringValue());
 
-
-					jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
-					boolean isOk = performConnectionTest(message);
-					MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
-							(isOk ? SWT.ICON_WORKING : SWT.ICON_ERROR));
-					box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
-					box.setMessage(message.value);
-					box.open();
+				jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
+				boolean isOk = performConnectionTest(message);
+				MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
+						(isOk ? SWT.ICON_WORKING : SWT.ICON_ERROR));
+				box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
+				box.setMessage(message.value);
+				box.open();
+				// }
 			}
 		});
 
@@ -464,9 +545,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	public static String getDocboxBrowserUrl() {
 		String host = getBrowserHost(); // $NON-NLS-1$
 		String cgibin = "cgi-bin"; //$NON-NLS-1$
-		return "https://" + host + "/" + cgibin + "/WebObjects/docbox.woa/wa/default"; //$NON-NLS-3$ //$NON-NLS-2$
-		// return "https://" + host + "/" + cgibin +
-		// "/WebObjects/docbox.woa/ws/CDACHServicesV2"; //$NON-NLS-1$//$NON-NLS-2$
+		return "https://" + host + "/" + cgibin + "/WebObjects/docbox.woa/wa/default"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public static String getDocboxServiceUrl() {
@@ -488,10 +567,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI, directoryhCardEditor.getStringValue());
-		// if (showSha1SecretKey) {
-		// ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
-		// secretkeyFieldEditor.getStringValue());
-		// }
+		if (showSha1SecretKey) {
+			ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY, secretkeyFieldEditor.getStringValue());
+		}
 
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
@@ -501,12 +579,12 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			setUseHCard(buttonUseHCard.getSelection());
 		}
 
-		// if (buttonUseProxy.getSelection() != oldUseProxy) {
-		// setUseProxy(buttonUseProxy.getSelection());
-		// }
+		if (buttonUseProxy.getSelection() != oldUseProxy) {
+			setUseProxy(buttonUseProxy.getSelection());
+		}
 
-		// setProxyHost(proxyHostFieldEditor.getStringValue());
-		// setProxyPort(proxyPortFieldEditor.getStringValue());
+		setProxyHost(proxyHostFieldEditor.getStringValue());
+		setProxyPort(proxyPortFieldEditor.getStringValue());
 
 		if (hasAgendaPlugin()) {
 			if (!oldAppointmentsBereich.equals(getSelectedAgendaBereich())) {
@@ -580,7 +658,10 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static boolean hasValidDocboxCredentials() {
 		return ((!StringUtils.EMPTY.equals(getDocboxLoginID(true))
-				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()); // $NON-NLS-1$
+				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())));
+		// && !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()) //
+		// $NON-NLS-1$
+		// && !StringUtils.EMPTY.equals(getSha1DocboxSecretKey());
 	}
 
 	@Override

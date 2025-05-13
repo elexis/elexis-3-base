@@ -53,7 +53,7 @@ public class ClustertecPrescriptionFactory {
 		PatientAddress ret = new ObjectFactory().createPatientAddress();
 		setAddress(ret, patient);
 		if (patient.getDateOfBirth() != null) {
-			ret.setBirthday(DateTimeFormatter.ofPattern("dd.MM.yyyy").format(patient.getDateOfBirth()));
+			ret.setBirthday(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(patient.getDateOfBirth()));
 		}
 		ret.setLangCode(1);
 		ret.setSex(patient.getGender() == Gender.MALE ? 1 : 2);
@@ -122,7 +122,7 @@ public class ClustertecPrescriptionFactory {
 			ret.setRepetition(numberOfRepetitions > 0);
 		}
 		if (validityRepetition != null) {
-			ret.setValidityRepetition(DateTimeFormatter.ofPattern("dd.MM.yyyy").format(validityRepetition));
+			ret.setValidityRepetition(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(validityRepetition));
 			ret.setRepetition(true);
 		}
 		Insurance clustertecInsurance = new ObjectFactory().createInsurance();

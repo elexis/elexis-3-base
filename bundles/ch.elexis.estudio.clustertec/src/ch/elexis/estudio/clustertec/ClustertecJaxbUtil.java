@@ -80,7 +80,7 @@ public class ClustertecJaxbUtil {
 	public static boolean marshalOrder(Order clustertecOrder, OutputStream outStream) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Order.class);
-			Marshaller marshaller = initMarshaller(jaxbContext, "http://estudio.clustertec.ch/schemas/order.xsd");
+			Marshaller marshaller = initMarshaller(jaxbContext, "http://estudio.clustertec.ch/schemas/order.xsd", true);
 			marshaller.marshal(clustertecOrder, outStream);
 			return true;
 		} catch (JAXBException e) {
@@ -89,6 +89,12 @@ public class ClustertecJaxbUtil {
 		}
 	}
 
+	/**
+	 * Use JAXB to marshal the {@link Order} to the returned String.
+	 * 
+	 * @param clustertecOrder
+	 * @return
+	 */
 	public static String marshalOrder(Order clustertecOrder) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		marshalOrder(clustertecOrder, out);
@@ -104,13 +110,18 @@ public class ClustertecJaxbUtil {
 	 * @return {@link Marshaller} marshaller
 	 * @throws JAXBException if creating marshaller from jaxbContext failed
 	 */
-	private static Marshaller initMarshaller(JAXBContext jaxbContext, String schemaLocation) throws JAXBException {
+	private static Marshaller initMarshaller(JAXBContext jaxbContext, String schemaLocation, boolean addDefaultHeader)
+			throws JAXBException {
 
 		Marshaller marshaller = jaxbContext.createMarshaller();
 		try {
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-			marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
-			marshaller.setProperty(JAXB_HEADER_KEY, DEFAULT_HEADER);
+			if (schemaLocation != null) {
+				marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
+			}
+			if (addDefaultHeader) {
+				marshaller.setProperty(JAXB_HEADER_KEY, DEFAULT_HEADER);
+			}
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
 			return marshaller;
@@ -120,6 +131,12 @@ public class ClustertecJaxbUtil {
 		return marshaller;
 	}
 
+	/**
+	 * Use JAXB to marshal the {@link Prescription} to the returned String.
+	 * 
+	 * @param clustertecPrescription
+	 * @return
+	 */
 	public static String marshalPrescription(Prescription clustertecPrescription) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		marshalPrescription(clustertecPrescription, out);
@@ -130,7 +147,7 @@ public class ClustertecJaxbUtil {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Prescription.class);
 			Marshaller marshaller = initMarshaller(jaxbContext,
-					"http://estudio.clustertec.ch/schemas/prescription.xsd");
+					"http://estudio.clustertec.ch/schemas/prescription.xsd", false);
 			marshaller.marshal(clustertecPrescription, outStream);
 			return true;
 		} catch (JAXBException e) {

@@ -31,6 +31,10 @@ public class BarcodeCreator {
 		return output;
 	}
 
+	public static String createInternalCode128FromArticleString(String article) {
+		return article;
+	}
+
 	public static String createInternalCode128FromKontaktPatNrString(IContact pat) {
 		String output = null;
 		if (pat != null && pat.isPatient()) {

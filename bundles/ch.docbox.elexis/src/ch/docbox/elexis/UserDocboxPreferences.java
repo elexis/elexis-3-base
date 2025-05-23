@@ -610,9 +610,10 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static synchronized CDACHServices getPort() {
 		CDACHServices_Service serviceClient = new CDACHServices_Service();
-		if (UserDocboxPreferences.useHCard()) {
-			new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false), null).setProxyPort();
-		}
+		// if (UserDocboxPreferences.useHCard()) {
+		// new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false),
+		// null).setProxyPort();
+		// }
 		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(serviceClient, WsClientConfig.getUsername(),
 				WsClientConfig.getPassword());
 

@@ -240,11 +240,6 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>com.fasterxml.jackson.core.jackson-core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.e4.ui.model.workbench</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -305,11 +300,6 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-adapter-spi</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.pde.junit.runtime</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -321,11 +311,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.eclipse.equinox.bidi</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-adapter-core</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -376,11 +361,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.eclipse.jdt.junit4.runtime</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>com.fasterxml.jackson.core.jackson-annotations</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -635,11 +615,6 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>com.healthmarketscience.jackcess</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -765,11 +740,6 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-authz-client</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>jakarta.enterprise.cdi-api</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -855,11 +825,6 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>com.fasterxml.jackson.core.jackson-databind</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.core.resources</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -926,11 +891,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.eclipse.ui</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-common</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

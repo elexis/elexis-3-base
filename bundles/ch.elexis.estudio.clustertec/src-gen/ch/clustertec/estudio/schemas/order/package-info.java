@@ -5,5 +5,5 @@
 // Generiert: 2025.04.09 um 01:08:44 PM CEST 
 //
 
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://estudio.clustertec.ch/schemas/order", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://estudio.clustertec.ch/schemas/order", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package ch.clustertec.estudio.schemas.order;

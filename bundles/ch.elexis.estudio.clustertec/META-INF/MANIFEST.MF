@@ -7,10 +7,10 @@ Export-Package: ch.clustertec.estudio.schemas.order,
  ch.elexis.estudio.clustertec
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.estudio.clustertec
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: ch.elexis.core.data.interfaces,
  ch.elexis.core.model,
- jakarta.xml.bind;version="[4.0.0,5.0.0)",
- jakarta.xml.bind.annotation;version="[4.0.0,5.0.0)",
+ javax.xml.bind,
+ javax.xml.bind.annotation,
  org.slf4j;version="[1.7.0,2.0.0)"
 Require-Bundle: org.apache.commons.lang3

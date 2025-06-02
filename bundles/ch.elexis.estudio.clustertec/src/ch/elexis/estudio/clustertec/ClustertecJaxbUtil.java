@@ -6,6 +6,11 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -23,11 +28,6 @@ import org.xml.sax.InputSource;
 
 import ch.clustertec.estudio.schemas.order.Order;
 import ch.clustertec.estudio.schemas.order.OrderResponse;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.PropertyException;
-import jakarta.xml.bind.Unmarshaller;
 
 public class ClustertecJaxbUtil {
 

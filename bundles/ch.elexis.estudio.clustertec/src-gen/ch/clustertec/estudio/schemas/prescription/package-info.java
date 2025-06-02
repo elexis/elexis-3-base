@@ -5,5 +5,5 @@
 // Generiert: 2025.04.23 um 10:18:39 AM CEST 
 //
 
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://estudio.clustertec.ch/schemas/prescription", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://estudio.clustertec.ch/schemas/prescription", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package ch.clustertec.estudio.schemas.prescription;

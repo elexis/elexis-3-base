@@ -250,8 +250,9 @@ public class FindingsView extends ViewPart implements IRefreshable {
 
 		private void sort(int i, int j) {
 			if (flds != null) {
-				String[] values = new String[flds.length];
-				for (int fldIdx = 0; fldIdx < flds.length; fldIdx++) {
+				int columnCount = table.getColumnCount();
+				String[] values = new String[columnCount];
+				for (int fldIdx = 0; fldIdx < columnCount; fldIdx++) {
 					values[fldIdx] = items[i].getText(fldIdx);
 				}
 				items[i].dispose();

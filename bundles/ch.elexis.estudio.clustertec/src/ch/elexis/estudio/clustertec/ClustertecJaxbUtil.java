@@ -80,7 +80,8 @@ public class ClustertecJaxbUtil {
 	public static boolean marshalOrder(Order clustertecOrder, OutputStream outStream) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Order.class);
-			Marshaller marshaller = initMarshaller(jaxbContext, "http://estudio.clustertec.ch/schemas/order.xsd", true);
+			Marshaller marshaller = initMarshaller(jaxbContext, "http://estudio.clustertec.ch/schemas/order.xsd",
+					false);
 			marshaller.marshal(clustertecOrder, outStream);
 			return true;
 		} catch (JAXBException e) {
@@ -146,8 +147,8 @@ public class ClustertecJaxbUtil {
 	public static boolean marshalPrescription(Prescription clustertecPrescription, OutputStream outStream) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Prescription.class);
-			Marshaller marshaller = initMarshaller(jaxbContext,
-					"http://estudio.clustertec.ch/schemas/prescription.xsd", false);
+			Marshaller marshaller = initMarshaller(jaxbContext, "http://estudio.clustertec.ch/schemas/prescription.xsd",
+					false);
 			marshaller.marshal(clustertecPrescription, outStream);
 			return true;
 		} catch (JAXBException e) {

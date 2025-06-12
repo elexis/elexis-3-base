@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -131,6 +132,7 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter i
 			physio.setTp(line[2]);
 			physio.setValidFrom(validFrom);
 			physio.setValidUntil(null);
+			physio.setLaw(getLaw());
 			if (lineHasFixPrice(line)) {
 				applyFixPrice(physio, line[3]);
 			}
@@ -156,6 +158,7 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter i
 					newPhysio.setTp(line[2]);
 					newPhysio.setValidFrom(validFrom);
 					newPhysio.setValidUntil(null);
+					newPhysio.setLaw(getLaw());
 					if (lineHasFixPrice(line)) {
 						applyFixPrice(newPhysio, line[3]);
 					}
@@ -195,5 +198,9 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter i
 			}
 		}
 		return -1;
+	}
+
+	protected String getLaw() {
+		return StringUtils.EMPTY;
 	}
 }

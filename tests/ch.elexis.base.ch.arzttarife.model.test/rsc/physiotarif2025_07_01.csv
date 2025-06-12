@@ -1,0 +1,24 @@
+"Ziffer";"Text";"TP";"Fixpreis"
+"25.110";"Patientenbehandlung (Einzelsetting), pro 5 Min.";"1003";
+"25.120";"Patientenbehandlung Hippotherapie (Einzelsetting), pro 5 Min.";"1826";
+"25.130";"Durchführung von Wohnungs- oder Arbeitsplatzabklärungen, pro 5 Min.";"1003";
+"25.210";"Patientenbehandlung Robotik obere Extremität (Einzelsetting), pro 5 Min.";"1157";
+"25.220";"Patientenbehandlung Robotik untere Extremität (Einzelsetting), pro 5 Min.";"1444";
+"25.310";"Patientenbehandlung (Einzelsetting) auf räumliche Distanz, pro 5 Minuten";"1003";
+"25.410";"Patientenbehandlung (Gruppensetting), pro 5 Min.";"1038";
+"25.510";"MTT-Einführung/Reevaluation (Einzelsetting), pro 5 Min.";"1023";
+"25.520";"MTT-Training (selbständig)";"4847";
+"25.610";"Zuschlag für zweiten Physiotherapeuten im Einzelsetting, pro 5 Min.";"928";
+"25.620";"Zuschlag für zweiten Physiotherapeuten im Gruppensetting, pro 5 Min.";"928";
+"25.630";"Zuschlag für die Behandlung an Sonn- und gesetzlichen Feiertagen, pro 5 Min.";"365";
+"25.640";"Zuschlag für Geh-, Schwimmbad Einzelsetting";"3000";
+"25.650";"Zuschlag für Geh-, Schwimmbad Gruppensetting";"1500";
+"25.710";"Auswertungs- und Koordinationsaufgaben in Abwesenheit des Patienten, pro 5 Min.";"972";
+"25.720";"Besprechung/Beratung in An- oder Abwesenheit des Patienten, pro 5 Min.";"972";
+"25.730";"Bericht 1 - Formalisierter Bericht";"2620";
+"25.740";"Bericht 2 - Formalisierter oder nicht formalisierter Bericht";"5240";
+"25.750";"Bericht 3 - Formalisierter oder nicht formalisierter Bericht";"10480";
+"25.760";"Herstellen und Anpassen von Schienen in Abwesenheit des Patienten, pro 5 Min.";"972";
+"25.770";"Wegentschädigung pro Min.";"232";
+"25.810";"Patientenspezifisches Behandlungsmaterial";;
+"25.820";"Zuschlag für die Behandlung von Beckenbodendysfunktionen in der Einzeltherapie";"500";

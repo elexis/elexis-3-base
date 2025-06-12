@@ -3,6 +3,7 @@
  */
 package ch.elexis.base.ch.arzttarife.psycho.impl;
 
+import ch.elexis.base.ch.arzttarife.psycho.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;

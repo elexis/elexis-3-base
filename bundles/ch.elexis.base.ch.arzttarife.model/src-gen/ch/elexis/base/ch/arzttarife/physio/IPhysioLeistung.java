@@ -22,6 +22,7 @@ import ch.elexis.core.model.IBillable;
  *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getTP <em>TP</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getZiffer <em>Ziffer</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getDescription <em>Description</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getLaw <em>Law</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.physio.PhysioPackage#getIPhysioLeistung()
@@ -159,4 +160,15 @@ public interface IPhysioLeistung extends IBillable {
 	 * @generated
 	 */
 	void setDescription(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Law</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Law</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.physio.PhysioPackage#getIPhysioLeistung_Law()
+	 * @model changeable="false"
+	 * @generated
+	 */
+	String getLaw();
 } // IPhysioLeistung

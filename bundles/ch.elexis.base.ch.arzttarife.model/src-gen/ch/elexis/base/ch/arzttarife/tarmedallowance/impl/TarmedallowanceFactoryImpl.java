@@ -3,6 +3,7 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmedallowance.impl;
 
+import ch.elexis.base.ch.arzttarife.tarmedallowance.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;

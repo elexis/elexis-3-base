@@ -98,6 +98,7 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/TP"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/ziffer"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/description"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/law"/>
       </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="Complementary" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//complementary">

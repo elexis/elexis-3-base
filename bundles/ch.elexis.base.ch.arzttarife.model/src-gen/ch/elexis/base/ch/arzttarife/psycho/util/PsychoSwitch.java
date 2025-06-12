@@ -4,15 +4,15 @@
 package ch.elexis.base.ch.arzttarife.psycho.util;
 
 import ch.elexis.base.ch.arzttarife.psycho.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 
+import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-
-import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->

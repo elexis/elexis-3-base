@@ -4,14 +4,14 @@
 package ch.elexis.base.ch.arzttarife.psycho.impl;
 
 import ch.elexis.base.ch.arzttarife.psycho.*;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+import ch.elexis.base.ch.arzttarife.psycho.PsychoFactory;
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
 
 /**
  * <!-- begin-user-doc -->

@@ -16,8 +16,14 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -41,7 +47,8 @@ public class PhysioImporter extends ImporterPage {
 
 	private TimeTool validFrom = new TimeTool();
 
-	private TimeTool endOfEpoch = new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
+	String selectedLaw = StringUtils.EMPTY;
+	String[] availableLaws = new String[] { StringUtils.EMPTY, "KVG", "UVG", "MVG", "IVG" };
 
 	@Inject
 	private IReferenceDataImporterService importerService;
@@ -98,16 +105,55 @@ public class PhysioImporter extends ImporterPage {
 		validDate.setDate(validFrom.get(TimeTool.YEAR), validFrom.get(TimeTool.MONTH),
 				validFrom.get(TimeTool.DAY_OF_MONTH));
 
+		lbl = new Label(validDateComposite, SWT.NONE);
+		lbl.setText("Gesetz des Datensatz (relevant ab 1 Juli 2025)");
+		final ComboViewer lawCombo = new ComboViewer(validDateComposite, SWT.BORDER);
+
+		lawCombo.setContentProvider(ArrayContentProvider.getInstance());
+		lawCombo.setInput(availableLaws);
+		lawCombo.setSelection(new StructuredSelection(selectedLaw));
+		lawCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				StructuredSelection selection = (StructuredSelection) event.getSelection();
+				if (selection != null && !selection.isEmpty()) {
+					selectedLaw = (String) selection.getFirstElement();
+				} else {
+					selectedLaw = StringUtils.EMPTY;
+				}
+			}
+		});
+
+		fd = new FormData();
+		fd.top = new FormAttachment(validDate, 5);
+		fd.left = new FormAttachment(0, 0);
+		lbl.setLayoutData(fd);
+
+		fd = new FormData();
+		fd.top = new FormAttachment(validDate, 5);
+		fd.left = new FormAttachment(lbl, 5);
+		lawCombo.getControl().setLayoutData(fd);
+
 		return fis;
 	}
 
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		try (FileInputStream tarifInputStream = new FileInputStream(results[0])) {
-			IReferenceDataImporter importer = importerService.getImporter("physio")
-					.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
+			IReferenceDataImporter importer = getImporter();
 			return importer.performImport(monitor, tarifInputStream, getVersionFromValid(validFrom));
 		}
+	}
+
+	private IReferenceDataImporter getImporter() {
+		// special importers since 1.7.2025
+		if ("KVG".equals(selectedLaw)) {
+			return importerService.getImporter("physio_kvg")
+					.orElseThrow(() -> new IllegalStateException("No ReferenceDataImporter available"));
+		}
+		// default importer
+		return importerService.getImporter("physio")
+				.orElseThrow(() -> new IllegalStateException("No ReferenceDataImporter available"));
 	}
 
 	private int getVersionFromValid(TimeTool validFrom) {

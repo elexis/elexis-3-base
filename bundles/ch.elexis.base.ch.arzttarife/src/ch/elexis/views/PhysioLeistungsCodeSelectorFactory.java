@@ -14,7 +14,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -28,11 +31,10 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.ui.selectors.FieldDescriptor;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
-import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
@@ -40,6 +42,8 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
+
+	PhysioSelectorPanelProvider slp;
 	private ViewerConfigurer vc;
 
 	@Inject
@@ -66,10 +70,11 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 				}
 			}
 		});
-		FieldDescriptor<?>[] fd = new FieldDescriptor<?>[] {
-				new FieldDescriptor<IPhysioLeistung>("Ziffer", "ziffer", null),
-				new FieldDescriptor<IPhysioLeistung>("Text", "titel", null), };
-		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
+
+		slp = new PhysioSelectorPanelProvider(cv);
+
+		slp.addActions(new ToggleFiltersAction());
+
 		vc = new ViewerConfigurer(new PhysioContentProvider(cv, slp), new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
@@ -89,15 +94,6 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			IQuery<?> query = getBaseQuery();
-
-			java.util.Optional<IEncounter> encounter = ContextServiceHolder.get().getTyped(IEncounter.class);
-			encounter.ifPresent(e -> {
-				query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
-				query.startGroup();
-				query.or("validUntil", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
-				query.or("validUntil", COMPARATOR.EQUALS, null);
-				query.andJoinGroups();
-			});
 
 			// apply filters from control field provider
 			controlFieldProvider.setQuery(query);
@@ -130,5 +126,29 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public Class<?> getElementClass() {
 		return IPhysioLeistung.class;
+	}
+
+	private class ToggleFiltersAction extends Action {
+
+		public ToggleFiltersAction() {
+			super(StringUtils.EMPTY, Action.AS_CHECK_BOX);
+			// initial state, active filters
+			setChecked(true);
+		}
+
+		@Override
+		public String getToolTipText() {
+			return "Kontext (Konsultation, Fall, etc.) Filter (de)aktivieren";
+		}
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
+			return Images.IMG_FILTER.getImageDescriptor();
+		}
+
+		@Override
+		public void run() {
+			slp.toggleFilters();
+		}
 	}
 }

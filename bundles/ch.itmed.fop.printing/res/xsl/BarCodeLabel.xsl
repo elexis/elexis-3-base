@@ -73,6 +73,10 @@
 					,&#160;
 					<xsl:value-of select="/Page/Case/InsurancePolicyNumber" />
 					</fo:block>
+					<fo:block>
+					Patient-Nr:
+					<xsl:value-of select="/Page/Patient/PID" />
+					</fo:block>
 					</fo:block-container>
 				</fo:flow>
 			</fo:page-sequence>

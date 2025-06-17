@@ -184,7 +184,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		oldAppointmentsPharmaVisits = isAppointmentsPharmaVisits();
 		oldAppointmentsTerminvereinbarung = isAppointmentsTerminvereinbarung();
 		oldAppointmentsBereich = getAppointmentsBereich();
-		oldSecretKey = getSha1DocboxSecretKey();
+		// oldSecretKey = getSha1DocboxSecretKey();
 
 		boolean enableForMandant = AccessControlServiceHolder.get().evaluate(EvACE.of(IUser.class, Right.UPDATE));
 
@@ -200,26 +200,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 		addField(passwordFieldEditor);
 
-<<<<<<< HEAD
-=======
-		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
-		buttonUseHCard.setText(Messages.UserDocboxPreferences_UseHCard);
-		buttonUseHCard.setSelection(useHCard());
-		buttonUseHCard.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
-		buttonUseHCard.setEnabled(enableForMandant);
-
->>>>>>> dc5f12fd1f38912b0dd630e29f36bf72b790007f
-		directoryhCardEditor = new DirectoryFieldEditor(USR_DEFDOCBOXPATHHCARDAPI,
-				Messages.UserDocboxPreferences_PathHCardAPI, getFieldEditorParent());
-		directoryhCardEditor.setEnabled(enableForMandant, getFieldEditorParent());
-
-		addField(directoryhCardEditor);
-<<<<<<< HEAD
-		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
-				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-=======
->>>>>>> dc5f12fd1f38912b0dd630e29f36bf72b790007f
-
 		Button docboxConnectionTestButton = new Button(getFieldEditorParent(), SWT.PUSH);
 		docboxConnectionTestButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -230,17 +210,11 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID,
 						loginIdFieldEditor.getStringValue());
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
-				if (showSha1SecretKey && secretkeyFieldEditor != null) {
-					ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
-							secretkeyFieldEditor.getStringValue());
-				}
-<<<<<<< HEAD
+				// if (showSha1SecretKey && secretkeyFieldEditor != null) {
+				// ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
+				// secretkeyFieldEditor.getStringValue());
+				// }
 				jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
-=======
-				setUseHCard(buttonUseHCard.getSelection());
-
-				javax.xml.ws.Holder<java.lang.String> message = new javax.xml.ws.Holder<java.lang.String>();
->>>>>>> dc5f12fd1f38912b0dd630e29f36bf72b790007f
 				boolean isOk = performConnectionTest(message);
 				MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
 						(isOk ? SWT.ICON_WORKING : SWT.ICON_ERROR));
@@ -478,10 +452,12 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, loginIdFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
-		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI, directoryhCardEditor.getStringValue());
-		if (showSha1SecretKey) {
-			ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY, secretkeyFieldEditor.getStringValue());
-		}
+		// ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI,
+		// directoryhCardEditor.getStringValue());
+		// if (showSha1SecretKey) {
+		// ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
+		// secretkeyFieldEditor.getStringValue());
+		// }
 
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
@@ -554,11 +530,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static boolean hasValidDocboxCredentials() {
 		return ((!StringUtils.EMPTY.equals(getDocboxLoginID(true))
-<<<<<<< HEAD
 				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())));
-=======
-				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()); // $NON-NLS-1$
->>>>>>> dc5f12fd1f38912b0dd630e29f36bf72b790007f
 	}
 
 	@Override
@@ -645,10 +617,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static synchronized CDACHServices getPort() {
 		CDACHServices_Service serviceClient = new CDACHServices_Service();
-		// if (UserDocboxPreferences.useHCard()) {
-		// new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false),
-		// null).setProxyPort();
-		// }
 		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(serviceClient, WsClientConfig.getUsername(),
 				WsClientConfig.getPassword());
 

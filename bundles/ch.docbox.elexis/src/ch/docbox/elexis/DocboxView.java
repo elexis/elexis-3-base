@@ -102,14 +102,17 @@ public class DocboxView extends ViewPart {
 	private String getSSOLoginParams(String page) {
 		String ts = StringUtils.EMPTY + System.currentTimeMillis() / 1000;
 		String username = UserDocboxPreferences.getDocboxLoginID(false);
+<<<<<<< HEAD
 		String signature = UserDocboxPreferences.getSSOSignature(ts);
 		String password = UserDocboxPreferences.getSha1DocboxPassword();
 		String basicUser = "framsteg-gmbh_elexis_7247D69F";
 		String sig = new String(sig(username, password, Long.parseUnsignedLong(ts), basicUser), StandardCharsets.UTF_8);
 
+=======
+>>>>>>> dc5f12fd1f38912b0dd630e29f36bf72b790007f
 		try {
-			return "?ts=" + ts + "&loginId=" + URLEncoder.encode(username, "UTF-8") + "&sig="
-					+ URLEncoder.encode(signature, "UTF-8") + "&page=" + URLEncoder.encode(page, "UTF-8");
+			return "?ts=" + ts + "&loginId=" + URLEncoder.encode(username, "UTF-8") + "&page="
+					+ URLEncoder.encode(page, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			return StringUtils.EMPTY;
 		}

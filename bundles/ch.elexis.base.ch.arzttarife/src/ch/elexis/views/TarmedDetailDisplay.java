@@ -12,6 +12,7 @@
 
 package ch.elexis.views;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -76,6 +77,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		}
 	}
 
+	@Override
 	public Composite createDisplay(Composite parent, IViewSite notUsed) {
 		tk = UiDesk.getToolkit();
 		form = tk.createScrolledForm(parent);
@@ -144,91 +146,104 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		return form.getBody();
 	}
 
+	@Override
 	public Class getElementClass() {
 		return ITarmedLeistung.class;
 	}
 
+	@Override
 	public void display(Object obj) {
 		if (obj instanceof ITarmedLeistung) {
 			actCode = (ITarmedLeistung) obj;
 			form.setText(actCode.getLabel());
-			if (inputs[0] != null) {
-				inputs[0].setText(actCode.getDigniQuanti());
-				inputs[1].setText(actCode.getDigniQuali());
-				inputs[2].setText(actCode.getSparte());
-				inputs[3].setText(TarmedDefinitionenUtil
-						.getTextForRisikoKlasse((String) actCode.getExtension().getExtInfo("ANAESTHESIE"))); //$NON-NLS-1$
-				for (int i = 4; i < fields.length - 1; i++) {
-					String val = (String) actCode.getExtension().getExtInfo(retrieve[i]);
-					if (val == null) {
-						val = StringUtils.EMPTY;
-					}
-					inputs[i].setText(val);
+			if (actCode.isChapter()) {
+				if (inputs[0] != null) {
+					Arrays.asList(inputs).forEach(i -> i.setText(StringUtils.EMPTY));
 				}
-				inputs[fields.length - 1].setText(actCode.getNickname()); // $NON-NLS-1$
-			}
-			medinter.setText(actCode.getExtension().getMedInterpretation(), false, false);
-			techinter.setText(actCode.getExtension().getTechInterpretation(), false, false);
-			List<ITarmedKumulation> kumulations = actCode.getKumulations(TarmedKumulationArt.SERVICE);
-			exclusion.setText(getKumulationsString(kumulations, actCode.getCode(), TarmedKumulationTyp.EXCLUSION),
-					false, false);
-			inclusion.setText(getKumulationsString(kumulations, actCode.getCode(), TarmedKumulationTyp.INCLUSION),
-					false, false); // $NON-NLS-1$
-			List<String> hirarchyCodes = actCode.getHierarchy(actCode.getValidFrom());
-			hirarchy.setText(String.join(", ", hirarchyCodes), false, false);
-
-			String limit = (String) actCode.getExtension().getExtInfo("limits"); //$NON-NLS-1$
-			if (limit != null) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("<form>"); //$NON-NLS-1$
-				String[] ll = limit.split("#"); //$NON-NLS-1$
-				for (String line : ll) {
-					String[] f = line.split(","); //$NON-NLS-1$
-					if (f.length == 6) {
-						sb.append("<li>"); //$NON-NLS-1$
-						if (f[0].equals("<=")) { //$NON-NLS-1$
-							sb.append(Messages.TarmedDetailDisplay_max).append(StringUtils.SPACE);
-						} else {
-							sb.append(f[0]).append(StringUtils.SPACE);
-						}
-						sb.append(f[1]).append(Messages.TarmedDetailDisplay_times);
-						if (f[3].equals("P")) { //$NON-NLS-1$
-							sb.append(Messages.TarmedDetailDisplay_per);
-						} else {
-							sb.append(Messages.TarmedDetailDisplay_after);
-						}
-						sb.append(f[2]).append(StringUtils.SPACE);
-						sb.append(TarmedDefinitionenUtil.getTextForZR_Einheit(f[4]));
-						sb.append("</li>"); //$NON-NLS-1$
-					}
-				}
-				sb.append("</form>"); //$NON-NLS-1$
-				limits.setText(sb.toString(), true, false);
-			} else {
+				exclusion.setText(StringUtils.EMPTY, false, false);
+				inclusion.setText(StringUtils.EMPTY, false, false);
+				hirarchy.setText(StringUtils.EMPTY, false, false);
+				medinter.setText(StringUtils.EMPTY, false, false);
+				techinter.setText(StringUtils.EMPTY, false, false);
 				limits.setText(StringUtils.EMPTY, false, false);
-			}
-
-			// validity
-			String text;
-			TimeTool tGueltigVon = new TimeTool(actCode.getValidFrom());
-			TimeTool tGueltigBis = new TimeTool(actCode.getValidTo());
-			if (tGueltigVon != null && tGueltigBis != null) {
-				String from = tGueltigVon.toString(TimeTool.DATE_GER);
-				String to;
-				if (tGueltigBis.isSameDay(INFINITE)) {
-					to = StringUtils.EMPTY;
-				} else {
-					to = tGueltigBis.toString(TimeTool.DATE_GER);
-				}
-				text = from + "-" + to; //$NON-NLS-1$
+				validity.setText(StringUtils.EMPTY, false, false);
 			} else {
-				text = StringUtils.EMPTY;
-			}
-			validity.setText(text, false, false);
+				if (inputs[0] != null) {
+					inputs[0].setText(actCode.getDigniQuanti());
+					inputs[1].setText(actCode.getDigniQuali());
+					inputs[2].setText(actCode.getSparte());
+					inputs[3].setText(TarmedDefinitionenUtil
+							.getTextForRisikoKlasse((String) actCode.getExtension().getExtInfo("ANAESTHESIE"))); //$NON-NLS-1$
+					for (int i = 4; i < fields.length - 1; i++) {
+						String val = (String) actCode.getExtension().getExtInfo(retrieve[i]);
+						if (val == null) {
+							val = StringUtils.EMPTY;
+						}
+						inputs[i].setText(val);
+					}
+					inputs[fields.length - 1].setText(actCode.getNickname()); // $NON-NLS-1$
+				}
+				medinter.setText(actCode.getExtension().getMedInterpretation(), false, false);
+				techinter.setText(actCode.getExtension().getTechInterpretation(), false, false);
+				List<ITarmedKumulation> kumulations = actCode.getKumulations(TarmedKumulationArt.SERVICE);
+				exclusion.setText(getKumulationsString(kumulations, actCode.getCode(), TarmedKumulationTyp.EXCLUSION),
+						false, false);
+				inclusion.setText(getKumulationsString(kumulations, actCode.getCode(), TarmedKumulationTyp.INCLUSION),
+						false, false); // $NON-NLS-1$
+				List<String> hirarchyCodes = actCode.getHierarchy(actCode.getValidFrom());
+				hirarchy.setText(String.join(", ", hirarchyCodes), false, false);
 
+				String limit = (String) actCode.getExtension().getExtInfo("limits"); //$NON-NLS-1$
+				if (limit != null) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("<form>"); //$NON-NLS-1$
+					String[] ll = limit.split("#"); //$NON-NLS-1$
+					for (String line : ll) {
+						String[] f = line.split(","); //$NON-NLS-1$
+						if (f.length == 6) {
+							sb.append("<li>"); //$NON-NLS-1$
+							if (f[0].equals("<=")) { //$NON-NLS-1$
+								sb.append(Messages.TarmedDetailDisplay_max).append(StringUtils.SPACE);
+							} else {
+								sb.append(f[0]).append(StringUtils.SPACE);
+							}
+							sb.append(f[1]).append(Messages.TarmedDetailDisplay_times);
+							if (f[3].equals("P")) { //$NON-NLS-1$
+								sb.append(Messages.TarmedDetailDisplay_per);
+							} else {
+								sb.append(Messages.TarmedDetailDisplay_after);
+							}
+							sb.append(f[2]).append(StringUtils.SPACE);
+							sb.append(TarmedDefinitionenUtil.getTextForZR_Einheit(f[4]));
+							sb.append("</li>"); //$NON-NLS-1$
+						}
+					}
+					sb.append("</form>"); //$NON-NLS-1$
+					limits.setText(sb.toString(), true, false);
+				} else {
+					limits.setText(StringUtils.EMPTY, false, false);
+				}
+
+				// validity
+				String text;
+				TimeTool tGueltigVon = new TimeTool(actCode.getValidFrom());
+				TimeTool tGueltigBis = new TimeTool(actCode.getValidTo());
+				if (tGueltigVon != null && tGueltigBis != null) {
+					String from = tGueltigVon.toString(TimeTool.DATE_GER);
+					String to;
+					if (tGueltigBis.isSameDay(INFINITE)) {
+						to = StringUtils.EMPTY;
+					} else {
+						to = tGueltigBis.toString(TimeTool.DATE_GER);
+					}
+					text = from + "-" + to; //$NON-NLS-1$
+				} else {
+					text = StringUtils.EMPTY;
+				}
+				validity.setText(text, false, false);
+			}
 			form.reflow(true);
 		}
-
 	}
 
 	private String getKumulationsString(List<ITarmedKumulation> list, String code, TarmedKumulationTyp typ) {
@@ -289,6 +304,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		return sb.toString();
 	}
 
+	@Override
 	public String getTitle() {
 		return "Tarmed"; //$NON-NLS-1$
 	}

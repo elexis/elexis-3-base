@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://estudio.clustertec.ch/schemas/prescription" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://estudio.clustertec.ch/schemas/prescription" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:appinfo>elements.xsd, © Clustertec AG - Prescription Web Service, 2005 (Beat De Martin)</xs:appinfo>
+	</xs:annotation>
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:complexType name="addressComplexType">
+		<xs:attribute name="title" type="string32" use="optional"/>
+		<xs:attribute name="titleCode" type="titleCode" use="optional"/>
+		<xs:attribute name="lastName" type="string32" use="required"/>
+		<xs:attribute name="firstName" type="string32" use="optional"/>
+		<xs:attribute name="street" type="string32" use="required"/>
+		<xs:attribute name="zipCode" type="string10" use="required"/>
+		<xs:attribute name="city" type="string32" use="required"/>
+		<xs:attribute name="kanton" type="string2" use="required"/>
+		<xs:attribute name="country" type="string2" use="optional"/>
+		<xs:attribute name="phoneNrBusiness" type="string20" use="optional"/>
+		<xs:attribute name="phoneNrHome" type="string20" use="optional"/>
+		<xs:attribute name="faxNr" type="string20" use="optional"/>
+		<xs:attribute name="email" type="string32" use="optional"/>
+	</xs:complexType>
+	<xs:element name="deliveryAddress">
+		<xs:annotation>
+			<xs:documentation>Lieferadresse</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="billingAddress">
+		<xs:annotation>
+			<xs:documentation>Rechnungsadresse</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="prescriptorAddress">
+		<xs:annotation>
+			<xs:documentation>Arztadresse</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType">
+					<xs:attribute name="langCode" type="langCode" use="required"/>
+					<xs:attribute name="clientNrClustertec" type="string6" use="required"/>
+					<xs:attribute name="zsrId" type="string7" use="required"/>
+					<xs:attribute name="eanId" type="eanId" use="optional"/>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="patientAddress">
+		<xs:annotation>
+			<xs:documentation>Patientenadresse</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType">
+					<xs:attribute name="birthday" type="string10" use="required"/>
+					<xs:attribute name="langCode" type="langCode" use="required"/>
+					<xs:attribute name="coverCardId" type="string25" use="optional"/>
+					<xs:attribute name="sex" type="sex" use="required"/>
+					<xs:attribute name="patientNr" type="string15" use="required"/>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="posology">
+		<xs:complexType>
+			<xs:attribute name="qtyMorning" type="positiveInteger3" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen morgens</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="qtyMidday" type="positiveInteger3" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen mittags</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="qtyEvening" type="positiveInteger3" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen abends</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="qtyNight" type="positiveInteger3" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen nachts</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="qtyMorningString" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen morgens</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="qtyMiddayString" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen mittags</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="qtyEveningString" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen abends</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="qtyNightString" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Einnahmen nachts</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="posologyText" type="string80" use="optional"/>
+			<xs:attribute name="label" type="xs:boolean" use="optional">
+				<xs:annotation>
+					<xs:documentation>Etikett aufkleben ?</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="insurance">
+		<xs:complexType>
+			<xs:attribute name="eanId" type="eanId" use="optional"/>
+			<xs:attribute name="bsvNr" type="string7" use="optional"/>
+			<xs:attribute name="insuranceName" type="string32" use="optional">
+				<xs:annotation>
+					<xs:documentation>Bei billingType=1 muss die Versicherung mitgegeben werden.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="billingType" type="billingType" use="required"/>
+			<xs:attribute name="insureeNr" type="string20" use="optional">
+				<xs:annotation>
+					<xs:documentation>Nummer des Versicherten</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="product">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="posology" minOccurs="0"/>
+				<xs:element ref="insurance"/>
+			</xs:all>
+			<xs:attribute name="pharmacode" type="pharmaCode" use="required"/>
+			<xs:attribute name="eanId" type="eanId" use="optional"/>
+			<xs:attribute name="description" type="string50" use="optional">
+				<xs:annotation>
+					<xs:documentation>Artikelbezeichnung</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="repetition" type="xs:boolean" use="required">
+				<xs:annotation>
+					<xs:documentation>Dauerposition ?</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="nrOfRepetitions" type="positiveInteger2" use="optional">
+				<xs:annotation>
+					<xs:documentation>Anzahl Wiederholungen (nur bei Dauerposition relevant)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="quantity" type="positiveInteger3" use="required">
+				<xs:annotation>
+					<xs:documentation>Bestellmenge</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="validityRepetition" type="string10" use="optional">
+				<xs:annotation>
+					<xs:documentation>Gültigkeitsdatum der Dauerposition (nur bei Dauerposition relevant)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="interaction">
+		<xs:complexType>
+			<xs:attribute name="medikamentA" type="string50" use="required"/>
+			<xs:attribute name="medikamentB" type="string50" use="required"/>
+			<xs:attribute name="relevanzText" type="string30" use="required"/>
+			<xs:attribute name="interaktionseffekt" type="string120" use="required"/>
+			<xs:attribute name="pharmacodeA" type="pharmaCode" use="required"/>
+			<xs:attribute name="pharmacodeB" type="pharmaCode" use="required"/>
+			<xs:attribute name="ausstellungsdatumA" type="string10" use="required"/>
+			<xs:attribute name="ausstellungsdatumB" type="string10" use="required"/>
+			<xs:attribute name="wirkstoffgruppe1" type="string60" use="required"/>
+			<xs:attribute name="wirkstoffgruppe2" type="string60" use="required"/>
+			<xs:attribute name="status" type="string30" use="required"/>
+			<xs:attribute name="docKey" type="xs:int" use="required"/>
+			<xs:attribute name="relevanz" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -5,6 +5,7 @@
       <provide interface="ch.elexis.core.services.IModelService"/>
       <provide interface="ch.elexis.core.services.IStoreToStringContribution"/>
    </service>
+   <reference cardinality="1..1" field="accessControl" interface="ch.elexis.core.services.IAccessControlService" name="accessControl"/>
    <reference cardinality="1..1" field="entityManager" interface="ch.elexis.core.services.IElexisEntityManager" name="entityManager" target="(id=default)"/>
    <reference cardinality="1..1" field="eventAdmin" interface="org.osgi.service.event.EventAdmin" name="eventAdmin"/>
    <reference cardinality="1..1" field="xidService" interface="ch.elexis.core.services.IXidService" name="xidService"/>

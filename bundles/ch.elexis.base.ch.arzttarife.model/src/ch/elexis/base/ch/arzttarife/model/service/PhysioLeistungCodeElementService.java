@@ -1,24 +1,32 @@
 package ch.elexis.base.ch.arzttarife.model.service;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IElexisEntityManager;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IStoreToStringContribution;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -41,18 +49,67 @@ public class PhysioLeistungCodeElementService implements ICodeElementServiceCont
 
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
-		EntityManager em = (EntityManager) entityManager.getEntityManager();
-		TypedQuery<PhysioLeistung> gtinQuery = em.createNamedQuery("PhysioLeistung.ziffer", PhysioLeistung.class);
-		gtinQuery.setParameter("ziffer", code);
-		List<PhysioLeistung> resultList = gtinQuery.getResultList();
-		if (resultList.size() > 0) {
-			Optional<Identifiable> element = ArzttarifeModelAdapterFactory.getInstance()
-					.getModelAdapter(resultList.get(0), IPhysioLeistung.class, false);
-			if (element.isPresent()) {
-				return Optional.of((ICodeElement) element.get());
+		String law = getLaw(context);
+		LocalDate date = getDate(context);
+
+		IQuery<IPhysioLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class);
+		query.and("ziffer", COMPARATOR.EQUALS, code);
+
+		if (law != null) {
+			if (!ArzttarifeUtil.isAvailableLaw(law)) {
+				query.startGroup();
+				query.or("law", COMPARATOR.EQUALS, StringUtils.EMPTY);
+				query.or("law", COMPARATOR.EQUALS, null);
+				query.andJoinGroups();
+			} else {
+				query.and("law", COMPARATOR.EQUALS, law, true);
+			}
+		}
+		List<IPhysioLeistung> leistungen = query.execute();
+		for (IPhysioLeistung leistung : leistungen) {
+			if ((date.isAfter(leistung.getValidFrom()) || date.equals(leistung.getValidFrom()))) {
+				if (leistung.getValidTo() != null) {
+					if (date.isBefore(leistung.getValidTo()) || date.equals(leistung.getValidTo())) {
+						return Optional.of(leistung);
+					}
+				} else {
+					return Optional.of(leistung);
+				}
 			}
 		}
 		return Optional.empty();
+	}
+
+	private LocalDate getDate(Map<Object, Object> context) {
+		if (context != null) {
+			Object date = context.get(ContextKeys.DATE);
+			if (date instanceof LocalDate) {
+				return (LocalDate) date;
+			}
+			IEncounter encounter = (IEncounter) context.get(ContextKeys.CONSULTATION);
+			if (encounter != null) {
+				return encounter.getDate();
+			}
+		}
+		return LocalDate.now();
+	}
+
+	private String getLaw(Map<Object, Object> context) {
+		if (context != null) {
+			Object law = context.get(ContextKeys.LAW);
+			if (law instanceof String) {
+				return (String) law;
+			}
+			Object coverage = context.get(ContextKeys.COVERAGE);
+			if (coverage instanceof ICoverage) {
+				return ((ICoverage) coverage).getBillingSystem().getLaw().name();
+			}
+			Object consultation = context.get(ContextKeys.CONSULTATION);
+			if (consultation instanceof IEncounter && ((IEncounter) consultation).getCoverage() != null) {
+				return ((IEncounter) consultation).getCoverage().getBillingSystem().getLaw().name();
+			}
+		}
+		return null;
 	}
 
 	@Override

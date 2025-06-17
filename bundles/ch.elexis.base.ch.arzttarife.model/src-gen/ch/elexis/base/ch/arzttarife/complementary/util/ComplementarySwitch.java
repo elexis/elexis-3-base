@@ -3,6 +3,7 @@
  */
 package ch.elexis.base.ch.arzttarife.complementary.util;
 
+import ch.elexis.base.ch.arzttarife.complementary.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://estudio.clustertec.ch/schemas/order" xmlns="http://estudio.clustertec.ch/schemas/order" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:include schemaLocation="elements.xsd"/>
+	<xs:annotation>
+		<xs:appinfo>order.xsd, © Clustertec AG - Prescription Web Service, 2005-2020 (Beat De Martin)</xs:appinfo>
+	</xs:annotation>
+	<xs:element name="order">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="patientOrderB2C" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="product" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="clientNrRose" type="string6" use="required"/>
+			<xs:attribute name="user" type="string16" use="required"/>
+			<xs:attribute name="password" type="string16" use="required"/>
+			<xs:attribute name="deliveryType" type="deliveryType" use="required"/>
+			<xs:attribute name="orderRefNr" type="xs:string" use="optional"/>
+			<xs:attribute name="rowa" type="xs:boolean" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

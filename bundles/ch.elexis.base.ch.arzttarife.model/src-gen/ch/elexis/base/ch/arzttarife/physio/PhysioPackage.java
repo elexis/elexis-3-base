@@ -140,13 +140,22 @@ public interface PhysioPackage extends EPackage {
 	int IPHYSIO_LEISTUNG__DESCRIPTION = ModelPackage.IBILLABLE_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Law</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IPHYSIO_LEISTUNG__LAW = ModelPackage.IBILLABLE_FEATURE_COUNT + 5;
+
+	/**
 	 * The number of structural features of the '<em>IPhysio Leistung</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IPHYSIO_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 5;
+	int IPHYSIO_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 6;
 
 
 	/**
@@ -215,6 +224,17 @@ public interface PhysioPackage extends EPackage {
 	EAttribute getIPhysioLeistung_Description();
 
 	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getLaw <em>Law</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Law</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getLaw()
+	 * @see #getIPhysioLeistung()
+	 * @generated
+	 */
+	EAttribute getIPhysioLeistung_Law();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -280,6 +300,13 @@ public interface PhysioPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute IPHYSIO_LEISTUNG__DESCRIPTION = eINSTANCE.getIPhysioLeistung_Description();
+		/**
+		 * The meta object literal for the '<em><b>Law</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IPHYSIO_LEISTUNG__LAW = eINSTANCE.getIPhysioLeistung_Law();
 
 	}
 

@@ -73,6 +73,7 @@ Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.complementary.model.imp
  OSGI-INF/ch.elexis.base.ch.arzttarife.nutrition.model.importer.NutritionReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.occupational.model.importer.OccupationalReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieReferenceDataImporter.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.KVGPhysioReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.PhysioReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.psycho.model.importer.PsychoReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tarmed.model.importer.KVGTarmedReferenceDataImporter.xml,

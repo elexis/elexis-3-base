@@ -80,9 +80,9 @@ public class GDTOutputHandler {
 				logger.info("Command line [" + handlerProgram + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					Process exec = runtime.exec(handlerProgram);
-					int exitValue = exec.exitValue();
+					int exitValue = exec.waitFor();
 					logger.debug("Return value of " + handlerProgram + ": " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (IOException e) {
+				} catch (IOException | InterruptedException e) {
 					String message = "Fehler beim Ausführen von " + handlerProgram;
 					Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, e);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);

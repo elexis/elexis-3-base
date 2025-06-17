@@ -60,7 +60,7 @@ public class Sender implements IDataSender {
 		String secretId = getClientSecret();
 		String token = transportService.retrieveAccessToken(clientId, secretId);
 		for (String orderRequest : orderRequests) {
-			transportService.sendOrderRequest(orderRequest, token);
+			transportService.sendOrderRequest(orderRequest, token, xmlGenerator.getExportedEntries());
 		}
 		orderRequests.clear();
 	}

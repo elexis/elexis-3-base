@@ -215,11 +215,6 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
               <artifactId>com.healthmarketscience.jackcess</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -341,11 +336,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>bcprov</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-authz-client</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -501,11 +491,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.osgi.service.provisioning</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.keycloak.keycloak-common</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

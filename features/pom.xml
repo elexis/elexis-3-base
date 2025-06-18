@@ -100,5 +100,6 @@
     <module>ch.framsteg.elexis.administration.covercard.feature</module>
     <module>ch.framsteg.elexis.labor.teamw.feature</module>
     <module>ch.framsteg.elexis.hin.auth.feature</module>
+    <module>ch.framsteg.elexis.docbox.feature</module>
   </modules>
 </project>

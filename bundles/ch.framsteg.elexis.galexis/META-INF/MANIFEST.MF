@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Galexis
+Bundle-SymbolicName: ch.framsteg.elexis.galexis
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: ch.framsteg
+Automatic-Module-Name: ch.framsteg.elexis.galexis
+Bundle-RequiredExecutionEnvironment: JavaSE-21

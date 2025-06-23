@@ -38,7 +38,7 @@ public class BarCodeLabel {
 		doc.appendChild(page);
 		Element barcode = BarCodeElement.create(doc, false, false, null);
 		page.appendChild(barcode);
-		Element patient = PatientElement.create(doc, false, true, null);
+		Element patient = PatientElement.create(doc, false, false, null);
 		page.appendChild(patient);
 		Element c = CaseElement.create(doc);
 		page.appendChild(c);

@@ -29,8 +29,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -40,8 +38,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -54,12 +50,15 @@ import ch.elexis.actions.IBereichSelectionEvent;
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.ICalTransfer;
+import ch.elexis.agenda.data.IPlannable;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.BereichMenuCreator;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
@@ -94,9 +93,7 @@ import ch.elexis.dialogs.RecurringAppointmentDialog;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Log;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public abstract class BaseAgendaView extends ViewPart implements IRefreshable, IBereichSelectionEvent {
@@ -271,7 +268,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 		agenda.setActResource(b);
 	}
 
-	public abstract void setAppointment(IAppointment t);
+	public abstract void setTermin(Termin t);
 
 	class AgendaContentProvider implements IStructuredContentProvider {
 
@@ -309,13 +306,10 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 				ContextServiceHolder.get().removeTyped(IAppointment.class);
 			} else {
 				Object o = sel.getFirstElement();
-				if (o instanceof IAppointment) {
-					IAppointment appointment = (IAppointment) o;
-					if (appointmentService.getType(AppointmentType.FREE).equals(appointment.getType())) {
-						ContextServiceHolder.get().removeTyped(IAppointment.class);
-					} else {
-						setAppointment(appointment);
-					}
+				if (o instanceof Termin) {
+					setTermin((Termin) o);
+				} else if (o instanceof Termin.Free) {
+					ContextServiceHolder.get().removeTyped(IAppointment.class);
 				}
 			}
 		}
@@ -346,19 +340,15 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 				if (sel != null && !sel.isEmpty()) {
-					IAppointment appointment = (IAppointment) sel.getFirstElement();
-					if (appointmentService.getType(AppointmentType.FREE).equals(appointment.getType())) {
-						appointment.setSchedule(agenda.getActResource());
-						appointment.setType(appointmentService.getType(AppointmentType.BOOKED));
-						appointment.setState(appointmentService.getState(AppointmentState.EMPTY));
-						appointment.setCreated(Integer.toString(TimeTool.getTimeInSeconds() / 60));
-						ContextServiceHolder.get().getActiveUser().ifPresent(au -> {
-							appointment.setCreatedBy(au.getLabel());
-						});
-						CoreModelServiceHolder.get().save(appointment);
-						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+					IPlannable p = (IPlannable) sel.getFirstElement();
+					if (p instanceof Termin.Free) {
+						new Termin(agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
+								p.getStartMinute(), p.getDurationInMinutes() + p.getStartMinute(),
+								Termin.typReserviert(), Termin.statusLeer());
+						ElexisEventDispatcher.reload(Termin.class);
 					}
 				}
+
 			}
 		};
 		terminAendernAction = new LockRequestingRestrictedAction<IAppointment>(
@@ -488,7 +478,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 							patient.getId());
 					query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
 					query.orderBy("Tag", ORDER.ASC);
-					query.orderByLeftPadded("Beginn", ORDER.ASC);
+					query.orderBy("Beginn", ORDER.ASC);
 					java.util.List<IAppointment> list = query.execute();
 					if (list != null) {
 						boolean directPrint = LocalConfigService.get(
@@ -567,49 +557,5 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 	@Inject
 	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
-	}
-
-	protected Color getTypColor(IAppointment p) {
-		String coldesc = appointmentService.getContactConfiguredTypeColor(null, p.getType());
-		if (coldesc.startsWith("#")) {
-			coldesc = coldesc.substring(1);
-		}
-		ColorRegistry cr = JFaceResources.getColorRegistry();
-		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
-
-		if (!cr.hasValueFor(col)) {
-			RGB rgb;
-			try {
-				rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col.substring(2, 4), 16),
-						Integer.parseInt(col.substring(4, 6), 16));
-			} catch (NumberFormatException nex) {
-				ExHandler.handle(nex);
-				rgb = new RGB(100, 100, 100);
-			}
-			cr.put(col, rgb);
-		}
-		return cr.get(col);
-	}
-
-	protected Color getStateColor(IAppointment p) {
-		String coldesc = appointmentService.getContactConfiguredStateColor(null, p.getType());
-		if (coldesc.startsWith("#")) {
-			coldesc = coldesc.substring(1);
-		}
-		ColorRegistry cr = JFaceResources.getColorRegistry();
-		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
-
-		if (!cr.hasValueFor(col)) {
-			RGB rgb;
-			try {
-				rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col.substring(2, 4), 16),
-						Integer.parseInt(col.substring(4, 6), 16));
-			} catch (NumberFormatException nex) {
-				ExHandler.handle(nex);
-				rgb = new RGB(100, 100, 100);
-			}
-			cr.put(col, rgb);
-		}
-		return cr.get(col);
 	}
 }

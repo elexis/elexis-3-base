@@ -13,13 +13,11 @@ Require-Bundle: ch.elexis.core.l10n,
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Import-Package: ch.elexis.agenda.composite,
- ch.elexis.agenda.preferences,
- ch.elexis.agenda.util,
+Import-Package: ch.elexis.agenda.preferences,
  ch.elexis.core.mail,
  ch.elexis.core.mail.ui.client,
  ch.elexis.core.tasks.model,
- ch.elexis.dialogs,
+ ch.itmed.fop.printing.handler,
  com.equo.chromium.swt,
  com.google.common.cache;version="15.0.0",
  com.google.gson,

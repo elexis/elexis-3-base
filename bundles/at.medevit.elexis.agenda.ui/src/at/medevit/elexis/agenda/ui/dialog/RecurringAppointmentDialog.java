@@ -1,4 +1,4 @@
-package ch.elexis.dialogs;
+package at.medevit.elexis.agenda.ui.dialog;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -41,10 +41,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.agenda.composite.MonthlySeriesComposite;
-import ch.elexis.agenda.composite.WeeklySeriesComposite;
-import ch.elexis.agenda.composite.YearlySeriesComposite;
-import ch.elexis.agenda.ui.Messages;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IAppointmentSeries;

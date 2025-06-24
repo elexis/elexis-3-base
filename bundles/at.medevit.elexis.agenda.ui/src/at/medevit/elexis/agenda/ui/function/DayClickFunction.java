@@ -8,6 +8,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import com.equo.chromium.swt.Browser;
 
+import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
@@ -15,7 +16,6 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.AppointmentState;
 import ch.elexis.core.types.AppointmentType;
-import ch.elexis.dialogs.AppointmentDialog;
 
 public class DayClickFunction extends AbstractBrowserFunction {
 

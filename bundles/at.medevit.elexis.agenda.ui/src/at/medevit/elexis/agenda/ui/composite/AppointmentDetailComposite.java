@@ -1,4 +1,4 @@
-package ch.elexis.agenda.composite;
+package at.medevit.elexis.agenda.ui.composite;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,10 +52,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
+import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
+
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.ui.Messages;
-import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
@@ -71,6 +70,7 @@ import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
 import ch.elexis.core.ui.e4.fieldassist.IdentifiableContentProposal;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
+import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
 import ch.rgw.tools.TimeTool;
 
 public class AppointmentDetailComposite extends Composite {

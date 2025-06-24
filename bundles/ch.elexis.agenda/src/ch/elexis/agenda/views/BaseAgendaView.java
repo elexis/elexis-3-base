@@ -20,7 +20,6 @@ import java.util.TimerTask;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -30,6 +29,8 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -40,6 +41,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -92,7 +94,9 @@ import ch.elexis.dialogs.RecurringAppointmentDialog;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Log;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public abstract class BaseAgendaView extends ViewPart implements IRefreshable, IBereichSelectionEvent {
@@ -179,10 +183,6 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 						});
 					} else {
 						if (appointmentService.getType(AppointmentType.FREE).equals(pl.getType())) {
-							pl.setEndTime(pl.getStartTime().plusMinutes(30));
-							pl.setType(AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
-							pl.setState(AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT));
-							pl.setSubjectOrPatient(StringUtils.EMPTY);
 							AppointmentDialog dlg = new AppointmentDialog(pl);
 							dlg.open();
 						} else {
@@ -219,7 +219,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 		tv.getControl().setMenu(cMenu);
 
 		timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
+		timer.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
@@ -230,7 +230,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 					refresh();
 				}
 			}
-		}, 10000, 10000);
+		}, 10000);
 
 		getSite().getPage().addPartListener(udpateOnVisible);
 
@@ -570,19 +570,46 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 	}
 
 	protected Color getTypColor(IAppointment p) {
-		String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
-				"FFFFFF"); //$NON-NLS-1$
-		return UiDesk.getColorFromRGB(coldesc);
+		String coldesc = appointmentService.getContactConfiguredTypeColor(null, p.getType());
+		if (coldesc.startsWith("#")) {
+			coldesc = coldesc.substring(1);
+		}
+		ColorRegistry cr = JFaceResources.getColorRegistry();
+		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
+
+		if (!cr.hasValueFor(col)) {
+			RGB rgb;
+			try {
+				rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col.substring(2, 4), 16),
+						Integer.parseInt(col.substring(4, 6), 16));
+			} catch (NumberFormatException nex) {
+				ExHandler.handle(nex);
+				rgb = new RGB(100, 100, 100);
+			}
+			cr.put(col, rgb);
+		}
+		return cr.get(col);
 	}
 
 	protected Color getStateColor(IAppointment p) {
-		if (appointmentService.getType(AppointmentType.BOOKED).equals(p.getType())) {
-			String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
-					"000000"); //$NON-NLS-1$
-			return UiDesk.getColorFromRGB(coldesc);
+		String coldesc = appointmentService.getContactConfiguredStateColor(null, p.getType());
+		if (coldesc.startsWith("#")) {
+			coldesc = coldesc.substring(1);
 		}
-		String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getState(),
-				"000000"); //$NON-NLS-1$
-		return UiDesk.getColorFromRGB(coldesc);
+		ColorRegistry cr = JFaceResources.getColorRegistry();
+		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
+
+		if (!cr.hasValueFor(col)) {
+			RGB rgb;
+			try {
+				rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col.substring(2, 4), 16),
+						Integer.parseInt(col.substring(4, 6), 16));
+			} catch (NumberFormatException nex) {
+				ExHandler.handle(nex);
+				rgb = new RGB(100, 100, 100);
+			}
+			cr.put(col, rgb);
+		}
+		return cr.get(col);
 	}
 }

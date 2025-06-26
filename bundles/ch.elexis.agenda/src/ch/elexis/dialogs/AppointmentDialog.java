@@ -36,7 +36,7 @@ public class AppointmentDialog extends Dialog {
 
 	private AppointmentDetailComposite detailComposite;
 	private EmailSender emailSender;
-
+	private boolean expanded;
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
@@ -48,15 +48,19 @@ public class AppointmentDialog extends Dialog {
 	protected Control createContents(Composite parent) {
 		initializeAppointmentIfNecessary();
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
+		detailComposite.setExpanded(expanded);
+
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
 		return super.createContents(parent);
 	}
+
 	@Override
 	protected void okPressed() {
 		saveAndReloadAppointment();
 		sendEmailIfConfirmationChecked();
 		super.okPressed();
 	}
+
 	@Override
 	protected void cancelPressed() {
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
@@ -81,6 +85,10 @@ public class AppointmentDialog extends Dialog {
 		}
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 		eventBroker.post(ElexisEventTopics.EVENT_UPDATE, appointment);
+	}
+
+	public void setExpanded(boolean expand) {
+		expanded = expand;
 	}
 
   private void sendEmailIfConfirmationChecked() {

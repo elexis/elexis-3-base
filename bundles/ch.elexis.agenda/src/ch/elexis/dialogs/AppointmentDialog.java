@@ -36,7 +36,7 @@ public class AppointmentDialog extends Dialog {
 
 	private AppointmentDetailComposite detailComposite;
 	private EmailSender emailSender;
-	private boolean fromBaseAgenda;
+	private boolean expanded;
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
@@ -48,9 +48,8 @@ public class AppointmentDialog extends Dialog {
 	protected Control createContents(Composite parent) {
 		initializeAppointmentIfNecessary();
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
-		if (fromBaseAgenda) {
-			detailComposite.setExpanded(true);
-		}
+		detailComposite.setExpanded(expanded);
+
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
 		return super.createContents(parent);
 	}
@@ -89,7 +88,7 @@ public class AppointmentDialog extends Dialog {
 	}
 
 	public void setExpanded(boolean expand) {
-		fromBaseAgenda = expand;
+		expanded = expand;
 	}
 
   private void sendEmailIfConfirmationChecked() {

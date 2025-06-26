@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.elexis.base.ch.ebanking.esr.ESRFile;
@@ -35,7 +36,7 @@ public class Test_Camt054andEsr {
 	@Test
 	public void testReadRecords() throws Camet054Exception, IOException{
 		// read camt
-		Result<List<ESRRecord>> optionalCamtRecords = readCamtFile();
+		Result<List<ESRRecord>> optionalCamtRecords = readCamtFile("Testfile1_1.xml");
 		assertTrue(optionalCamtRecords.isOK());
 		
 		// read same file in esr format
@@ -72,6 +73,14 @@ public class Test_Camt054andEsr {
 		}
 	}
 	
+	@Ignore("Use to test camt file that can not be included (pricay)")
+	@Test
+	public void testReadCamt() throws Camet054Exception, IOException {
+		// read camt
+		Result<List<ESRRecord>> optionalCamtRecords = readCamtFile("xxx.xml");
+		assertTrue(optionalCamtRecords.isOK());
+	}
+
 	private StringBuilder getTextFromRecord(ESRRecord l){
 		StringBuilder builder = new StringBuilder();
 		builder.append("esr:" + l.getESRCode());
@@ -99,12 +108,12 @@ public class Test_Camt054andEsr {
 	}
 
 	
-	public Result<List<ESRRecord>> readCamtFile(){
+	public Result<List<ESRRecord>> readCamtFile(String filename) {
 		
 		try {
-			File file = File.createTempFile("test1", ".xml");
+			File file = File.createTempFile("camt_", ".xml");
 			FileUtils.copyInputStreamToFile(Test_Camt054andEsr.class
-				.getResourceAsStream("/rsc/Testfile1_1.xml"), file);
+					.getResourceAsStream("/rsc/" + filename), file);
 			file.deleteOnExit();
 			Assert.assertTrue(file.exists());
 			ESRFile esrFile = new ESRFile();

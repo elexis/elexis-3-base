@@ -104,5 +104,6 @@ public class Messages {
 	public static String SerienTerminDialog_dlgBtnApplyAnyway = ch.elexis.core.l10n.Messages.SerienTerminDialog_dlgBtnApplyAnyway;
 	public static String SerienTerminDialog_dlgBtnChange = ch.elexis.core.l10n.Messages.SerienTerminDialog_dlgBtnChange;
 	public static String SerienTerminDialog_dlgBtnCancel = ch.elexis.core.l10n.Messages.SerienTerminDialog_dlgBtnCancel;
+	public static String TerminDialog_remarks = ch.elexis.core.l10n.Messages.TerminDialog_remarks;
 
 }

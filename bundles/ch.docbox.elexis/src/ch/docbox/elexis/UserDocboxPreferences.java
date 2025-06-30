@@ -210,10 +210,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID,
 						loginIdFieldEditor.getStringValue());
 				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
-				// if (showSha1SecretKey && secretkeyFieldEditor != null) {
-				// ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
-				// secretkeyFieldEditor.getStringValue());
-				// }
 				jakarta.xml.ws.Holder<java.lang.String> message = new jakarta.xml.ws.Holder<java.lang.String>();
 				boolean isOk = performConnectionTest(message);
 				MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(),
@@ -452,12 +448,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, loginIdFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
-		// ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI,
-		// directoryhCardEditor.getStringValue());
-		// if (showSha1SecretKey) {
-		// ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
-		// secretkeyFieldEditor.getStringValue());
-		// }
 
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());

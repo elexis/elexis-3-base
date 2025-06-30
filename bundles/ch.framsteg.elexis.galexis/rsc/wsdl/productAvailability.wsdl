@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns="http://xml.e-galexis.com/V2/schemas/" targetNamespace="http://xml.e-galexis.com/V2/schemas/">
+
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/productAvailability/productAvailabilityRequest.xsd" />
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/productAvailability/productAvailabilityResponse.xsd" />
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/galexisXMLError/galexisXMLError.xsd" />
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/offlineResponse/offlineResponse.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="productAvailabilityRequest">
+		<wsdl:part name="parameters" element="productAvailabilityRequest" />
+	</wsdl:message>
+	<wsdl:message name="productAvailabilityResponse">
+		<wsdl:part name="parameters" element="productAvailabilityResponse" />
+	</wsdl:message>
+	<wsdl:message name="offlineResponse">
+		<wsdl:part name="parameters" element="offlineResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="errorResponse">
+		<wsdl:part name="parameters" element="GalexisXMLError"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="ProductPortType">
+		<wsdl:operation name="getAvailability">
+			<wsdl:input message="productAvailabilityRequest" />
+			<wsdl:output message="productAvailabilityResponse" />
+			<wsdl:fault name="offlineResponse" message="offlineResponse"></wsdl:fault>
+			<wsdl:fault name="errorResponse" message="errorResponse"></wsdl:fault>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ProductSOAP" type="ProductPortType">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="getAvailability">
+			<soap:operation soapAction="http://xml.e-galexis.com/V2/schemas/getAvailability" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="errorResponse">
+				<soap:fault use="literal" name="errorResponse"/>
+			</wsdl:fault>
+			<wsdl:fault name="offlineResponse">
+				<soap:fault use="literal" name="offlineResponse"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ProductService">
+		<wsdl:port name="ProductPort" binding="ProductSOAP">
+			<soap:address location="https://test.e-galexis.com/testPOS/WebService" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

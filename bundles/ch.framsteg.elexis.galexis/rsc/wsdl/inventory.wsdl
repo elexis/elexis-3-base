@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://xml.e-galexis.com/V2/schemas/" targetNamespace="http://xml.e-galexis.com/V2/schemas/">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/getInventoryIdRequest.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/getInventoryIdResponse.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/inventoryTransmissionRequest.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/inventoryTransmissionResponse.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/inventoryStatusRequest.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/inventoryStatusResponse.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/closeInventoryRequest.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/inventory/closeInventoryResponse.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/galexisXMLError/galexisXMLError.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/offlineResponse/offlineResponse.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="getInventoryRequest">
+		<wsdl:part name="parameters" element="getInventoryIdRequest"/>
+	</wsdl:message>
+	<wsdl:message name="getInventoryResponse">
+		<wsdl:part name="parameters" element="getInventoryIdResponse"/>
+	</wsdl:message>
+	<wsdl:message name="inventoryTransmissionRequest">
+		<wsdl:part name="parameters" element="inventoryTransmissionRequest"/>
+	</wsdl:message>
+	<wsdl:message name="inventoryTransmissionResponse">
+		<wsdl:part name="parameters" element="inventoryTransmissionResponse"/>
+	</wsdl:message>
+	<wsdl:message name="inventoryStatusRequest">
+		<wsdl:part name="parameters" element="inventoryStatusRequest"/>
+	</wsdl:message>
+	<wsdl:message name="inventoryStatusResponse">
+		<wsdl:part name="parameters" element="inventoryStatusResponse"/>
+	</wsdl:message>
+	<wsdl:message name="closeInventoryRequest">
+		<wsdl:part name="parameters" element="closeInventoryRequest"/>
+	</wsdl:message>
+	<wsdl:message name="closeInventoryResponse">
+		<wsdl:part name="parameters" element="closeInventoryResponse"/>
+	</wsdl:message>
+	<wsdl:message name="offlineResponse">
+		<wsdl:part name="parameters" element="offlineResponse"/>
+	</wsdl:message>
+	<wsdl:message name="errorResponse">
+		<wsdl:part name="parameters" element="GalexisXMLError"/>
+	</wsdl:message>
+	<wsdl:portType name="InventoryPortType" xmlns="http://xml.e-galexis.com/V2/schemas/">
+		<wsdl:operation name="getInventoryId">
+			<wsdl:input message="getInventoryRequest"/>
+			<wsdl:output message="getInventoryResponse"/>
+			<wsdl:fault name="offlineResponse" message="offlineResponse"/>
+			<wsdl:fault name="errorResponse" message="errorResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="transmitInventory">
+			<wsdl:input message="inventoryTransmissionRequest"/>
+			<wsdl:output message="inventoryTransmissionResponse"/>
+			<wsdl:fault name="offlineResponse" message="offlineResponse"/>
+			<wsdl:fault name="errorResponse" message="errorResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="getInventoryStatus">
+			<wsdl:input message="inventoryStatusRequest"/>
+			<wsdl:output message="inventoryStatusResponse"/>
+			<wsdl:fault name="offlineResponse" message="offlineResponse"/>
+			<wsdl:fault name="errorResponse" message="errorResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="closeInventory">
+			<wsdl:input message="closeInventoryRequest"/>
+			<wsdl:output message="closeInventoryResponse"/>
+			<wsdl:fault name="offlineResponse" message="offlineResponse"/>
+			<wsdl:fault name="errorResponse" message="errorResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="InventorySOAP" type="InventoryPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getInventoryId">
+			<soap:operation soapAction="http://xml.e-galexis.com/V2/schemas/getInventoryId"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="errorResponse">
+				<soap:fault name="errorResponse" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="offlineResponse">
+				<soap:fault name="offlineResponse" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="transmitInventory">
+			<soap:operation soapAction="http://xml.e-galexis.com/V2/schemas/transmitInventory"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="errorResponse">
+				<soap:fault name="errorResponse" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="offlineResponse">
+				<soap:fault name="offlineResponse" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="getInventoryStatus">
+			<soap:operation soapAction="http://xml.e-galexis.com/V2/schemas/getInventoryStatus"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="errorResponse">
+				<soap:fault name="errorResponse" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="offlineResponse">
+				<soap:fault name="offlineResponse" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="closeInventory">
+			<soap:operation soapAction="http://xml.e-galexis.com/V2/schemas/closeInventory"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="errorResponse">
+				<soap:fault name="errorResponse" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="offlineResponse">
+				<soap:fault name="offlineResponse" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="InventoryService">
+		<wsdl:port name="InventoryPort" binding="InventorySOAP">
+			<soap:address location="https://test.e-galexis.com/testPOS/WebService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

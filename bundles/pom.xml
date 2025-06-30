@@ -168,6 +168,7 @@
     <module>ch.framsteg.elexis.administration.covercard</module>
     <module>ch.framsteg.elexis.hin.auth.fragment</module>
     <module>ch.framsteg.elexis.labor.teamw</module>
+    <module>ch.framsteg.elexis.galexis</module> 
     <module>ch.elexis.global_inbox.core</module>
   </modules>
 </project>

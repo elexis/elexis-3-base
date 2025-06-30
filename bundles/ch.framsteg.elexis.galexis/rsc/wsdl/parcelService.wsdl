@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://xml.e-galexis.com/V2/schemas/" targetNamespace="http://xml.e-galexis.com/V2/schemas/">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/parcelService/getAddressLabelsRequest.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/parcelService/getAddressLabelsResponse.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/galexisXMLError/galexisXMLError.xsd"/>
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/" schemaLocation="../schemas/offlineResponse/offlineResponse.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="getAddressLabelsRequest">
+		<wsdl:part name="parameters" element="getAddressLabelsRequest"/>
+	</wsdl:message>
+	<wsdl:message name="getAddressLabelsResponse">
+		<wsdl:part name="parameters" element="getAddressLabelsResponse"/>
+	</wsdl:message>
+	<wsdl:message name="offlineResponse">
+		<wsdl:part name="parameters" element="offlineResponse"/>
+	</wsdl:message>
+	<wsdl:message name="errorResponse">
+		<wsdl:part name="parameters" element="GalexisXMLError"/>
+	</wsdl:message>
+	<wsdl:portType name="getAddressLabelsPortType">
+		<wsdl:operation name="getAddressLabels">
+			<wsdl:input message="getAddressLabelsRequest"/>
+			<wsdl:output message="getAddressLabelsResponse"/>
+			<wsdl:fault name="offlineResponse" message="offlineResponse"/>
+			<wsdl:fault name="errorResponse" message="errorResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="getAddressLabelsSOAP" type="getAddressLabelsPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getAddressLabels">
+			<soap:operation soapAction="http://xml.e-galexis.com/V2/schemas/getAddressLabels"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="errorResponse">
+				<soap:fault name="errorResponse" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="offlineResponse">
+				<soap:fault name="offlineResponse" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="getAddressLabelsService">
+		<wsdl:port name="getAddressLabelsPort" binding="getAddressLabelsSOAP">
+			<soap:address location="https://test.e-galexis.com/testPOS/WebService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

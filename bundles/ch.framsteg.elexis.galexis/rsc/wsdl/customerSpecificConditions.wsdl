@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns="http://xml.e-galexis.com/V2/schemas/" targetNamespace="http://xml.e-galexis.com/V2/schemas/">
+
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/customerSpecificConditions/customerSpecificConditionsRequest.xsd" />
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/customerSpecificConditions/customerSpecificConditionsResponse.xsd" />
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/galexisXMLError/galexisXMLError.xsd" />
+			<xsd:import namespace="http://xml.e-galexis.com/V2/schemas/"
+				schemaLocation="../schemas/offlineResponse/offlineResponse.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="customerSpecificConditionsRequest">
+		<wsdl:part name="parameters" element="customerSpecificConditionsRequest" />
+	</wsdl:message>
+	<wsdl:message name="customerSpecificConditionsResponse">
+		<wsdl:part name="parameters" element="customerSpecificConditionsResponse" />
+	</wsdl:message>
+	<wsdl:message name="offlineResponse">
+		<wsdl:part name="parameters" element="offlineResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="errorResponse">
+		<wsdl:part name="parameters" element="GalexisXMLError"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="CustomerSpecificConditionsPortType">
+		<wsdl:operation name="getCustomerSpecificConditions">
+			<wsdl:input message="customerSpecificConditionsRequest" />
+			<wsdl:output message="customerSpecificConditionsResponse" />
+			<wsdl:fault name="offlineResponse" message="offlineResponse"></wsdl:fault>
+			<wsdl:fault name="errorResponse" message="errorResponse"></wsdl:fault>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="CustomerSpecificConditionsSOAP" type="CustomerSpecificConditionsPortType">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="getCustomerSpecificConditions">
+			<soap:operation soapAction="http://xml.e-galexis.com/V2/schemas/customerSpecificConditionsRequest" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="errorResponse">
+				<soap:fault use="literal" name="errorResponse"/>
+			</wsdl:fault>
+			<wsdl:fault name="offlineResponse">
+				<soap:fault use="literal" name="offlineResponse"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="CustomerSpecificConditionsService">
+		<wsdl:port name="CustomerSpecificConditionsPort" binding="CustomerSpecificConditionsSOAP">
+			<soap:address location="https://test.e-galexis.com/testPOS/WebService" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

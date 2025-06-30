@@ -274,6 +274,9 @@
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>
+   <bundle id="ch.framsteg.elexis.galexis">
+      <category name="dataexchange"/>
+   </bundle>
    <bundle id="at.medevit.elexis.hin.auth.core">
       <category name="libraries"/>
    </bundle>

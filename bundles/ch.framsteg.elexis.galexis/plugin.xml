@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.framsteg.elexis.galexis.view.GalexisView"
+            icon="icons/logo-tiny.jpg"
+            id="ch.framsteg.elexis.galexis.view1"
+            name="Galexis"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>

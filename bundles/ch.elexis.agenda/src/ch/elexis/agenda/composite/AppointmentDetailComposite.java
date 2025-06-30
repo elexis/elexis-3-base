@@ -801,14 +801,13 @@ public class AppointmentDetailComposite extends Composite {
 			setAllDetailCompositesVisible(true);
 		} else {
 			sash.setMaximizedControl(rightPane);
-			gd.heightHint = rightPane.computeSize(SWT.DEFAULT, 100).y;
-			gd.grabExcessVerticalSpace = false;
 			setAllDetailCompositesVisible(false);
+			rightPane.layout(true, true);
+			gd.heightHint = rightPane.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			gd.grabExcessVerticalSpace = false;
 		}
-
 		container.layout(true, true);
-		container.getShell().layout(true, true);
-
+		getShell().layout(true, true);
 		dayBar.refresh();
 	}
 

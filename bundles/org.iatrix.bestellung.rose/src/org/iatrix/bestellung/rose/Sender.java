@@ -2,11 +2,8 @@ package org.iatrix.bestellung.rose;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iatrix.bestellung.rose.service.Gs1OrderXmlGenerator;
@@ -16,9 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
-import ch.elexis.core.model.IOrderEntry;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.model.service.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.OrderServiceHolder;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
@@ -105,27 +103,21 @@ public class Sender implements IDataSender {
 
 	@Override
 	public boolean canHandle(Identifiable identifiable) {
-		if (!(identifiable instanceof IOrder)) {
+		if (!(identifiable instanceof IOrder order)) {
 			return false;
 		}
-		IOrder order = (IOrder) identifiable;
-
 		String cfg = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, StringUtils.EMPTY);
 		if (StringUtils.isBlank(cfg)) {
-
 			return false;
 		}
-		String[] configured = StringUtils.split(cfg, ',');
-		Set<String> supplierSet = new HashSet<>(Arrays.asList(configured));
-		for (IOrderEntry entry : order.getEntries()) {
-			IContact provider = entry.getProvider();
-			if (provider != null) {
-				String providerId = provider.getId();
-				if (supplierSet.contains(providerId)) {
-					return true;
-				}
+		String[] supplierIds = StringUtils.split(cfg, ',');
+		for (String supplierId : supplierIds) {
+			IContact supplier = CoreModelServiceHolder.get().load(supplierId, IContact.class).orElse(null);
+			if (supplier != null && OrderServiceHolder.get().containsSupplier(order, supplier)) {
+				return true;
 			}
 		}
 		return false;
 	}
+
 }

@@ -2,8 +2,11 @@ package org.iatrix.bestellung.rose;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iatrix.bestellung.rose.service.Gs1OrderXmlGenerator;
@@ -11,7 +14,10 @@ import org.iatrix.bestellung.rose.service.HttpOrderTransportService;
 import org.iatrix.bestellung.rose.service.XmlValidator;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
+import ch.elexis.core.model.IOrderEntry;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
@@ -95,5 +101,31 @@ public class Sender implements IDataSender {
 			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e);
 		}
 		return ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET_APIKEY, StringUtils.EMPTY);
+	}
+
+	@Override
+	public boolean canHandle(Identifiable identifiable) {
+		if (!(identifiable instanceof IOrder)) {
+			return false;
+		}
+		IOrder order = (IOrder) identifiable;
+
+		String cfg = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, StringUtils.EMPTY);
+		if (StringUtils.isBlank(cfg)) {
+
+			return false;
+		}
+		String[] configured = StringUtils.split(cfg, ',');
+		Set<String> supplierSet = new HashSet<>(Arrays.asList(configured));
+		for (IOrderEntry entry : order.getEntries()) {
+			IContact provider = entry.getProvider();
+			if (provider != null) {
+				String providerId = provider.getId();
+				if (supplierSet.contains(providerId)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

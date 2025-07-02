@@ -11,8 +11,12 @@ import org.iatrix.bestellung.rose.service.HttpOrderTransportService;
 import org.iatrix.bestellung.rose.service.XmlValidator;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.model.service.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.OrderServiceHolder;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
@@ -96,4 +100,24 @@ public class Sender implements IDataSender {
 		}
 		return ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_CLIENT_SECRET_APIKEY, StringUtils.EMPTY);
 	}
+
+	@Override
+	public boolean canHandle(Identifiable identifiable) {
+		if (!(identifiable instanceof IOrder order)) {
+			return false;
+		}
+		String cfg = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, StringUtils.EMPTY);
+		if (StringUtils.isBlank(cfg)) {
+			return false;
+		}
+		String[] supplierIds = StringUtils.split(cfg, ',');
+		for (String supplierId : supplierIds) {
+			IContact supplier = CoreModelServiceHolder.get().load(supplierId, IContact.class).orElse(null);
+			if (supplier != null && OrderServiceHolder.get().containsSupplier(order, supplier)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

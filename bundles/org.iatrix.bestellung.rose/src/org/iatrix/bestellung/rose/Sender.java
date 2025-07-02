@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.model.service.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.OrderServiceHolder;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
@@ -59,6 +59,7 @@ public class Sender implements IDataSender {
 		return clazz.equals(ch.elexis.data.Bestellung.class);
 	}
 
+	@Override
 	public void finalizeExport() throws XChangeException {
 		String clientId = getClientId();
 		String secretId = getClientSecret();

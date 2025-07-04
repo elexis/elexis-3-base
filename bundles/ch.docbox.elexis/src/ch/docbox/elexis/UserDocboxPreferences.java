@@ -46,6 +46,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.slf4j.LoggerFactory;
 
 import ch.docbox.model.CdaMessage;
 import ch.docbox.model.DocboxContact;
@@ -109,15 +110,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			mac.init(new SecretKeySpec(toHex(sha1(basicUser)).getBytes("UTF-8"), "HmacSHA1"));
 			Base64 base64 = new Base64();
 			return new String(base64.encode(mac.doFinal(message.getBytes("UTF-8"))));
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			LoggerFactory.getLogger(UserDocboxPreferences.class).error("Exception getting SSO signature", e);
 		}
 		return null;
 	}

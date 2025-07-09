@@ -665,16 +665,24 @@ public class AppointmentDetailComposite extends Composite {
 		comboArea.setText(appointment.getSchedule());
 		txtReason.setText(appointment.getReason());
 		if (appointment.getContact() == null) {
-			ContextServiceHolder.get().getActivePatient().ifPresent(p -> {
-				txtPatSearch.setData(p);
-				txtPatSearch.setText(p.getLabel());
-				appointment.setSubjectOrPatient(p.getId());
-				tBem.setText(p.getComment());
-			});
+		    String sop = appointment.getSubjectOrPatient();
+		    if (StringUtils.isNotBlank(sop)) {
+		        txtPatSearch.setData(null);          
+		        txtPatSearch.setText(sop);           
+				tBem.setText(StringUtils.EMPTY);
+		    } else {
+		        ContextServiceHolder.get().getActivePatient().ifPresent(p -> {
+		            txtPatSearch.setData(p);
+		            txtPatSearch.setText(p.getLabel());
+		            appointment.setSubjectOrPatient(p.getId());
+		            tBem.setText(p.getComment());
+		        });
+		    }
 		} else {
-			txtPatSearch.setData(reloadAsPatient(Optional.ofNullable(appointment.getContact())).get());
-			txtPatSearch.setText(appointment.getSubjectOrPatient());
-			tBem.setText(reloadAsPatient(Optional.ofNullable(appointment.getContact())).get().getComment());
+		    IContact pat = reloadAsPatient(Optional.ofNullable(appointment.getContact())).get();
+		    txtPatSearch.setData(pat);
+		    txtPatSearch.setText(pat.getLabel());
+		    tBem.setText(pat.getComment());
 		}
 		loadCompTimeFromModel();
 		applyPreferredDuration();

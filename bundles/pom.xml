@@ -163,6 +163,7 @@
     <module>ch.itmed.fop.printing.ui</module>
     <module>at.medevit.elexis.documents.converter</module>
     <module>at.medevit.elexis.documents.converter.ui</module>
+    <module>ch.framsteg.elexis.docbox.fragment</module>
     <module>ch.framsteg.elexis.finance.analytics</module>
     <module>ch.framsteg.elexis.administration.covercard</module>
     <module>ch.framsteg.elexis.hin.auth.fragment</module>

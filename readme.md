@@ -1,4 +1,4 @@
-<a href="https://gitlab.medelexis.ch/elexis/elexis-3-base/commits/master"><img alt="build status" src="https://gitlab.medelexis.ch/elexis/elexis-3-base/badges/master/pipeline.svg" /></a>
+[![Build P2 Site](https://github.com/elexis/elexis-3-base/actions/workflows/build-p2-site.yaml/badge.svg)](https://github.com/elexis/elexis-3-base/actions/workflows/build-p2-site.yaml)
 
 Elexis Base contains bundles that can be installed using the <a href="https://gitlab.medelexis.ch/elexis/elexis-3-core">Elexis</a> application.
 

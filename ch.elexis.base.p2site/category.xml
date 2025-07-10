@@ -112,6 +112,9 @@
    <feature url="features/ch.docbox.elexis.feature_0.0.0.jar" id="ch.docbox.elexis.feature" version="0.0.0">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature id="ch.framsteg.elexis.docbox.feature" version="0.0.0">
+   	  <category name="clinicrecordkeeping"/>
+   </feature>
    <feature url="features/ch.elexis.molemax.feature_0.0.0.jar" id="ch.elexis.molemax.feature" version="0.0.0">
       <category name="clinicrecordkeeping"/>
    </feature>

@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -104,10 +106,25 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 
 		label = new Label(com, SWT.NONE);
 		label.setText(Messages.DocboxArztArztDialog_TextDoctor);
-		comboDoctor = new Combo(com, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+
+		comboDoctor = new Combo(com, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL);
 
 		Query<Kontakt> qbe = new Query<Kontakt>(Kontakt.class);
 		List<Kontakt> list = qbe.execute();
+
+		TreeMap<String, Kontakt> tm = new TreeMap<String, Kontakt>();
+		List<Kontakt> sortedList = new ArrayList<Kontakt>();
+
+		for (Kontakt k : list) {
+			tm.put(k.getLabel().toLowerCase(), k);
+		}
+
+		for (Map.Entry<String, Kontakt> entry : tm.entrySet()) {
+			sortedList.add(entry.getValue());
+		}
+
+		list = sortedList;
+
 		for (Kontakt k : list) {
 			Boolean isDoc2Doc = (Boolean) k.getInfoElement("doctodoc");
 			if (isDoc2Doc != null && isDoc2Doc.booleanValue()) {

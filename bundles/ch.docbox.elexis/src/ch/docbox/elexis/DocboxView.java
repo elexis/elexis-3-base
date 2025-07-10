@@ -112,6 +112,7 @@ public class DocboxView extends ViewPart {
 		}
 	}
 
+
 	@Override
 	public void setFocus() {
 

@@ -338,6 +338,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static String getDocboxLoginID(boolean prefixed) {
 		String loginId = ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBXLOGINID, StringUtils.EMPTY);
+		if (!prefixed && loginId.startsWith(WsClientConfig.TESTLOGINIDPREFIX)) {
+			loginId = loginId.substring(WsClientConfig.TESTLOGINIDPREFIX.length());
+		}
 		return loginId;
 	}
 

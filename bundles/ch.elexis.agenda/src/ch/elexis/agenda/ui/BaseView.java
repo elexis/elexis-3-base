@@ -262,17 +262,13 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		blockAction = new Action(Messages.TagesView_lockPeriod) {
 			@Override
 			public void run() {
-				IAppointment appointment = getSelection();
-				if (appointment != null) {
-					if (appointmentService.getType(AppointmentType.FREE).equals(appointment.getType())) {
-						appointment.setSchedule(agenda.getActResource());
-						appointment.setType(appointmentService.getType(AppointmentType.BOOKED));
-						appointment.setState(appointmentService.getState(AppointmentState.EMPTY));
-						appointment.setCreated(Integer.toString(TimeTool.getTimeInSeconds() / 60));
-						ContextServiceHolder.get().getActiveUser().ifPresent(au -> {
-							appointment.setCreatedBy(au.getLabel());
-						});
-						CoreModelServiceHolder.get().save(appointment);
+				IAppointment p = getSelection();
+				if (p != null) {
+					if (appointmentService.getType(AppointmentType.FREE).equals(p.getType())) {
+						p.setSchedule(agenda.getActResource());
+						p.setType(appointmentService.getType(AppointmentType.BOOKED));
+						p.setState(appointmentService.getState(AppointmentState.EMPTY));
+						CoreModelServiceHolder.get().save(p);
 						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 					}
 				}
@@ -326,7 +322,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 							patient.getId());
 					query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
 					query.orderBy("Tag", ORDER.ASC);
-					query.orderByLeftPadded("Beginn", ORDER.ASC);
+					query.orderBy("Beginn", ORDER.ASC);
 					java.util.List<IAppointment> list = query.execute();
 					if (list != null) {
 						boolean directPrint = LocalConfigService.get(

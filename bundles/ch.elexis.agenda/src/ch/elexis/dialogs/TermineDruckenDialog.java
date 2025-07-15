@@ -15,7 +15,6 @@ import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_APPOINTMENT
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -29,8 +28,6 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.util.NoPoUtil;
-import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.ui.text.ITextPlugin.ICallback;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -41,11 +38,6 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 	Termin[] liste;
 
 	private TextContainer text = null;
-
-	public TermineDruckenDialog(Shell shell, List<IAppointment> appointments) {
-		this(shell, appointments.stream().map(a -> (Termin) NoPoUtil.loadAsPersistentObject(a)).toList()
-				.toArray(new Termin[appointments.size()]));
-	}
 
 	public TermineDruckenDialog(Shell shell, Termin[] liste) {
 		super(shell);
@@ -122,11 +114,9 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 		super.okPressed();
 	}
 
-	@Override
 	public void save() {
 	}
 
-	@Override
 	public boolean saveAs() {
 		return false;
 	}

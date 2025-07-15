@@ -11,12 +11,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
-import ch.elexis.dialogs.AppointmentDialog;
 
 public class EditHandler {
 

@@ -50,7 +50,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
+import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
 import at.medevit.elexis.agenda.ui.function.LoadEventTimeSpan;
+import at.medevit.elexis.agenda.ui.handler.CopyHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IDayMessage;
@@ -66,7 +68,6 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.utils.CoreUtil;
-import ch.elexis.dialogs.RecurringAppointmentDialog;
 
 public class SideBarComposite extends Composite {
 

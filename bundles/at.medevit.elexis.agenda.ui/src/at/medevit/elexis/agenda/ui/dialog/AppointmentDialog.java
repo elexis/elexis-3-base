@@ -1,4 +1,4 @@
-package ch.elexis.dialogs;
+package at.medevit.elexis.agenda.ui.dialog;
 
 import java.time.LocalDateTime;
 
@@ -11,9 +11,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import ch.elexis.agenda.commands.EmailSender;
-import ch.elexis.agenda.composite.AppointmentDetailComposite;
-import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
+import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
+import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
+import at.medevit.elexis.agenda.ui.handler.EmailSender;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.IContextService;

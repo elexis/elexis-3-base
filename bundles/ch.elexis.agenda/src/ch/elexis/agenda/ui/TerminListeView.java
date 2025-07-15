@@ -35,9 +35,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IQuery;
@@ -59,14 +61,14 @@ import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.IRefreshable;
-import ch.elexis.dialogs.AppointmentDialog;
+import ch.elexis.dialogs.TerminDialog;
 import ch.rgw.tools.TimeTool;
 
 public class TerminListeView extends ViewPart implements IRefreshable {
 	public static final String ID = "ch.elexis.agenda.Terminliste";
 	ScrolledForm form;
 	CommonViewer cv = new CommonViewer();
-	LockRequestingRestrictedAction<IAppointment> terminAendernAction;
+	LockRequestingRestrictedAction<Termin> terminAendernAction;
 
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
@@ -86,8 +88,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	}
 
 	public TerminListeView() {
-		terminAendernAction = new LockRequestingRestrictedAction<IAppointment>(
-				EvACE.of(IAppointment.class, Right.UPDATE),
+		terminAendernAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
 				ch.elexis.agenda.Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
@@ -95,13 +96,17 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			}
 
 			@Override
-			public IAppointment getTargetedObject() {
-				return ContextServiceHolder.get().getTyped(IAppointment.class).orElse(null);
+			public Termin getTargetedObject() {
+				java.util.Optional<IAppointment> appointment = ContextServiceHolder.get().getTyped(IAppointment.class);
+				if (appointment.isPresent()) {
+					return Termin.load(appointment.get().getId());
+				}
+				return null;
 			}
 
 			@Override
-			public void doRun(IAppointment element) {
-				AcquireLockBlockingUi.aquireAndRun(element, new ILockHandler() {
+			public void doRun(Termin element) {
+				AcquireLockBlockingUi.aquireAndRun((IPersistentObject) element, new ILockHandler() {
 
 					@Override
 					public void lockFailed() {
@@ -110,7 +115,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 
 					@Override
 					public void lockAcquired() {
-						AppointmentDialog dlg = new AppointmentDialog(element);
+						TerminDialog dlg = new TerminDialog(element).useAgendaGlobalData(false);
 						dlg.open();
 					}
 				});

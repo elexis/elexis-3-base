@@ -13,9 +13,6 @@ package ch.elexis.dialogs;
 
 import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_AGENDA_LIST;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -29,11 +26,6 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.model.IAppointment;
-import ch.elexis.core.model.IContact;
-import ch.elexis.core.model.IPerson;
-import ch.elexis.core.model.format.PersonFormatUtil;
-import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.text.ITextPlugin.ICallback;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -43,8 +35,6 @@ import ch.elexis.data.Patient;
 public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallback {
 	IPlannable[] liste;
 
-	List<IAppointment> appointments;
-
 	public TerminListeDruckenDialog(Shell shell, IPlannable[] liste) {
 		super(shell);
 		this.liste = liste;
@@ -52,14 +42,6 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		if (liste != null && liste.length > 0) {
 			Termin termin = (Termin) liste[0];
 			ElexisEventDispatcher.fireSelectionEvent(termin);
-		}
-	}
-
-	public TerminListeDruckenDialog(Shell shell, List<IAppointment> appointments) {
-		super(shell);
-		this.appointments = appointments;
-		if (appointments != null && !appointments.isEmpty()) {
-			ContextServiceHolder.get().setTyped(appointments.get(0));
 		}
 	}
 
@@ -73,41 +55,6 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, TT_AGENDA_LIST, Brief.UNKNOWN, CoreHub.getLoggedInContact(), "Agenda");
-		String[][] termine = new String[0][0];
-		if (liste != null && liste.length > 0) {
-			termine = createListeTable();
-		} else if (appointments != null && !appointments.isEmpty()) {
-			termine = createAppointmentsTable();
-		}
-		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-		text.getPlugin().insertTable("[Termine]", 0, termine, new int[] { 15, 15, 20, 50, 20 });
-		return ret;
-	}
-
-	private String[][] createAppointmentsTable() {
-		String[][] termine = new String[appointments.size() + 1][5];
-		termine[0] = new String[] { "von", "bis", "Typ", "Name", "Grund" };
-		for (int i = 1; i < appointments.size(); i++) {
-			IAppointment appointment = appointments.get(i - 1);
-			termine[i][0] = DateTimeFormatter.ofPattern("HH:mm").format(appointment.getStartTime());
-			termine[i][1] = DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime());
-			termine[i][2] = appointment.getType();
-			IContact contact = appointment.getContact();
-			IPerson person = null;
-			if(contact.isPerson()) {
-				person = contact.asIPerson();
-			}
-			String patCode = StringUtils.EMPTY;
-			if (contact != null) {
-				patCode = ", Id: " + contact.getCode();
-			}
-			termine[i][3] = (person != null ? PersonFormatUtil.getPersonalia(person) : contact.getDescription1()) + patCode;
-			termine[i][4] = appointment.getReason();
-		}
-		return termine;
-	}
-
-	private String[][] createListeTable() {
 		String[][] termine = new String[liste.length + 1][5];
 		termine[0] = new String[] { "von", "bis", "Typ", "Name", "Grund" };
 		for (int i = 1; i < liste.length; i++) {
@@ -122,7 +69,10 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 			termine[i][3] = liste[i - 1].getTitle() + patCode;
 			termine[i][4] = liste[i - 1].getReason();
 		}
-		return termine;
+
+		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
+		text.getPlugin().insertTable("[Termine]", 0, termine, new int[] { 15, 15, 20, 50, 20 });
+		return ret;
 	}
 
 	@Override
@@ -140,11 +90,9 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		super.okPressed();
 	}
 
-	@Override
 	public void save() {
 	}
 
-	@Override
 	public boolean saveAs() {
 		return false;
 	}

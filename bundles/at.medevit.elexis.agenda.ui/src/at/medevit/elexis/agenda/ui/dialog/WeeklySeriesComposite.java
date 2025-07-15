@@ -1,4 +1,4 @@
-package ch.elexis.agenda.composite;
+package at.medevit.elexis.agenda.ui.dialog;
 
 import java.util.Calendar;
 
@@ -10,8 +10,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import ch.elexis.agenda.ui.Messages;
 
 public class WeeklySeriesComposite extends Composite {
 	private Text txtWeekDistance;

@@ -135,7 +135,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 	protected void userChanged() {
 		updateActions();
 		CoreUiUtil.runAsyncIfActive(() -> {
-			tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
+			tv.getControl().setFont(UiDesk.getFont(Preferences.USR_AGENDAFONT));
 		}, tv);
 		setBereich(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
 	}

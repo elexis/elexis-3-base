@@ -2,22 +2,10 @@ package ch.elexis.omnivore.model.internal;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
-import ch.elexis.core.jpa.entities.EntityWithId;
-import ch.elexis.core.services.IModelService;
 import ch.rgw.tools.MimeTool;
 
-@Component
 public class ModelUtil {
-
-	private static IModelService modelService;
-
-	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
-	public void setModelService(IModelService modelService) {
-		ModelUtil.modelService = modelService;
-	}
 
 	/**
 	 * Get the file extension part of the input String.
@@ -36,10 +24,4 @@ public class ModelUtil {
 		return ext;
 	}
 
-	public static <T> T loadCoreModel(EntityWithId entity, Class<T> clazz) {
-		if (entity != null) {
-			return (T) modelService.load(entity.getId(), clazz).orElse(null);
-		}
-		return null;
-	}
 }

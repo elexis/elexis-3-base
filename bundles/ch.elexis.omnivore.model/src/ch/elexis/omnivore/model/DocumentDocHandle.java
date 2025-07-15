@@ -174,7 +174,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 
 	@Override
 	public IPatient getPatient() {
-		return ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
+		return CoreModelServiceHolder.get().load(getEntity().getKontakt().getId(), IPatient.class).orElse(null);
 	}
 
 	@Override
@@ -287,7 +287,8 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 				try {
 					IVirtualFilesystemHandle storageDir = VirtualFilesystemServiceHolder.get().of(pathname);
 					if (storageDir.isDirectory()) {
-						IPatient patient = ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
+						IPatient patient = CoreModelServiceHolder.get()
+								.load(getEntity().getKontakt().getId(), IPatient.class).orElse(null);
 						if (patient != null) {
 							IVirtualFilesystemHandle patientDir = storageDir.subDir(patient.getPatientNr());
 							if (!patientDir.exists()) {

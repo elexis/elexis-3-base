@@ -5,10 +5,14 @@ Bundle-SymbolicName: ch.elexis.global_inbox.core
 Bundle-Version: 3.13.0.qualifier
 Export-Package: ch.elexis.global_inbox.core.handler,
  ch.elexis.global_inbox.core.util
+Import-Package: io.quarkus.runtime,
+ jakarta.annotation;version="[2.1.0,3.0.0)",
+ jakarta.enterprise.context;version="[4.0.0,5.0.0)",
+ jakarta.inject;version="2.0.1"
 Require-Bundle: ch.elexis.core.tasks,
  ch.elexis.core.services
 Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml,
- OSGI-INF/ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil.xml
+ OSGI-INF/ch.elexis.global_inbox.core.util.OmnivoreDocumentStoreServiceHolder.xml
 Automatic-Module-Name: ch.elexis.global.inbox.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21

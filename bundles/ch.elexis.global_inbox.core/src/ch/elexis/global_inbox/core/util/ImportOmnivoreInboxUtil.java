@@ -3,8 +3,6 @@ package ch.elexis.global_inbox.core.util;
 import java.io.InputStream;
 import java.util.Optional;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,15 +16,7 @@ import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandl
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
-@Component
 public class ImportOmnivoreInboxUtil {
-
-	private static IDocumentStore omnivoreDocumentStore;
-
-	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
-	public void setDocumentStore(IDocumentStore documentStore) {
-		ImportOmnivoreInboxUtil.omnivoreDocumentStore = documentStore;
-	}
 
 	private static Logger logger = LoggerFactory.getLogger(ImportOmnivoreInboxUtil.class);
 
@@ -45,38 +35,39 @@ public class ImportOmnivoreInboxUtil {
 				.executeWithParametersSingleResult(namedQuery.getParameterMap("code", patientNo));
 		if (loaded.isPresent()) {
 
-				IPatient pat = loaded.get();
-				String cat = ImportOmnivoreInboxUtil.getCategory(file);
-				if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
-					cat = null;
+			IDocumentStore iDocumentStore = OmnivoreDocumentStoreServiceHolder.get();
+
+			IPatient pat = loaded.get();
+			String cat = ImportOmnivoreInboxUtil.getCategory(file);
+			if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
+				cat = null;
+			}
+			try {
+				long heapSize = Runtime.getRuntime().totalMemory();
+				long length = file.getContentLenght();
+				if (length >= heapSize) {
+					logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)"); //$NON-NLS-1$ //$NON-NLS-2$
+					return null;
 				}
-				try {
-					long heapSize = Runtime.getRuntime().totalMemory();
-					long length = file.getContentLenght();
-					if (length >= heapSize) {
-						logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)"); //$NON-NLS-1$ //$NON-NLS-2$
-						return null;
+				IDocument newDocument = iDocumentStore.createDocument(pat.getId(), fileName, cat);
+				String extension = getFileExtension(file);
+				if (extension != null && (newDocument.getMimeType() == null || newDocument.getMimeType().isEmpty())) {
+					MimeType mimetyp = MimeType.getByExtension(extension);
+					if (mimetyp != MimeType.undefined) {
+						newDocument.setMimeType(mimetyp.getContentType());
+					} else {
+						newDocument.setMimeType(file.getName());
 					}
-					IDocument newDocument = omnivoreDocumentStore.createDocument(pat.getId(), fileName, cat);
-					String extension = getFileExtension(file);
-					if (extension != null
-							&& (newDocument.getMimeType() == null || newDocument.getMimeType().isEmpty())) {
-						MimeType mimetyp = MimeType.getByExtension(extension);
-						if (mimetyp != MimeType.undefined) {
-							newDocument.setMimeType(mimetyp.getContentType());
-						} else {
-							newDocument.setMimeType(file.getName());
-						}
-					}
-					try (InputStream contentStream = file.openInputStream()) {
-						omnivoreDocumentStore.saveDocument(newDocument, contentStream);
-					}
-					file.delete();
-					return newDocument.getId();
-				} catch (Exception ex) {
-					logger.error("An error occurred while trying to import the document for patient with ID {}.",
-							patientNo, ex);
 				}
+				try (InputStream contentStream = file.openInputStream()) {
+					iDocumentStore.saveDocument(newDocument, contentStream);
+				}
+				file.delete();
+				return newDocument.getId();
+			} catch (Exception ex) {
+				logger.error("An error occurred while trying to import the document for patient with ID {}.", patientNo,
+						ex);
+			}
 		}
 		return null;
 	}

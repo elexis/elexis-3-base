@@ -3,9 +3,6 @@
    <service>
       <provide interface="ch.elexis.core.model.tasks.IIdentifiedRunnableFactory"/>
    </service>
-   <reference bind="setModelService" interface="ch.elexis.core.services.IModelService" name="ModelService" target="(service.model.name=ch.elexis.core.tasks.model)"/>
-   <reference cardinality="1..1" field="accessControlService" interface="ch.elexis.core.services.IAccessControlService" name="accessControlService"/>
-   <reference bind="getModelService" interface="ch.elexis.core.services.IModelService" name="getModelService" target="(service.model.name=ch.elexis.core.tasks.model)"/>
    <reference cardinality="1..1" field="taskService" interface="ch.elexis.core.tasks.model.ITaskService" name="taskService"/>
    <implementation class="ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover"/>
 </scr:component>

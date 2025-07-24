@@ -13,24 +13,40 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.IIdentifiedRunnableFactory;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.tasks.model.ITaskService;
+import io.quarkus.runtime.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+@ApplicationScoped
+@Startup
 @Component(immediate = true)
 public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnableFactory {
 
+	@Inject
 	@Reference
-	private ITaskService taskService;
+	ITaskService taskService;
 
+	@Inject
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
-	private IModelService coreModelService;
+	IModelService coreModelService;
 
+	@Inject
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.omnivore.data.model)")
-	private IModelService omnivoreModelService;
+	IModelService omnivoreModelService;
 
+	@Inject
 	@Reference
-	private IConfigService configService;
+	IConfigService configService;
+
+	@Inject
+	@Reference
+	IAccessControlService accessControlService;
 
 	@Override
 	public List<IIdentifiedRunnable> getProvidedRunnables() {
@@ -41,20 +57,24 @@ public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnable
 		return ret;
 	}
 
+	@PostConstruct
 	@Activate
 	public void activate() {
-		try {
-			// FIXME switch to assert
-			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForEncounter((ITaskService) taskService);
-			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForLetter((ITaskService) taskService);
-			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForDocument((ITaskService) taskService);
-		} catch (TaskException e) {
-			LoggerFactory.getLogger(getClass()).error("initialize", e); //$NON-NLS-1$
-			throw new ComponentException(e);
-		}
-		taskService.bindIIdentifiedRunnableFactory(this);
+		accessControlService.doPrivileged(() -> {
+			try {
+				// FIXME switch to assert
+				SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForEncounter((ITaskService) taskService);
+				SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForLetter((ITaskService) taskService);
+				SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForDocument((ITaskService) taskService);
+			} catch (TaskException e) {
+				LoggerFactory.getLogger(getClass()).error("initialize", e);
+				throw new ComponentException(e);
+			}
+			taskService.bindIIdentifiedRunnableFactory(this);
+		});
 	}
 
+	@PreDestroy
 	@Deactivate
 	public void deactivate() {
 		taskService.unbindIIdentifiedRunnableFactory(this);

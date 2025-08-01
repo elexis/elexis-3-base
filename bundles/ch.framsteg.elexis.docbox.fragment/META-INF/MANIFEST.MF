@@ -6,4 +6,4 @@ Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: ch.framsteg
 Fragment-Host: ch.elexis.docbox.ws.client;bundle-version="3.0.0"
 Automatic-Module-Name: ch.framsteg.elexis.docbox.fragment
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17

@@ -58,12 +58,20 @@
             category="ch.elexis.Agendaprefs"
             class="ch.elexis.agenda.preferences.Zeitvorgaben"
             id="ch.agendaprefs.zeiten"
-            name="%Zeitvorgaben"/>
+            name="%Zeitvorgaben">
+         <keywordReference
+               id="aclallow:all">
+         </keywordReference>
+      </page>
       <page
             category="ch.elexis.Agendaprefs"
             class="ch.elexis.agenda.preferences.Tageseinteilung"
             id="ch.elexis.agenda.tageseinteilung"
-            name="%Tageseinteilung"/>
+            name="%Tageseinteilung">
+         <keywordReference
+               id="aclallow:all">
+         </keywordReference>
+      </page>
       <page
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.agenda.preferences.AgendaAnzeige"

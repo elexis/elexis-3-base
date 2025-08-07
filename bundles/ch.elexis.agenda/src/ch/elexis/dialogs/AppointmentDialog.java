@@ -12,6 +12,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -61,13 +63,20 @@ public class AppointmentDialog extends Dialog {
 	}
 
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createDialogArea(Composite parent) {
 		initializeAppointmentIfNecessary();
-		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
+
+		Composite container = (Composite) super.createDialogArea(parent);
+		container.setLayout(new GridLayout(1, true));
+		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		detailComposite = new AppointmentDetailComposite(container, SWT.NONE, appointment);
 		detailComposite.setExpanded(expanded);
+		detailComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
-		return super.createContents(parent);
+
+		return container;
 	}
 
 	@Override
@@ -80,6 +89,7 @@ public class AppointmentDialog extends Dialog {
 	@Override
 	protected void cancelPressed() {
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
+		ContextServiceHolder.get().getRootContext().setNamed("mail.alreadySent", null);
 		super.cancelPressed();
 	}
 
@@ -108,13 +118,16 @@ public class AppointmentDialog extends Dialog {
 	}
 
   private void sendEmailIfConfirmationChecked() {
-		if (detailComposite.getEmailCheckboxStatus()) {
+		Boolean alreadySent = ContextServiceHolder.get().getNamed("mail.alreadySent").map(Boolean.class::cast)
+				.orElse(false);
+		if (detailComposite.getEmailCheckboxStatus() && !alreadySent) {
 			ContextServiceHolder.get().setNamed("ch.elexis.core.mail.image.elexismailappointmentqr",
 					new AppointmentQrSupplier(appointment));
 			EmailDetails emailDetails = detailComposite.getEmailDeteils();
 			emailSender.sendEmail(emailDetails, appointment);
 			ContextServiceHolder.get().setNamed("ch.elexis.core.mail.image.elexismailappointmentqr", null);
 		}
+		ContextServiceHolder.get().getRootContext().setNamed("mail.alreadySent", null);
 	}
 
 	private class AppointmentQrSupplier implements Supplier<IImage> {

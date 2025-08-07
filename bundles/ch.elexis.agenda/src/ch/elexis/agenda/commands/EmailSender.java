@@ -95,7 +95,7 @@ public class EmailSender {
 		if (emailTemplate != null) {
 			IContext context = contextService.createNamedContext("appointment_reminder_context");
 			context.setTyped(appointment);
-			context.setTyped(emailDetails.patient());
+			context.setTyped(appointment.getContact().asIPatient());
 			String preparedMessageText = textReplacementService.performReplacement(context, emailTemplate);
 			params.put(SEND_MAIL_COMMAND_NOUI + ".text", preparedMessageText);
 		}

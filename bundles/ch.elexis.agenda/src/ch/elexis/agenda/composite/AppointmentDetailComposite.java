@@ -102,7 +102,7 @@ public class AppointmentDetailComposite extends Composite {
 	private Combo comboStatus;
 	private Text txtReason;
 	private Text txtPatSearch;
-	private Text tBem;
+	private Label tBem;
 	private DayOverViewComposite dayBar;
 	private TableViewer appointmentsViewer;
 	private Composite container;
@@ -114,6 +114,7 @@ public class AppointmentDetailComposite extends Composite {
 	private Button btnExpand;
 	private Group compContentMiddle;
 	private Group compTimeSelektor;
+	private Label lblDateFrom;
 	private static final int[] SASH_WEIGHTS_EXPANDED = { 25, 75 };
 
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
@@ -182,13 +183,13 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private void requireAppointment() {
-		Objects.requireNonNull(appointment, "Appointment cannot be null");
+		Objects.requireNonNull(appointment, "Appointment cannot be null"); //$NON-NLS-1$
 	}
 
 	private void initContainer(Composite parent) {
 		container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	}
 
 	private void createHeader(Composite parent) {
@@ -246,7 +247,7 @@ public class AppointmentDetailComposite extends Composite {
 
 	private class PatientContentProposalProvider extends AsyncContentProposalProvider<IPatient> {
 		PatientContentProposalProvider() {
-			super("description1", "description2", "dob", "code");
+			super("description1", "description2", "dob", "code"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
 		@Override
@@ -287,7 +288,7 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private void initSashForm(Composite parent) {
-		sash = new SashForm(parent, SWT.HORIZONTAL);
+		sash = new SashForm(parent, SWT.HORIZONTAL | SWT.BORDER);
 		sash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		sash.setSashWidth(1);
@@ -307,14 +308,14 @@ public class AppointmentDetailComposite extends Composite {
 
 		txtContact = new Link(leftPane, SWT.WRAP);
 		txtContact.setBackground(compContext.getBackground());
-		txtContact.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 2));
+		txtContact.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		txtContact.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					java.awt.Desktop.getDesktop().browse(new java.net.URI(e.text));
 				} catch (Exception ex) {
-					SWTHelper.alert("Fehler", "Kann Ruf-Aufruf nicht starten:\n" + ex.getMessage());
+					SWTHelper.alert("Fehler", "Kann Ruf-Aufruf nicht starten:\n" + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		});
@@ -345,10 +346,13 @@ public class AppointmentDetailComposite extends Composite {
 	private void createAppointmentsViewer(Composite parent) {
 		compContentMiddle = new Group(parent, SWT.NONE);
 		compContentMiddle.setText(Messages.AppointmentDetailComposite_planned_dates);
-		compContentMiddle.setLayout(new GridLayout(4, false));
+		compContentMiddle.setLayout(new GridLayout(2, false));
 		compContentMiddle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 2));
-		appointmentsViewer = new TableViewer(compContentMiddle, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
-		appointmentsViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 3));
+		appointmentsViewer = new TableViewer(compContentMiddle,
+				SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
+		GridData gdTable = new GridData(SWT.FILL, SWT.FILL, true, true);
+
+		appointmentsViewer.getControl().setLayoutData(gdTable);
 		appointmentsViewer.setContentProvider(ArrayContentProvider.getInstance());
 		appointmentsViewer.setLabelProvider(new LabelProvider() {
 			@Override
@@ -363,12 +367,18 @@ public class AppointmentDetailComposite extends Composite {
 				ContextServiceHolder.get().getRootContext().setTyped(sel);
 			}
 		});
-		createControlButtons(compContentMiddle);
+		Composite btnCol = new Composite(compContentMiddle, SWT.NONE);
+		btnCol.setLayout(new GridLayout(1, true));
+		btnCol.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
+		createControlButtons(btnCol);
 	}
 
 	private void createControlButtons(Composite parent) {
+		GridData gdButton = new GridData(SWT.FILL, SWT.TOP, true, false);
+
 		Button btnAdd = new Button(parent, SWT.PUSH);
 		btnAdd.setText(Messages.AppointmentDetailComposite_insert);
+		btnAdd.setLayoutData(gdButton);
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -380,8 +390,10 @@ public class AppointmentDetailComposite extends Composite {
 				ContextServiceHolder.get().getRootContext().setTyped(appointment);
 			}
 		});
+
 		Button btnDelete = new Button(parent, SWT.PUSH);
 		btnDelete.setText(Messages.AppointmentDetailComposite_delete);
+		btnDelete.setLayoutData(gdButton);
 		btnDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -390,8 +402,10 @@ public class AppointmentDetailComposite extends Composite {
 				cloneAndReloadAppointment();
 			}
 		});
+
 		Button btnPrint = new Button(parent, SWT.PUSH);
 		btnPrint.setText(Messages.AppointmentDetailComposite_print);
+		btnPrint.setLayoutData(gdButton);
 		btnPrint.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -403,9 +417,9 @@ public class AppointmentDetailComposite extends Composite {
 	private void printLabelsFor(IContact contact) {
 		List<IAppointment> appts = loadAppointments(contact).stream()
 				.sorted(Comparator.comparing(IAppointment::getStartTime).reversed()).collect(Collectors.toList());
-		String ids = appts.stream().map(IAppointment::getId).collect(Collectors.joining(","));
-		ParameterizedCommand cmd = commandService.createCommand("ch.elexis.agenda.commands.printAppointmentLabel",
-				Collections.singletonMap("ch.elexis.agenda.param.appointmentids", ids));
+		String ids = appts.stream().map(IAppointment::getId).collect(Collectors.joining(",")); //$NON-NLS-1$
+		ParameterizedCommand cmd = commandService.createCommand("ch.elexis.agenda.commands.printAppointmentLabel", //$NON-NLS-1$
+				Collections.singletonMap("ch.elexis.agenda.param.appointmentids", ids)); //$NON-NLS-1$
 		handlerService.executeHandler(cmd);
 	}
 
@@ -413,7 +427,7 @@ public class AppointmentDetailComposite extends Composite {
 		compTimeSelektor = new Group(parent, SWT.SHADOW_ETCHED_IN);
 		compTimeSelektor.setTextDirection(SWT.CENTER);
 		compTimeSelektor.setLayout(new GridLayout(1, false));
-		compTimeSelektor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
+		compTimeSelektor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
 		dayBar = new DayOverViewComposite(compTimeSelektor, appointment, txtTimeFrom, txtTimeTo, txtDuration);
 		dayBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 	}
@@ -423,7 +437,8 @@ public class AppointmentDetailComposite extends Composite {
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		comp.setLayout(new GridLayout(2, false));
 		new Label(comp, SWT.NONE).setText(Messages.TerminDialog_remarks);
-		tBem = new Text(comp, SWT.BORDER | SWT.READ_ONLY);
+		tBem = new Label(comp, SWT.NONE);
+		tBem.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_DARK_RED));
 		tBem.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
 		new Label(comp, SWT.NONE).setText(Messages.AppointmentDetailComposite_date_type_or_status);
 		new Label(comp, SWT.NONE).setText(Messages.AppointmentDetailComposite_reason);
@@ -466,7 +481,7 @@ public class AppointmentDetailComposite extends Composite {
 		sash.setMaximizedControl(rightPane);
 		GridData sashData = (GridData) sash.getLayoutData();
 		sashData.heightHint = rightPane.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		sashData.grabExcessVerticalSpace = false;
+		sashData.grabExcessVerticalSpace = true;
 		setExpanded(false);
 	}
 
@@ -497,20 +512,22 @@ public class AppointmentDetailComposite extends Composite {
 			dayBar.refresh();
 		}
 		reloadContactLabel();
+		emailComposite.updateEmailControlsStatus(getSelectedContact());
 	}
 
 	private void reloadContactLabel() {
+
 		Optional<IContact> c = reloadAsPatient(getAppointmentContact());
 		String currentSearchText = txtPatSearch.getText();
 		if (c.isPresent() && c.get().getLabel().equals(currentSearchText)) {
 			StringBuilder b = new StringBuilder();
-			b.append(c.get().getLabel()).append("\n").append("\n");
-			Optional.ofNullable(c.get().getMobile()).filter(s -> !s.isEmpty()).ifPresent(m -> b.append("Mobil:      ")
-					.append("<a href=\"tel:").append(m).append("\">").append(m).append("</a>\n"));
-			Optional.ofNullable(c.get().getPhone1()).filter(s -> !s.isEmpty()).ifPresent(p1 -> b.append("Telefon 1: ")
-					.append("<a href=\"tel:").append(p1).append("\">").append(p1).append("</a>\n"));
-			Optional.ofNullable(c.get().getPhone2()).filter(s -> !s.isEmpty()).ifPresent(p2 -> b.append("Telefon 2: ")
-					.append("<a href=\"tel:").append(p2).append("\">").append(p2).append("</a>\n"));
+			b.append(c.get().getLabel()).append("\n").append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			Optional.ofNullable(c.get().getMobile()).filter(s -> !s.isEmpty()).ifPresent(m -> b.append("Mobil:      ") //$NON-NLS-1$
+					.append("<a href=\"tel:").append(m).append("\">").append(m).append("</a>\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Optional.ofNullable(c.get().getPhone1()).filter(s -> !s.isEmpty()).ifPresent(p1 -> b.append("Telefon 1: ") //$NON-NLS-1$
+					.append("<a href=\"tel:").append(p1).append("\">").append(p1).append("</a>\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Optional.ofNullable(c.get().getPhone2()).filter(s -> !s.isEmpty()).ifPresent(p2 -> b.append("Telefon 2: ") //$NON-NLS-1$
+					.append("<a href=\"tel:").append(p2).append("\">").append(p2).append("</a>\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			txtContact.setText(b.toString());
 		} else {
 			if (!c.isPresent() && StringUtils.isBlank(currentSearchText)) {
@@ -519,6 +536,7 @@ public class AppointmentDetailComposite extends Composite {
 				txtContact.setText(Messages.AppointmentDetailComposite_freetext + currentSearchText);
 			}
 		}
+		container.layout(true, true);
 	}
 
 	private Optional<IContact> getAppointmentContact() {
@@ -562,9 +580,11 @@ public class AppointmentDetailComposite extends Composite {
 		Composite compDateTime = new Composite(container, SWT.NULL);
 		compDateTime.setLayoutData(gd);
 		compDateTime.setLayout(new GridLayout(3, false));
-		Label lblDateFrom = new Label(compDateTime, SWT.NULL);
+		lblDateFrom = new Label(compDateTime, SWT.NULL);
 		lblDateFrom.setText(Messages.AppointmentDetailComposite_tag);
+		lblDateFrom.setVisible(true);
 		txtDateFromDrop = new CDateTime(compDateTime, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
+		txtDateFromDrop.setVisible(true);
 		txtDateFromDrop.setPattern("EEE, dd.MM.yyyy "); //$NON-NLS-1$
 		txtDateFromDrop.setLayoutData(new GridData());
 		txtDateFromDrop.addSelectionListener(dateTimeSelectionAdapter);
@@ -667,7 +687,7 @@ public class AppointmentDetailComposite extends Composite {
 		if (appointment.getContact() == null) {
 		    String sop = appointment.getSubjectOrPatient();
 		    if (StringUtils.isNotBlank(sop)) {
-		        txtPatSearch.setData(null);          
+				txtPatSearch.setData(null);
 		        txtPatSearch.setText(sop);           
 				tBem.setText(StringUtils.EMPTY);
 		    } else {
@@ -729,7 +749,7 @@ public class AppointmentDetailComposite extends Composite {
 	private void handleComboTypeSelection() {
 		String selectedType = comboType.getText();
 		List<String> kombiTermineList = ConfigServiceHolder.get()
-				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType);
+				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType); //$NON-NLS-1$
 		if (!StringUtils.isBlank(selectedType) && !kombiTermineList.isEmpty()) {
 			chkTerminLinks.setEnabled(true);
 		} else {
@@ -745,15 +765,15 @@ public class AppointmentDetailComposite extends Composite {
 		}
 		String selectedType = comboType.getText();
 		List<String> kombiTermineList = ConfigServiceHolder.get()
-				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType);
+				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType); //$NON-NLS-1$
 		if (kombiTermineList.isEmpty()) {
 			return;
 		}
 		AppointmentExtensionHandler.setMainAppointmentId(appointment, appointment.getId());
 		List<String> kombiTerminIds = new ArrayList<>();
 		for (String kombiTermin : kombiTermineList) {
-			kombiTermin = kombiTermin.replaceAll("[{}]", "");
-			String[] elements = kombiTermin.split(";");
+			kombiTermin = kombiTermin.replaceAll("[{}]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			String[] elements = kombiTermin.split(";"); //$NON-NLS-1$
 			IAppointment newAppointment = CoreModelServiceHolder.get().create(IAppointment.class);
 			newAppointment.setState(appointment.getState());
 			newAppointment.setType(elements[2]);
@@ -807,12 +827,16 @@ public class AppointmentDetailComposite extends Composite {
 			gd.heightHint = SWT.DEFAULT;
 			gd.grabExcessVerticalSpace = true;
 			setAllDetailCompositesVisible(true);
+			lblDateFrom.setVisible(!expand);
+			txtDateFromDrop.setVisible(!expand);
 		} else {
 			sash.setMaximizedControl(rightPane);
 			setAllDetailCompositesVisible(false);
 			rightPane.layout(true, true);
 			gd.heightHint = rightPane.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 			gd.grabExcessVerticalSpace = false;
+			lblDateFrom.setVisible(!expand);
+			txtDateFromDrop.setVisible(!expand);
 		}
 		container.layout(true, true);
 		getShell().layout(true, true);

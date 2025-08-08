@@ -80,4 +80,12 @@
             genModel="arzttarife.genmodel"/>
    </extension>
 
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated arzttarife -->
+      <package
+            uri="http://ch.elexis.base/model/arzttarife/tardoc"
+            class="ch.elexis.base.ch.arzttarife.tardoc.TardocPackage"
+            genModel="arzttarife.genmodel"/>
+   </extension>
+
 </plugin>

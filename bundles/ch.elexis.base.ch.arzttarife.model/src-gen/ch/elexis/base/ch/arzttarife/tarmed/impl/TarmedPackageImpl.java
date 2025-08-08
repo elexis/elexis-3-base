@@ -27,6 +27,8 @@ import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
 import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
 import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
+import ch.elexis.base.ch.arzttarife.tardoc.impl.TardocPackageImpl;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
@@ -181,6 +183,8 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(OccupationalPackage.eNS_URI);
 		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TardocPackage.eNS_URI);
+		TardocPackageImpl theTardocPackage = (TardocPackageImpl)(registeredPackage instanceof TardocPackageImpl ? registeredPackage : TardocPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theTarmedPackage.createPackageContents();
@@ -192,6 +196,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		theNutritionPackage.createPackageContents();
 		thePsychoPackage.createPackageContents();
 		theOccupationalPackage.createPackageContents();
+		theTardocPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theTarmedPackage.initializePackageContents();
@@ -203,6 +208,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		theNutritionPackage.initializePackageContents();
 		thePsychoPackage.initializePackageContents();
 		theOccupationalPackage.initializePackageContents();
+		theTardocPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theTarmedPackage.freeze();

@@ -217,4 +217,131 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
   </eSubpackages>
+  <eSubpackages name="tardoc" nsURI="http://ch.elexis.base/model/arzttarife/tardoc"
+      nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">
+    <eClassifiers xsi:type="ecore:EClass" name="ITardocLeistung" abstract="true" interface="true"
+        eSuperTypes="../ch.elexis.core/model/model.ecore#//IService">
+      <eOperations name="getServiceGroups" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
+      <eOperations name="getServiceBlocks" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
+      <eOperations name="requiresSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eOperations name="getAL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eParameters name="mandator" eType="ecore:EClass ../ch.elexis.core/model/model.ecore#//IMandator"/>
+      </eOperations>
+      <eOperations name="getKumulations">
+        <eGenericType eClassifier="ecore:EClass ../ch.elexis.core/model/types.ecore#//List">
+          <eTypeArguments eClassifier="#//tardoc/ITardocKumulation"/>
+        </eGenericType>
+        <eParameters name="type" eType="#//tardoc/TardocKumulationArt"/>
+      </eOperations>
+      <eOperations name="getHierarchy">
+        <eGenericType eClassifier="ecore:EClass ../ch.elexis.core/model/types.ecore#//List">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eGenericType>
+        <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
+      <eOperations name="isZuschlagsleistung" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="IPL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuanti" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tardoc/ITardocExtension"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//tardoc/ITardocLeistung"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="serviceTyp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="law" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="sparte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="nickname" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ITardocExtension" abstract="true"
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//WithExtInfo">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="limits" changeable="false"
+          transient="true">
+        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eGenericType>
+      </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="medInterpretation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="techInterpretation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ITardocGroup" abstract="true" interface="true"
+        eSuperTypes="../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//Identifiable">
+      <eOperations name="validAt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="reference" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
+      <eOperations name="getExclusions">
+        <eGenericType eClassifier="ecore:EClass ../ch.elexis.core/model/types.ecore#//List">
+          <eTypeArguments eClassifier="#//tardoc/TardocExclusion"/>
+        </eGenericType>
+        <eParameters name="encounter" eType="ecore:EClass ../ch.elexis.core/model/model.ecore#//IEncounter"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="services" upperBound="-1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="law" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="limitations" upperBound="-1"
+          eType="#//tardoc/TardocLimitation" changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tardoc/ITardocExtension"
+          changeable="false"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ITardocKumulation" abstract="true"
+        interface="true">
+      <eOperations name="isValidKumulation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="reference" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveArt" eType="#//tardoc/TardocKumulationArt"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="law" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="masterCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="masterArt" eType="#//tardoc/TardocKumulationArt"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="typ" eType="#//tardoc/TardocKumulationTyp"
+          changeable="false"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EDataType" name="TardocLimitation" instanceClassName="ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="TardocExclusion" instanceClassName="ch.elexis.base.ch.arzttarife.tardoc.model.TardocExclusion"/>
+    <eClassifiers xsi:type="ecore:EEnum" name="MandantType">
+      <eLiterals name="SPECIALIST"/>
+      <eLiterals name="PRACTITIONER" value="1"/>
+      <eLiterals name="TARPSYAPPRENTICE" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EDataType" name="TardocKumulationArt" instanceClassName="ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationArt"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="TardocKumulationTyp" instanceClassName="ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp"/>
+  </eSubpackages>
 </ecore:EPackage>

@@ -163,5 +163,83 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//occupational/IOccupationalLeistung/description"/>
       </genClasses>
     </nestedGenPackages>
+    <nestedGenPackages prefix="Tardoc" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//tardoc">
+      <genEnums typeSafeEnumCompatible="false" ecoreEnum="arzttarife.ecore#//tardoc/MandantType">
+        <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tardoc/MandantType/SPECIALIST"/>
+        <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tardoc/MandantType/PRACTITIONER"/>
+        <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tardoc/MandantType/TARPSYAPPRENTICE"/>
+      </genEnums>
+      <genDataTypes ecoreDataType="arzttarife.ecore#//tardoc/TardocLimitation"/>
+      <genDataTypes ecoreDataType="arzttarife.ecore#//tardoc/TardocExclusion"/>
+      <genDataTypes ecoreDataType="arzttarife.ecore#//tardoc/TardocKumulationArt"/>
+      <genDataTypes ecoreDataType="arzttarife.ecore#//tardoc/TardocKumulationTyp"/>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tardoc/ITardocLeistung">
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/AL"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/IPL"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/digniQuali"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/digniQuanti"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/exclusion"/>
+        <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference arzttarife.ecore#//tardoc/ITardocLeistung/extension"/>
+        <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference arzttarife.ecore#//tardoc/ITardocLeistung/parent"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/validFrom"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/validTo"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/serviceTyp"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/law"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/sparte"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/chapter"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocLeistung/nickname"/>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocLeistung/getServiceGroups">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocLeistung/getServiceGroups/date"/>
+        </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocLeistung/getServiceBlocks">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocLeistung/getServiceBlocks/date"/>
+        </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocLeistung/requiresSide"/>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocLeistung/getAL">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocLeistung/getAL/mandator"/>
+        </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocLeistung/getKumulations">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocLeistung/getKumulations/type"/>
+        </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocLeistung/getHierarchy">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocLeistung/getHierarchy/date"/>
+        </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocLeistung/isZuschlagsleistung"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tardoc/ITardocExtension">
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocExtension/limits"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocExtension/medInterpretation"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocExtension/techInterpretation"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tardoc/ITardocGroup">
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocGroup/code"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocGroup/services"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocGroup/validFrom"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocGroup/validTo"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocGroup/law"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocGroup/limitations"/>
+        <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference arzttarife.ecore#//tardoc/ITardocGroup/extension"/>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocGroup/validAt">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocGroup/validAt/reference"/>
+        </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocGroup/getExclusions">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocGroup/getExclusions/encounter"/>
+        </genOperations>
+      </genClasses>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tardoc/ITardocKumulation">
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/slaveCode"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/slaveArt"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/validSide"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/validFrom"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/validTo"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/law"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/masterCode"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/masterArt"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tardoc/ITardocKumulation/typ"/>
+        <genOperations ecoreOperation="arzttarife.ecore#//tardoc/ITardocKumulation/isValidKumulation">
+          <genParameters ecoreParameter="arzttarife.ecore#//tardoc/ITardocKumulation/isValidKumulation/reference"/>
+        </genOperations>
+      </genClasses>
+    </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

@@ -39,7 +39,7 @@
     <booleanAttribute key="run_in_ui_thread" value="true"/>
     <setAttribute key="selected_target_bundles">
         <setEntry value="bcprov@default:default"/>
-        <setEntry value="ch.qos.logback.classic@default:default"/>
+        <setEntry value="ch.qos.logback.classic@1:true"/>
         <setEntry value="ch.qos.logback.core@default:default"/>
         <setEntry value="com.google.gson*2.12.1@default:default"/>
         <setEntry value="com.google.guava.failureaccess@default:default"/>
@@ -64,7 +64,7 @@
         <setEntry value="jakarta.xml.bind-api@default:false"/>
         <setEntry value="jcl.over.slf4j@default:default"/>
         <setEntry value="org.apache-extras.beanshell.bsh@default:default"/>
-        <setEntry value="org.apache.aries.spifly.dynamic.bundle@default:default"/>
+        <setEntry value="org.apache.aries.spifly.dynamic.bundle@1:true"/>
         <setEntry value="org.apache.commons.collections@default:default"/>
         <setEntry value="org.apache.commons.commons-beanutils@default:default"/>
         <setEntry value="org.apache.commons.commons-codec*1.17.0@default:default"/>
@@ -108,7 +108,7 @@
         <setEntry value="org.eclipse.equinox.registry@default:default"/>
         <setEntry value="org.eclipse.jdt.junit.runtime@default:default"/>
         <setEntry value="org.eclipse.jdt.junit4.runtime@default:default"/>
-        <setEntry value="org.eclipse.jetty.ee10.osgi.alpn.fragment@default:default"/>
+        <setEntry value="org.eclipse.jetty.ee10.osgi.alpn.fragment@default:false"/>
         <setEntry value="org.eclipse.osgi.compatibility.state@default:false"/>
         <setEntry value="org.eclipse.osgi@1:true"/>
         <setEntry value="org.eclipse.pde.junit.runtime@default:default"/>
@@ -171,7 +171,7 @@
         <setEntry value="ch.elexis.core.webdav@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="es.gogo.shell@default:default"/>
+        <setEntry value="es.gogo.shell@default:false"/>
         <setEntry value="info.elexis.server.core.logging@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>

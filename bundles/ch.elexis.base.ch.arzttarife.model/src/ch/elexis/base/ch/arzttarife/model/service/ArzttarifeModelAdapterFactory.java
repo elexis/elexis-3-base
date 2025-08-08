@@ -7,6 +7,10 @@ import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocExtension;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocGroup;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
@@ -19,6 +23,10 @@ import ch.elexis.core.jpa.entities.PandemieLeistung;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
 import ch.elexis.core.jpa.entities.PsychoLeistung;
 import ch.elexis.core.jpa.entities.RFE;
+import ch.elexis.core.jpa.entities.TardocExtension;
+import ch.elexis.core.jpa.entities.TardocGroup;
+import ch.elexis.core.jpa.entities.TardocKumulation;
+import ch.elexis.core.jpa.entities.TardocLeistung;
 import ch.elexis.core.jpa.entities.TarmedExtension;
 import ch.elexis.core.jpa.entities.TarmedGroup;
 import ch.elexis.core.jpa.entities.TarmedKumulation;
@@ -69,6 +77,15 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 				ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulation.class, TarmedKumulation.class));
 		addMapping(new MappingEntry(ITarmedGroup.class, ch.elexis.base.ch.arzttarife.tarmed.model.TarmedGroup.class,
 				TarmedGroup.class));
+
+		addMapping(new MappingEntry(ITardocLeistung.class,
+				ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung.class, TardocLeistung.class));
+		addMapping(new MappingEntry(ITardocExtension.class,
+				ch.elexis.base.ch.arzttarife.tardoc.model.TardocExtension.class, TardocExtension.class));
+		addMapping(new MappingEntry(ITardocKumulation.class,
+				ch.elexis.base.ch.arzttarife.tardoc.model.TardocKumulation.class, TardocKumulation.class));
+		addMapping(new MappingEntry(ITardocGroup.class, ch.elexis.base.ch.arzttarife.tardoc.model.TardocGroup.class,
+				TardocGroup.class));
 
 		addMapping(new MappingEntry(IReasonForEncounter.class,
 				ch.elexis.base.ch.arzttarife.rfe.model.ReasonForEncounter.class, RFE.class));

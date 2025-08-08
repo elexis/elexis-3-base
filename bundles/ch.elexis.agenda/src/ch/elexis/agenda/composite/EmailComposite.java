@@ -51,16 +51,17 @@ import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class EmailComposite extends Composite {
 
-	private static final String TEMPLATE_TEXT = "[Pea.SiteUrl]";
-	private static final String TEMPLATE = "Terminbestätigung inkl. Anmeldeformular";
-	private static final String URL = "https://medelexis.ch/pea/";
-	private static final String HYPERLINK = "<a href=\"https://medelexis.ch/pea/\">Weitere Informationen finden Sie hier.</a>";
-	private static final String QUERY_SYMBOL = "?";
+	private static final String TEMPLATE_TEXT = "[Pea.SiteUrl]"; //$NON-NLS-1$
+	private static final String TEMPLATE = "Terminbestätigung inkl. Anmeldeformular"; //$NON-NLS-1$
+	private static final String URL = "https://medelexis.ch/pea/"; //$NON-NLS-1$
+	private static final String HYPERLINK = "<a href=\"https://medelexis.ch/pea/\">Weitere Informationen finden Sie hier.</a>"; //$NON-NLS-1$
+	private static final String QUERY_SYMBOL = "?"; //$NON-NLS-1$
 	private String preparedMessageText;
 	@Inject
 	private ITextReplacementService textReplacement;
 	@Inject
 	private IContextService contextService;
+
 
 	private EmailEditHandler emailEdith;
 	private Button chkEmail;
@@ -70,16 +71,14 @@ public class EmailComposite extends Composite {
 	private boolean isEmailConfigured;
 	private boolean isPatientSelected;
 	private boolean hasEmail;
-	private Object pat;
+	private IContact pat;
 	private Color blue = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
-	private IAppointment appointment;
 	private Label emailHyperlink;
 
 	public EmailComposite(Composite parent, int style, IContact selectedContact, IAppointment appointment) {
 		super(parent, style);
 		CoreUiUtil.injectServicesWithContext(this);
 		this.pat = selectedContact;
-		this.appointment = appointment;
 		setLayout(new GridLayout(4, false));
 		chkEmail = new Button(this, SWT.CHECK);
 		chkEmail.setText(Messages.Appointment_Confirmation);
@@ -93,8 +92,9 @@ public class EmailComposite extends Composite {
 				emailHyperlink.setEnabled(selected);
 			}
 		});
+
 		emailTemplatesLabel = new Label(this, SWT.NONE);
-		emailTemplatesLabel.setText(Messages.Core_E_Mail + " " + Messages.Core_Temlate);
+		emailTemplatesLabel.setText(Messages.Core_E_Mail + StringUtils.SPACE + Messages.Core_Temlate);
 		emailTemplatesLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false)); // Updated GridData
 		emailTemplatesViewer = new ComboViewer(this, SWT.DROP_DOWN | SWT.READ_ONLY);
 		emailTemplatesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -105,12 +105,13 @@ public class EmailComposite extends Composite {
 				if (element instanceof ITextTemplate) {
 					ITextTemplate template = (ITextTemplate) element;
 					return template.getName()
-							+ (template.getMandator() != null ? " (" + template.getMandator().getLabel() + ")"
+							+ (template.getMandator() != null ? " (" + template.getMandator().getLabel() + ")" //$NON-NLS-1$ //$NON-NLS-2$
 									: StringUtils.EMPTY);
 				}
 				return super.getText(element);
 			}
 		});
+
 		emailTemplatesViewer.addSelectionChangedListener(event -> {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			Object selectedElement = selection.getFirstElement();
@@ -128,12 +129,13 @@ public class EmailComposite extends Composite {
 				}
 			}
 		});
-		emailHyperlink = SWTHelper.createHyperlink(this, "E-Mail bearbeiten", new HyperlinkAdapter() {
+
+		emailHyperlink = SWTHelper.createHyperlink(this, "E-Mail bearbeiten", new HyperlinkAdapter() { //$NON-NLS-1$
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
 				String emailTemplate = getSelectedEmailTemplateViewerDetails().getTemplate();
 				if (emailTemplate != null) {
-					IContext context = contextService.createNamedContext("appointment_reminder_context");
+					IContext context = contextService.createNamedContext("appointment_reminder_context"); //$NON-NLS-1$
 					context.setTyped(appointment);
 					context.setTyped(pat);
 					preparedMessageText = textReplacement.performReplacement(context, emailTemplate);

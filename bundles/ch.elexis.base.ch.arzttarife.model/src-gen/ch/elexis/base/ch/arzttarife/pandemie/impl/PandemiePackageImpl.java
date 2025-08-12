@@ -3,6 +3,8 @@
  */
 package ch.elexis.base.ch.arzttarife.pandemie.impl;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
+import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
@@ -127,6 +129,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TardocPackage.eNS_URI);
 		TardocPackageImpl theTardocPackage = (TardocPackageImpl)(registeredPackage instanceof TardocPackageImpl ? registeredPackage : TardocPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
+		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		thePandemiePackage.createPackageContents();
@@ -139,6 +143,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		thePsychoPackage.createPackageContents();
 		theOccupationalPackage.createPackageContents();
 		theTardocPackage.createPackageContents();
+		theAmbulatoryPackage.createPackageContents();
 
 		// Initialize created meta-data
 		thePandemiePackage.initializePackageContents();
@@ -151,6 +156,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		thePsychoPackage.initializePackageContents();
 		theOccupationalPackage.initializePackageContents();
 		theTardocPackage.initializePackageContents();
+		theAmbulatoryPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePandemiePackage.freeze();

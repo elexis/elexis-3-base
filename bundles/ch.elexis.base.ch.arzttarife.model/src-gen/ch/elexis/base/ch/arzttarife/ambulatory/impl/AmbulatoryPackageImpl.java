@@ -1,36 +1,52 @@
 /**
  * Copyright Text	Copyright (c) 2018 MEDEVIT <office@medevit.at>....
  */
-package ch.elexis.base.ch.arzttarife.complementary.impl;
+package ch.elexis.base.ch.arzttarife.ambulatory.impl;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryFactory;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
-import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
-import ch.elexis.base.ch.arzttarife.complementary.ComplementaryFactory;
+import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
+
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
-import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
+
+import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
+
 import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
+
 import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
+
 import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
+
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
+
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
+
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
 
 import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
+
 import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
+
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
+
 import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
+
 import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
+
 import ch.elexis.base.ch.arzttarife.tardoc.impl.TardocPackageImpl;
+
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
 
 import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
 
 import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
+
 import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
+
 import ch.elexis.core.model.ModelPackage;
 
 import ch.elexis.core.types.TypesPackage;
@@ -47,13 +63,13 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ComplementaryPackageImpl extends EPackageImpl implements ComplementaryPackage {
+public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass iComplementaryLeistungEClass = null;
+	private EClass iAmbulatoryAllowanceEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -66,14 +82,13 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage#eNS_URI
+	 * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private ComplementaryPackageImpl() {
-		super(eNS_URI, ComplementaryFactory.eINSTANCE);
+	private AmbulatoryPackageImpl() {
+		super(eNS_URI, AmbulatoryFactory.eINSTANCE);
 	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -84,7 +99,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 *
-	 * <p>This method is used to initialize {@link ComplementaryPackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link AmbulatoryPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -93,12 +108,12 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static ComplementaryPackage init() {
-		if (isInited) return (ComplementaryPackage)EPackage.Registry.INSTANCE.getEPackage(ComplementaryPackage.eNS_URI);
+	public static AmbulatoryPackage init() {
+		if (isInited) return (AmbulatoryPackage)EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
 
 		// Obtain or create and register package
-		Object registeredComplementaryPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		ComplementaryPackageImpl theComplementaryPackage = registeredComplementaryPackage instanceof ComplementaryPackageImpl ? (ComplementaryPackageImpl)registeredComplementaryPackage : new ComplementaryPackageImpl();
+		Object registeredAmbulatoryPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		AmbulatoryPackageImpl theAmbulatoryPackage = registeredAmbulatoryPackage instanceof AmbulatoryPackageImpl ? (AmbulatoryPackageImpl)registeredAmbulatoryPackage : new AmbulatoryPackageImpl();
 
 		isInited = true;
 
@@ -111,6 +126,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		TarmedPackageImpl theTarmedPackage = (TarmedPackageImpl)(registeredPackage instanceof TarmedPackageImpl ? registeredPackage : TarmedPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PhysioPackage.eNS_URI);
 		PhysioPackageImpl thePhysioPackage = (PhysioPackageImpl)(registeredPackage instanceof PhysioPackageImpl ? registeredPackage : PhysioPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ComplementaryPackage.eNS_URI);
+		ComplementaryPackageImpl theComplementaryPackage = (ComplementaryPackageImpl)(registeredPackage instanceof ComplementaryPackageImpl ? registeredPackage : ComplementaryPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(RfePackage.eNS_URI);
 		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
@@ -125,13 +142,12 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TardocPackage.eNS_URI);
 		TardocPackageImpl theTardocPackage = (TardocPackageImpl)(registeredPackage instanceof TardocPackageImpl ? registeredPackage : TardocPackage.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
-		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
 
 		// Create package meta-data objects
-		theComplementaryPackage.createPackageContents();
+		theAmbulatoryPackage.createPackageContents();
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
+		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
@@ -139,12 +155,12 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		thePsychoPackage.createPackageContents();
 		theOccupationalPackage.createPackageContents();
 		theTardocPackage.createPackageContents();
-		theAmbulatoryPackage.createPackageContents();
 
 		// Initialize created meta-data
-		theComplementaryPackage.initializePackageContents();
+		theAmbulatoryPackage.initializePackageContents();
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
+		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
@@ -152,14 +168,13 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		thePsychoPackage.initializePackageContents();
 		theOccupationalPackage.initializePackageContents();
 		theTardocPackage.initializePackageContents();
-		theAmbulatoryPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		theComplementaryPackage.freeze();
+		theAmbulatoryPackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(ComplementaryPackage.eNS_URI, theComplementaryPackage);
-		return theComplementaryPackage;
+		EPackage.Registry.INSTANCE.put(AmbulatoryPackage.eNS_URI, theAmbulatoryPackage);
+		return theAmbulatoryPackage;
 	}
 
 	/**
@@ -168,8 +183,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
-	public EClass getIComplementaryLeistung() {
-		return iComplementaryLeistungEClass;
+	public EClass getIAmbulatoryAllowance() {
+		return iAmbulatoryAllowanceEClass;
 	}
 
 	/**
@@ -178,8 +193,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIComplementaryLeistung_Description() {
-		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(0);
+	public EAttribute getIAmbulatoryAllowance_ValidFrom() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -188,8 +203,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIComplementaryLeistung_Chapter() {
-		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(1);
+	public EAttribute getIAmbulatoryAllowance_ValidTo() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -198,8 +213,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIComplementaryLeistung_FixedValue() {
-		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(2);
+	public EAttribute getIAmbulatoryAllowance_Chapter() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -208,8 +223,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIComplementaryLeistung_FixedValueSet() {
-		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(3);
+	public EAttribute getIAmbulatoryAllowance_TP() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -218,8 +233,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIComplementaryLeistung_ValidFrom() {
-		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(4);
+	public EAttribute getIAmbulatoryAllowance_DigniQuali() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -228,18 +243,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIComplementaryLeistung_ValidTo() {
-		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public ComplementaryFactory getComplementaryFactory() {
-		return (ComplementaryFactory)getEFactoryInstance();
+	public AmbulatoryFactory getAmbulatoryFactory() {
+		return (AmbulatoryFactory)getEFactoryInstance();
 	}
 
 	/**
@@ -261,13 +266,12 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		isCreated = true;
 
 		// Create classes and their features
-		iComplementaryLeistungEClass = createEClass(ICOMPLEMENTARY_LEISTUNG);
-		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__DESCRIPTION);
-		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__CHAPTER);
-		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE);
-		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET);
-		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__VALID_FROM);
-		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__VALID_TO);
+		iAmbulatoryAllowanceEClass = createEClass(IAMBULATORY_ALLOWANCE);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__VALID_FROM);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__VALID_TO);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__CHAPTER);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__TP);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__DIGNI_QUALI);
 	}
 
 	/**
@@ -302,21 +306,18 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		iComplementaryLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
-		iComplementaryLeistungEClass.getESuperTypes().add(theModelPackage.getDeleteable());
-		iComplementaryLeistungEClass.getESuperTypes().add(theModelPackage.getWithAssignableId());
+		iAmbulatoryAllowanceEClass.getESuperTypes().add(theModelPackage.getIBillable());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(iComplementaryLeistungEClass, IComplementaryLeistung.class, "IComplementaryLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getIComplementaryLeistung_Description(), ecorePackage.getEString(), "description", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIComplementaryLeistung_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIComplementaryLeistung_FixedValue(), ecorePackage.getEInt(), "fixedValue", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIComplementaryLeistung_FixedValueSet(), ecorePackage.getEBoolean(), "fixedValueSet", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIComplementaryLeistung_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIComplementaryLeistung_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(iAmbulatoryAllowanceEClass, IAmbulatoryAllowance.class, "IAmbulatoryAllowance", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getIAmbulatoryAllowance_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_TP(), ecorePackage.getEString(), "TP", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_DigniQuali(), ecorePackage.getEString(), "digniQuali", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
 	}
 
-} //ComplementaryPackageImpl
+} //AmbulatoryPackageImpl

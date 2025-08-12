@@ -218,7 +218,7 @@
     </eClassifiers>
   </eSubpackages>
   <eSubpackages name="tardoc" nsURI="http://ch.elexis.base/model/arzttarife/tardoc"
-      nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">
+      nsPrefix="ch.elexis.arzttarife.ch.tardoc.model">
     <eClassifiers xsi:type="ecore:EClass" name="ITardocLeistung" abstract="true" interface="true"
         eSuperTypes="../ch.elexis.core/model/model.ecore#//IService">
       <eOperations name="getServiceGroups" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
@@ -343,5 +343,17 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EDataType" name="TardocKumulationArt" instanceClassName="ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationArt"/>
     <eClassifiers xsi:type="ecore:EDataType" name="TardocKumulationTyp" instanceClassName="ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp"/>
+  </eSubpackages>
+  <eSubpackages name="ambulatory" nsURI="http://ch.elexis.base/model/arzttarife/amulatory"
+      nsPrefix="ch.elexis.arzttarife.ch.ambulatory.model">
+    <eClassifiers xsi:type="ecore:EClass" name="IAmbulatoryAllowance" abstract="true"
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="TP" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+    </eClassifiers>
   </eSubpackages>
 </ecore:EPackage>

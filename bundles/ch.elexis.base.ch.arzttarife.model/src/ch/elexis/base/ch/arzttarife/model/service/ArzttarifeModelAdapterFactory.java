@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.model.service;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
 import ch.elexis.base.ch.arzttarife.occupational.IOccupationalLeistung;
@@ -16,6 +17,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
+import ch.elexis.core.jpa.entities.AmbulantePauschalen;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
 import ch.elexis.core.jpa.entities.NutritionLeistung;
 import ch.elexis.core.jpa.entities.OccupationalLeistung;
@@ -86,6 +88,9 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 				ch.elexis.base.ch.arzttarife.tardoc.model.TardocKumulation.class, TardocKumulation.class));
 		addMapping(new MappingEntry(ITardocGroup.class, ch.elexis.base.ch.arzttarife.tardoc.model.TardocGroup.class,
 				TardocGroup.class));
+
+		addMapping(new MappingEntry(IAmbulatoryAllowance.class,
+				ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowance.class, AmbulantePauschalen.class));
 
 		addMapping(new MappingEntry(IReasonForEncounter.class,
 				ch.elexis.base.ch.arzttarife.rfe.model.ReasonForEncounter.class, RFE.class));

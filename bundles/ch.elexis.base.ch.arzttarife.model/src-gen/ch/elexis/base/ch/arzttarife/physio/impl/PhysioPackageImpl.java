@@ -3,6 +3,8 @@
  */
 package ch.elexis.base.ch.arzttarife.physio.impl;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
+import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
@@ -119,6 +121,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TardocPackage.eNS_URI);
 		TardocPackageImpl theTardocPackage = (TardocPackageImpl)(registeredPackage instanceof TardocPackageImpl ? registeredPackage : TardocPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
+		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		thePhysioPackage.createPackageContents();
@@ -131,6 +135,7 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		thePsychoPackage.createPackageContents();
 		theOccupationalPackage.createPackageContents();
 		theTardocPackage.createPackageContents();
+		theAmbulatoryPackage.createPackageContents();
 
 		// Initialize created meta-data
 		thePhysioPackage.initializePackageContents();
@@ -143,6 +148,7 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		thePsychoPackage.initializePackageContents();
 		theOccupationalPackage.initializePackageContents();
 		theTardocPackage.initializePackageContents();
+		theAmbulatoryPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePhysioPackage.freeze();

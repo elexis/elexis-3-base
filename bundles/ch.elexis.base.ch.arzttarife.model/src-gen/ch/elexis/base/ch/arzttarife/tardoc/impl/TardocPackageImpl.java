@@ -3,6 +3,8 @@
  */
 package ch.elexis.base.ch.arzttarife.tardoc.impl;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
+import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
@@ -206,6 +208,8 @@ public class TardocPackageImpl extends EPackageImpl implements TardocPackage {
 		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(OccupationalPackage.eNS_URI);
 		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
+		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theTardocPackage.createPackageContents();
@@ -218,6 +222,7 @@ public class TardocPackageImpl extends EPackageImpl implements TardocPackage {
 		theNutritionPackage.createPackageContents();
 		thePsychoPackage.createPackageContents();
 		theOccupationalPackage.createPackageContents();
+		theAmbulatoryPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theTardocPackage.initializePackageContents();
@@ -230,6 +235,7 @@ public class TardocPackageImpl extends EPackageImpl implements TardocPackage {
 		theNutritionPackage.initializePackageContents();
 		thePsychoPackage.initializePackageContents();
 		theOccupationalPackage.initializePackageContents();
+		theAmbulatoryPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theTardocPackage.freeze();

@@ -22,7 +22,6 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
-import ch.elexis.core.jpa.entities.PandemieLeistung;
 import ch.elexis.core.jpa.entities.TarmedPauschalen;
 import ch.rgw.tools.TimeTool;
 
@@ -118,12 +117,12 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 	}
 
 	private LocalDate getValidFrom(List<String> line) {
-		return getLocalDate((String) line.get(12).trim());
+		return getLocalDate(line.get(12).trim());
 	}
 
 	private LocalDate getValidTo(List<String> line) {
 		if (StringUtils.isNotBlank(line.get(13).trim())) {
-			return getLocalDate((String) line.get(13).trim());
+			return getLocalDate(line.get(13).trim());
 		} else {
 			return LocalDate.MAX;
 		}
@@ -149,7 +148,7 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 	}
 
 	public static void setCurrentVersion(int newVersion) {
-		PandemieLeistung versionEntry = EntityUtil.load("VERSION", PandemieLeistung.class);
+		TarmedPauschalen versionEntry = EntityUtil.load("VERSION", TarmedPauschalen.class);
 		if (versionEntry != null) {
 			versionEntry.setChapter(Integer.toString(newVersion));
 			EntityUtil.save(Collections.singletonList(versionEntry));
@@ -165,7 +164,7 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 			String chapter = versionEntry.getChapter();
 			if (chapter != null) {
 				try {
-					return Integer.parseInt(((String) chapter).trim());
+					return Integer.parseInt(chapter.trim());
 				} catch (NumberFormatException e) {
 					// ignore return 0
 				}

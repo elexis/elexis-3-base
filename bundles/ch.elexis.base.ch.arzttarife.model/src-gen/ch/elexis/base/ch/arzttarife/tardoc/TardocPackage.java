@@ -50,7 +50,7 @@ public interface TardocPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_PREFIX = "ch.elexis.arzttarife.ch.tarmed.model";
+	String eNS_PREFIX = "ch.elexis.arzttarife.ch.tardoc.model";
 
 	/**
 	 * The singleton instance of the package.

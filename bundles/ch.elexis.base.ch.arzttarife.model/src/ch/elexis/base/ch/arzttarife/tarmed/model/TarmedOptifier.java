@@ -154,11 +154,6 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	 * kann und kann sie ggf. zurückweisen oder modifizieren.
 	 */
 	public Result<IBilled> add(TarmedLeistung code, IEncounter kons) {
-		if (!(code instanceof TarmedLeistung)) {
-			return new Result<IBilled>(Result.SEVERITY.ERROR, LEISTUNGSTYP, Messages.TarmedOptifier_BadType, null,
-					true);
-		}
-
 		bOptify = TarmedUtil.getConfigValue(getClass(), IMandator.class, Preferences.LEISTUNGSCODES_OPTIFY, true);
 
 		bAllowOverrideStrict = TarmedUtil.getConfigValue(getClass(), IUser.class,

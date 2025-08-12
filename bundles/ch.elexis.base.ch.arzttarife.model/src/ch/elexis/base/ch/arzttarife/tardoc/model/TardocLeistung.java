@@ -44,7 +44,7 @@ public class TardocLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	public static final String STS_CLASS = "ch.elexis.data.TardocLeistung";
 
-	private IBillableOptifier<TardocLeistung> tarmedOptifier;
+	private IBillableOptifier<TardocLeistung> tardocOptifier;
 	private IBillableVerifier verifier;
 
 	private ITardocExtension extension;
@@ -139,10 +139,10 @@ public class TardocLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	@Override
 	public synchronized IBillableOptifier<TardocLeistung> getOptifier() {
-		if (tarmedOptifier == null) {
-			tarmedOptifier = new TardocOptifier();
+		if (tardocOptifier == null) {
+			tardocOptifier = new TardocOptifier();
 		}
-		return tarmedOptifier;
+		return tardocOptifier;
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class TardocLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	@Override
 	public String getCodeSystemCode() {
-		return "001";
+		return "007";
 	}
 
 	@Override

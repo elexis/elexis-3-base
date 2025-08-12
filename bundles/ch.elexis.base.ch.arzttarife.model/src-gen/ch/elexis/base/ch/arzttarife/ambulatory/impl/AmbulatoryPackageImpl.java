@@ -1,38 +1,61 @@
 /**
  * Copyright Text	Copyright (c) 2018 MEDEVIT <office@medevit.at>....
  */
-package ch.elexis.base.ch.arzttarife.tarmedallowance.impl;
+package ch.elexis.base.ch.arzttarife.ambulatory.impl;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryFactory;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
-import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
+import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
+
+import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
+
+import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
+
+import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
+
+import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
+
+import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
+
+import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
+
+import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
+
+import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
+
+import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
+
+import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
+
+import ch.elexis.base.ch.arzttarife.tardoc.impl.TardocPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
+
+import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
+
+import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
+
+import ch.elexis.core.model.ModelPackage;
+
+import ch.elexis.core.types.TypesPackage;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
 
-import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
-import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
-import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
-import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
-import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
-import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
-import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
-import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
-import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
-import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
-import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
-import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
-import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
-import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
-import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
-import ch.elexis.base.ch.arzttarife.tardoc.impl.TardocPackageImpl;
-import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
-import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
-import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
-import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowanceFactory;
-import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
-import ch.elexis.core.model.ModelPackage;
-import ch.elexis.core.types.TypesPackage;
+import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -40,13 +63,13 @@ import ch.elexis.core.types.TypesPackage;
  * <!-- end-user-doc -->
  * @generated
  */
-public class TarmedallowancePackageImpl extends EPackageImpl implements TarmedallowancePackage {
+public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass iTarmedAllowanceEClass = null;
+	private EClass iAmbulatoryAllowanceEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -59,14 +82,13 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage#eNS_URI
+	 * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private TarmedallowancePackageImpl() {
-		super(eNS_URI, TarmedallowanceFactory.eINSTANCE);
+	private AmbulatoryPackageImpl() {
+		super(eNS_URI, AmbulatoryFactory.eINSTANCE);
 	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -77,7 +99,7 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 *
-	 * <p>This method is used to initialize {@link TarmedallowancePackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link AmbulatoryPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -86,12 +108,12 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static TarmedallowancePackage init() {
-		if (isInited) return (TarmedallowancePackage)EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
+	public static AmbulatoryPackage init() {
+		if (isInited) return (AmbulatoryPackage)EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
 
 		// Obtain or create and register package
-		Object registeredTarmedallowancePackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		TarmedallowancePackageImpl theTarmedallowancePackage = registeredTarmedallowancePackage instanceof TarmedallowancePackageImpl ? (TarmedallowancePackageImpl)registeredTarmedallowancePackage : new TarmedallowancePackageImpl();
+		Object registeredAmbulatoryPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		AmbulatoryPackageImpl theAmbulatoryPackage = registeredAmbulatoryPackage instanceof AmbulatoryPackageImpl ? (AmbulatoryPackageImpl)registeredAmbulatoryPackage : new AmbulatoryPackageImpl();
 
 		isInited = true;
 
@@ -110,6 +132,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
 		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
+		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
 		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PsychoPackage.eNS_URI);
@@ -118,41 +142,39 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TardocPackage.eNS_URI);
 		TardocPackageImpl theTardocPackage = (TardocPackageImpl)(registeredPackage instanceof TardocPackageImpl ? registeredPackage : TardocPackage.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
-		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
 
 		// Create package meta-data objects
-		theTarmedallowancePackage.createPackageContents();
+		theAmbulatoryPackage.createPackageContents();
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
 		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
+		theTarmedallowancePackage.createPackageContents();
 		theNutritionPackage.createPackageContents();
 		thePsychoPackage.createPackageContents();
 		theOccupationalPackage.createPackageContents();
 		theTardocPackage.createPackageContents();
-		theAmbulatoryPackage.createPackageContents();
 
 		// Initialize created meta-data
-		theTarmedallowancePackage.initializePackageContents();
+		theAmbulatoryPackage.initializePackageContents();
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
 		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
+		theTarmedallowancePackage.initializePackageContents();
 		theNutritionPackage.initializePackageContents();
 		thePsychoPackage.initializePackageContents();
 		theOccupationalPackage.initializePackageContents();
 		theTardocPackage.initializePackageContents();
-		theAmbulatoryPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		theTarmedallowancePackage.freeze();
+		theAmbulatoryPackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(TarmedallowancePackage.eNS_URI, theTarmedallowancePackage);
-		return theTarmedallowancePackage;
+		EPackage.Registry.INSTANCE.put(AmbulatoryPackage.eNS_URI, theAmbulatoryPackage);
+		return theAmbulatoryPackage;
 	}
 
 	/**
@@ -161,8 +183,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EClass getITarmedAllowance() {
-		return iTarmedAllowanceEClass;
+	public EClass getIAmbulatoryAllowance() {
+		return iAmbulatoryAllowanceEClass;
 	}
 
 	/**
@@ -171,8 +193,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedAllowance_ValidFrom() {
-		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(0);
+	public EAttribute getIAmbulatoryAllowance_ValidFrom() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -181,8 +203,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedAllowance_ValidTo() {
-		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(1);
+	public EAttribute getIAmbulatoryAllowance_ValidTo() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -191,8 +213,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedAllowance_Chapter() {
-		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(2);
+	public EAttribute getIAmbulatoryAllowance_Chapter() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -201,8 +223,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedAllowance_TP() {
-		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(3);
+	public EAttribute getIAmbulatoryAllowance_TP() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -211,8 +233,18 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public TarmedallowanceFactory getTarmedallowanceFactory() {
-		return (TarmedallowanceFactory)getEFactoryInstance();
+	public EAttribute getIAmbulatoryAllowance_DigniQuali() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public AmbulatoryFactory getAmbulatoryFactory() {
+		return (AmbulatoryFactory)getEFactoryInstance();
 	}
 
 	/**
@@ -234,11 +266,12 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		isCreated = true;
 
 		// Create classes and their features
-		iTarmedAllowanceEClass = createEClass(ITARMED_ALLOWANCE);
-		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_FROM);
-		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_TO);
-		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__CHAPTER);
-		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__TP);
+		iAmbulatoryAllowanceEClass = createEClass(IAMBULATORY_ALLOWANCE);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__VALID_FROM);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__VALID_TO);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__CHAPTER);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__TP);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__DIGNI_QUALI);
 	}
 
 	/**
@@ -273,17 +306,18 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		iTarmedAllowanceEClass.getESuperTypes().add(theModelPackage.getIBillable());
+		iAmbulatoryAllowanceEClass.getESuperTypes().add(theModelPackage.getIBillable());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(iTarmedAllowanceEClass, ITarmedAllowance.class, "ITarmedAllowance", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getITarmedAllowance_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getITarmedAllowance_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getITarmedAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getITarmedAllowance_TP(), ecorePackage.getEString(), "TP", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(iAmbulatoryAllowanceEClass, IAmbulatoryAllowance.class, "IAmbulatoryAllowance", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getIAmbulatoryAllowance_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_TP(), ecorePackage.getEString(), "TP", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_DigniQuali(), ecorePackage.getEString(), "digniQuali", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
 	}
 
-} //TarmedallowancePackageImpl
+} //AmbulatoryPackageImpl

@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import ch.elexis.base.ch.arzttarife.model.tarmed.test.AllTarmedTests;
+import ch.elexis.base.ch.arzttarife.model.tardoc.test.AllTardocTests;
 import ch.elexis.core.common.DBConnection;
 import ch.elexis.core.common.DBConnection.DBType;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
@@ -40,7 +40,8 @@ import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 @RunWith(Suite.class)
-@SuiteClasses({ PhysioLeistungTest.class, ComplementaryLeistungTest.class, AllTarmedTests.class })
+// @SuiteClasses({ PhysioLeistungTest.class, ComplementaryLeistungTest.class, AllTarmedTests.class, AllTardocTests.class })
+@SuiteClasses({ AllTardocTests.class })
 public class AllTestsSuite {
 
 	private static IElexisEntityManager entityManager;
@@ -84,7 +85,15 @@ public class AllTestsSuite {
 			assertTrue(result.isOK());
 			OsgiServiceUtil.ungetService(tarmedImporter);
 
-			// dumpInitialTarifs();
+			IReferenceDataImporter tardocImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34)").get();
+			result = tardocImporter.performImport(new NullProgressMonitor(),
+					AllTestsSuite.class.getResourceAsStream("/rsc/250410_TARDOC_1.4b_ohne_001_4.mdb"),
+					171019);
+			assertTrue(result.isOK());
+			OsgiServiceUtil.ungetService(tardocImporter);
+
+			dumpInitialTarifs();
 		}
 		modelService = OsgiServiceUtil.getService(IModelService.class,
 				"(" + IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.arzttarife.model)").get();

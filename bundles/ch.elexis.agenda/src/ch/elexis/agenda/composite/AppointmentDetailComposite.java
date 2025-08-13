@@ -71,6 +71,7 @@ import ch.elexis.core.ui.e4.fieldassist.IdentifiableContentProposal;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.CoreUtil;
 import ch.rgw.tools.TimeTool;
 
 public class AppointmentDetailComposite extends Composite {
@@ -669,7 +670,11 @@ public class AppointmentDetailComposite extends Composite {
 		Label lblTimeFrom = new Label(compTime, SWT.NONE);
 		lblTimeFrom.setText(Messages.AppointmentDetailComposite_starting_from);
 
-		txtTimeFrom = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT | CDT.SPINNER);
+		if (CoreUtil.isLinux()) {
+			txtTimeFrom = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT);
+		} else {
+			txtTimeFrom = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT | CDT.SPINNER);
+		}
 		txtTimeFrom.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		txtTimeFrom.addSelectionListener(dateTimeSelectionAdapter);
 
@@ -684,7 +689,11 @@ public class AppointmentDetailComposite extends Composite {
 		Label lblTimeTo = new Label(compTime, SWT.NONE);
 		lblTimeTo.setText(Messages.AppointmentDetailComposite_until);
 
-		txtTimeTo = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT | CDT.SPINNER);
+		if (CoreUtil.isLinux()) {
+			txtTimeTo = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT);
+		} else {
+			txtTimeTo = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT | CDT.SPINNER);
+		}
 		txtTimeTo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		txtTimeTo.addSelectionListener(dateTimeSelectionAdapter);
 

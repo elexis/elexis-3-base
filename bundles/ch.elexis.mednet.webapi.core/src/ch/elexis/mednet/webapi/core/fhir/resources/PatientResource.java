@@ -123,6 +123,9 @@ public class PatientResource {
 
 
 	private static String mapRelationshipToRoleCode(RelationshipType relationshipType) {
+		if (relationshipType == null) {
+			return "U";
+		}
 		switch (relationshipType) {
 		case FAMILY_PARENT:
 			return "PRN";

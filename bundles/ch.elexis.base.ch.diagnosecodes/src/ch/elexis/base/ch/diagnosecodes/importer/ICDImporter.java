@@ -45,14 +45,14 @@ public class ICDImporter extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 
-		IReferenceDataImporter importer = importerService.getImporter("icd10") //$NON-NLS-1$
+		IReferenceDataImporter importer = importerService.getImporter("icd10_fhir") //$NON-NLS-1$
 				.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available.")); //$NON-NLS-1$
 		return importer.performImport(monitor, new FileInputStream(results[0]), null);
 	}
 
 	@Override
 	public String getDescription() {
-		return "Import einer ICD-10 zip Datei";
+		return "Import einer ICD-10 CodeSystem JSON Datei";
 	}
 
 	@Override

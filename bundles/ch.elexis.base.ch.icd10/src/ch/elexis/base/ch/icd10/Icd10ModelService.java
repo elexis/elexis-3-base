@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.icd10;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Activate;
@@ -86,9 +87,9 @@ public class Icd10ModelService extends AbstractModelService implements IModelSer
 				if (dbObject == null) {
 					TypedQuery<? extends EntityWithId> codeQuery = em.createNamedQuery("ICD10.code", clazz); //$NON-NLS-1$
 					codeQuery.setParameter("code", id); //$NON-NLS-1$
-					Object result = codeQuery.getSingleResult();
-					if (result instanceof EntityWithId) {
-						dbObject = (EntityWithId) result;
+					List<? extends EntityWithId> found = codeQuery.getResultList();
+					if (!found.isEmpty() && found.get(0) instanceof EntityWithId) {
+						dbObject = found.get(0);
 					}
 				}
 				return Optional.ofNullable(adapterFactory.getModelAdapter(dbObject, null, false).orElse(null));

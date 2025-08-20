@@ -9,14 +9,18 @@ import java.util.function.Supplier;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.slf4j.LoggerFactory;
 
 import com.google.zxing.BarcodeFormat;
@@ -55,6 +59,10 @@ public class AppointmentDialog extends Dialog {
 	private AppointmentDetailComposite detailComposite;
 	private EmailSender emailSender;
 	private boolean expanded;
+
+	private static final Point MIN_COLLAPSED = new Point(680, 400);
+	private static final Point MIN_EXPANDED = new Point(900, 700);
+
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
@@ -80,6 +88,37 @@ public class AppointmentDialog extends Dialog {
 	}
 
 	@Override
+	protected Point getInitialSize() {
+		return (detailComposite != null && expanded) ? new Point(MIN_EXPANDED.x, MIN_EXPANDED.y)
+				: new Point(MIN_COLLAPSED.x, MIN_COLLAPSED.y);
+	}
+
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setMinimumSize(680, 400);
+		newShell.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				Point size = newShell.getSize();
+				if (size.x >= 880 && size.y >= 650) {
+					if (!expanded) {
+						expanded = true;
+						detailComposite.setExpanded(true);
+						newShell.layout(true, true);
+					}
+				} else {
+					if (expanded) {
+						expanded = false;
+						detailComposite.setExpanded(false);
+						newShell.layout(true, true);
+					}
+				}
+			}
+		});
+	}
+
+	@Override
 	protected void okPressed() {
 		saveAndReloadAppointment();
 		sendEmailIfConfirmationChecked();
@@ -98,14 +137,14 @@ public class AppointmentDialog extends Dialog {
 		return true;
 	}
 
-  private void initializeAppointmentIfNecessary() {
+	private void initializeAppointmentIfNecessary() {
 		if (appointment == null) {
 			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
 			appointment.setStartTime(LocalDateTime.now());
 		}
 	}
 
-  private void saveAndReloadAppointment() {
+	private void saveAndReloadAppointment() {
 		if (appointment != null) {
 			CoreModelServiceHolder.get().save(detailComposite.setToModel());
 		}
@@ -117,7 +156,7 @@ public class AppointmentDialog extends Dialog {
 		expanded = expand;
 	}
 
-  private void sendEmailIfConfirmationChecked() {
+	private void sendEmailIfConfirmationChecked() {
 		Boolean alreadySent = ContextServiceHolder.get().getNamed("mail.alreadySent").map(Boolean.class::cast)
 				.orElse(false);
 		if (detailComposite.getEmailCheckboxStatus() && !alreadySent) {

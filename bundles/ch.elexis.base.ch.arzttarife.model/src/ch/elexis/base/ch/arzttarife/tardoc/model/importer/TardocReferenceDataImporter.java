@@ -31,7 +31,7 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
-@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=tardoc_14")
+@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=tardoc")
 public class TardocReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
 
 	private static final Logger logger = LoggerFactory.getLogger(TardocReferenceDataImporter.class);

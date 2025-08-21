@@ -49,7 +49,7 @@ public class TardocReferenceDataImporterTest {
 		// (https://oaat-otma.ch/)
 		// and add to the rsc folder of test bundle
 		InputStream tarmedInStream = TardocReferenceDataImporterTest.class
-				.getResourceAsStream("/rsc/250410_TARDOC_1.4b_ohne_001_4.mdb");
+				.getResourceAsStream("/rsc/250808_Anhang_A2_Katalog_des_TARDOC_1.4c.mdb");
 
 		TardocReferenceDataImporter importer = new TardocReferenceDataImporter();
 		Status retStatus = (Status) importer.performImport(new NullProgressMonitor(), tarmedInStream, null);
@@ -62,7 +62,7 @@ public class TardocReferenceDataImporterTest {
 		// (https://oaat-otma.ch/)
 		// and add to the rsc folder of test bundle
 		InputStream tarmedInStream = TardocReferenceDataImporterTest.class
-				.getResourceAsStream("/rsc/250410_TARDOC_1.4b_ohne_001_4.mdb");
+				.getResourceAsStream("/rsc/250808_Anhang_A2_Katalog_des_TARDOC_1.4c.mdb");
 
 		TardocReferenceDataImporter importer = new TardocReferenceDataImporter();
 		Status retStatus = (Status) importer.performImport(new NullProgressMonitor(), tarmedInStream, null);

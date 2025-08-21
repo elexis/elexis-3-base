@@ -7,6 +7,8 @@ import ch.elexis.core.model.ModelPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
 /**
@@ -140,13 +142,33 @@ public interface AmbulatoryPackage extends EPackage {
 	int IAMBULATORY_ALLOWANCE__DIGNI_QUALI = ModelPackage.IBILLABLE_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Typ</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IAMBULATORY_ALLOWANCE__TYP = ModelPackage.IBILLABLE_FEATURE_COUNT + 5;
+
+	/**
 	 * The number of structural features of the '<em>IAmbulatory Allowance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IAMBULATORY_ALLOWANCE_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 5;
+	int IAMBULATORY_ALLOWANCE_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 6;
+
+
+	/**
+	 * The meta object id for the '<em>Ambulante Pauschalen Typ</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp
+	 * @see ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl#getAmbulantePauschalenTyp()
+	 * @generated
+	 */
+	int AMBULANTE_PAUSCHALEN_TYP = 1;
 
 
 	/**
@@ -213,6 +235,28 @@ public interface AmbulatoryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIAmbulatoryAllowance_DigniQuali();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance#getTyp <em>Typ</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Typ</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance#getTyp()
+	 * @see #getIAmbulatoryAllowance()
+	 * @generated
+	 */
+	EAttribute getIAmbulatoryAllowance_Typ();
+
+	/**
+	 * Returns the meta object for data type '{@link ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp <em>Ambulante Pauschalen Typ</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Ambulante Pauschalen Typ</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp
+	 * @model instanceClass="ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp"
+	 * @generated
+	 */
+	EDataType getAmbulantePauschalenTyp();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -285,6 +329,24 @@ public interface AmbulatoryPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute IAMBULATORY_ALLOWANCE__DIGNI_QUALI = eINSTANCE.getIAmbulatoryAllowance_DigniQuali();
+
+		/**
+		 * The meta object literal for the '<em><b>Typ</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IAMBULATORY_ALLOWANCE__TYP = eINSTANCE.getIAmbulatoryAllowance_Typ();
+
+		/**
+		 * The meta object literal for the '<em>Ambulante Pauschalen Typ</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp
+		 * @see ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl#getAmbulantePauschalenTyp()
+		 * @generated
+		 */
+		EDataType AMBULANTE_PAUSCHALEN_TYP = eINSTANCE.getAmbulantePauschalenTyp();
 
 	}
 

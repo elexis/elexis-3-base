@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.entities.AmbulantePauschalen;
@@ -45,8 +46,9 @@ public class AmbulatoryAllowanceCodeElementService implements ICodeElementServic
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
 		EntityManager em = (EntityManager) entityManager.getEntityManager();
-		TypedQuery<AmbulantePauschalen> gtinQuery = em.createNamedQuery("AmbulantePauschalen.code",
+		TypedQuery<AmbulantePauschalen> gtinQuery = em.createNamedQuery("AmbulantePauschalen.typ.code",
 				AmbulantePauschalen.class);
+		gtinQuery.setParameter("typ", AmbulantePauschalenTyp.PAUSCHALE.getCode());
 		gtinQuery.setParameter("code", code);
 		List<AmbulantePauschalen> resultList = gtinQuery.getResultList();
 		resultList = resultList.stream().filter(pl -> isValid(pl, context)).collect(Collectors.toList());

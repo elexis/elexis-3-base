@@ -27,6 +27,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.constants.Preferences;
@@ -102,6 +103,7 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 						chapterMap.put(line.get().get("code"), line.get().get("title_" + lang));
 					} else {
 						AmbulantePauschalen ambulantePauschale = new AmbulantePauschalen();
+						ambulantePauschale.setTyp(AmbulantePauschalenTyp.PAUSCHALE.getCode());
 						ambulantePauschale.setCode(line.get().get("code"));
 						ambulantePauschale.setText(getText(line.get()));
 						ambulantePauschale.setChapter(getChapter(line.get()));
@@ -142,7 +144,7 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 	}
 
 	private boolean isChapter(Map<String, String> line) {
-		return line.get("﻿terminal").equals("0");
+		return line.get("terminal").equals("0");
 	}
 
 	private String getLang() {
@@ -161,7 +163,8 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 		try {
 			if (reader == null) {
 				reader = new CSVReaderBuilder(new InputStreamReader(input, "UTF-8"))
-						.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar('"').build()).build();
+						.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar('"').build())
+						.withKeepCarriageReturn(false).build();
 				headers = reader.readNext();
 				// file is empty
 				if (headers == null || headers.length == 0) {
@@ -179,7 +182,7 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 
 	private Map<String, String> toMap(String[] values) {
 		if (headers != null && values != null) {
-			Map<String, String> ret = new HashMap<String, String>();
+			Map<String, String> ret = new HashMap<>(headers.length);
 			for (int i = 0; i < headers.length; i++) {
 				ret.put(headers[i], values[i]);
 			}
@@ -201,6 +204,7 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 
 	private List<AmbulantePauschalen> getExisting(String code, LocalDate validFrom) {
 		Map<String, Object> propertyMap = new LinkedHashMap<String, Object>();
+		propertyMap.put("typ", AmbulantePauschalenTyp.PAUSCHALE);
 		propertyMap.put("code", code);
 		propertyMap.put("validFrom", validFrom);
 		return EntityUtil.loadByNamedQuery(propertyMap, AmbulantePauschalen.class);

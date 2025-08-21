@@ -1,25 +1,26 @@
 package ch.elexis.base.ch.arzttarife.ambulatory.model;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
+import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.core.jpa.entities.AmbulantePauschalen;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
-import ch.elexis.core.model.IBilled;
-import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.rgw.tools.Money;
 
@@ -39,20 +40,8 @@ public class AmbulatoryAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.
 	@Override
 	public IBillableOptifier<AmbulatoryAllowance> getOptifier() {
 		if (optifier == null) {
-			optifier = new AbstractOptifier<AmbulatoryAllowance>(CoreModelServiceHolder.get(),
-					ContextServiceHolder.get().get()) {
-
-				@Override
-				protected void setPrice(AmbulatoryAllowance billable, IBilled billed) {
-					billed.setFactor(1.0);
-					billed.setPoints(billable.getPrice(billed.getEncounter()).getCents());
-				}
-
-				@Override
-				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
-					return Optional.empty();
-				}
-			};
+			optifier = new AmbulatoryAllowanceOptifier(CoreModelServiceHolder.get(),
+					ContextServiceHolder.get().get());
 		}
 		return optifier;
 	}
@@ -165,5 +154,35 @@ public class AmbulatoryAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.
 	@Override
 	public String getDigniQuali() {
 		return getEntity().getDigniQuali();
+	}
+
+	@Override
+	public AmbulantePauschalenTyp getTyp() {
+		if (StringUtils.isNotBlank(getEntity().getTyp())) {
+			return AmbulantePauschalenTyp.fromCode(getEntity().getTyp());
+		}
+		return AmbulantePauschalenTyp.PAUSCHALE;
+	}
+
+	@Override
+	public void setTyp(AmbulantePauschalenTyp value) {
+		getEntityMarkDirty().setTyp(value.getCode());
+	}
+
+	public static AmbulatoryAllowance getFromCode(String code, AmbulantePauschalenTyp typ, LocalDate date) {
+		IQuery<IAmbulatoryAllowance> query = ArzttarifeModelServiceHolder.get().getQuery(IAmbulatoryAllowance.class);
+		query.and("code", COMPARATOR.EQUALS, code);
+		if (typ != null) {
+			query.and("typ", COMPARATOR.EQUALS, typ.getCode());
+		}
+
+		List<IAmbulatoryAllowance> leistungen = query.execute();
+		for (IAmbulatoryAllowance ambulanteLeistung : leistungen) {
+			if ((date.isAfter(ambulanteLeistung.getValidFrom()) || date.equals(ambulanteLeistung.getValidFrom()))
+					&& (date.isBefore(ambulanteLeistung.getValidTo()) || date.equals(ambulanteLeistung.getValidTo()))) {
+				return (AmbulatoryAllowance) ambulanteLeistung;
+			}
+		}
+		return null;
 	}
 }

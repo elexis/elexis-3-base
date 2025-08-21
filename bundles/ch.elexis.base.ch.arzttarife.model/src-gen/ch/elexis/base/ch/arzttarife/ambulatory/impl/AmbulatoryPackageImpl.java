@@ -3,6 +3,7 @@
  */
 package ch.elexis.base.ch.arzttarife.ambulatory.impl;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryFactory;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
@@ -53,6 +54,8 @@ import ch.elexis.core.types.TypesPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -70,6 +73,13 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	private EClass iAmbulatoryAllowanceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType ambulantePauschalenTypEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -243,6 +253,26 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
+	public EAttribute getIAmbulatoryAllowance_Typ() {
+		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EDataType getAmbulantePauschalenTyp() {
+		return ambulantePauschalenTypEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public AmbulatoryFactory getAmbulatoryFactory() {
 		return (AmbulatoryFactory)getEFactoryInstance();
 	}
@@ -272,6 +302,10 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__CHAPTER);
 		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__TP);
 		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__DIGNI_QUALI);
+		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__TYP);
+
+		// Create data types
+		ambulantePauschalenTypEDataType = createEDataType(AMBULANTE_PAUSCHALEN_TYP);
 	}
 
 	/**
@@ -315,6 +349,10 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 		initEAttribute(getIAmbulatoryAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIAmbulatoryAllowance_TP(), ecorePackage.getEString(), "TP", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIAmbulatoryAllowance_DigniQuali(), ecorePackage.getEString(), "digniQuali", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIAmbulatoryAllowance_Typ(), this.getAmbulantePauschalenTyp(), "typ", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		// Initialize data types
+		initEDataType(ambulantePauschalenTypEDataType, AmbulantePauschalenTyp.class, "AmbulantePauschalenTyp", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

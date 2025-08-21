@@ -26,7 +26,7 @@ public class AmbulatoryAllowanceImporterTest {
 		AmbulatoryAllowanceReferenceDataImporter importer = new AmbulatoryAllowanceReferenceDataImporter();
 		Status retStatus = (Status) importer.performImport(new NullProgressMonitor(),
 				AmbulatoryAllowanceImporterTest.class.getResourceAsStream(
-						"/rsc/250410_Anhang_A1_Katalog_der_Ambulanten_Pauschalen_CSV_v1.1b.csv"),
+						"/rsc/250808_Anhang_A1_Katalog_der_Ambulanten_Pauschalen_CSV_v1.1c.csv"),
 				null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 

@@ -354,6 +354,8 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="TP" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="typ" eType="#//ambulatory/AmbulantePauschalenTyp"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EDataType" name="AmbulantePauschalenTyp" instanceClassName="ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp"/>
   </eSubpackages>
 </ecore:EPackage>

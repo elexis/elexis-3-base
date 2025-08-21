@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.base.ch.arzttarife.tardoc.model.importer.TardocReferenceDataImporter">
-   <property name="referenceDataId" value="tardoc_14"/>
+   <property name="referenceDataId" value="tardoc"/>
    <service>
       <provide interface="ch.elexis.core.interfaces.IReferenceDataImporter"/>
    </service>

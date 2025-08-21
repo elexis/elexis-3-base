@@ -86,12 +86,29 @@ public class AllTestsSuite {
 			OsgiServiceUtil.ungetService(tarmedImporter);
 
 			IReferenceDataImporter tardocImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
-					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34)").get();
+					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tardoc)").get();
 			result = tardocImporter.performImport(new NullProgressMonitor(),
-					AllTestsSuite.class.getResourceAsStream("/rsc/250410_TARDOC_1.4b_ohne_001_4.mdb"),
-					171019);
+					AllTestsSuite.class.getResourceAsStream("/rsc/250808_Anhang_A2_Katalog_des_TARDOC_1.4c.mdb"),
+					250820);
 			assertTrue(result.isOK());
 			OsgiServiceUtil.ungetService(tardocImporter);
+
+			IReferenceDataImporter pauschalenImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+					"(" + IReferenceDataImporter.REFERENCEDATAID + "=ambulatoryallowance)").get();
+			result = pauschalenImporter.performImport(new NullProgressMonitor(),
+					AllTestsSuite.class.getResourceAsStream(
+							"/rsc/250808_Anhang_A1_Katalog_der_Ambulanten_Pauschalen_CSV_v1.1c.csv"),
+					250820);
+			assertTrue(result.isOK());
+			OsgiServiceUtil.ungetService(pauschalenImporter);
+
+			IReferenceDataImporter tarifImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+					"(" + IReferenceDataImporter.REFERENCEDATAID + "=ambulatorytarif)").get();
+			result = tarifImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
+					.getResourceAsStream("/rsc/250808_LKAAT_1.0c.CSV"),
+					250820);
+			assertTrue(result.isOK());
+			OsgiServiceUtil.ungetService(tarifImporter);
 
 			dumpInitialTarifs();
 		}

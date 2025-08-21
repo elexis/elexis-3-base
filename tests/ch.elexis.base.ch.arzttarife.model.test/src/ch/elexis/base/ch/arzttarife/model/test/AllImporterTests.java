@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import ch.elexis.base.ch.arzttarife.ambulatory.model.importer.AmbulatoryAllowanceImporterTest;
+import ch.elexis.base.ch.arzttarife.ambulatory.model.importer.AmbulatoryTarifImporterTest;
 import ch.elexis.base.ch.arzttarife.complementary.model.importer.ComplementaryImporterTest;
 import ch.elexis.base.ch.arzttarife.nutrition.model.importer.NutritionImporterTest;
 import ch.elexis.base.ch.arzttarife.occupational.model.importer.OccupationalImporterTest;
@@ -19,7 +20,7 @@ import ch.elexis.base.ch.arzttarife.tarmedallowance.model.importer.TarmedAllowan
 @SuiteClasses({ OccupationalImporterTest.class, PsychoImporterTest.class, NutritionImporterTest.class,
 		PhysioImporterTest.class, TarmedAllowanceImporterTest.class, TarmedReferenceDataImporterTest.class,
 		ComplementaryImporterTest.class, PandemieImporterTest.class, TardocReferenceDataImporterTest.class,
-		AmbulatoryAllowanceImporterTest.class })
+		AmbulatoryAllowanceImporterTest.class, AmbulatoryTarifImporterTest.class })
 public class AllImporterTests {
 
 }

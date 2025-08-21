@@ -17,6 +17,7 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.CoreUtil;
 import ch.oaat_otma.Diagnosis;
@@ -52,9 +53,11 @@ public class CasemasterService {
 		}
 	}
 
-	public CasemasterResult getResult(List<IEncounter> encounters) {
+	public CasemasterResult getResult(IBilled billed, IEncounter encounter) {
 		int sessionIdx = 1;
 		List<Session> sessions = new ArrayList<>();
+		List<IEncounter> encounters = encounter.getCoverage().getEncounters().stream()
+				.filter(e -> e.getInvoice() == null || e.getInvoiceState() == InvoiceState.CANCELLED).toList();
 		for (IEncounter iEncounter : encounters) {
 			Session session = new Session(sessionIdx++, iEncounter.getDate());
 			for (IDiagnosisReference diagnose : iEncounter.getDiagnoses()) {
@@ -66,18 +69,11 @@ public class CasemasterService {
 					session.setDiagnosis(new Diagnosis(diagnose.getCode()));
 				}
 			}
-			for (IBilled billed : iEncounter.getBilled()) {
-				IBillable billable = billed.getBillable();
-				if (billable != null) {
-					if (billable.getCodeSystemName().toLowerCase().contains("tardoc")) {
-						session.addService(new Service(billable.getCode(), Side.NONE,
-								Double.valueOf(billed.getAmount()).intValue(), iEncounter.getDate(), session.number));
-					} else if (!(billable instanceof IArticle) || billable.getCodeSystemCode().equals("402")) {
-						session.addTarpo(new Tarpo(billable.getCode(), billable.getCodeSystemCode(), billed.getAmount(),
-								iEncounter.getDate(), billed.getAmount(), (billed.getPrice().getCents() / 100),
-								Side.NONE));
-					}
-				}
+			if (iEncounter.equals(encounter)) {
+				addBilled(billed, session);
+			}
+			for (IBilled encounterBilled : iEncounter.getBilled()) {
+				addBilled(encounterBilled, session);
 			}
 			sessions.add(session);
 		}
@@ -86,5 +82,18 @@ public class CasemasterService {
 		patient.setSex(encounters.get(0).getPatient().getGender() == Gender.FEMALE ? "W" : "M");
 		patient.setSessions(sessions);
 		return caseMaster.apply(patient);
+	}
+
+	private void addBilled(IBilled billed, Session session) {
+		IBillable billable = billed.getBillable();
+		if (billable.getCodeSystemName().toLowerCase().contains("tardoc")
+				|| billable.getCodeSystemName().toLowerCase().contains("ambulantepauschalen")) {
+			session.addService(new Service(billable.getCode(), Side.NONE,
+					Double.valueOf(billed.getAmount()).intValue(), billed.getEncounter().getDate(), session.number));
+		} else if (!(billable instanceof IArticle) || billable.getCodeSystemCode().equals("402")) {
+			session.addTarpo(new Tarpo(billable.getCode(), billable.getCodeSystemCode(), billed.getAmount(),
+					billed.getEncounter().getDate(), billed.getAmount(), (billed.getPrice().getCents() / 100),
+					Side.NONE));
+		}
 	}
 }

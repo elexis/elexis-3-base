@@ -242,12 +242,14 @@
       </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="Ambulatory" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//ambulatory">
+      <genDataTypes ecoreDataType="arzttarife.ecore#//ambulatory/AmbulantePauschalenTyp"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//ambulatory/IAmbulatoryAllowance">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ambulatory/IAmbulatoryAllowance/validFrom"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ambulatory/IAmbulatoryAllowance/validTo"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ambulatory/IAmbulatoryAllowance/chapter"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ambulatory/IAmbulatoryAllowance/TP"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ambulatory/IAmbulatoryAllowance/digniQuali"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ambulatory/IAmbulatoryAllowance/typ"/>
       </genClasses>
     </nestedGenPackages>
   </genPackages>

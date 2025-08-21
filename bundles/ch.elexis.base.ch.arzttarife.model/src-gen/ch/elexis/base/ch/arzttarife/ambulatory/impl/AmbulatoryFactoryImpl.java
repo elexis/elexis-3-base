@@ -4,14 +4,15 @@
 package ch.elexis.base.ch.arzttarife.ambulatory.impl;
 
 import ch.elexis.base.ch.arzttarife.ambulatory.*;
-
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryFactory;
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -60,6 +61,54 @@ public class AmbulatoryFactoryImpl extends EFactoryImpl implements AmbulatoryFac
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case AmbulatoryPackage.AMBULANTE_PAUSCHALEN_TYP:
+				return createAmbulantePauschalenTypFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case AmbulatoryPackage.AMBULANTE_PAUSCHALEN_TYP:
+				return convertAmbulantePauschalenTypToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AmbulantePauschalenTyp createAmbulantePauschalenTypFromString(EDataType eDataType, String initialValue) {
+		return (AmbulantePauschalenTyp)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertAmbulantePauschalenTypToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

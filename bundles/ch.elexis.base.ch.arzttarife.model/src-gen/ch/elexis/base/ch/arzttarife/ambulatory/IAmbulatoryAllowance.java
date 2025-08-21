@@ -3,9 +3,9 @@
  */
 package ch.elexis.base.ch.arzttarife.ambulatory;
 
-import ch.elexis.core.model.IBillable;
-
 import java.time.LocalDate;
+
+import ch.elexis.core.model.IBillable;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,6 +21,7 @@ import java.time.LocalDate;
  *   <li>{@link ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance#getChapter <em>Chapter</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance#getTP <em>TP</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance#getDigniQuali <em>Digni Quali</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance#getTyp <em>Typ</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage#getIAmbulatoryAllowance()
@@ -126,5 +127,27 @@ public interface IAmbulatoryAllowance extends IBillable {
 	 * @generated
 	 */
 	String getDigniQuali();
+
+	/**
+	 * Returns the value of the '<em><b>Typ</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Typ</em>' attribute.
+	 * @see #setTyp(AmbulantePauschalenTyp)
+	 * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage#getIAmbulatoryAllowance_Typ()
+	 * @model dataType="ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp"
+	 * @generated
+	 */
+	AmbulantePauschalenTyp getTyp();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance#getTyp <em>Typ</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Typ</em>' attribute.
+	 * @see #getTyp()
+	 * @generated
+	 */
+	void setTyp(AmbulantePauschalenTyp value);
 
 } // IAmbulatoryAllowance

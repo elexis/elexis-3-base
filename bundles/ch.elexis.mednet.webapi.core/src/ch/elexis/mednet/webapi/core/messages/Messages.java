@@ -73,6 +73,7 @@ public class Messages extends NLS {
 	public static String BreadcrumbNavigation_providers;
 	public static String BreadcrumbNavigation_forms;
 	public static String MedNetMainComposite_deactivateImport;
+	public static String MedNetWebPreferencePage_confirmBeforeSend;
 
 	static {
 

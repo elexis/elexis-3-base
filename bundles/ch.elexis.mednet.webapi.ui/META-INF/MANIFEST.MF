@@ -12,7 +12,8 @@ Require-Bundle: ch.elexis.core.data,
  ch.elexis.core.findings,
  ch.elexis.core.ui.icons,
  ch.elexis.core.ui.documents,
- info.elexis.target.hapi.fhir;bundle-version="7.2.3"
+ info.elexis.target.hapi.fhir;bundle-version="7.2.3",
+ org.apache.httpcomponents.httpcore
 Automatic-Module-Name: ch.elexis.mednet.webapi.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.mednet.webapi.ui.Activator

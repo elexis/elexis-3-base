@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
@@ -43,7 +44,7 @@ public class RiskFactorResource {
 				if (riskFactor.getId() == null || riskFactor.getId().isEmpty()) {
 					riskFactor.setId(UUID.randomUUID().toString());
 				}
-				applyStandardCodes(riskFactor, patientReference, structuredRisk.getText().orElse("Unknown Risk"));
+				applyStandardCodes(riskFactor, patientReference, structuredRisk.getText().orElse("Unknown Risk")); //$NON-NLS-1$
 				riskFactors.add(riskFactor);
 			}
 		} else {
@@ -67,6 +68,7 @@ public class RiskFactorResource {
 		riskFactor.getMeta().addProfile(FHIRConstants.PROFILE_RISK_FACTOR_OBSERVATION);
 		riskFactor.setStatus(Observation.ObservationStatus.FINAL);
 
+		riskFactor.setCategory(new java.util.ArrayList<>());
 		riskFactor.addCategory(new CodeableConcept().addCoding(new Coding()
 				.setSystem(FHIRConstants.OBSERVATION_CATEGORY_SYSTEM).setCode(FHIRConstants.SOCIAL_HISTORY_CODE_CAT)
 				.setDisplay(FHIRConstants.SOCIAL_HISTORY_DISPLAY_CAT)));
@@ -74,7 +76,7 @@ public class RiskFactorResource {
 		riskFactor.setCode(new CodeableConcept().addCoding(new Coding().setSystem(FHIRConstants.SNOMED_SYSTEM)
 				.setCode(FHIRConstants.RISK_FACTOR_CODE).setDisplay(FHIRConstants.RISK_FACTOR_DISPLAY)));
 
-		String riskDisplay = (risk == null || risk.isEmpty()) ? "" : risk;
+		String riskDisplay = (risk == null ? StringUtils.EMPTY : risk.trim());
 
 		riskFactor.setValue(new CodeableConcept()
 				.addCoding(new Coding().setSystem(FHIRConstants.SNOMED_SYSTEM)

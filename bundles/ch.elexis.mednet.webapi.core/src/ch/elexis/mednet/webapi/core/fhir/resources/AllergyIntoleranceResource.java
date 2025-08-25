@@ -24,7 +24,7 @@ public class AllergyIntoleranceResource {
 	public static List<AllergyIntolerance> createAllergies(Patient patient, IPatient sourcePatient,
 			FhirResourceFactory resourceFactory) {
 		List<AllergyIntolerance> allergies = new ArrayList<>();
-		String patientFullUrl = "urn:uuid:" + UUID.nameUUIDFromBytes(patient.getId().getBytes());
+		String patientFullUrl = FHIRConstants.UUID_PREFIX + patient.getIdElement().getIdPart();
 		boolean strukturAllergy = ConfigServiceHolder
 				.getGlobal(IMigratorService.ALLERGYINTOLERANCE_SETTINGS_USE_STRUCTURED, false);
 		if (strukturAllergy) {
@@ -41,14 +41,20 @@ public class AllergyIntoleranceResource {
 				allergy.setId(UUID.randomUUID().toString());
 			}
 			allergy.getMeta().addProfile(FHIRConstants.PROFILE_ALLERGY_INTOLERANCE);
-			if (allergy.getClinicalStatus() == null) {
-				CodeableConcept clinicalStatus = new CodeableConcept();
-				clinicalStatus.addCoding(new Coding(FHIRConstants.CLINICAL_STATUS_SYSTEM,
+			if (allergy.getClinicalStatus() == null || allergy.getClinicalStatus().isEmpty()) {
+				CodeableConcept cs = new CodeableConcept().addCoding(new Coding(FHIRConstants.CLINICAL_STATUS_SYSTEM,
 						FHIRConstants.CLINICAL_STATUS_ACTIVE_CODE, FHIRConstants.CLINICAL_STATUS_ACTIVE_DISPLAY));
-				allergy.setClinicalStatus(clinicalStatus);
+				allergy.setClinicalStatus(cs);
 			}
+			if (allergy.getVerificationStatus() == null || allergy.getVerificationStatus().isEmpty()) {
+				CodeableConcept vs = new CodeableConcept()
+						.addCoding(new Coding("http://terminology.hl7.org/CodeSystem/allergyintolerance-verification", //$NON-NLS-1$
+								"confirmed", "Confirmed")); //$NON-NLS-1$ //$NON-NLS-2$
+				allergy.setVerificationStatus(vs);
+			}
+
 			if (allergy.getCode() == null || allergy.getCode().getCoding().isEmpty()) {
-				allergy.setCode(new CodeableConcept().setText(structuredAllergy.getText().orElse("Unknown Allergy")));
+				allergy.setCode(new CodeableConcept().setText(structuredAllergy.getText().orElse("Unknown Allergy"))); //$NON-NLS-1$
 			}
 			allergy.setPatient(new Reference(patientFullUrl));
 			allergies.add(allergy);
@@ -57,7 +63,7 @@ public class AllergyIntoleranceResource {
 		String patientAllergies = sourcePatient.getAllergies();
 
 		if (patientAllergies != null && !patientAllergies.isEmpty()) {
-			List<String> allergyList = Arrays.asList(patientAllergies.split(","));
+			List<String> allergyList = Arrays.asList(patientAllergies.split(",")); //$NON-NLS-1$
 			for (String allergyText : allergyList) {
 				IAllergyIntolerance sourceAllergy = FindingsServiceHolder.getiFindingsService()
 						.create(IAllergyIntolerance.class);

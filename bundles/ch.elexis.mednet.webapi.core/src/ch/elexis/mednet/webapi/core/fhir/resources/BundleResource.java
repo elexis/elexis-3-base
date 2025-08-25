@@ -28,8 +28,6 @@ import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Procedure;
 import org.hl7.fhir.r4.model.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.findings.ICondition;
 import ch.elexis.core.findings.IFindingsService;
@@ -54,11 +52,12 @@ import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
 
 public class BundleResource {
 
-	private static final Logger logger = LoggerFactory.getLogger(BundleResource.class);
+	private static java.util.Map<String, String> idToFullUrl;
 
 	public static Bundle createPatientOverviewBundle(Patient patient, IPatient sourcePatient,
 			List<IDocument> selectedDocuments, boolean isEpdSelected, FhirResourceFactory resourceFactory,
 			IModelService coreModelService, IFindingsService findingsService) {
+		idToFullUrl = new java.util.HashMap<>();
 		Bundle bundle = new Bundle();
 		bundle.setType(BundleType.DOCUMENT);
 		String bundleId = UUID.randomUUID().toString();
@@ -68,45 +67,20 @@ public class BundleResource {
 		bundle.setTimestamp(new Date());
 
 		List<BundleEntryComponent> bundleEntries = new ArrayList<>();
-
-		List<Reference> organizationReferences = new ArrayList<>();
-		List<BundleEntryComponent> organizationEntries = new ArrayList<>();
+		Composition composition = CompositionResource.createComposition(patient);
+		addEntryAndIndex(bundleEntries, composition);
+		String patientFullUrl = addEntryAndIndex(bundleEntries, patient);
+		composition.setSubject(new Reference(patientFullUrl));
 		List<IRelatedContact> relatedContacts = sourcePatient.getRelatedContacts();
 
 		for (IRelatedContact relatedContact : relatedContacts) {
 			IContact otherContact = relatedContact.getOtherContact();
 
 			if (otherContact != null && otherContact.isOrganization()) {
-				String organizationId = UUID.nameUUIDFromBytes(otherContact.getId().getBytes()).toString();
-				String organizationFullUrl = FHIRConstants.UUID_PREFIX + organizationId;
-
 				Organization organization = OrganizationResource.createOrganization(otherContact, resourceFactory);
-				organization.setId(organizationId);
-
-				BundleEntryComponent organizationEntry = new BundleEntryComponent();
-				organizationEntry.setFullUrl(organizationFullUrl);
-				organizationEntry.setResource(organization);
-				organizationEntries.add(organizationEntry);
-
-				organizationReferences.add(new Reference(organizationFullUrl));
+				addEntryAndIndex(bundleEntries, organization);
 			}
 		}
-
-		Composition composition = CompositionResource.createComposition(patient);
-		String compositionFullUrl = FHIRConstants.UUID_PREFIX + composition.getId();
-
-		BundleEntryComponent compositionEntry = new BundleEntryComponent();
-		compositionEntry.setFullUrl(compositionFullUrl);
-		compositionEntry.setResource(composition);
-		bundleEntries.add(compositionEntry);
-
-		bundleEntries.addAll(organizationEntries);
-
-		String patientFullUrl = FHIRConstants.UUID_PREFIX + patient.getIdElement().getIdPart();
-		BundleEntryComponent patientEntry = new BundleEntryComponent();
-		patientEntry.setFullUrl(patientFullUrl);
-		patientEntry.setResource(patient);
-		bundleEntries.add(patientEntry);
 
 		String gpId = (String) sourcePatient.getExtInfo(FHIRConstants.FHIRKeys.PRACTITIONER_GP_ID);
 		if (gpId != null && !gpId.isEmpty()) {
@@ -118,21 +92,14 @@ public class BundleResource {
 						Practitioner.class);
 				if (gpPractitioner != null) {
 					gpPractitioner = PractitionerResource.adjustPractitioner(gpPractitioner);
-					String gpPractitionerFullUrl = FHIRConstants.UUID_PREFIX + gpPractitioner.getId();
-					BundleEntryComponent practitionerEntry = new BundleEntryComponent();
-					practitionerEntry.setFullUrl(gpPractitionerFullUrl);
-					practitionerEntry.setResource(gpPractitioner);
-					bundleEntries.add(practitionerEntry);
+					addEntryAndIndex(bundleEntries, gpPractitioner);
+
 					Optional<IUser> gpUserOptional = findMandatorUser(gpMandatorOptional);
 					if (gpUserOptional.isPresent()) {
 						IUser gpUser = gpUserOptional.get();
 						PractitionerRole gpPractitionerRole = new PractitionerRoleResource()
 								.createPractitionerRole(gpUser, gpPractitioner, resourceFactory);
-						String gpPractitionerRoleFullUrl = FHIRConstants.UUID_PREFIX + gpPractitionerRole.getId();
-						BundleEntryComponent practitionerRoleEntry = new BundleEntryComponent();
-						practitionerRoleEntry.setFullUrl(gpPractitionerRoleFullUrl);
-						practitionerRoleEntry.setResource(gpPractitionerRole);
-						bundleEntries.add(practitionerRoleEntry);
+						String gpPractitionerRoleFullUrl = addEntryAndIndex(bundleEntries, gpPractitionerRole);
 						patient.addGeneralPractitioner(new Reference(gpPractitionerRoleFullUrl));
 					}
 				}
@@ -140,11 +107,7 @@ public class BundleResource {
 		}
 
 		Device device = DeviceResource.createDevice();
-		String deviceFullUrl = FHIRConstants.UUID_PREFIX + device.getId();
-		BundleEntryComponent deviceEntry = new BundleEntryComponent();
-		deviceEntry.setFullUrl(deviceFullUrl);
-		deviceEntry.setResource(device);
-		bundleEntries.add(deviceEntry);
+		String deviceFullUrl = addEntryAndIndex(bundleEntries, device);
 		composition.addAuthor(new Reference(deviceFullUrl));
 
 		// Allergies
@@ -152,14 +115,9 @@ public class BundleResource {
 				resourceFactory);
 		List<Reference> allergyReferences = new ArrayList<>();
 		for (AllergyIntolerance allergy : allergies) {
-			String allergyFullUrl = FHIRConstants.UUID_PREFIX + allergy.getId();
-			BundleEntryComponent allergyEntry = new BundleEntryComponent();
-			allergyEntry.setFullUrl(allergyFullUrl);
-			allergyEntry.setResource(allergy);
-			bundleEntries.add(allergyEntry);
-
-			allergyReferences.add(new Reference(allergyFullUrl));
 			allergy.setPatient(new Reference(patientFullUrl));
+			String allergyFullUrl = addEntryAndIndex(bundleEntries, allergy);
+			allergyReferences.add(new Reference(allergyFullUrl));
 		}
 
 		Composition.SectionComponent allergySection = new Composition.SectionComponent();
@@ -169,7 +127,6 @@ public class BundleResource {
 		allergySection.setEntry(allergyReferences);
 		composition.addSection(allergySection);
 
-		// Coverage (Insurance)
 		ICoverage activeCoverage = getActiveCoverage(sourcePatient);
 		if (activeCoverage != null) {
 			IContact coveragePayor = activeCoverage.getCostBearer();
@@ -178,41 +135,22 @@ public class BundleResource {
 				Coverage coverage = resourceFactory.getResource(activeCoverage, ICoverage.class, Coverage.class);
 				CoverageResource.toMednet(coverage, patientFullUrl);
 
-				String coverageId = coverage.getIdElement().getIdPart();
-				String coverageUUID = UUID.nameUUIDFromBytes(coverageId.getBytes()).toString();
-				String coverageFullUrl = FHIRConstants.UUID_PREFIX + coverageUUID;
-				coverage.setId(coverageUUID);
-
-				BundleEntryComponent coverageEntry = new BundleEntryComponent();
-				coverageEntry.setFullUrl(coverageFullUrl);
-				coverageEntry.setResource(coverage);
-				bundleEntries.add(coverageEntry);
+				String coverageFullUrl = addEntryAndIndex(bundleEntries, coverage);
 
 				Organization organization = OrganizationResource.createOrganization(coveragePayor, resourceFactory);
-				String organizationId = UUID.nameUUIDFromBytes(coveragePayor.getId().getBytes()).toString();
-				String organizationFullUrl = FHIRConstants.UUID_PREFIX + organizationId;
-				organization.setId(organizationId);
+				String orgFullUrl = addEntryAndIndex(bundleEntries, organization);
 
-				BundleEntryComponent payorOrganizationEntry = new BundleEntryComponent();
-				payorOrganizationEntry.setFullUrl(organizationFullUrl);
-				payorOrganizationEntry.setResource(organization);
-				bundleEntries.add(payorOrganizationEntry);
-
-				List<Reference> payorList = new ArrayList<>();
-				payorList.add(new Reference(organizationFullUrl));
-				coverage.setPayor(payorList);
+				coverage.setPayor(java.util.List.of(new Reference(orgFullUrl)));
 
 				Composition.SectionComponent coverageSection = new Composition.SectionComponent();
 				coverageSection.setTitle(FHIRConstants.INSURANCE_DATA_SECTION_TITLE);
 				coverageSection.setCode(new CodeableConcept().addCoding(new Coding(FHIRConstants.LOINC_SYSTEM,
 						FHIRConstants.PRIMARY_INSURANCE_CODE, FHIRConstants.PRIMARY_INSURANCE_DISPLAY)));
 				coverageSection.addEntry(new Reference(coverageFullUrl));
-
 				composition.addSection(coverageSection);
 			}
 		}
 
-		// Conditions
 		boolean strukturDiagnose = ConfigServiceHolder.getGlobal(IMigratorService.DIAGNOSE_SETTINGS_USE_STRUCTURED,
 				false);
 
@@ -225,12 +163,15 @@ public class BundleResource {
 				if (condition == null || !condition.hasClinicalStatus() || !condition.hasCode()) {
 					condition = ConditionResource.createConditionFallback(localCondition, patient);
 				}
-				ConditionResource.addConditionToBundle(condition, bundleEntries, conditionReferences);
+				condition.setSubject(new Reference(patientFullUrl));
+				String condFullUrl = addEntryAndIndex(bundleEntries, condition);
+				conditionReferences.add(new Reference(condFullUrl));
 			}
 		} else {
 			List<Condition> conditions = ConditionResource.createConditions(patient, sourcePatient);
 			for (Condition condition : conditions) {
-				ConditionResource.addConditionToBundle(condition, bundleEntries, conditionReferences);
+				String condFullUrl = addEntryAndIndex(bundleEntries, condition);
+				conditionReferences.add(new Reference(condFullUrl));
 			}
 		}
 
@@ -241,7 +182,6 @@ public class BundleResource {
 		conditionSection.setEntry(conditionReferences);
 		composition.addSection(conditionSection);
 
-		// Medications
 		List<IPrescription> prescriptions = sourcePatient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
 				EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
 
@@ -251,22 +191,14 @@ public class BundleResource {
 				.createMedicationStatementsFromPrescriptions(new Reference(patientFullUrl), prescriptions,
 						resourceFactory);
 		List<Reference> medicationReferences = new ArrayList<>();
-		for (MedicationStatement medicationStatement : medicationStatements) {
-			String medicationStatementFullUrl = FHIRConstants.UUID_PREFIX + medicationStatement.getId();
-			BundleEntryComponent medicationStatementEntry = new BundleEntryComponent();
-			medicationStatementEntry.setFullUrl(medicationStatementFullUrl);
-			medicationStatementEntry.setResource(medicationStatement);
-			bundleEntries.add(medicationStatementEntry);
-
-			medicationReferences.add(new Reference(medicationStatementFullUrl));
+		for (MedicationStatement ms : medicationStatements) {
+			ms.setSubject(new Reference(patientFullUrl));
+			String msFullUrl = addEntryAndIndex(bundleEntries, ms);
+			medicationReferences.add(new Reference(msFullUrl));
 		}
 
 		for (Medication medication : medications) {
-			String medicationFullUrl = FHIRConstants.UUID_PREFIX + medication.getId();
-			BundleEntryComponent medicationEntry = new BundleEntryComponent();
-			medicationEntry.setFullUrl(medicationFullUrl);
-			medicationEntry.setResource(medication);
-			bundleEntries.add(medicationEntry);
+			String medFullUrl = addEntryAndIndex(bundleEntries, medication);
 		}
 
 		Composition.SectionComponent medicationSection = new Composition.SectionComponent();
@@ -276,18 +208,13 @@ public class BundleResource {
 		medicationSection.setEntry(medicationReferences);
 		composition.addSection(medicationSection);
 
-		// Procedures
 		List<Procedure> procedures = ProcedureResource.createProcedures(new Reference(patientFullUrl), sourcePatient,
 				resourceFactory);
 		List<Reference> procedureReferences = new ArrayList<>();
-		for (Procedure procedure : procedures) {
-			String procedureFullUrl = FHIRConstants.UUID_PREFIX + procedure.getId();
-			BundleEntryComponent procedureEntry = new BundleEntryComponent();
-			procedureEntry.setFullUrl(procedureFullUrl);
-			procedureEntry.setResource(procedure);
-			bundleEntries.add(procedureEntry);
-
-			procedureReferences.add(new Reference(procedureFullUrl));
+		for (Procedure proc : procedures) {
+			proc.setSubject(new Reference(patientFullUrl));
+			String procFullUrl = addEntryAndIndex(bundleEntries, proc);
+			procedureReferences.add(new Reference(procFullUrl));
 		}
 
 		Composition.SectionComponent procedureSection = new Composition.SectionComponent();
@@ -302,48 +229,35 @@ public class BundleResource {
 				resourceFactory, findingsService);
 		List<Reference> observationReferences = new ArrayList<>();
 		for (Observation observation : observations) {
-			String observationFullUrl = FHIRConstants.UUID_PREFIX + observation.getId();
-			BundleEntryComponent observationEntry = new BundleEntryComponent();
-			observationEntry.setFullUrl(observationFullUrl);
-			observationEntry.setResource(observation);
-			bundleEntries.add(observationEntry);
-
-			observationReferences.add(new Reference(observationFullUrl));
+			observation.setSubject(new Reference(patientFullUrl));
+			String obsFullUrl = addEntryAndIndex(bundleEntries, observation);
+			observationReferences.add(new Reference(obsFullUrl));
 		}
 
-		Composition.SectionComponent resultsSection = new Composition.SectionComponent();
-		resultsSection.setTitle(FHIRConstants.RESULTS_SECTION_TITLE);
-		resultsSection.setCode(new CodeableConcept().addCoding(
-				new Coding(FHIRConstants.LOINC_SYSTEM, FHIRConstants.RESULTS_CODE, FHIRConstants.RESULTS_DISPLAY)));
-		resultsSection.setEntry(observationReferences);
-		composition.addSection(resultsSection);
+		if (!observationReferences.isEmpty()) {
+			Composition.SectionComponent resultsSection = new Composition.SectionComponent();
+			resultsSection.setTitle(FHIRConstants.RESULTS_SECTION_TITLE);
+			resultsSection.setCode(new CodeableConcept().addCoding(
+					new Coding(FHIRConstants.LOINC_SYSTEM, FHIRConstants.RESULTS_CODE, FHIRConstants.RESULTS_DISPLAY)));
+			resultsSection.setEntry(observationReferences);
+			composition.addSection(resultsSection);
+		}
 
-		// Risk Factors (as Observations)
 		List<Observation> riskFactors = RiskFactorResource.createRiskFactors(new Reference(patientFullUrl),
 				sourcePatient, resourceFactory);
 		List<Reference> riskFactorReferences = new ArrayList<>();
 		for (Observation riskFactor : riskFactors) {
-			String riskFactorFullUrl = FHIRConstants.UUID_PREFIX + riskFactor.getId();
-			BundleEntryComponent riskFactorEntry = new BundleEntryComponent();
-			riskFactorEntry.setFullUrl(riskFactorFullUrl);
-			riskFactorEntry.setResource(riskFactor);
-			bundleEntries.add(riskFactorEntry);
-
-			riskFactorReferences.add(new Reference(riskFactorFullUrl));
+			riskFactor.setSubject(new Reference(patientFullUrl));
+			String rfFullUrl = addEntryAndIndex(bundleEntries, riskFactor);
+			riskFactorReferences.add(new Reference(rfFullUrl));
 		}
 
-		List<FamilyMemberHistory> familyHistories = FamilyMemberHistoryResource
-				.createFamilyMemberHistories(new Reference(patientFullUrl), sourcePatient, findingsService,
-						resourceFactory);
+		List<FamilyMemberHistory> familyHistories = FamilyMemberHistoryResource.createFamilyMemberHistories(
+				new Reference(patientFullUrl), sourcePatient, findingsService, resourceFactory);
 		List<Reference> familyHistoryReferences = new ArrayList<>();
 		for (FamilyMemberHistory familyHistory : familyHistories) {
-			String familyHistoryFullUrl = FHIRConstants.UUID_PREFIX + familyHistory.getId();
-			BundleEntryComponent familyHistoryEntry = new BundleEntryComponent();
-			familyHistoryEntry.setFullUrl(familyHistoryFullUrl);
-			familyHistoryEntry.setResource(familyHistory);
-			bundleEntries.add(familyHistoryEntry);
-
-			familyHistoryReferences.add(new Reference(familyHistoryFullUrl));
+			String fmhFullUrl = addEntryAndIndex(bundleEntries, familyHistory);
+			familyHistoryReferences.add(new Reference(fmhFullUrl));
 		}
 
 		Composition.SectionComponent socialHistorySection = new Composition.SectionComponent();
@@ -358,13 +272,9 @@ public class BundleResource {
 		List<Observation> annotations = AnnotationResource.createAnnotations(new Reference(patientFullUrl));
 		List<Reference> annotationReferences = new ArrayList<>();
 		for (Observation annotation : annotations) {
-			String annotationFullUrl = FHIRConstants.UUID_PREFIX + annotation.getId();
-			BundleEntryComponent annotationEntry = new BundleEntryComponent();
-			annotationEntry.setFullUrl(annotationFullUrl);
-			annotationEntry.setResource(annotation);
-			bundleEntries.add(annotationEntry);
-
-			annotationReferences.add(new Reference(annotationFullUrl));
+			annotation.setSubject(new Reference(patientFullUrl));
+			String annFullUrl = addEntryAndIndex(bundleEntries, annotation);
+			annotationReferences.add(new Reference(annFullUrl));
 		}
 
 		Composition.SectionComponent annotationsSection = new Composition.SectionComponent();
@@ -381,13 +291,10 @@ public class BundleResource {
 
 			List<Reference> documentReferences = new ArrayList<>();
 			for (DocumentReference document : documents) {
-				String documentFullUrl = FHIRConstants.UUID_PREFIX + document.getId();
-				BundleEntryComponent documentEntry = new BundleEntryComponent();
-				documentEntry.setFullUrl(documentFullUrl);
-				documentEntry.setResource(document);
-				bundleEntries.add(documentEntry);
-
-				documentReferences.add(new Reference(documentFullUrl));
+				if (!document.hasSubject())
+					document.setSubject(new Reference(patientFullUrl));
+				String drFullUrl = addEntryAndIndex(bundleEntries, document);
+				documentReferences.add(new Reference(drFullUrl));
 			}
 			Composition.SectionComponent documentsSection = new Composition.SectionComponent();
 			documentsSection.setTitle(FHIRConstants.DOCUMENTS_SECTION_TITLE);
@@ -398,6 +305,60 @@ public class BundleResource {
 		}
 
 		bundle.setEntry(bundleEntries);
+
+		for (Bundle.BundleEntryComponent e : bundleEntries) {
+			var r = e.getResource();
+			if (r instanceof MedicationStatement ms) {
+				fixRelativeReference(ms.getSubject());
+				fixRelativeReference(ms.getInformationSource());
+				if (ms.hasMedicationReference())
+					fixRelativeReference(ms.getMedicationReference());
+				if (ms.hasInformationSource()) {
+					Reference inf = ms.getInformationSource();
+					String v = inf.getReference();
+					if (v != null && !v.startsWith(FHIRConstants.UUID_PREFIX) && !v.startsWith("#")) { //$NON-NLS-1$
+						int s = v.indexOf('/');
+						if (s > 0 && s < v.length() - 1) {
+							String idPart = v.substring(s + 1);
+							if (!idToFullUrl.containsKey(idPart)) {
+								ms.setInformationSource((Reference) null);
+							}
+						}
+					}
+				}
+
+			} else if (r instanceof Condition c) {
+				fixRelativeReference(c.getSubject());
+				fixRelativeReference(c.getAsserter());
+			} else if (r instanceof Procedure p) {
+				fixRelativeReference(p.getSubject());
+				if (p.hasPerformer())
+					p.getPerformer().forEach(perf -> fixRelativeReference(perf.getActor()));
+			} else if (r instanceof Observation o) {
+				fixRelativeReference(o.getSubject());
+				if (o.hasPerformer())
+					o.getPerformer().forEach(thisRef -> fixRelativeReference(thisRef));
+			} else if (r instanceof FamilyMemberHistory fmh) {
+				fixRelativeReference(fmh.getPatient());
+			} else if (r instanceof DocumentReference dr) {
+				fixRelativeReference(dr.getSubject());
+				if (dr.hasAuthor())
+					dr.getAuthor().forEach(a -> fixRelativeReference(a));
+				fixRelativeReference(dr.getCustodian());
+			} else if (r instanceof PractitionerRole pr) {
+				fixRelativeReference(pr.getPractitioner());
+				fixRelativeReference(pr.getOrganization());
+			} else if (r instanceof Coverage cov) {
+				fixRelativeReference(cov.getBeneficiary());
+				fixRelativeReference(cov.getPolicyHolder());
+				if (cov.hasPayor())
+					cov.getPayor().forEach(p -> fixRelativeReference(p));
+			} else if (r instanceof Composition comp) {
+				fixRelativeReference(comp.getSubject());
+				if (comp.hasAuthor())
+					comp.getAuthor().forEach(a -> fixRelativeReference(a));
+			}
+		}
 
 		return bundle;
 	}
@@ -421,4 +382,39 @@ public class BundleResource {
 				u -> u.getAssignedContact() != null && u.getAssignedContact().getId().equals(mandator.get().getId()))
 				.findFirst();
 	}
+
+	private static String addEntryAndIndex(java.util.List<Bundle.BundleEntryComponent> entries,
+			org.hl7.fhir.r4.model.Resource r) {
+		String fullUrl = normalizeIdAndGetFullUrl(r);
+		Bundle.BundleEntryComponent e = new Bundle.BundleEntryComponent();
+		e.setFullUrl(fullUrl);
+		e.setResource(r);
+		entries.add(e);
+		idToFullUrl.put(r.getIdElement().getIdPart(), fullUrl);
+		return fullUrl;
+	}
+
+	private static String normalizeIdAndGetFullUrl(org.hl7.fhir.r4.model.Resource r) {
+		String idPart = r.getIdElement() != null ? r.getIdElement().getIdPart() : null;
+		String uuid = (idPart == null || idPart.isBlank()) ? UUID.randomUUID().toString()
+				: UUID.nameUUIDFromBytes(idPart.getBytes()).toString();
+		r.setId(uuid);
+		return FHIRConstants.UUID_PREFIX + uuid;
+	}
+
+	private static void fixRelativeReference(Reference ref) {
+		if (ref == null || !ref.hasReference())
+			return;
+		String val = ref.getReference();
+		if (val == null || val.startsWith(FHIRConstants.UUID_PREFIX) || val.startsWith("#")) //$NON-NLS-1$
+			return;
+		int slash = val.indexOf('/');
+		if (slash > 0 && slash < val.length() - 1) {
+			String idPart = val.substring(slash + 1);
+			String mapped = idToFullUrl.get(idPart);
+			if (mapped != null)
+				ref.setReference(mapped);
+		}
+	}
+
 }

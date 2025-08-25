@@ -1,7 +1,9 @@
 package ch.elexis.mednet.webapi.ui.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -21,21 +23,17 @@ import org.osgi.service.component.annotations.Reference;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
 import ch.elexis.mednet.webapi.core.messages.Messages;
+import javax.inject.Inject;
 
-@Component
 public class MedNetWebPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+	@Inject
     private IConfigService configService;
 
 	private Button demoRadioButton;
 	private Button produktivRadioButton;
-	public static final String DEMO = "DEMO";
-	public static final String PRODUKTIV = "PRODUKTIV";
-
-    @Reference
-    public void setConfigService(IConfigService configService) {
-        this.configService = configService;
-    }
+	public static final String DEMO = "DEMO"; //$NON-NLS-1$
+	public static final String PRODUKTIV = "PRODUKTIV"; //$NON-NLS-1$
 
     public MedNetWebPreferencePage() {
         super(GRID);
@@ -48,21 +46,17 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 
     @Override
     public void createFieldEditors() {
+		addField(new DirectoryFieldEditor(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
+				Messages.MedNetWebPreferencePage_downloadFolder, getFieldEditorParent()));
 
-        addField(new DirectoryFieldEditor(
-                PreferenceConstants.MEDNET_DOWNLOAD_PATH,
-                Messages.MedNetWebPreferencePage_downloadFolder,
-                getFieldEditorParent()
-        ));
+		addField(new StringFieldEditor(PreferenceConstants.MEDNET_USER_STRING,
+				Messages.MedNetWebPreferencePage_loginName, getFieldEditorParent()));
 
-        addField(new StringFieldEditor(
-                PreferenceConstants.MEDNET_USER_STRING,
-                Messages.MedNetWebPreferencePage_loginName,
-                getFieldEditorParent()
-        ));
+		addField(new BooleanFieldEditor(PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND,
+				Messages.MedNetWebPreferencePage_confirmBeforeSend, getFieldEditorParent()));
 
 		createRadioButtonGroup(getFieldEditorParent());
-    }
+	}
 
 	private void createRadioButtonGroup(Composite parent) {
 
@@ -80,28 +74,24 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 				.setSelection(PRODUKTIV.equals(getPreferenceStore().getString(PreferenceConstants.MEDNET_MODE)));
 	}
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench) {
-		if (configService == null) {
+		if (configService != null) {
+			String downloadPath = configService.getActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
+					StringUtils.EMPTY);
+			getPreferenceStore().setValue(PreferenceConstants.MEDNET_DOWNLOAD_PATH, downloadPath);
+			String userName = configService.getActiveUserContact(PreferenceConstants.MEDNET_USER_STRING,
+					StringUtils.EMPTY);
+			getPreferenceStore().setValue(PreferenceConstants.MEDNET_USER_STRING, userName);
+			String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, DEMO);
+			getPreferenceStore().setValue(PreferenceConstants.MEDNET_MODE, mode);
 
-			BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-			ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
-			if (serviceReference != null) {
-				configService = context.getService(serviceReference);
-			} else {
-				throw new IllegalStateException("IConfigService konnte nicht gefunden werden.");
-			}
+			String confirm = configService.getActiveUserContact(PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND, "true"); //$NON-NLS-1$
+			getPreferenceStore().setValue(PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND,
+					Boolean.parseBoolean(confirm));
 		}
-
-		String downloadPath = configService.getActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH, "");
-        getPreferenceStore().setValue(PreferenceConstants.MEDNET_DOWNLOAD_PATH, downloadPath);
-
-		String userName = configService.getActiveUserContact(PreferenceConstants.MEDNET_USER_STRING, "");
-        getPreferenceStore().setValue(PreferenceConstants.MEDNET_USER_STRING, userName);
-
-		String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, DEMO);
-		getPreferenceStore().setValue(PreferenceConstants.MEDNET_MODE, mode);
 	}
+
 
 	@Override
 	public boolean performOk() {
@@ -120,18 +110,12 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 		if (configService != null) {
 			configService.setActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
 					getPreferenceStore().getString(PreferenceConstants.MEDNET_DOWNLOAD_PATH));
+
 			configService.setActiveUserContact(PreferenceConstants.MEDNET_USER_STRING,
 					getPreferenceStore().getString(PreferenceConstants.MEDNET_USER_STRING));
 
-			String previousMode = getPreferenceStore().getString(PreferenceConstants.MEDNET_MODE);
-
-			String selectedMode = demoRadioButton.getSelection() ? DEMO : PRODUKTIV;
-			configService.setActiveUserContact(PreferenceConstants.MEDNET_MODE, selectedMode);
-
-			if (!previousMode.equals(selectedMode)) {
-				MessageDialog.openWarning(getShell(), Messages.MedNetMainComposite_restartRequiredTitle,
-						Messages.MedNetMainComposite_restartRequiredMessage);
-			}
+			configService.setActiveUserContact(PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND,
+					Boolean.toString(getPreferenceStore().getBoolean(PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND)));
 
 		}
 	}

@@ -20,8 +20,10 @@ import com.google.gson.reflect.TypeToken;
 
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
+import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
 import ch.elexis.mednet.webapi.core.messages.Messages;
 import ch.elexis.mednet.webapi.ui.parts.DocumentsSelectionDialog;
 
@@ -152,12 +154,14 @@ public class DataHandler {
 
 		IPatient ipatient = pat.get();
 		List<IDocument> selectedDocuments = null;
+		boolean confirmBeforeSend = ConfigServiceHolder.get()
+				.getActiveUserContact(PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND, true);
+		boolean sendDocuments = false;
+		if (confirmBeforeSend) {
 
-		boolean sendDocuments = MessageDialog.openQuestion(
-			    Display.getDefault().getActiveShell(),
-			    Messages.DataHandler_sendDocumentsTitle,
-			    Messages.DataHandler_sendDocumentsMessage
-			);
+			sendDocuments = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
+					Messages.DataHandler_sendDocumentsTitle, Messages.DataHandler_sendDocumentsMessage);
+		}
 
 		if (sendDocuments) {
 

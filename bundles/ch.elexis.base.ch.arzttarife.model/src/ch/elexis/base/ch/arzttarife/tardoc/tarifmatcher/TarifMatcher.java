@@ -2,8 +2,10 @@ package ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
@@ -70,8 +72,6 @@ public class TarifMatcher<T extends IBillable> {
 						"Abrechnung einer Trigger Position " + billed.getCode() + " ohne ICD Diagnose nicht möglich.",
 						null, false);
 			}
-			return new Result<IBilled>(Result.SEVERITY.WARNING, KOMBINATION, "Für die Zuschlagsleistung "
-					+ billed.getCode() + " konnte keine passende Hauptleistung gefunden werden.", null, false);
 		}
 		if (!result.patientCases.isEmpty() && !isPauschale(billed)) {
 			for (PatientCase patientCase : result.patientCases) {
@@ -100,10 +100,14 @@ public class TarifMatcher<T extends IBillable> {
 						}
 					} else {
 						MapperResult mapperResult = mapperService.getResult(patientCase);
-						List<MapperLogEntry> noneInfoLog = mapperResult.log.stream()
-								.filter(l -> l.level != MapperLogEntryLevel.INFO).toList();
+						List<MapperLogEntry> noneInfoLog = new ArrayList<>(
+								mapperResult.log.stream().filter(l -> l.level != MapperLogEntryLevel.INFO).toList());
 						if (!noneInfoLog.isEmpty()) {
-							noneInfoLog.forEach(li -> System.out.println(li.level + " - " + li.message));
+							noneInfoLog.sort((l, r) -> {
+								return logEntrySortMap().get(l.level).compareTo(logEntrySortMap().get(r.level));
+							});
+							noneInfoLog.forEach(li -> LoggerFactory.getLogger(getClass())
+									.info("Non info mapper log entry " + li.level + " - " + li.message));
 							return new Result<IBilled>(Result.SEVERITY.WARNING, getWarningCode(noneInfoLog.get(0)),
 									getWarningMessage(noneInfoLog.get(0)), null, false);
 						}
@@ -112,6 +116,16 @@ public class TarifMatcher<T extends IBillable> {
 			}
 		}
 		return ret;
+	}
+
+	private Map<MapperLogEntryLevel, Integer> logEntrySortMap() {
+		return Map.of(MapperLogEntryLevel.MISSING_MASTER, Integer.valueOf(1),
+				MapperLogEntryLevel.TARDOC_VALIDATION_DELETE, Integer.valueOf(2),
+				MapperLogEntryLevel.TARDOC_VALIDATION_UPDATE, Integer.valueOf(2),
+				MapperLogEntryLevel.LKAAT_VALIDATION_TRIGGER, Integer.valueOf(3),
+				MapperLogEntryLevel.LKAAT_VALIDATION_NOT_FOUND, Integer.valueOf(3),
+				MapperLogEntryLevel.LKAAT_VALIDATION_DUPLICATE, Integer.valueOf(3));
+
 	}
 
 	private boolean isPauschale(IBilled billed) {
@@ -124,12 +138,24 @@ public class TarifMatcher<T extends IBillable> {
 		case MISSING_MASTER:
 			return "Für die Zuschlagsleistung " + mapperLogEntry.tardocCode
 					+ " konnte keine passende Hauptleistung gefunden werden.";
+		case TARDOC_VALIDATION_DELETE:
+			if (mapperLogEntry.message != null && mapperLogEntry.message.contains("side")) {
+				return "Bei der Leistung  " +  mapperLogEntry.tardocCode + "  muss die Seite angegeben werden.";
+			}
+			return "Die Leistung " +  mapperLogEntry.tardocCode + " ist nicht möglich.";
+		case TARDOC_VALIDATION_UPDATE:
+			if (StringUtils.isNotBlank(mapperLogEntry.message)) {
+				return "Die Leistung " + mapperLogEntry.tardocCode + " ist nicht möglich.\n" + mapperLogEntry.message;
+			}
+			return "Die Leistung ist nicht möglich.";
 		case LKAAT_VALIDATION_TRIGGER:
 			return "Für die Trigger Position " + mapperLogEntry.tardocCode
 					+ " konnte keine passende Pauschale abgerechnet werden.";
 		case LKAAT_VALIDATION_NOT_FOUND:
 			return "Die Position ist neben der Pauschale "
 					+ mapperLogEntry.serviceCode + " nicht möglich.";
+		case LKAAT_VALIDATION_DUPLICATE:
+			return "Die Position ist wurde dupliziert.";
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + mapperLogEntry.level);
 		}
@@ -139,10 +165,16 @@ public class TarifMatcher<T extends IBillable> {
 		switch (mapperLogEntry.level) {
 		case MISSING_MASTER:
 			return KOMBINATION;
+		case TARDOC_VALIDATION_DELETE:
+			return LEISTUNGSTYP;
+		case TARDOC_VALIDATION_UPDATE:
+			return LEISTUNGSTYP;
 		case LKAAT_VALIDATION_TRIGGER:
 			return LEISTUNGSTYP;
 		case LKAAT_VALIDATION_NOT_FOUND:
 			return LEISTUNGSTYP;
+		case LKAAT_VALIDATION_DUPLICATE:
+			return KOMBINATION;
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + mapperLogEntry.level);
 		}

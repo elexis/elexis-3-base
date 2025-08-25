@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.CoreUtil;
 import ch.oaat_otma.Diagnosis;
@@ -88,12 +90,24 @@ public class CasemasterService {
 		IBillable billable = billed.getBillable();
 		if (billable.getCodeSystemName().toLowerCase().contains("tardoc")
 				|| billable.getCodeSystemName().toLowerCase().contains("ambulantepauschalen")) {
-			session.addService(new Service(billable.getCode(), Side.NONE,
+			session.addService(new Service(billable.getCode(), getSide(billed),
 					Double.valueOf(billed.getAmount()).intValue(), billed.getEncounter().getDate(), session.number));
 		} else if (!(billable instanceof IArticle) || billable.getCodeSystemCode().equals("402")) {
 			session.addTarpo(new Tarpo(billable.getCode(), billable.getCodeSystemCode(), billed.getAmount(),
 					billed.getEncounter().getDate(), billed.getAmount(), (billed.getPrice().getCents() / 100),
 					Side.NONE));
 		}
+	}
+
+	private Side getSide(IBilled billed) {
+		if (StringUtils.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_SIDE))) {
+			String side = (String) billed.getExtInfo(Constants.FLD_EXT_SIDE);
+			if (Constants.SIDE_L.equals(side)) {
+				return Side.L;
+			} else if (Constants.SIDE_R.equals(side)) {
+				return Side.R;
+			}
+		}
+		return Side.NONE;
 	}
 }

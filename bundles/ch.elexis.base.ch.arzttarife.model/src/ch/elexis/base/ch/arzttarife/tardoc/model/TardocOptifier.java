@@ -35,7 +35,13 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 	private Map<String, Object> contextMap;
 
+	private TardocVerifier verifier;
+
 	private TarifMatcher<TardocLeistung> tarifMatcher;
+
+	public TardocOptifier() {
+		verifier = new TardocVerifier();
+	}
 
 	@Override
 	public Result<IBilled> add(TardocLeistung code, IEncounter encounter, double amount, boolean save) {
@@ -98,6 +104,11 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			if (!resultAddBezug.isOK()) {
 				return resultAddBezug;
 			}
+		}
+
+		Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, code, newBilled);
+		if (!limitationsResult.isOK()) {
+			return limitationsResult;
 		}
 
 		Result<IBilled> matcherResult = tarifMatcher.evaluate(newBilled, encounter);

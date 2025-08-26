@@ -42,7 +42,7 @@ public class TardocLimitation {
 
 	private boolean skip = false;
 
-	private TardocLeistung tarmedLeistung;
+	private TardocLeistung tardocLeistung;
 	private TardocGroup tarmedGroup;
 
 	public enum LimitationUnit {
@@ -151,7 +151,7 @@ public class TardocLimitation {
 	}
 
 	public TardocLimitation setTardocLeistung(TardocLeistung tarmedLeistung) {
-		this.tarmedLeistung = tarmedLeistung;
+		this.tardocLeistung = tarmedLeistung;
 		return this;
 	}
 
@@ -169,9 +169,20 @@ public class TardocLimitation {
 		} else if (limitationUnit == LimitationUnit.SIDE) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
 					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perSide);
-		} else if (limitationUnit == LimitationUnit.DAY) {
+		} else if (limitationUnit == LimitationUnit.DAY && limitationAmount == 1) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
 					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perDay);
+		} else if (limitationUnit == LimitationUnit.DAY && limitationAmount > 1) {
+			if (tarmedGroup != null) {
+				sb.append(String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
+						tarmedGroup.getCode()) + amount
+						+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perDays,
+								limitationAmount));
+			} else {
+				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
+						+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perDays,
+								limitationAmount));
+			}
 		} else if (limitationUnit == LimitationUnit.WEEK) {
 			if (tarmedGroup != null) {
 				sb.append(String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
@@ -224,10 +235,11 @@ public class TardocLimitation {
 	public Result<IBilled> test(IEncounter kons, IBilled newVerrechnet) {
 		if (limitationUnit == LimitationUnit.SIDE || limitationUnit == LimitationUnit.SESSION) {
 			return testSideOrSession(kons, newVerrechnet);
-		} else if (limitationUnit == LimitationUnit.DAY) {
+		} else if (limitationUnit == LimitationUnit.DAY && limitationAmount == 1) {
 			return testDay(kons, newVerrechnet);
-		} else if (limitationUnit == LimitationUnit.WEEK || limitationUnit == LimitationUnit.MONTH
-				|| limitationUnit == LimitationUnit.YEAR) {
+		} else if ((limitationUnit == LimitationUnit.DAY && limitationAmount > 1)
+				|| limitationUnit == LimitationUnit.WEEK
+				|| limitationUnit == LimitationUnit.MONTH || limitationUnit == LimitationUnit.YEAR) {
 			return testDuration(kons, newVerrechnet);
 		} else if (limitationUnit == LimitationUnit.COVERAGE) {
 			return testCoverage(kons, newVerrechnet);
@@ -264,7 +276,7 @@ public class TardocLimitation {
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<IBilled> verrechnetByCoverage = getVerrechnetByCoverageAndCode(kons, tarmedLeistung.getCode());
+				List<IBilled> verrechnetByCoverage = getVerrechnetByCoverageAndCode(kons, tardocLeistung.getCode());
 				verrechnetByCoverage = filterWithSameCode(verrechnet, verrechnetByCoverage);
 				if (getVerrechnetCount(verrechnetByCoverage) > amount) {
 					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
@@ -330,7 +342,7 @@ public class TardocLimitation {
 	+ " WHERE leistungen.deleted = '0'"
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
-	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
+	+ " AND leistungen.KLASSE = 'ch.elexis.data.TardocLeistung'"
 	+ " AND faelle.ID = behandlungen.fallID"
 	+ " AND faelle.PatientID = ?1"
 	+ " AND leistungen.LEISTG_CODE like ?2"
@@ -436,7 +448,9 @@ public class TardocLimitation {
 
 		private VerrechnetPeriod(IBilled verrechnet) {
 			start = verrechnet.getEncounter().getDate();
-			if (limitationUnit == LimitationUnit.WEEK) {
+			if (limitationUnit == LimitationUnit.DAY) {
+				end = start.plus(limitationAmount, ChronoUnit.DAYS);
+			} else if (limitationUnit == LimitationUnit.WEEK) {
 				end = start.plus(limitationAmount, ChronoUnit.WEEKS);
 			} else if (limitationUnit == LimitationUnit.MONTH) {
 				end = start.plus(limitationAmount, ChronoUnit.MONTHS);
@@ -521,7 +535,7 @@ public class TardocLimitation {
 	+ " WHERE leistungen.deleted = '0'"
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
-	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
+	+ " AND leistungen.KLASSE = 'ch.elexis.data.TardocLeistung'"
 	+ " AND leistungen.LEISTG_CODE like ?1"
 	+ " AND behandlungen.FallID = ?2";
 	// @formatter:on
@@ -553,8 +567,8 @@ public class TardocLimitation {
 		} else if (limitationUnit == LimitationUnit.YEAR) {
 			ret = konsDate.minus(limitationAmount, ChronoUnit.YEARS);
 		}
-		if (tarmedLeistung != null && ret != null) {
-			LocalDate leistungDate = tarmedLeistung.getValidFrom();
+		if (tardocLeistung != null && ret != null) {
+			LocalDate leistungDate = tardocLeistung.getValidFrom();
 			if (ret.isBefore(leistungDate)) {
 				ret = leistungDate;
 			}

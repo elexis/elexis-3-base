@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
@@ -107,9 +108,13 @@ public class TarifMatcher<T extends IBillable> {
 								return logEntrySortMap().get(l.level).compareTo(logEntrySortMap().get(r.level));
 							});
 							noneInfoLog.forEach(li -> LoggerFactory.getLogger(getClass())
-									.info("Non info mapper log entry " + li.level + " - " + li.message));
-							return new Result<IBilled>(Result.SEVERITY.WARNING, getWarningCode(noneInfoLog.get(0)),
-									getWarningMessage(noneInfoLog.get(0)), null, false);
+									.info("Non info mapper log entry " + li.level + " - " + getMessage(li)));
+							List<MapperLogEntry> errorLog = noneInfoLog.stream()
+									.filter(l -> l.level != MapperLogEntryLevel.WARNING).toList();
+							if (!errorLog.isEmpty()) {
+								return new Result<IBilled>(Result.SEVERITY.WARNING, getWarningCode(noneInfoLog.get(0)),
+										getWarningMessage(noneInfoLog.get(0)), null, false);
+							}
 						}
 					}
 				}
@@ -119,7 +124,8 @@ public class TarifMatcher<T extends IBillable> {
 	}
 
 	private Map<MapperLogEntryLevel, Integer> logEntrySortMap() {
-		return Map.of(MapperLogEntryLevel.MISSING_MASTER, Integer.valueOf(1),
+		return Map.of(MapperLogEntryLevel.INFO, Integer.MAX_VALUE, MapperLogEntryLevel.WARNING, Integer.MAX_VALUE,
+				MapperLogEntryLevel.MISSING_MASTER, Integer.valueOf(1),
 				MapperLogEntryLevel.TARDOC_VALIDATION_DELETE, Integer.valueOf(2),
 				MapperLogEntryLevel.TARDOC_VALIDATION_UPDATE, Integer.valueOf(2),
 				MapperLogEntryLevel.LKAAT_VALIDATION_TRIGGER, Integer.valueOf(3),
@@ -145,7 +151,8 @@ public class TarifMatcher<T extends IBillable> {
 			return "Die Leistung " +  mapperLogEntry.tardocCode + " ist nicht möglich.";
 		case TARDOC_VALIDATION_UPDATE:
 			if (StringUtils.isNotBlank(mapperLogEntry.message)) {
-				return "Die Leistung " + mapperLogEntry.tardocCode + " ist nicht möglich.\n" + mapperLogEntry.message;
+				return "Die Leistung " + mapperLogEntry.tardocCode + " ist nicht möglich.\n"
+						+ getMessage(mapperLogEntry);
 			}
 			return "Die Leistung ist nicht möglich.";
 		case LKAAT_VALIDATION_TRIGGER:
@@ -159,6 +166,13 @@ public class TarifMatcher<T extends IBillable> {
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + mapperLogEntry.level);
 		}
+	}
+
+	private String getMessage(MapperLogEntry mapperLogEntry) {
+		if (mapperLogEntry.message != null) {
+			return StringEscapeUtils.unescapeHtml4(mapperLogEntry.message);
+		}
+		return StringUtils.EMPTY;
 	}
 
 	private int getWarningCode(MapperLogEntry mapperLogEntry) {

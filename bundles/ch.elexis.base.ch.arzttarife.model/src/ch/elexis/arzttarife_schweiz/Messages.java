@@ -118,6 +118,7 @@ public class Messages {
 	public static String TarmedOptifier_perSession = ch.elexis.core.l10n.Messages.TarmedOptifier_perSession;
 	public static String TarmedOptifier_perSide = ch.elexis.core.l10n.Messages.TarmedOptifier_perSide;
 	public static String TarmedOptifier_perDay = ch.elexis.core.l10n.Messages.TarmedOptifier_perDay;
+	public static String TarmedOptifier_perDays = ch.elexis.core.l10n.Messages.TarmedOptifier_perDays;
 	public static String TarmedOptifier_perWeeks = ch.elexis.core.l10n.Messages.TarmedOptifier_perWeeks;
 	public static String TarmedOptifier_perMonth = ch.elexis.core.l10n.Messages.TarmedOptifier_perMonth;
 	public static String TarmedOptifier_perYears = ch.elexis.core.l10n.Messages.TarmedOptifier_perYears;

@@ -11,7 +11,7 @@ import ch.elexis.core.services.IBillingSystemService;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TardocBillingTest.class })
+@SuiteClasses({ TardocBillingTest.class, TardocGroupLimitsTest.class })
 public class AllTardocTests {
 
 	public static final String UVG_NAME = Messages.Case_UVG_Short;

@@ -27,6 +27,7 @@ public class Sender implements IDataSender {
 	private final Gs1OrderXmlGenerator xmlGenerator;
 	private final XmlValidator xmlValidator;
 	private final HttpOrderTransportService transportService;
+	public static final String DEBUG_MODE = "rose.order.debug"; //$NON-NLS-1$
 
 	private final List<String> orderRequests = new ArrayList<>();
 
@@ -47,6 +48,9 @@ public class Sender implements IDataSender {
 			IOrder order = (IOrder) output;
 			String xml = xmlGenerator.createOrderXml(order);
 			xmlValidator.validateXml(xml);
+			if (System.getProperty(DEBUG_MODE) != null) {
+				System.out.println("GS1 Rose Order XML Payload:\n" + xml); //$NON-NLS-1$
+			}
 			orderRequests.add(xml);
 			return null;
 		} else {

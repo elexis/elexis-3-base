@@ -8,7 +8,7 @@ Bundle-ClassPath: .,
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: ch.elexis.base.ch.arzttarife,
  ch.elexis.base.ch.arzttarife.ambulatory,
  ch.elexis.base.ch.arzttarife.ambulatory.impl,

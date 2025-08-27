@@ -1,5 +1,7 @@
 package ch.elexis.mednet.webapi.ui.preferences;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -14,16 +16,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
 import ch.elexis.mednet.webapi.core.messages.Messages;
-import javax.inject.Inject;
 
 public class MedNetWebPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -95,6 +91,18 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 
 	@Override
 	public boolean performOk() {
+		String previousMode = getPreferenceStore().getString(PreferenceConstants.MEDNET_MODE);
+		String selectedMode = demoRadioButton.getSelection() ? DEMO : PRODUKTIV;
+		getPreferenceStore().setValue(PreferenceConstants.MEDNET_MODE, selectedMode);
+		configService.setActiveUserContact(PreferenceConstants.MEDNET_MODE, selectedMode);
+		if (!previousMode.equals(selectedMode)) {
+			configService.setActiveMandator(PreferenceConstants.PREF_TOKEN + "mednet", null);
+			configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + "mednet", null);
+			configService.setActiveMandator(PreferenceConstants.PREF_TOKEN_EXPIRES + "mednet", null);
+			MessageDialog.openWarning(getShell(), Messages.MedNetMainComposite_restartRequiredTitle,
+					Messages.MedNetMainComposite_restartRequiredMessage);
+		}
+
 		boolean result = super.performOk();
 		applyChanges();
 		return result;

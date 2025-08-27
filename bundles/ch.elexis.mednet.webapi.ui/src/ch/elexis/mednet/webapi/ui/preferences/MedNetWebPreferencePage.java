@@ -92,11 +92,16 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 	public boolean performOk() {
 		String previousMode = getPreferenceStore().getString(PreferenceConstants.MEDNET_MODE);
 		String selectedMode = demoRadioButton.getSelection() ? DEMO : PRODUKTIV;
+		getPreferenceStore().setValue(PreferenceConstants.MEDNET_MODE, selectedMode);
 		configService.setActiveUserContact(PreferenceConstants.MEDNET_MODE, selectedMode);
 		if (!previousMode.equals(selectedMode)) {
+			configService.setActiveMandator(PreferenceConstants.PREF_TOKEN + "mednet", null);
+			configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + "mednet", null);
+			configService.setActiveMandator(PreferenceConstants.PREF_TOKEN_EXPIRES + "mednet", null);
 			MessageDialog.openWarning(getShell(), Messages.MedNetMainComposite_restartRequiredTitle,
 					Messages.MedNetMainComposite_restartRequiredMessage);
 		}
+
 		boolean result = super.performOk();
 		applyChanges();
 		return result;

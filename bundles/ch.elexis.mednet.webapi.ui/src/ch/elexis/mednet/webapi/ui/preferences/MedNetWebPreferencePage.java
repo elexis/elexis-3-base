@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
 import ch.elexis.mednet.webapi.core.messages.Messages;
 
@@ -33,10 +34,10 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 
     public MedNetWebPreferencePage() {
         super(GRID);
+		CoreUiUtil.injectServices(this);
 		ScopedPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
 				PreferenceConstants.MEDNET_PLUGIN_STRING);
 		setPreferenceStore(preferenceStore);
-
         setDescription(Messages.MedNetWebPreferencePage_configForMedNetWebAPI);
     }
 
@@ -55,7 +56,6 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 	}
 
 	private void createRadioButtonGroup(Composite parent) {
-
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(Messages.MedNetWebPreferencePage_operatingMode);
 		group.setLayout(new org.eclipse.swt.layout.GridLayout(1, false));
@@ -87,7 +87,6 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 					Boolean.parseBoolean(confirm));
 		}
 	}
-
 
 	@Override
 	public boolean performOk() {

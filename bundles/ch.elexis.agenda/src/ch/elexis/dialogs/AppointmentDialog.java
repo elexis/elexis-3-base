@@ -45,8 +45,8 @@ public class AppointmentDialog extends Dialog {
 	private EmailSender emailSender;
 	private boolean expanded;
 
-	private static final Point MIN_COLLAPSED = new Point(680, 400);
-	private static final Point MIN_EXPANDED = new Point(900, 700);
+	private static final Point MIN_COLLAPSED = new Point(750, 500);
+	private static final Point MIN_EXPANDED = new Point(1000, 800);
 
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
@@ -74,14 +74,17 @@ public class AppointmentDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return (detailComposite != null && expanded) ? new Point(MIN_EXPANDED.x, MIN_EXPANDED.y)
-				: new Point(MIN_COLLAPSED.x, MIN_COLLAPSED.y);
+		if (detailComposite != null && expanded) {
+			return MIN_EXPANDED;
+		} else {
+			return MIN_COLLAPSED;
+		}
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setMinimumSize(680, 400);
+		newShell.setMinimumSize(750, 500);
 		newShell.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {

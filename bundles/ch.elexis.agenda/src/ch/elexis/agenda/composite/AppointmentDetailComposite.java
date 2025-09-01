@@ -489,6 +489,7 @@ public class AppointmentDetailComposite extends Composite {
 			comp.layout(true, true);
 			container.layout(true, true);
 			getShell().layout(true, true);
+
 		});
 
 		new Label(comp, SWT.NONE).setText(Messages.AppointmentDetailComposite_date_type_or_status);
@@ -756,13 +757,16 @@ public class AppointmentDetailComposite extends Composite {
 		glArea.horizontalSpacing = 6;
 		glArea.marginLeft = 8;
 		compArea.setLayout(glArea);
+		GridData gdCompArea = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gdCompArea.horizontalSpan = 1;
+		compArea.setLayoutData(gdCompArea);
 
 		Label lblArea = new Label(compArea, SWT.NONE);
 		lblArea.setText(Messages.AppointmentDetailComposite_range);
 
 		comboArea = new Combo(compArea, SWT.DROP_DOWN | SWT.READ_ONLY);
 		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(","));
-		comboArea.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		comboArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		comboArea.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

@@ -35,6 +35,7 @@ import ch.elexis.core.findings.migration.IMigratorService;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
@@ -46,6 +47,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
@@ -127,27 +129,29 @@ public class BundleResource {
 		allergySection.setEntry(allergyReferences);
 		composition.addSection(allergySection);
 
-		ICoverage activeCoverage = getActiveCoverage(sourcePatient);
-		if (activeCoverage != null) {
-			IContact coveragePayor = activeCoverage.getCostBearer();
+		Optional<IEncounter> encounterOpt = ContextServiceHolder.get().getTyped(IEncounter.class);
+		if (encounterOpt.isPresent()) {
+			ICoverage encounterCoverage = encounterOpt.get().getCoverage();
+			if (encounterCoverage != null && encounterCoverage.isOpen()) {
+				IContact coveragePayor = encounterCoverage.getCostBearer();
+				if (coveragePayor != null && coveragePayor.isOrganization()) {
+					Coverage coverage = resourceFactory.getResource(encounterCoverage, ICoverage.class, Coverage.class);
+					CoverageResource.toMednet(coverage, patientFullUrl);
 
-			if (coveragePayor != null && coveragePayor.isOrganization()) {
-				Coverage coverage = resourceFactory.getResource(activeCoverage, ICoverage.class, Coverage.class);
-				CoverageResource.toMednet(coverage, patientFullUrl);
+					String coverageFullUrl = addEntryAndIndex(bundleEntries, coverage);
 
-				String coverageFullUrl = addEntryAndIndex(bundleEntries, coverage);
+					Organization organization = OrganizationResource.createOrganization(coveragePayor, resourceFactory);
+					String orgFullUrl = addEntryAndIndex(bundleEntries, organization);
 
-				Organization organization = OrganizationResource.createOrganization(coveragePayor, resourceFactory);
-				String orgFullUrl = addEntryAndIndex(bundleEntries, organization);
+					coverage.setPayor(List.of(new Reference(orgFullUrl)));
 
-				coverage.setPayor(java.util.List.of(new Reference(orgFullUrl)));
-
-				Composition.SectionComponent coverageSection = new Composition.SectionComponent();
-				coverageSection.setTitle(FHIRConstants.INSURANCE_DATA_SECTION_TITLE);
-				coverageSection.setCode(new CodeableConcept().addCoding(new Coding(FHIRConstants.LOINC_SYSTEM,
-						FHIRConstants.PRIMARY_INSURANCE_CODE, FHIRConstants.PRIMARY_INSURANCE_DISPLAY)));
-				coverageSection.addEntry(new Reference(coverageFullUrl));
-				composition.addSection(coverageSection);
+					Composition.SectionComponent coverageSection = new Composition.SectionComponent();
+					coverageSection.setTitle(FHIRConstants.INSURANCE_DATA_SECTION_TITLE);
+					coverageSection.setCode(new CodeableConcept().addCoding(new Coding(FHIRConstants.LOINC_SYSTEM,
+							FHIRConstants.PRIMARY_INSURANCE_CODE, FHIRConstants.PRIMARY_INSURANCE_DISPLAY)));
+					coverageSection.addEntry(new Reference(coverageFullUrl));
+					composition.addSection(coverageSection);
+				}
 			}
 		}
 
@@ -361,15 +365,6 @@ public class BundleResource {
 		}
 
 		return bundle;
-	}
-
-	private static ICoverage getActiveCoverage(IPatient patient) {
-		for (ICoverage coverage : patient.getCoverages()) {
-			if (coverage.isOpen()) {
-				return coverage;
-			}
-		}
-		return null;
 	}
 
 	private static Optional<IUser> findMandatorUser(Optional<IMandator> mandator) {

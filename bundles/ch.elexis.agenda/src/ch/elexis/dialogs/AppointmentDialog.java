@@ -41,6 +41,7 @@ import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import ch.elexis.core.utils.CoreUtil;
 import jakarta.inject.Inject;
 
 public class AppointmentDialog extends Dialog {
@@ -59,9 +60,6 @@ public class AppointmentDialog extends Dialog {
 	private AppointmentDetailComposite detailComposite;
 	private EmailSender emailSender;
 	private boolean expanded;
-
-	private static final Point MIN_COLLAPSED = new Point(750, 500);
-	private static final Point MIN_EXPANDED = new Point(1000, 800);
 
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
@@ -90,16 +88,19 @@ public class AppointmentDialog extends Dialog {
 	@Override
 	protected Point getInitialSize() {
 		if (detailComposite != null && expanded) {
-			return MIN_EXPANDED;
+			return new Point(1000, 800);
 		} else {
-			return MIN_COLLAPSED;
+			if (CoreUtil.isLinux()) {
+				return new Point(800, 560);
+			} else {
+				return new Point(700, 490);
+			}
 		}
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setMinimumSize(750, 500);
 		newShell.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {

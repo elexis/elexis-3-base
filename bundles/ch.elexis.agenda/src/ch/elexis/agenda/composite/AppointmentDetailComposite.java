@@ -104,7 +104,7 @@ public class AppointmentDetailComposite extends Composite {
 	private Combo comboStatus;
 	private Text txtReason;
 	private Text txtPatSearch;
-	private Label tBem;
+	private Text tBem;
 	private DayOverViewComposite dayBar;
 	private TableViewer appointmentsViewer;
 	private Composite container;
@@ -276,11 +276,19 @@ public class AppointmentDetailComposite extends Composite {
 
 	private void onPatientSearchModify() {
 		reloadContactLabel();
-		if (!txtDataIsMatchingContact() || StringUtils.isBlank(txtPatSearch.getText())) {
+		String searchText = txtPatSearch.getText();
+		if (StringUtils.isBlank(searchText)) {
 			txtPatSearch.setData(null);
-		}
-		if (!txtDataIsMatchingContact() && appointmentsViewer != null) {
-			appointmentsViewer.setInput(Collections.emptyList());
+			tBem.setText(StringUtils.EMPTY);
+			if (appointmentsViewer != null) {
+				appointmentsViewer.setInput(Collections.emptyList());
+			}
+		} else if (!txtDataIsMatchingContact()) {
+			txtPatSearch.setData(null);
+			tBem.setText(StringUtils.EMPTY);
+			if (appointmentsViewer != null) {
+				appointmentsViewer.setInput(Collections.emptyList());
+			}
 		}
 		emailComposite.updateEmailControlsStatus(getSelectedContact());
 	}
@@ -465,9 +473,23 @@ public class AppointmentDetailComposite extends Composite {
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		comp.setLayout(new GridLayout(2, false));
 		new Label(comp, SWT.NONE).setText(Messages.TerminDialog_remarks);
-		tBem = new Label(comp, SWT.NONE);
+
+		tBem = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.READ_ONLY);
 		tBem.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_DARK_RED));
-		tBem.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
+
+		GridData gdBem = new GridData(SWT.FILL, SWT.TOP, true, false, 3, 1);
+		gdBem.heightHint = tBem.getLineHeight();
+		tBem.setLayoutData(gdBem);
+
+		tBem.addModifyListener(e -> {
+			int lineCount = tBem.getLineCount();
+			int newHeight = Math.min(100, lineCount * tBem.getLineHeight() + 4); // +4 Padding
+			gdBem.heightHint = newHeight;
+			comp.layout(true, true);
+			container.layout(true, true);
+			getShell().layout(true, true);
+		});
+
 		new Label(comp, SWT.NONE).setText(Messages.AppointmentDetailComposite_date_type_or_status);
 		new Label(comp, SWT.NONE).setText(Messages.AppointmentDetailComposite_reason);
 		comboType = createCombo(comp, appointmentService.getTypes());
@@ -537,6 +559,23 @@ public class AppointmentDetailComposite extends Composite {
 			dayBar.refresh();
 		}
 		reloadContactLabel();
+
+		if (StringUtils.isBlank(txtPatSearch.getText())) {
+			tBem.setText(StringUtils.EMPTY);
+		} else {
+			IContact c = getSelectedContact();
+			if (c != null && c.isPatient()) {
+				IPatient p = (IPatient) CoreModelServiceHolder.get().load(c.getId(), IPatient.class).orElse(null);
+				if (p != null) {
+					String comment = p.getComment() != null ? p.getComment() : StringUtils.EMPTY;
+					tBem.setText(comment);
+				} else {
+					tBem.setText(StringUtils.EMPTY);
+				}
+			} else {
+				tBem.setText(StringUtils.EMPTY);
+			}
+		}
 		emailComposite.updateEmailControlsStatus(getSelectedContact());
 	}
 

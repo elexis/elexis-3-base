@@ -353,6 +353,8 @@ public class AppointmentDetailComposite extends Composite {
 		pickerContext = new DateTime(calWrapper, SWT.CALENDAR | SWT.CALENDAR_WEEKNUMBERS | SWT.BORDER);
 		pickerContext.setLayout(new GridLayout(1, false));
 		pickerContext.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+		LocalDate ld = appointment.getStartTime().toLocalDate();
+		pickerContext.setDate(ld.getYear(), ld.getMonthValue() - 1, ld.getDayOfMonth());
 		pickerContext.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

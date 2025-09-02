@@ -409,6 +409,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 			@Override
 			public void doRun(IAppointment element) {
 				element.setEndTime(element.getStartTime().plusMinutes(element.getDurationMinutes() >> 1));
+				CoreModelServiceHolder.get().save(element);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		};

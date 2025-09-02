@@ -315,6 +315,9 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	public void setCollisionErrorLevel(CollisionErrorLevel level, Consumer<Boolean> callback) {
 		this.collisionErrorLevel = level;
 		this.collisionCallback = callback;
+		if (collisionCallback != null) {
+			collisionCallback.accept(isColliding());
+		}
 	}
 
 	private boolean isTerminTypeIsReserviert(IAppointment pi) {
@@ -382,8 +385,6 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			if (!iAppointment.getId().equals(appointment.getId())) {
 				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(), iAppointment.getStartTime(),
 						iAppointment.getEndTime())) {
-					System.out.println(
-							String.format("Collide %s with %s", appointment.getLabel(), iAppointment.getLabel())); //$NON-NLS-1$
 					return true;
 				}
 			}

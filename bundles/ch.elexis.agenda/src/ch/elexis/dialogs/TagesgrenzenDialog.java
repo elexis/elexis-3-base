@@ -11,7 +11,9 @@
  *******************************************************************************/
 package ch.elexis.dialogs;
 
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,20 +25,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.builder.IAppointmentBuilder;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.AppointmentState;
+import ch.elexis.core.types.AppointmentType;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Query;
-import ch.rgw.tools.TimeTool;
 
 public class TagesgrenzenDialog extends TitleAreaDialog {
-	String day;
+	LocalDate day;
 	Text text;
 	String beiwem;
-	List<Termin> lRes;
+	List<IAppointment> lRes;
 
 	public TagesgrenzenDialog(Shell parent, String tag, String bereich) {
 		super(parent);
-		day = tag;
+		day = LocalDate.parse(tag, DateTimeFormatter.ofPattern("yyyyMMdd"));
 		beiwem = bereich;
 	}
 
@@ -46,18 +55,21 @@ public class TagesgrenzenDialog extends TitleAreaDialog {
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
 		text = SWTHelper.createText(ret, 6, SWT.BORDER);
-		Query<Termin> qbe = new Query<Termin>(Termin.class);
-		qbe.add("Tag", "=", day);
-		qbe.add("Typ", "=", Termin.typReserviert());
-		qbe.add("BeiWem", "=", beiwem);
-		qbe.add("deleted", "=", "0");
-		lRes = qbe.execute();
-		Termin[] lt = lRes.toArray(new Termin[0]);
-		Arrays.sort(lt);
+
+		IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
+		query.and(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS, beiwem);
+		query.and("tag", COMPARATOR.EQUALS, day);
+		String typReserved = AppointmentServiceHolder.get().getType(AppointmentType.BOOKED);
+		query.and(ModelPackage.Literals.IAPPOINTMENT__TYPE, COMPARATOR.EQUALS, typReserved);
+		query.orderByLeftPadded("beginn", ORDER.ASC);
+		lRes = query.execute();
+
 		StringBuilder sb = new StringBuilder();
-		for (Termin t : lt) {
-			sb.append(t.getTimeSpan().from.toString(TimeTool.TIME_SMALL)).append("-")
-					.append(t.getTimeSpan().until.toString(TimeTool.TIME_SMALL)).append(StringUtils.LF);
+		for (IAppointment t : lRes) {
+			sb.append(DateTimeFormatter.ofPattern("HH:mm").format(t.getStartTime())).append("-")
+					.append(t.getEndTime() != null ? DateTimeFormatter.ofPattern("HH:mm").format(t.getEndTime())
+							: StringUtils.EMPTY)
+					.append(StringUtils.LF);
 		}
 		text.setText(sb.toString());
 		return ret;
@@ -70,20 +82,22 @@ public class TagesgrenzenDialog extends TitleAreaDialog {
 		setMessage(
 				"Bitte geben Sie nicht planbare Zeiträume in der Form hh:mm-hh:mm jeweils in einer eigenen Zeile ein");
 		getShell().setText("Agenda");
-
 	}
 
 	@Override
 	protected void okPressed() {
-		for (Termin t : lRes) {
-			t.delete();
+		for (IAppointment t : lRes) {
+			CoreModelServiceHolder.get().delete(t);
 		}
 		String[] sl = text.getText().split("\\s*[\\n*\\r*,]\\n?\\r?\\s*");
 		for (String s : sl) {
 			String[] lim = s.split("-");
-			int start = TimeTool.minutesStringToInt(lim[0]);
-			int end = TimeTool.minutesStringToInt(lim[1]);
-			new Termin(beiwem, day, start, end, Termin.typReserviert(), Termin.statusLeer());
+			LocalTime startTime = LocalTime.parse(lim[0], DateTimeFormatter.ofPattern("HH:mm"));
+			LocalTime endTime = LocalTime.parse(lim[1], DateTimeFormatter.ofPattern("HH:mm"));
+			String typReserved = AppointmentServiceHolder.get().getType(AppointmentType.BOOKED);
+			String emptyState = AppointmentServiceHolder.get().getState(AppointmentState.EMPTY);
+			new IAppointmentBuilder(CoreModelServiceHolder.get(), beiwem, day.atTime(startTime), day.atTime(endTime),
+					typReserved, emptyState).buildAndSave();
 		}
 		super.okPressed();
 	}

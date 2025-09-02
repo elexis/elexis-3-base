@@ -31,8 +31,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
-import ch.elexis.core.model.IPerson;
-import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.text.ITextPlugin.ICallback;
 import ch.elexis.core.ui.text.TextContainer;
@@ -92,16 +90,13 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 			termine[i][0] = DateTimeFormatter.ofPattern("HH:mm").format(appointment.getStartTime());
 			termine[i][1] = DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime());
 			termine[i][2] = appointment.getType();
+			String subject = appointment.getSubjectOrPatient();
 			IContact contact = appointment.getContact();
-			IPerson person = null;
-			if(contact.isPerson()) {
-				person = contact.asIPerson();
-			}
 			String patCode = StringUtils.EMPTY;
 			if (contact != null) {
 				patCode = ", Id: " + contact.getCode();
 			}
-			termine[i][3] = (person != null ? PersonFormatUtil.getPersonalia(person) : contact.getDescription1()) + patCode;
+			termine[i][3] = subject + patCode;
 			termine[i][4] = appointment.getReason();
 		}
 		return termine;

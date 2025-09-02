@@ -59,6 +59,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
@@ -294,6 +295,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
 						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
 				AppointmentDialog dlg = new AppointmentDialog(appointment);
+				dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
 				dlg.open();
 				internalRefresh();
 			}

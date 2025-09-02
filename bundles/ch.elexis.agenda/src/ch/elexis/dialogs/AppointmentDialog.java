@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -22,6 +23,7 @@ import ch.elexis.agenda.composite.AppointmentDetailComposite;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -46,6 +48,8 @@ public class AppointmentDialog extends Dialog {
 	private EmailSender emailSender;
 	private boolean expanded;
 
+	private CollisionErrorLevel collisionErrorLevel;
+
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
@@ -64,6 +68,21 @@ public class AppointmentDialog extends Dialog {
 		detailComposite = new AppointmentDetailComposite(container, SWT.NONE, appointment);
 		detailComposite.setExpanded(expanded);
 		detailComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		if (collisionErrorLevel != null) {
+			detailComposite.setCollisionErrorLevel(collisionErrorLevel, (colliding) -> {
+				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
+					if (colliding) {
+						if (getButton(IDialogConstants.OK_ID) != null) {
+							getButton(IDialogConstants.OK_ID).setEnabled(false);
+						}
+					} else {
+						if (getButton(IDialogConstants.OK_ID) != null) {
+							getButton(IDialogConstants.OK_ID).setEnabled(true);
+						}
+					}
+				}
+			});
+		}
 
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
 
@@ -124,6 +143,10 @@ public class AppointmentDialog extends Dialog {
 	@Override
 	protected boolean isResizable() {
 		return true;
+	}
+
+	public void setCollisionErrorLevel(final CollisionErrorLevel level) {
+		this.collisionErrorLevel = level;
 	}
 
 	private void initializeAppointmentIfNecessary() {

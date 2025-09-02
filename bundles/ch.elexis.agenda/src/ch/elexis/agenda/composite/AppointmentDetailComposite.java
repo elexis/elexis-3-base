@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -58,6 +59,7 @@ import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
@@ -566,7 +568,7 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			IContact c = getSelectedContact();
 			if (c != null && c.isPatient()) {
-				IPatient p = (IPatient) CoreModelServiceHolder.get().load(c.getId(), IPatient.class).orElse(null);
+				IPatient p = CoreModelServiceHolder.get().load(c.getId(), IPatient.class).orElse(null);
 				if (p != null) {
 					String comment = p.getComment() != null ? p.getComment() : StringUtils.EMPTY;
 					tBem.setText(comment);
@@ -996,5 +998,9 @@ public class AppointmentDetailComposite extends Composite {
 
 	public static String createTimeStamp() {
 		return Integer.toString(TimeTool.getTimeInSeconds() / 60);
+	}
+
+	public void setCollisionErrorLevel(CollisionErrorLevel level, Consumer<Boolean> callback) {
+		dayBar.setCollisionErrorLevel(level, callback);
 	}
 }

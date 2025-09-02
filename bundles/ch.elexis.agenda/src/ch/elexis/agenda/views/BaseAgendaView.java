@@ -59,6 +59,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
@@ -183,6 +184,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 							pl.setState(AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT));
 							pl.setSubjectOrPatient(StringUtils.EMPTY);
 							AppointmentDialog dlg = new AppointmentDialog(pl);
+							dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
 							dlg.setExpanded(true);
 							dlg.open();
 						} else {
@@ -386,6 +388,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 					@Override
 					public void lockAcquired() {
 						AppointmentDialog dlg = new AppointmentDialog(element);
+						dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
 						dlg.setExpanded(true);
 						if (dlg.open() == Dialog.OK) {
 							AppointmentHistoryServiceHolder.get().logAppointmentEdit(element);
@@ -452,6 +455,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
 						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
 				AppointmentDialog dlg = new AppointmentDialog(appointment);
+				dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
 				dlg.open();
 				if (tv != null) {
 					tv.refresh(true);

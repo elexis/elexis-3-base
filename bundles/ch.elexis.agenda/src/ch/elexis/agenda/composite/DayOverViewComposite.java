@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Spinner;
 import ch.elexis.agenda.ui.Messages;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
@@ -50,10 +52,6 @@ import ch.rgw.tools.StringTool;
 import jakarta.inject.Inject;
 
 public class DayOverViewComposite extends Canvas implements PaintListener {
-
-	public enum CollisionErrorLevel {
-		ERROR, WARNING
-	}
 
 	@Inject
 	private IAppointmentService appointmentService;
@@ -87,7 +85,8 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private Group parent;
 
-	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.ERROR;
+	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.WARNING;
+	private Consumer<Boolean> collisionCallback;
 
 	public DayOverViewComposite(final Group parent, IAppointment appointment, CDateTime txtTimeFrom,
 			CDateTime txtTimeTo, Spinner txtDuration) {
@@ -313,8 +312,9 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		}
 	}
 
-	public void setCollisionErrorLevel(CollisionErrorLevel level) {
+	public void setCollisionErrorLevel(CollisionErrorLevel level, Consumer<Boolean> callback) {
 		this.collisionErrorLevel = level;
+		this.collisionCallback = callback;
 	}
 
 	private boolean isTerminTypeIsReserviert(IAppointment pi) {
@@ -354,6 +354,9 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private void updateCollision() {
 		updateMessage(isColliding());
+		if (collisionCallback != null) {
+			collisionCallback.accept(isColliding());
+		}
 	}
 
 	private void loadCurrentAppointments() {

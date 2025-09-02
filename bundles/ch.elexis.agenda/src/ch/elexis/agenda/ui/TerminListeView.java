@@ -38,6 +38,7 @@ import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
@@ -110,6 +111,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					@Override
 					public void lockAcquired() {
 						AppointmentDialog dlg = new AppointmentDialog(element);
+						dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
 						dlg.open();
 					}
 				});

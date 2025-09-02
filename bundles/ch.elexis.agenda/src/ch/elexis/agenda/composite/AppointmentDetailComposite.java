@@ -814,26 +814,9 @@ public class AppointmentDetailComposite extends Composite {
 				txtPatSearch.setText(sop);
 				tBem.setText(StringUtils.EMPTY);
 			} else {
-				if (StringUtils.isBlank(appointment.getReason())) {
-					ContextServiceHolder.get().getActivePatient().ifPresentOrElse(p -> {
-						IContact pat = p; // IPatient -> IContact
-						txtPatSearch.setData(pat);
-						txtPatSearch.setText(pat.getLabel());
-						tBem.setText(Optional.ofNullable(pat.getComment()).orElse(StringUtils.EMPTY));
-						appointment.setSubjectOrPatient(pat.getId());
-						if (emailComposite != null) {
-							emailComposite.updateEmailControlsStatus(pat);
-						}
-					}, () -> {
-						txtPatSearch.setData(null);
-						txtPatSearch.setText(StringUtils.EMPTY);
-						tBem.setText(StringUtils.EMPTY);
-					});
-				} else {
-					txtPatSearch.setData(null);
-					txtPatSearch.setText(StringUtils.EMPTY);
-					tBem.setText(StringUtils.EMPTY);
-				}
+				txtPatSearch.setData(null);
+				txtPatSearch.setText(StringUtils.EMPTY);
+				tBem.setText(StringUtils.EMPTY);
 			}
 		} else {
 			IContact pat = reloadAsPatient(Optional.ofNullable(appointment.getContact())).get();

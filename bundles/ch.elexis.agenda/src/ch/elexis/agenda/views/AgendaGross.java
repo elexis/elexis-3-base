@@ -329,7 +329,11 @@ public class AgendaGross extends BaseAgendaView {
 				case 0:
 					return DateTimeFormatter.ofPattern("HH:mm").format(ip.getStartTime());
 				case 1:
-					return DateTimeFormatter.ofPattern("HH:mm").format(ip.getEndTime());
+					if (ip.getEndTime() != null) {
+						return DateTimeFormatter.ofPattern("HH:mm").format(ip.getEndTime());
+					} else {
+						return StringUtils.EMPTY;
+					}
 				case 2:
 					return ip.getType();
 				case 3:
@@ -372,7 +376,9 @@ public class AgendaGross extends BaseAgendaView {
 		IContact contact = appointment.getContact();
 		StringBuilder sb = new StringBuilder(200);
 		sb.append(DateTimeFormatter.ofPattern("HH:mm").format(appointment.getStartTime())).append("-") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime())) //$NON-NLS-1$
+				.append(appointment.getEndTime() != null
+						? DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime()) //$NON-NLS-1$
+						: StringUtils.EMPTY)
 				.append(StringUtils.SPACE);
 		if (appointment.isRecurring()) {
 			Optional<IAppointmentSeries> series = AppointmentServiceHolder.get().getAppointmentSeries(appointment);

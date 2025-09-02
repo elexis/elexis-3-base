@@ -361,7 +361,6 @@ public class AppointmentDetailComposite extends Composite {
 				onContextDateSelected();
 			}
 		});
-
 	}
 
 	private Date getDateFromCalendar() {
@@ -828,7 +827,6 @@ public class AppointmentDetailComposite extends Composite {
 		}
 		loadCompTimeFromModel();
 		applyPreferredDuration();
-
 	}
 
 	private void setCompTimeToModel() {

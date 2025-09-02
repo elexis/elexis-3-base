@@ -94,7 +94,6 @@ public class AppointmentDetailComposite extends Composite {
 
 	private CDateTime txtDateFrom;
 	private CDateTime txtDateFromDrop;
-	private CDateTime txtDateFromNoDrop;
 	private Button btnIsAllDay;
 	private CDateTime txtTimeFrom;
 	private Spinner txtDuration;
@@ -160,6 +159,7 @@ public class AppointmentDetailComposite extends Composite {
 			txtDuration.setSelection((int) diff);
 		}
 
+		setCompTimeToModel();
 		dayBar.set();
 	}
 
@@ -681,18 +681,6 @@ public class AppointmentDetailComposite extends Composite {
 		txtDateFromDrop.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		txtDateFromDrop.addSelectionListener(dateTimeSelectionAdapter);
 		txtDateFromDrop.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setCompTimeToModel();
-				dayBar.refresh();
-			}
-		});
-
-		txtDateFromNoDrop = new CDateTime(compDateTime, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
-		txtDateFromNoDrop.setPattern("EEE, dd.MM.yyyy ");
-		txtDateFromNoDrop.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		txtDateFromNoDrop.setVisible(false);
-		txtDateFromNoDrop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setCompTimeToModel();

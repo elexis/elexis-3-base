@@ -13,6 +13,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -21,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.agenda.commands.EmailSender;
 import ch.elexis.agenda.composite.AppointmentDetailComposite;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
+import ch.elexis.agenda.ui.Messages;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.agenda.CollisionErrorLevel;
@@ -50,6 +52,8 @@ public class AppointmentDialog extends Dialog {
 
 	private CollisionErrorLevel collisionErrorLevel;
 
+	private boolean initColliding = false;
+
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
@@ -71,14 +75,17 @@ public class AppointmentDialog extends Dialog {
 		if (collisionErrorLevel != null) {
 			detailComposite.setCollisionErrorLevel(collisionErrorLevel, (colliding) -> {
 				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
-					if (colliding) {
-						if (getButton(IDialogConstants.OK_ID) != null) {
-							getButton(IDialogConstants.OK_ID).setEnabled(false);
+					Button okButton = getButton(IDialogConstants.OK_ID);
+					if (okButton != null) {
+						if (colliding) {
+							okButton.setEnabled(false);
+							okButton.setText(Messages.AgendaUI_DayOverView_date_collision);
+						} else {
+							okButton.setEnabled(true);
+							okButton.setText(IDialogConstants.OK_LABEL);
 						}
 					} else {
-						if (getButton(IDialogConstants.OK_ID) != null) {
-							getButton(IDialogConstants.OK_ID).setEnabled(true);
-						}
+						initColliding = colliding;
 					}
 				}
 			});
@@ -87,6 +94,19 @@ public class AppointmentDialog extends Dialog {
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
 
 		return container;
+	}
+
+	@Override
+	protected Control createButtonBar(Composite parent) {
+		Control ret = super.createButtonBar(parent);
+		if (initColliding) {
+			Button okButton = getButton(IDialogConstants.OK_ID);
+			if (okButton != null) {
+				okButton.setEnabled(false);
+				okButton.setText(Messages.AgendaUI_DayOverView_date_collision);
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -135,6 +155,7 @@ public class AppointmentDialog extends Dialog {
 
 	@Override
 	protected void cancelPressed() {
+		CoreModelServiceHolder.get().refresh(appointment, false, true);
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
 		ContextServiceHolder.get().getRootContext().setNamed("mail.alreadySent", null);
 		super.cancelPressed();

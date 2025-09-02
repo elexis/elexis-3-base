@@ -821,8 +821,8 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			IContact pat = reloadAsPatient(Optional.ofNullable(appointment.getContact())).get();
 			txtPatSearch.setData(pat);
-			txtPatSearch.setText(pat.getLabel());
-			tBem.setText(pat.getComment());
+			txtPatSearch.setText(StringUtils.defaultString(pat.getLabel()));
+			tBem.setText(StringUtils.defaultString(pat.getComment()));
 		}
 		loadCompTimeFromModel();
 		applyPreferredDuration();

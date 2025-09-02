@@ -811,12 +811,9 @@ public class AppointmentDetailComposite extends Composite {
 				txtPatSearch.setText(sop);
 				tBem.setText(StringUtils.EMPTY);
 			} else {
-				ContextServiceHolder.get().getActivePatient().ifPresent(p -> {
-					txtPatSearch.setData(p);
-					txtPatSearch.setText(p.getLabel());
-					appointment.setSubjectOrPatient(p.getId());
-					tBem.setText(p.getComment());
-				});
+				txtPatSearch.setData(null);
+				txtPatSearch.setText(StringUtils.EMPTY);
+				tBem.setText(StringUtils.EMPTY);
 			}
 		} else {
 			IContact pat = reloadAsPatient(Optional.ofNullable(appointment.getContact())).get();
@@ -862,6 +859,8 @@ public class AppointmentDetailComposite extends Composite {
 			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
 		} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
 			appointment.setSubjectOrPatient(txtPatSearch.getText());
+		} else {
+			appointment.setSubjectOrPatient(null);
 		}
 		createKombiTermineIfApplicable();
 		return appointment;

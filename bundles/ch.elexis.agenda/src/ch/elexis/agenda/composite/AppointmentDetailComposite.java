@@ -62,7 +62,6 @@ import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
-import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -646,7 +645,7 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private void applyPreferredDuration() {
-		Map<String, Integer> pref = AppointmentServiceHolder.get().getPreferredDurations(comboArea.getText());
+		Map<String, Integer> pref = appointmentService.getPreferredDurations(comboArea.getText());
 		String type = comboType.getText();
 		Integer d = pref.get(type);
 		if (d != null) {
@@ -813,7 +812,6 @@ public class AppointmentDetailComposite extends Composite {
 			tBem.setText(pat.getComment());
 		}
 		loadCompTimeFromModel();
-		applyPreferredDuration();
 	}
 
 	private void setCompTimeToModel() {

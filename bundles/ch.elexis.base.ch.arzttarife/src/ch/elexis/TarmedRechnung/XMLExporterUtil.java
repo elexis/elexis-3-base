@@ -24,6 +24,7 @@ import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
+import ch.elexis.core.constants.ExtInfoConstants;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.model.IBilled;
@@ -72,7 +73,7 @@ public class XMLExporterUtil {
 		Element ret;
 		boolean anredeOrganization = false;
 		if (checkAnrede) {
-			String anrede = (String) contact.getExtInfo("Anrede");
+			String anrede = (String) contact.getExtInfo(ExtInfoConstants.ANREDE);
 			anredeOrganization = (anrede == null || anrede.isEmpty());
 		}
 		if (contact.isPerson() == false || anredeOrganization) {
@@ -96,12 +97,12 @@ public class XMLExporterUtil {
 
 			if (!useAnschrift) {
 				setAttributeIfNotEmptyWithLimit(ret, "salutation", //$NON-NLS-1$
-						(String) contact.getExtInfo("Anrede"), //$NON-NLS-1$
+						(String) contact.getExtInfo(ExtInfoConstants.ANREDE), // $NON-NLS-1$
 						35);
 				if (contact.isPerson()) {
 					IPerson person = CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
 					setAttributeIfNotEmptyWithLimit(ret, "title", person.getTitel(), 35); //$NON-NLS-1$
-					if (StringUtils.isEmpty((String) contact.getExtInfo("Anrede"))) {
+					if (StringUtils.isEmpty((String) contact.getExtInfo(ExtInfoConstants.ANREDE))) {
 						setAttributeIfNotEmptyWithLimit(ret, "salutation", //$NON-NLS-1$
 								PersonFormatUtil.getSalutation(person), // $NON-NLS-1$
 								35);
@@ -330,7 +331,7 @@ public class XMLExporterUtil {
 			responsibleKontakt = CoreModelServiceHolder.get().load(responsibleId, IMandator.class).orElse(null);
 		} else {
 			IContact rechnungssteller = encounter.getMandator().getBiller();
-			String anrede = (String) rechnungssteller.getExtInfo("Anrede");
+			String anrede = (String) rechnungssteller.getExtInfo(ExtInfoConstants.ANREDE);
 			// only way to determine if rechnungssteller is a organization is testing empty
 			// anrede
 			if (anrede != null && !anrede.isEmpty()) {

@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
+import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IPerson;
@@ -45,9 +46,9 @@ public class TarmedRequirements {
 	public static final String BILLINGSYSTEM_NAME = "TarmedLeistung"; //$NON-NLS-1$
 	public static final String OUTPUTTER_NAME = "Tarmed-Drucker"; //$NON-NLS-1$
 
-	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
-	public static final String DOMAIN_NIF = "www.xid.ch/id/nif"; //$NON-NLS-1$
-	public static final String DOMAIN_SUVA = "www.xid.ch/id/suva"; // $NON-NLS-1$
+	public static final String DOMAIN_KSK = XidConstants.DOMAIN_KSK;
+	public static final String DOMAIN_NIF = XidConstants.DOMAIN_NIF;
+	public static final String DOMAIN_SUVA = XidConstants.DOMAIN_SUVA;
 
 	public static final String RESPONSIBLE_INFO_KEY = "ch.elexis.tarmedprefs.responsible";
 	private static Logger logger = LoggerFactory.getLogger(TarmedRequirements.class);

@@ -37,6 +37,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.arzttarife.xml.exporter.VatRateSum.VatRateElement;
 import ch.elexis.base.ch.ebanking.esr.ESR;
+import ch.elexis.core.constants.ExtInfoConstants;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
@@ -550,7 +551,7 @@ public class Tarmed45Exporter {
 					personType.setSalutation(StringUtils.abbreviate(postAnschrift.getSalutation(), 35));
 				}
 			} else {
-				String salutation = (String) contact.getExtInfo("Anrede");
+				String salutation = (String) contact.getExtInfo(ExtInfoConstants.ANREDE);
 				if (StringUtils.isNotBlank(salutation)) {
 					personType.setSalutation(StringUtils.abbreviate(salutation, 35));
 				}

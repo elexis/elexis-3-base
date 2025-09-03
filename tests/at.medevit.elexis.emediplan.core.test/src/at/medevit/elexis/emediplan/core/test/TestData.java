@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import ch.elexis.core.constants.ExtInfoConstants;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -173,8 +174,8 @@ public class TestData {
 			mandatorPerson.setPhone1("+41 79 123 45 90");
 			mandatorPerson.setTitel("Dr. med.");
 			
-			mandatorPerson.setExtInfo("Anrede", "Frau");
-			mandatorPerson.setExtInfo("Kanton", "AG");
+			mandatorPerson.setExtInfo(ExtInfoConstants.ANREDE, "Frau");
+			mandatorPerson.setExtInfo(ExtInfoConstants.KANTON, "AG");
 			
 			mandatorPerson.addXid(DOMAIN_EAN, "2000000000002", true);
 			CoreModelServiceHolder.get().save(mandatorPerson);

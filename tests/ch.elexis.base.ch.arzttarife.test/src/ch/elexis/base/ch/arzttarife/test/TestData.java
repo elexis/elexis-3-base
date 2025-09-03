@@ -25,6 +25,7 @@ import org.jdom2.input.SAXBuilder;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.core.constants.ExtInfoConstants;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.constants.XidConstants;
@@ -404,8 +405,8 @@ public class TestData {
 			mandant.setLabel("mt");
 
 			TarmedACL ta = TarmedACL.getInstance();
-			mandant.setExtInfoStoredObjectByKey("Anrede", "Frau");
-			mandant.setExtInfoStoredObjectByKey("Kanton", "AG");
+			mandant.setExtInfoStoredObjectByKey(ExtInfoConstants.ANREDE, "Frau");
+			mandant.setExtInfoStoredObjectByKey(ExtInfoConstants.KANTON, "AG");
 
 			mandant.addXid(DOMAIN_EAN, "2000000000002", true);
 			Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_KSK, "KSK/ZSR-Nr", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$

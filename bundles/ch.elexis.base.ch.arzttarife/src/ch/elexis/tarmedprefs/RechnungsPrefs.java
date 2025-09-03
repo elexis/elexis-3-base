@@ -61,6 +61,7 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.constants.ExtInfoConstants;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.util.NoPoUtil;
@@ -104,11 +105,14 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 	static TarmedACL ta = TarmedACL.getInstance();
 
-	static final String[] ExtFlds = { "Anrede=" + XidConstants.XID_KONTAKT_ANREDE, //$NON-NLS-1$
-			"Kanton=" + XidConstants.XID_KONTAKT_KANTON, //$NON-NLS-1$
-			"EAN=" + DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$
-			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
-			ta.KANTON, ta.LOCAL, ta.DIAGSYS, "Rolle=" + XidConstants.XID_KONTAKT_ROLLE };
+	static final String[] ExtFlds = { 
+			ExtInfoConstants.ANREDE, ExtInfoConstants.KANTON,
+			ExtInfoConstants.ROLLE,
+			"EAN=" + DOMAIN_EAN, 
+			"NIF=" + XidConstants.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$
+			"KSK=" + XidConstants.DOMAIN_KSK, 
+			ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
+			ta.KANTON, ta.LOCAL, ta.DIAGSYS };
 
 	public RechnungsPrefs() {
 		super(Messages.RechnungsPrefs_BillPrefs); // $NON-NLS-1$

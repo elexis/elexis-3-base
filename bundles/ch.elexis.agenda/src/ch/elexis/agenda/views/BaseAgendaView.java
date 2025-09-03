@@ -14,6 +14,7 @@ package ch.elexis.agenda.views;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -179,9 +180,10 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 						});
 					} else {
 						if (appointmentService.getType(AppointmentType.FREE).equals(pl.getType())) {
-							pl.setEndTime(pl.getStartTime().plusMinutes(30));
 							pl.setType(AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
 							pl.setState(AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT));
+							final int minutes = getPreferredDuration(pl.getSchedule(), pl.getType());
+							pl.setEndTime(pl.getStartTime().plusMinutes(minutes));
 							pl.setSubjectOrPatient(ContextServiceHolder.get().getActivePatient().map(p -> p.getId())
 									.orElse(StringUtils.EMPTY));
 							AppointmentDialog dlg = new AppointmentDialog(pl);
@@ -240,6 +242,14 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 		tv.setInput(getViewSite());
 		updateActions();
 		tv.addSelectionChangedListener(sListen);
+	}
+
+	private Integer getPreferredDuration(String areaName, String type) {
+		Map<String, Integer> preferredDurations = appointmentService.getPreferredDurations(areaName);
+		if (preferredDurations.containsKey(type)) {
+			return preferredDurations.get(type);
+		}
+		return 30;
 	}
 
 	public IAppointment getSelection() {

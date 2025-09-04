@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -34,16 +33,13 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
-import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
-import jakarta.inject.Inject;
 
 /**
  * Some common actions for the agenda
@@ -58,26 +54,15 @@ public class AgendaActions {
 	/** Display or change the state of an appointment */
 	private static IAction terminStatusAction;
 
-	private static IAppointmentService appointmentService;
-
-	@Inject
-	private ECommandService commandService;
-
-	@Inject
-	private EHandlerService handlerService;
-
-	@Inject
-	private ESelectionService selectionService;
 	/**
 	 * Reflect the user's rights on the agenda actions
 	 */
-	public static void updateActions(IAppointmentService appointmentService) {
+	public static void updateActions() {
 		getTerminStatusAction().setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.VIEW).and(Right.UPDATE)));
-		((RestrictedAction) getDelTerminAction(appointmentService)).reflectRight();
+		((RestrictedAction) getDelTerminAction()).reflectRight();
 	}
 
-	public static IAction getDelTerminAction(IAppointmentService appointmentServices) {
-		appointmentService = appointmentServices;
+	public static IAction getDelTerminAction() {
 		if (delTerminAction == null) {
 			makeActions();
 		}
@@ -106,8 +91,8 @@ public class AgendaActions {
 
 			@Override
 			public void doRun(Termin element) {
-				ECommandService cmdSvc = (ECommandService) PlatformUI.getWorkbench().getService(ECommandService.class);
-				EHandlerService hdlSvc = (EHandlerService) PlatformUI.getWorkbench().getService(EHandlerService.class);
+				ECommandService cmdSvc = PlatformUI.getWorkbench().getService(ECommandService.class);
+				EHandlerService hdlSvc = PlatformUI.getWorkbench().getService(EHandlerService.class);
 				ParameterizedCommand cmd = cmdSvc.createCommand("ch.elexis.agenda.commands.delete", //$NON-NLS-1$
 						java.util.Collections.emptyMap());
 				hdlSvc.executeHandler(cmd);
@@ -121,6 +106,7 @@ public class AgendaActions {
 			Listener showListener = null;
 			{
 				setMenuCreator(new IMenuCreator() {
+					@Override
 					public void dispose() {
 						if (mine != null) {
 							removeShowListener();
@@ -128,6 +114,7 @@ public class AgendaActions {
 						}
 					}
 
+					@Override
 					public Menu getMenu(Control parent) {
 						mine = new Menu(parent);
 						fillMenu();
@@ -135,6 +122,7 @@ public class AgendaActions {
 						return mine;
 					}
 
+					@Override
 					public Menu getMenu(Menu parent) {
 						mine = new Menu(parent);
 						fillMenu();
@@ -181,7 +169,7 @@ public class AgendaActions {
 						@Override
 						public void widgetSelected(SelectionEvent e) {
 							Termin act = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-							AcquireLockBlockingUi.aquireAndRun((IPersistentObject) act, new ILockHandler() {
+							AcquireLockBlockingUi.aquireAndRun(act, new ILockHandler() {
 								@Override
 								public void lockFailed() {
 									// do nothing

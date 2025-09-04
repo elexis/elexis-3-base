@@ -191,6 +191,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 							AppointmentDialog dlg = new AppointmentDialog(pl);
 							dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
 							dlg.setExpanded(true);
+							dlg.setScheduleChangeMode(true);
 							dlg.open();
 						} else {
 							terminAendernAction.run();

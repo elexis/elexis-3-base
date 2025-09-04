@@ -53,6 +53,8 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.actions.Activator;
+import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.Messages;
@@ -123,6 +125,7 @@ public class AppointmentDetailComposite extends Composite {
 	private Group compTimeSelektor;
 	private Label lblDateFrom;
 	private Composite dateArea;
+	private boolean scheduleChangeMode = false;
 
 	private static final int[] SASH_WEIGHTS_EXPANDED = { 25, 75 };
 
@@ -567,6 +570,9 @@ public class AppointmentDetailComposite extends Composite {
 		btnIsAllDay.setVisible(showAllDay);
 	}
 
+	public void setScheduleChangeMode(boolean mode) {
+		this.scheduleChangeMode = mode;
+	}
 	private void refreshPatientModel() {
 		loadAppointmentsForPatient();
 		if (dayBar != null) {
@@ -776,6 +782,12 @@ public class AppointmentDetailComposite extends Composite {
 					dayBar.setAppointment(appointment);
 					dayBar.refresh();
 					applyPreferredDuration();
+					if (scheduleChangeMode) {
+					Activator.getDefault().setActResource(comboArea.getText());
+					BereichSelectionHandler.updateListeners();
+					ContextServiceHolder.get().postEvent(ch.elexis.core.common.ElexisEventTopics.EVENT_RELOAD,
+								ch.elexis.core.model.IAppointment.class);
+					}
 				}
 			}
 		});

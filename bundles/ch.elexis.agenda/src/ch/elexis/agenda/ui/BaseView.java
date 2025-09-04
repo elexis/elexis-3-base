@@ -196,7 +196,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		dayLimitsAction.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.UPDATE).and(Right.EXECUTE)));
 		boolean canChangeAppointments = AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.UPDATE));
 		newTerminAction.setEnabled(canChangeAppointments);
-		AgendaActions.updateActions(appointmentService);
+		AgendaActions.updateActions();
 		internalRefresh();
 	}
 

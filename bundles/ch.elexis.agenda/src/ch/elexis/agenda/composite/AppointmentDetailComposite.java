@@ -51,6 +51,8 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.actions.Activator;
+import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.Messages;
@@ -775,6 +777,10 @@ public class AppointmentDetailComposite extends Composite {
 					dayBar.setAppointment(appointment);
 					dayBar.refresh();
 					applyPreferredDuration();
+					Activator.getDefault().setActResource(comboArea.getText());
+					BereichSelectionHandler.updateListeners();
+					ContextServiceHolder.get().postEvent(ch.elexis.core.common.ElexisEventTopics.EVENT_RELOAD,
+							ch.elexis.core.model.IAppointment.class);
 				}
 			}
 		});

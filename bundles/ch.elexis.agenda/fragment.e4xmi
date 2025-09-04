@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_6mNnQIjVEfCYKIG2vKJe5g">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8vavcIjVEfCYKIG2vKJe5g" featurename="commands" parentElementId="xpath:/">
+    <elements xsi:type="commands:Command" xmi:id="_ILApAIjWEfCYKIG2vKJe5g" elementId="ch.elexis.agenda.commands.delete" commandName="Delete"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_hXT5YIjWEfCYKIG2vKJe5g" featurename="handlers" parentElementId="xpath:/">
+    <elements xsi:type="commands:Handler" xmi:id="_j7SSAIjWEfCYKIG2vKJe5g" elementId="ch.elexis.agenda.handler.delete" contributionURI="bundleclass://ch.elexis.agenda/ch.elexis.agenda.commands.DeleteHandler" command="_ILApAIjWEfCYKIG2vKJe5g"/>
+  </fragments>
+</fragment:ModelFragments>

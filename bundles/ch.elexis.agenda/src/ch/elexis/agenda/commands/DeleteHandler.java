@@ -1,4 +1,4 @@
-package at.medevit.elexis.agenda.ui.handler;
+package ch.elexis.agenda.commands;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,17 +12,19 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.DeleteActionType;
+import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
+import ch.elexis.dialogs.AppointmentLinkOptionsDialog;
+import ch.elexis.dialogs.AppointmentLinkOptionsDialog.DeleteActionType;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -31,6 +33,8 @@ public class DeleteHandler {
 	@Inject
 	private ESelectionService selectionService;
 
+	@Inject
+	private IContextService contextService;
 	@Inject
 	private IAppointmentService appointmentService;
 
@@ -47,7 +51,7 @@ public class DeleteHandler {
 		return null;
 	}
 
-	private void handleAppointmentDeletion(IAppointment appointment, Shell shell) {
+	public void handleAppointmentDeletion(IAppointment appointment, Shell shell) {
 		if (AppointmentExtensionHandler.isMainAppointment(appointment)) {
 			handleMainAppointmentDeletion(appointment, shell);
 		} else {
@@ -57,8 +61,6 @@ public class DeleteHandler {
 
 	private void handleMainAppointmentDeletion(IAppointment appointment, Shell shell) {
 		List<IAppointment> linkedAppointments = AppointmentExtensionHandler.getLinkedAppointments(appointment);
-
-
 		if (!linkedAppointments.isEmpty()) {
 			DeleteActionType action = AppointmentLinkOptionsDialog.showDeleteDialog(shell, linkedAppointments);
 			processDeleteAction(appointment, linkedAppointments, action);
@@ -185,6 +187,8 @@ public class DeleteHandler {
 			if (element instanceof IPeriod) {
 				return Optional.of((IPeriod) element);
 			}
+		} else {
+			return contextService.getTyped(IAppointment.class).map(a -> (IPeriod) a);
 		}
 		return Optional.empty();
 	}

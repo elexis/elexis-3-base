@@ -88,7 +88,9 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		for (int i = 1; i < appointments.size(); i++) {
 			IAppointment appointment = appointments.get(i - 1);
 			termine[i][0] = DateTimeFormatter.ofPattern("HH:mm").format(appointment.getStartTime());
-			termine[i][1] = DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime());
+			termine[i][1] = Plannables.isNotAllDay(appointment)
+					? DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime())
+					: "-";
 			termine[i][2] = appointment.getType();
 			String subject = appointment.getSubjectOrPatient();
 			IContact contact = appointment.getContact();

@@ -55,6 +55,7 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.BereichMenuCreator;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
@@ -295,7 +296,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 				String resource = agenda.getActResource();
 				TimeTool date = agenda.getActDate();
 				appointmentService.assertBlockTimes(date.toLocalDate(), resource);
-				return appointmentService.getAppointments(resource, date.toLocalDate(), true).toArray();
+				return appointmentService.getAppointments(resource, date.toLocalDate(), true).stream()
+						.filter(a -> Plannables.isNotAllDay(a)).toList().toArray();
 			} else {
 				return new Object[0];
 			}
@@ -440,7 +442,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 				LocalDateTime oldEndTime = t.getEndTime();
 				agenda.setActDate(new TimeTool(t.getStartTime().toLocalDate()));
 				List<IAppointment> appointments = appointmentService.getAppointments(agenda.getActResource(),
-						agenda.getActDate().toLocalDate(), false);
+						agenda.getActDate().toLocalDate(), false).stream().filter(a -> Plannables.isNotAllDay(a))
+						.toList();
 				appointments.stream().filter(a -> a.getStartTime().isAfter(t.getEndTime())).findFirst().ifPresent(a -> {
 					t.setEndTime(a.getStartTime());
 					if (AppointmentHistoryServiceHolder.get() != null) {
@@ -483,7 +486,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 			@Override
 			public void run() {
 				List<IAppointment> appointments = appointmentService.getAppointments(agenda.getActResource(),
-						agenda.getActDate().toLocalDate(), true);
+						agenda.getActDate().toLocalDate(), true).stream().filter(a -> Plannables.isNotAllDay(a))
+						.toList();
 				TerminListeDruckenDialog dlg = new TerminListeDruckenDialog(getViewSite().getShell(), appointments);
 				dlg.open();
 				if (tv != null) {

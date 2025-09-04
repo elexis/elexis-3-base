@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
@@ -138,20 +139,20 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			@Override
 			public Object[] getElements(final Object inputElement) {
 				java.util.Optional<IPatient> actPat = ContextServiceHolder.get().getActivePatient();
-				IQuery<?> query = getBaseQuery();
+				IQuery<IAppointment> query = getBaseQuery();
 				if (actPat.isPresent()) {
 					query.and("patId", COMPARATOR.EQUALS, actPat.get().getId());
 				} else {
 					return new Object[0];
 				}
 				query.orderBy("tag", ORDER.DESC);
-				List<?> elements = query.execute();
+				List<IAppointment> elements = query.execute().stream().filter(a -> Plannables.isNotAllDay(a)).toList();
 				commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);
 				return elements.toArray(new Object[elements.size()]);
 			}
 
 			@Override
-			protected IQuery<?> getBaseQuery() {
+			protected IQuery<IAppointment> getBaseQuery() {
 				IQuery<IAppointment> ret = CoreModelServiceHolder.get().getQuery(IAppointment.class);
 				if (!ignoreLimit) {
 					ret.limit(QUERY_LIMIT);

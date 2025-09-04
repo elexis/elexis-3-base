@@ -1,4 +1,4 @@
-package at.medevit.elexis.agenda.ui.dialog;
+package ch.elexis.dialogs;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.elexis.agenda.Messages;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.time.TimeUtil;
 

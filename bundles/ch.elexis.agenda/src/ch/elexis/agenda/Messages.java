@@ -187,5 +187,20 @@ public final class Messages {
 	public static String AgendaFarben_Titel = ch.elexis.core.l10n.Messages.AgendaFarben_Titel;
 	public static String AgendaFarben_Link = ch.elexis.core.l10n.Messages.AgendaFarben_Link;
 	public static String Agenda_Mandator = ch.elexis.core.l10n.Messages.Agenda_Mandator;
+	public static String AppointmentLinkOptionsDialogDescription = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogDescription;
+	public static String AppointmentLinkOptionsDialogTitel = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogTitel;
+	public static String AppointmentLinkOptionsDialogMove = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogMove;
+	public static String AppointmentLinkOptionsDialogCopy = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogCopy;
+	public static String AppointmentLinkOptionsDialogDelete = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogDelete;
+	public static String AppointmentLinkOptionsDialogDeleteButton = ch.elexis.core.l10n.Messages.ContactLinkPreferences_delete;
+	public static String AppointmentLinkOptionsDialogAbortButton = ch.elexis.core.l10n.Messages.SerienTerminDialog_other_text;
+	public static String AppointmentLinkOptionsDialogAllButton = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogAllButton;
+	public static String AppointmentLinkOptionsDialogMainAppointmentButton = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogMainAppointmentButton;
+	public static String AppointmentLinkOptionsDialogKeepButton = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogKeepButton;
+	public static String AgendaUI_Delete__delete = ch.elexis.core.l10n.Messages.AgendaUI_Delete__delete;
+	public static String AgendaUI_Delete_ask_delete_whole_series = ch.elexis.core.l10n.Messages.AgendaUI_Delete_ask_delete_whole_series;
+	public static String AgendaUI_Delete_ask_really_delete = ch.elexis.core.l10n.Messages.AgendaUI_Delete_ask_really_delete;
+	public static String AgendaUI_Delete_delete = ch.elexis.core.l10n.Messages.AgendaUI_Delete_delete;
+	public static String DeleteHandlerLinkedAppointmentWarning = ch.elexis.core.l10n.Messages.DeleteHandlerLinkedAppointmentWarning;
 
 }

@@ -53,6 +53,7 @@ public class AppointmentDialog extends Dialog {
 	private CollisionErrorLevel collisionErrorLevel;
 
 	private boolean initColliding = false;
+	private boolean showAllDay = false;
 
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
@@ -70,6 +71,7 @@ public class AppointmentDialog extends Dialog {
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		detailComposite = new AppointmentDetailComposite(container, SWT.NONE, appointment);
+		detailComposite.setShowAllDay(showAllDay);
 		detailComposite.setExpanded(expanded);
 		detailComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		if (collisionErrorLevel != null) {
@@ -187,6 +189,10 @@ public class AppointmentDialog extends Dialog {
 
 	public void setExpanded(boolean expand) {
 		expanded = expand;
+	}
+
+	public void setShowAllDay(boolean showAllDay) {
+		this.showAllDay = showAllDay;
 	}
 
 	private void sendEmailIfConfirmationChecked() {

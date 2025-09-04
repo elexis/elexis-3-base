@@ -563,6 +563,10 @@ public class AppointmentDetailComposite extends Composite {
 		doExpand(expand);
 	}
 
+	public void setShowAllDay(boolean showAllDay) {
+		btnIsAllDay.setVisible(showAllDay);
+	}
+
 	private void refreshPatientModel() {
 		loadAppointmentsForPatient();
 		if (dayBar != null) {

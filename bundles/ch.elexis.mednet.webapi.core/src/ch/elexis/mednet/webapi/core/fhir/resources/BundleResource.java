@@ -36,8 +36,8 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IEncounter;
-import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.IRelatedContact;
 import ch.elexis.core.model.IUser;
@@ -86,11 +86,11 @@ public class BundleResource {
 
 		String gpId = (String) sourcePatient.getExtInfo(FHIRConstants.FHIRKeys.PRACTITIONER_GP_ID);
 		if (gpId != null && !gpId.isEmpty()) {
-			Optional<IMandator> gpMandatorOptional = coreModelService.load(gpId, IMandator.class);
+			Optional<IPerson> gpMandatorOptional = coreModelService.load(gpId, IPerson.class);
 
-			IMandator generalPractitionerMandator = gpMandatorOptional.orElse(null);
+			IPerson generalPractitionerMandator = gpMandatorOptional.orElse(null);
 			if (generalPractitionerMandator != null) {
-				Practitioner gpPractitioner = resourceFactory.getResource(generalPractitionerMandator, IMandator.class,
+				Practitioner gpPractitioner = resourceFactory.getResource(generalPractitionerMandator, IPerson.class,
 						Practitioner.class);
 				if (gpPractitioner != null) {
 					gpPractitioner = PractitionerResource.adjustPractitioner(gpPractitioner);
@@ -367,7 +367,7 @@ public class BundleResource {
 		return bundle;
 	}
 
-	private static Optional<IUser> findMandatorUser(Optional<IMandator> mandator) {
+	private static Optional<IUser> findMandatorUser(Optional<IPerson> mandator) {
 		if (mandator.isEmpty()) {
 			return Optional.empty();
 		}

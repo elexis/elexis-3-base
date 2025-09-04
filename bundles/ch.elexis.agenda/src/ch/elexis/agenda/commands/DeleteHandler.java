@@ -189,9 +189,7 @@ public class DeleteHandler {
 			if (element instanceof IPeriod) {
 				return Optional.of((IPeriod) element);
 			}
-		} else {
-			return contextService.getTyped(IAppointment.class).map(a -> (IPeriod) a);
 		}
-		return Optional.empty();
+		return contextService.getTyped(IAppointment.class).map(a -> (IPeriod) a);
 	}
 }

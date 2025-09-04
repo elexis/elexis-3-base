@@ -403,6 +403,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 					public void lockAcquired() {
 						AppointmentDialog dlg = new AppointmentDialog(element);
 						dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
+						dlg.setScheduleChangeMode(true);
 						dlg.setExpanded(true);
 						if (dlg.open() == Dialog.OK) {
 							AppointmentHistoryServiceHolder.get().logAppointmentEdit(element);

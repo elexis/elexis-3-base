@@ -44,6 +44,7 @@ public class DoubleClickFunction extends BrowserFunction {
 							}
 						} else {
 							AppointmentDialog dlg = new AppointmentDialog(termin);
+							dlg.setShowAllDay(true);
 							if (dlg.open() == Dialog.OK) {
 								AppointmentHistoryServiceHolder.get().logAppointmentEdit(termin);
 							}

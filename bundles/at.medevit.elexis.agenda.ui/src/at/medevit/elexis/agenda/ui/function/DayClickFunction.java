@@ -58,6 +58,7 @@ public class DayClickFunction extends AbstractBrowserFunction {
 			ContextServiceHolder.get().getActivePatient()
 					.ifPresent(p -> editAppointment.setSubjectOrPatient(p.getId()));
 			AppointmentDialog dlg = new AppointmentDialog(editAppointment);
+			dlg.setShowAllDay(true);
 			dlg.open();
 		}
 		return null;

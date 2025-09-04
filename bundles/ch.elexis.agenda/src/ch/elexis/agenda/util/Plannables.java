@@ -33,6 +33,7 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -392,5 +393,19 @@ public final class Plannables {
 	public static void setDayPrefFor(String mandantLabel, Hashtable<String, String> map) {
 		String flat = StringTool.flattenStrings(map);
 		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAYPREFERENCES + "/" + mandantLabel, flat); //$NON-NLS-1$
+	}
+
+	/**
+	 * Test if the {@link IAppointment} is NOT all day. Used to filter such
+	 * {@link IAppointment}s from non web agenda views.
+	 * 
+	 * @param appointment
+	 * @return
+	 */
+	public static boolean isNotAllDay(IAppointment appointment) {
+		if (appointment != null) {
+			return !appointment.isAllDay();
+		}
+		return false;
 	}
 }

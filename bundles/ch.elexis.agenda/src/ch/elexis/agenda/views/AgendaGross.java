@@ -53,6 +53,7 @@ import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.TagesNachricht;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IAppointmentSeries;
@@ -329,10 +330,10 @@ public class AgendaGross extends BaseAgendaView {
 				case 0:
 					return DateTimeFormatter.ofPattern("HH:mm").format(ip.getStartTime());
 				case 1:
-					if (ip.getEndTime() != null) {
+					if (Plannables.isNotAllDay(ip)) {
 						return DateTimeFormatter.ofPattern("HH:mm").format(ip.getEndTime());
 					} else {
-						return StringUtils.EMPTY;
+						return "-";
 					}
 				case 2:
 					return ip.getType();
@@ -376,9 +377,9 @@ public class AgendaGross extends BaseAgendaView {
 		IContact contact = appointment.getContact();
 		StringBuilder sb = new StringBuilder(200);
 		sb.append(DateTimeFormatter.ofPattern("HH:mm").format(appointment.getStartTime())).append("-") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(appointment.getEndTime() != null
+				.append(Plannables.isNotAllDay(appointment)
 						? DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime()) //$NON-NLS-1$
-						: StringUtils.EMPTY)
+						: "-")
 				.append(StringUtils.SPACE);
 		if (appointment.isRecurring()) {
 			Optional<IAppointmentSeries> series = AppointmentServiceHolder.get().getAppointmentSeries(appointment);

@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Spinner;
 
 import ch.elexis.agenda.ui.Messages;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.agenda.CollisionErrorLevel;
@@ -224,7 +225,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		double minutes = end - start;
 		double pixelPerMinute = r.width / minutes;
 		int x = (int) Math.round((getStartMinute(p) - start) * pixelPerMinute);
-		int w = (int) Math.round(p.getDurationMinutes() * pixelPerMinute);
+		int w = (int) Math.round((Plannables.isNotAllDay(p) ? p.getDurationMinutes() : 24 * 60) * pixelPerMinute);
 		gc.setBackground(getTypColor(p));
 		gc.fillRectangle(x, r.y, w, r.height);
 	}
@@ -342,10 +343,12 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private void setTimeTo(int i) {
-		LocalDateTime localDateTime = txtTimeTo.getSelection().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-				.atStartOfDay();
-		appointment.setEndTime(localDateTime.plusMinutes(i));
-		txtTimeTo.setSelection(Date.from(appointment.getEndTime().atZone(ZoneId.systemDefault()).toInstant()));
+		if (txtTimeTo.getSelection() != null) {
+			LocalDateTime localDateTime = txtTimeTo.getSelection().toInstant().atZone(ZoneId.systemDefault())
+					.toLocalDate().atStartOfDay();
+			appointment.setEndTime(localDateTime.plusMinutes(i));
+			txtTimeTo.setSelection(Date.from(appointment.getEndTime().atZone(ZoneId.systemDefault()).toInstant()));
+		}
 	}
 
 	private void setTimeFrom(int i) {
@@ -377,12 +380,17 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			appointmentService.assertBlockTimes(appointment.getStartTime().toLocalDate(), appointment.getSchedule());
 			list = query.execute();
 		}
-		list = list.stream().sorted(Comparator.comparing(a -> a.getStartTime())).collect(Collectors.toList());
+		list = list.stream().filter(a -> Plannables.isNotAllDay(a)).sorted(Comparator.comparing(a -> a.getStartTime()))
+				.collect(Collectors.toList());
 	}
 
 	private boolean isColliding() {
 		for (IAppointment iAppointment : list) {
 			if (!iAppointment.getId().equals(appointment.getId())) {
+				// skip all day appointments for collision detection
+				if (iAppointment.isAllDay()) {
+					continue;
+				}
 				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(), iAppointment.getStartTime(),
 						iAppointment.getEndTime())) {
 					return true;

@@ -46,6 +46,7 @@ import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
@@ -308,7 +309,8 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 			@Override
 			public void run() {
 				new TerminListeDruckenDialog(getViewSite().getShell(), appointmentService
-						.getAppointments(agenda.getActResource(), agenda.getActDate().toLocalDate(), true)).open();
+						.getAppointments(agenda.getActResource(), agenda.getActDate().toLocalDate(), true).stream()
+						.filter(a -> Plannables.isNotAllDay(a)).toList()).open();
 				internalRefresh();
 			}
 		};

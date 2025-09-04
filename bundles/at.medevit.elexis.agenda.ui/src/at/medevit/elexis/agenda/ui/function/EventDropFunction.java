@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.equo.chromium.swt.Browser;
 
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 import ch.elexis.agenda.composite.AppointmentDetailComposite;
 import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.common.ElexisEventTopics;
@@ -24,6 +22,8 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LocalLockServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
+import ch.elexis.dialogs.AppointmentLinkOptionsDialog;
+import ch.elexis.dialogs.AppointmentLinkOptionsDialog.MoveActionType;
 
 
 public class EventDropFunction extends AbstractBrowserFunction {

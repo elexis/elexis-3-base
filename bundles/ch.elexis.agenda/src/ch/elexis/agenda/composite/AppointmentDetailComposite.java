@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -89,6 +90,9 @@ public class AppointmentDetailComposite extends Composite {
 
 	@Inject
 	private EHandlerService handlerService;
+
+	@Inject
+	private ESelectionService selectionService;
 
 	private CDateTime txtDateFrom;
 	private CDateTime txtDateFromDrop;
@@ -331,11 +335,11 @@ public class AppointmentDetailComposite extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					String target = e.text;
-					if (target != null && target.startsWith("tel:")) {
+					if (target != null && target.startsWith("tel:")) { //$NON-NLS-1$
 						String num = target.substring(4);
-						num = num.replaceAll("[^+\\d]", "");
-						num = num.replaceFirst("^00", "+");
-						target = "tel:" + num;
+						num = num.replaceAll("[^+\\d]", StringUtils.EMPTY); //$NON-NLS-1$
+						num = num.replaceFirst("^00", "+"); //$NON-NLS-1$ //$NON-NLS-2$
+						target = "tel:" + num; //$NON-NLS-1$
 					}
 					java.awt.Desktop.getDesktop().browse(new java.net.URI(target));
 				} catch (Exception ex) {
@@ -434,9 +438,13 @@ public class AppointmentDetailComposite extends Composite {
 		btnDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreModelServiceHolder.get().delete(appointment);
-				appointmentsViewer.remove(appointment);
-				cloneAndReloadAppointment();
+				if (appointment != null) {
+					selectionService.setSelection(new StructuredSelection(appointment));
+					ParameterizedCommand cmd = commandService.createCommand("ch.elexis.agenda.commands.delete", //$NON-NLS-1$
+							java.util.Collections.emptyMap());
+					handlerService.executeHandler(cmd);
+					loadAppointmentsForPatient();
+				}
 			}
 		});
 
@@ -588,14 +596,14 @@ public class AppointmentDetailComposite extends Composite {
 		if (c.isPresent() && c.get().getLabel().equals(currentSearchText)) {
 			StringBuilder b = new StringBuilder();
 			b.append(c.get().getLabel()).append("\n").append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			Optional.ofNullable(c.get().getMobile()).filter(s -> !s.isEmpty()).ifPresent(m -> b.append("Mobil:      ")
-					.append("<a href=\"").append(toTelHref(m)).append("\">").append(m).append("</a>\n"));
+			Optional.ofNullable(c.get().getMobile()).filter(s -> !s.isEmpty()).ifPresent(m -> b.append("Mobil:      ") //$NON-NLS-1$
+					.append("<a href=\"").append(toTelHref(m)).append("\">").append(m).append("</a>\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-			Optional.ofNullable(c.get().getPhone1()).filter(s -> !s.isEmpty()).ifPresent(p1 -> b.append("Telefon 1: ")
-					.append("<a href=\"").append(toTelHref(p1)).append("\">").append(p1).append("</a>\n"));
+			Optional.ofNullable(c.get().getPhone1()).filter(s -> !s.isEmpty()).ifPresent(p1 -> b.append("Telefon 1: ") //$NON-NLS-1$
+					.append("<a href=\"").append(toTelHref(p1)).append("\">").append(p1).append("</a>\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-			Optional.ofNullable(c.get().getPhone2()).filter(s -> !s.isEmpty()).ifPresent(p2 -> b.append("Telefon 2: ")
-					.append("<a href=\"").append(toTelHref(p2)).append("\">").append(p2).append("</a>\n"));
+			Optional.ofNullable(c.get().getPhone2()).filter(s -> !s.isEmpty()).ifPresent(p2 -> b.append("Telefon 2: ") //$NON-NLS-1$
+					.append("<a href=\"").append(toTelHref(p2)).append("\">").append(p2).append("</a>\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			txtContact.setText(b.toString());
 		} else {
@@ -612,9 +620,9 @@ public class AppointmentDetailComposite extends Composite {
 	private static String toTelHref(String raw) {
 		if (StringUtils.isBlank(raw))
 			return null;
-		String normalized = raw.replaceAll("[^+\\d]", "");
-		normalized = normalized.replaceFirst("^00", "+");
-		return "tel:" + normalized;
+		String normalized = raw.replaceAll("[^+\\d]", StringUtils.EMPTY); //$NON-NLS-1$
+		normalized = normalized.replaceFirst("^00", "+"); //$NON-NLS-1$ //$NON-NLS-2$
+		return "tel:" + normalized; //$NON-NLS-1$
 	}
 
 	private Optional<IContact> getAppointmentContact() {
@@ -675,7 +683,7 @@ public class AppointmentDetailComposite extends Composite {
 		lblDateFrom.setText(Messages.AppointmentDetailComposite_tag);
 
 		txtDateFromDrop = new CDateTime(compDateTime, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
-		txtDateFromDrop.setPattern("EEE, dd.MM.yyyy ");
+		txtDateFromDrop.setPattern("EEE, dd.MM.yyyy "); //$NON-NLS-1$
 		txtDateFromDrop.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		txtDateFromDrop.addSelectionListener(dateTimeSelectionAdapter);
 		txtDateFromDrop.addSelectionListener(new SelectionAdapter() {
@@ -753,7 +761,7 @@ public class AppointmentDetailComposite extends Composite {
 		lblArea.setText(Messages.AppointmentDetailComposite_range);
 
 		comboArea = new Combo(compArea, SWT.DROP_DOWN | SWT.READ_ONLY);
-		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(","));
+		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		comboArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		comboArea.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -880,7 +888,7 @@ public class AppointmentDetailComposite extends Composite {
 		AppointmentExtensionHandler.setMainAppointmentId(appointment, appointment.getId());
 		List<String> kombiTerminIds = new ArrayList<>();
 		for (String kombiTermin : kombiTermineList) {
-			kombiTermin = kombiTermin.replaceAll("[{}]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			kombiTermin = kombiTermin.replaceAll("[{}]", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
 			String[] elements = kombiTermin.split(";"); //$NON-NLS-1$
 			IAppointment newAppointment = CoreModelServiceHolder.get().create(IAppointment.class);
 			newAppointment.setState(appointment.getState());

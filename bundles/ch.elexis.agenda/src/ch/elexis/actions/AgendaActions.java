@@ -23,17 +23,18 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.commands.DeleteHandler;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
-import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
@@ -53,15 +54,18 @@ public class AgendaActions {
 	/** Display or change the state of an appointment */
 	private static IAction terminStatusAction;
 
+	private static IAppointmentService appointmentService;
+
 	/**
 	 * Reflect the user's rights on the agenda actions
 	 */
-	public static void updateActions() {
+	public static void updateActions(IAppointmentService appointmentService) {
 		getTerminStatusAction().setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.VIEW).and(Right.UPDATE)));
-		((RestrictedAction) getDelTerminAction()).reflectRight();
+		((RestrictedAction) getDelTerminAction(appointmentService)).reflectRight();
 	}
 
-	public static IAction getDelTerminAction() {
+	public static IAction getDelTerminAction(IAppointmentService appointmentServices) {
+		appointmentService = appointmentServices;
 		if (delTerminAction == null) {
 			makeActions();
 		}
@@ -91,8 +95,9 @@ public class AgendaActions {
 			@Override
 			public void doRun(Termin element) {
 				IAppointment appointment = (IAppointment) element.toIAppointment();
-				AppointmentHistoryServiceHolder.get().logAppointmentDeletion(appointment);
-				CoreModelServiceHolder.get().delete(appointment);
+				Shell shell = new Shell();
+				DeleteHandler deleteHandler = new DeleteHandler();
+				deleteHandler.deleteAppointment(appointment, shell, appointmentService);
 				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};

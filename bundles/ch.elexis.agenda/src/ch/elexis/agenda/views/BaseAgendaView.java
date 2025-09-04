@@ -213,7 +213,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 					manager.add(terminKuerzenAction);
 					manager.add(terminVerlaengernAction);
 					manager.add(terminAendernAction);
-					manager.add(AgendaActions.getDelTerminAction());
+					manager.add(AgendaActions.getDelTerminAction(appointmentService));
 				}
 				updateActions();
 			}
@@ -340,7 +340,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 		terminKuerzenAction.reflectRight();
 		terminVerlaengernAction.reflectRight();
 		terminAendernAction.reflectRight();
-		AgendaActions.updateActions();
+		AgendaActions.updateActions(appointmentService);
 	}
 
 	protected void makeActions() {

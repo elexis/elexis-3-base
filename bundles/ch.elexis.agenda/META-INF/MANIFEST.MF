@@ -3,20 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Agenda Plugin für Elexis
 Bundle-SymbolicName: ch.elexis.agenda;singleton:=true
 Bundle-Version: 3.13.0.qualifier
-Bundle-Vendor: elexis.info
-Bundle-Activator: ch.elexis.actions.Activator
-Bundle-Localization: plugin
-Require-Bundle: ch.elexis.core.l10n,
- ch.rgw.utility;bundle-version="3.9.100",
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
- ch.elexis.fop.service;bundle-version="3.2.0",
- org.apache.commons.lang3;bundle-version="3.12.0",
- com.google.zxing.core
-Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/cache-api-1.1.1.jar,
  lib/ical4j-3.0.29.jar
+Bundle-Activator: ch.elexis.actions.Activator
+Bundle-Vendor: elexis.info
+Bundle-Localization: plugin
 Export-Package: ch.elexis.agenda.composite,
  ch.elexis.agenda.data,
  ch.elexis.agenda.externalaccess,
@@ -24,12 +16,21 @@ Export-Package: ch.elexis.agenda.composite,
  ch.elexis.agenda.series,
  ch.elexis.agenda.util,
  ch.elexis.dialogs
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Bundle: ch.elexis.core.l10n,
+ ch.rgw.utility;bundle-version="3.9.100",
+ ch.elexis.core.data;bundle-version="3.0.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.fop.service;bundle-version="3.2.0",
+ org.apache.commons.lang3;bundle-version="3.12.0",
+ com.google.zxing.core,
+ org.eclipse.e4.ui.model.workbench;bundle-version="2.4.500.v20250215-1931"
 Import-Package: ch.elexis.core.mail,
  ch.elexis.core.mail.ui.client,
  ch.elexis.core.tasks.model,
  com.google.common.cache;version="15.0.0",
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.model.application.ui.basic
-Service-Component: OSGI-INF/ch.elexis.agenda.data.ClassToModelInterfaceContribution.xml
 Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Service-Component: OSGI-INF/ch.elexis.agenda.data.ClassToModelInterfaceContribution.xml

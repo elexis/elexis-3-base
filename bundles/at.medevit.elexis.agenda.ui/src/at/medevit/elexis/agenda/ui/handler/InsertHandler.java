@@ -12,9 +12,6 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.CopyActionType;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 import at.medevit.elexis.agenda.ui.function.AbstractBrowserFunction;
 import ch.elexis.agenda.composite.AppointmentDetailComposite;
 import ch.elexis.agenda.util.AppointmentExtensionHandler;
@@ -26,6 +23,9 @@ import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.dialogs.AppointmentLinkOptionsDialog;
+import ch.elexis.dialogs.AppointmentLinkOptionsDialog.CopyActionType;
+import ch.elexis.dialogs.AppointmentLinkOptionsDialog.MoveActionType;
 import jakarta.inject.Inject;
 
 

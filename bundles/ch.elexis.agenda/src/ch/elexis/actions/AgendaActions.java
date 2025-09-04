@@ -12,6 +12,10 @@
 package ch.elexis.actions;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -23,10 +27,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.commands.DeleteHandler;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
@@ -40,6 +43,7 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
+import jakarta.inject.Inject;
 
 /**
  * Some common actions for the agenda
@@ -56,6 +60,14 @@ public class AgendaActions {
 
 	private static IAppointmentService appointmentService;
 
+	@Inject
+	private ECommandService commandService;
+
+	@Inject
+	private EHandlerService handlerService;
+
+	@Inject
+	private ESelectionService selectionService;
 	/**
 	 * Reflect the user's rights on the agenda actions
 	 */
@@ -94,10 +106,12 @@ public class AgendaActions {
 
 			@Override
 			public void doRun(Termin element) {
-				IAppointment appointment = (IAppointment) element.toIAppointment();
-				Shell shell = new Shell();
-				DeleteHandler deleteHandler = new DeleteHandler();
-				deleteHandler.deleteAppointment(appointment, shell, appointmentService);
+				ECommandService cmdSvc = (ECommandService) PlatformUI.getWorkbench().getService(ECommandService.class);
+				EHandlerService hdlSvc = (EHandlerService) PlatformUI.getWorkbench().getService(EHandlerService.class);
+				ParameterizedCommand cmd = cmdSvc.createCommand("ch.elexis.agenda.commands.delete", //$NON-NLS-1$
+						java.util.Collections.emptyMap());
+				hdlSvc.executeHandler(cmd);
+
 				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};

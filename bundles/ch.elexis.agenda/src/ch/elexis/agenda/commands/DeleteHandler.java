@@ -18,6 +18,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
@@ -33,12 +34,13 @@ public class DeleteHandler {
 	private ESelectionService selectionService;
 
 	@Inject
+	private IContextService contextService;
+	@Inject
 	private IAppointmentService appointmentService;
 
 	@Execute
 	public Object execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) throws ExecutionException {
 		Optional<IPeriod> period = getSelectedPeriod();
-
 		period.ifPresent(p -> {
 			if (p instanceof IAppointment) {
 				handleAppointmentDeletion((IAppointment) p, shell);
@@ -47,19 +49,6 @@ public class DeleteHandler {
 			}
 		});
 		return null;
-	}
-
-	public void deleteAppointment(IAppointment appointment, Shell shell, IAppointmentService appointmentService) {
-		this.appointmentService = appointmentService;
-		if (appointment == null || shell == null) {
-			return;
-		}
-
-		if (AppointmentExtensionHandler.isMainAppointment(appointment)) {
-			handleMainAppointmentDeletion(appointment, shell);
-		} else {
-			handleLinkedAppointmentDeletion(appointment, shell);
-		}
 	}
 
 	public void handleAppointmentDeletion(IAppointment appointment, Shell shell) {
@@ -198,6 +187,8 @@ public class DeleteHandler {
 			if (element instanceof IPeriod) {
 				return Optional.of((IPeriod) element);
 			}
+		} else {
+			return contextService.getTyped(IAppointment.class).map(a -> (IPeriod) a);
 		}
 		return Optional.empty();
 	}

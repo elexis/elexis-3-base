@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
 <plugin>
-
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -10,16 +10,14 @@
             icon="icons/calendar.png"
             id="ch.elexis.agenda.tagesview"
             inject="true"
-            name="%Agenda">
-      </view>
+            name="%Agenda"/>
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.views.AgendaGross"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.largeview"
             inject="true"
-            name="%Agenda_gross">
-      </view>
+            name="%Agenda_gross"/>
       <category
             id="ch.elexis.agenda.Views"
             name="%Agenda">
@@ -34,25 +32,22 @@
             restorable="true">
       </view>
    </extension>
-   <extension
+      <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="ch.elexis.agenda.preferences.AgendaDefinitionPreferencePage"
             id="ch.elexis.Agendaprefs"
-            name="%Agenda">
-      </page>
+            name="%Agenda"/>
       <page
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.agenda.preferences.AgendaFarben"
             id="ch.Agendapref.colors"
-            name="%Farben">
-      </page>
+            name="%Farben"/>
       <page
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.agenda.preferences.AgendaImages"
             id="elexis-agenda.imageprefs"
-            name="%Agenda-Icons">
-      </page>
+            name="%Agenda-Icons"/>
       <page
             category="ch.elexis.Agendaprefs"
             class="ch.elexis.agenda.preferences.AgendaDruck"
@@ -81,166 +76,165 @@
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.agenda.preferences.AgendaAnzeige"
             id="ch.elexis.agenda.anzeige"
-            name="%Ansicht">
-      </page>
+            name="%Ansicht"/>
       <page
             category="ch.elexis.Agendaprefs"
             class="ch.elexis.agenda.preferences.CombinedAppointments"
             id="ch.agendaprefs.kombi"
             name="%Kombi">
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            id="ch.elexis.agenda.commands"
-            name="Agenda Commands">
-      </category>
-      <command
-            categoryId="ch.elexis.agenda.commands"
-            defaultHandler="ch.elexis.agenda.commands.ExportCommand"
-            description="Exportiere Termine nach iCal"
-            id="ch.elexis.agenda.commands.export"
-            name="export">
-         <commandParameter
-               id="ch.elexis.agenda.param.resource"
-               name="resource"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="ch.elexis.agenda.param.from"
-               name="Date from"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="ch.elexis.agenda.param.until"
-               name="Date until"
-               optional="false">
-         </commandParameter>
-      </command>
-      <command
-            defaultHandler="ch.elexis.agenda.series.command.AddReccuringDateHandler"
-            id="ch.elexis.agenda.series.command.AddReccuringDate"
-            name="%Add_Recurring_Appointment">
-      </command>
-      <command
-            defaultHandler="ch.elexis.agenda.commands.SortAscendingCommand"
-            id="ch.elexis.agenda.commands.SortAscending"
-            name="%SortAscending">
-      </command>
-      <command
-            defaultHandler="ch.elexis.agenda.commands.SortDescendingCommand"
-            id="ch.elexis.agenda.commands.SortDescending"
-            name="%SortDescending">
-      </command>
-      <command
-            categoryId="ch.elexis.agenda.commands"
-            defaultHandler="ch.elexis.agenda.commands.PrintAppointmentLabelHandler"
-            id="ch.elexis.agenda.commands.printAppointmentLabel"
-            name="%PrintAppointmentLabel">
-         <commandParameter
-               id="ch.elexis.agenda.param.appointmentids"
-               name="appointmentids"
-               optional="false">
-         </commandParameter>
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.agenda.tagesview">
+      </extension>
+      <extension
+            point="org.eclipse.ui.commands">
+         <category
+               id="ch.elexis.agenda.commands"
+               name="Agenda Commands">
+         </category>
          <command
-               commandId="ch.elexis.agenda.series.command.AddReccuringDate"
-               icon="icons/arrow-repeat.png"
-               label="%Add_Recurring_Appointment"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.agenda.largeview">
-         <command
-               commandId="ch.elexis.agenda.series.command.AddReccuringDate"
-               icon="icons/arrow-repeat.png"
-               label="%Add_Recurring_Appointment"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.agenda.week">
-         <command
-               commandId="ch.elexis.agenda.series.command.AddReccuringDate"
-               icon="icons/arrow-repeat.png"
-               label="%Add_Recurring_Appointment"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.agenda.Views">
-         <command
-               commandId="ch.elexis.agenda.series.command.AddReccuringDate"
-               icon="icons/arrow-repeat.png"
-               label="%Add_Recurring_Appointment"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.agenda.parallelview">
-         <command
-               commandId="ch.elexis.agenda.series.command.AddReccuringDate"
-               icon="icons/arrow-repeat.png"
-               label="%Add_Recurring_Appointment"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.agenda.Terminliste">
-         <command
-               commandId="ch.elexis.agenda.series.command.AddReccuringDate"
-               icon="icons/arrow-repeat.png"
-               label="%Add_Recurring_Appointment"
-               style="push">
+               categoryId="ch.elexis.agenda.commands"
+               defaultHandler="ch.elexis.agenda.commands.ExportCommand"
+               description="Exportiere Termine nach iCal"
+               id="ch.elexis.agenda.commands.export"
+               name="export">
+            <commandParameter
+                  id="ch.elexis.agenda.param.resource"
+                  name="resource"
+                  optional="false">
+            </commandParameter>
+            <commandParameter
+                  id="ch.elexis.agenda.param.from"
+                  name="Date from"
+                  optional="false">
+            </commandParameter>
+            <commandParameter
+                  id="ch.elexis.agenda.param.until"
+                  name="Date until"
+                  optional="false">
+            </commandParameter>
          </command>
          <command
-               commandId="ch.elexis.agenda.commands.SortAscending"
-               icon="icons/sort-number.png"
-               label="%SortAscending"
-               style="push">
+               defaultHandler="ch.elexis.agenda.series.command.AddReccuringDateHandler"
+               id="ch.elexis.agenda.series.command.AddReccuringDate"
+               name="%Add_Recurring_Appointment">
          </command>
          <command
-               commandId="ch.elexis.agenda.commands.SortDescending"
-               icon="icons/sort-number-descending.png"
-               label="%SortDescending"
-               style="push">
+               defaultHandler="ch.elexis.agenda.commands.SortAscendingCommand"
+               id="ch.elexis.agenda.commands.SortAscending"
+               name="%SortAscending">
          </command>
-      </menuContribution>
-   </extension>
-   <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.agenda.data.TerminFactory"
-            name="Termin">
-      </Factory>
-   </extension>
-   <extension
-         point="ch.elexis.core.data.DataAccess">
-      <DataAccess
-            class="ch.elexis.agenda.data.DataAccessor"
-            name="Termin">
-      </DataAccess>
-   </extension>
-   <extension
-         point="ch.elexis.core.ui.TextTemplateRequirement">
-      <TextTemplateRequirement
-            element="ch.elexis.agenda.text.AgendaTextTemplateRequirement">
-      </TextTemplateRequirement>
-   </extension>
-   <extension
+         <command
+               defaultHandler="ch.elexis.agenda.commands.SortDescendingCommand"
+               id="ch.elexis.agenda.commands.SortDescending"
+               name="%SortDescending">
+         </command>
+         <command
+               categoryId="ch.elexis.agenda.commands"
+               defaultHandler="ch.elexis.agenda.commands.PrintAppointmentLabelHandler"
+               id="ch.elexis.agenda.commands.printAppointmentLabel"
+               name="%PrintAppointmentLabel">
+            <commandParameter
+                  id="ch.elexis.agenda.param.appointmentids"
+                  name="appointmentids"
+                  optional="false">
+            </commandParameter>
+         </command>
+      </extension>
+      <extension
+            point="org.eclipse.ui.menus">
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.tagesview">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.largeview">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.week">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.Views">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.parallelview">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.Terminliste">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+            <command
+                  commandId="ch.elexis.agenda.commands.SortAscending"
+                  icon="icons/sort-number.png"
+                  label="%SortAscending"
+                  style="push">
+            </command>
+            <command
+                  commandId="ch.elexis.agenda.commands.SortDescending"
+                  icon="icons/sort-number-descending.png"
+                  label="%SortDescending"
+                  style="push">
+            </command>
+         </menuContribution>
+      </extension>
+      <extension
+            point="ch.elexis.core.data.PersistentReference">
+         <Factory
+               Class="ch.elexis.agenda.data.TerminFactory"
+               name="Termin">
+         </Factory>
+      </extension>
+      <extension
+            point="ch.elexis.core.data.DataAccess">
+         <DataAccess
+               class="ch.elexis.agenda.data.DataAccessor"
+               name="Termin">
+         </DataAccess>
+      </extension>
+      <extension
+            point="ch.elexis.core.ui.TextTemplateRequirement">
+         <TextTemplateRequirement
+               element="ch.elexis.agenda.text.AgendaTextTemplateRequirement">
+         </TextTemplateRequirement>
+      </extension>
+      <extension
          id="ch.elexis.agenda.fragment"
          point="org.eclipse.e4.workbench.model">
       <fragment
@@ -248,5 +242,4 @@
             apply="always">
       </fragment>
    </extension>
-
 </plugin>

@@ -113,7 +113,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 	Activator agenda = Activator.getDefault();
 
 	private Timer timer;
-
+	public static final String DATE_CHANGED = "ch/elexis/agenda/DATE_CHANGED"; //$NON-NLS-1$
 	private IAppointmentService appointmentService;
 
 	@Optional

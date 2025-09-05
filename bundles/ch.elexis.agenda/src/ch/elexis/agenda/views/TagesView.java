@@ -12,6 +12,7 @@
 
 package ch.elexis.agenda.views;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -62,7 +63,6 @@ import jakarta.inject.Inject;
 
 public class TagesView extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.tagesview"; //$NON-NLS-1$
-	public static final String DATE_CHANGED = "ch/elexis/agenda/DATE_CHANGED"; //$NON-NLS-1$
 	Button bDay, bToday, bPrint;
 	Text tDetail;
 
@@ -70,7 +70,7 @@ public class TagesView extends BaseAgendaView {
 
 	@org.eclipse.e4.core.di.annotations.Optional
 	@Inject
-	void onDateChanged(@UIEventTopic(DATE_CHANGED) Object ignored) {
+	void onDateChanged(@UIEventTopic(BaseAgendaView.DATE_CHANGED) LocalDate newDate) {
 		Display.getDefault().asyncExec(this::updateDate);
 	}
 

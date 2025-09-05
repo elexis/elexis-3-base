@@ -182,7 +182,7 @@ public class AgendaGross extends BaseAgendaView {
 			public void widgetSelected(SelectionEvent arg0) {
 				LocalDate localDate = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
 				agenda.setActDate(new TimeTool(localDate));
-				ContextServiceHolder.get().postEvent(TagesView.DATE_CHANGED, null);
+				ContextServiceHolder.get().postEvent(BaseAgendaView.DATE_CHANGED, agenda.getActDate());
 				updateDate();
 			}
 

@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -32,6 +33,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
@@ -56,13 +58,21 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import jakarta.inject.Inject;
 
 public class TagesView extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.tagesview"; //$NON-NLS-1$
+	public static final String DATE_CHANGED = "ch/elexis/agenda/DATE_CHANGED"; //$NON-NLS-1$
 	Button bDay, bToday, bPrint;
 	Text tDetail;
 
 	Label lCreator;
+
+	@org.eclipse.e4.core.di.annotations.Optional
+	@Inject
+	void onDateChanged(@UIEventTopic(DATE_CHANGED) Object ignored) {
+		Display.getDefault().asyncExec(this::updateDate);
+	}
 
 	public TagesView() {
 		self = this;

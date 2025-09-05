@@ -182,9 +182,9 @@ public class AgendaGross extends BaseAgendaView {
 			public void widgetSelected(SelectionEvent arg0) {
 				LocalDate localDate = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
 				agenda.setActDate(new TimeTool(localDate));
+				ContextServiceHolder.get().postEvent(BaseAgendaView.DATE_CHANGED, localDate);
 				updateDate();
 			}
-
 		});
 
 		sash.setWeights(sashWeights == null ? new int[] { 70, 30 } : sashWeights);

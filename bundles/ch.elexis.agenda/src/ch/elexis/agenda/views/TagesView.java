@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
@@ -59,7 +61,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import jakarta.inject.Inject;
 
 public class TagesView extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.tagesview"; //$NON-NLS-1$

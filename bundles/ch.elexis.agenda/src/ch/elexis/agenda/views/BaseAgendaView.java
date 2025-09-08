@@ -62,7 +62,6 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.agenda.CollisionErrorLevel;
-import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -181,17 +180,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 						});
 					} else {
 						if (appointmentService.getType(AppointmentType.FREE).equals(pl.getType())) {
-							pl.setType(AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
-							pl.setState(AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT));
-							final int minutes = getPreferredDuration(pl.getSchedule(), pl.getType());
-							pl.setEndTime(pl.getStartTime().plusMinutes(minutes));
-							pl.setSubjectOrPatient(ContextServiceHolder.get().getActivePatient().map(p -> p.getId())
-									.orElse(StringUtils.EMPTY));
-							AppointmentDialog dlg = new AppointmentDialog(pl);
-							dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
-							dlg.setExpanded(true);
-							dlg.setScheduleChangeMode(true);
-							dlg.open();
+							openAppointmentDialog(pl, true, true);
 						} else {
 							terminAendernAction.run();
 						}
@@ -464,20 +453,11 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 			@Override
 			public void doRun() {
-				LocalDateTime start = agenda.getActDate().toLocalDateTime();
-				LocalDateTime end = start.plusMinutes(30);
-				IAppointment appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(),
-						agenda.getActResource(), start, end,
-						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
-						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
-				AppointmentDialog dlg = new AppointmentDialog(appointment);
-				dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
-				dlg.open();
-				if (tv != null) {
-					tv.refresh(true);
-				}
+				IAppointment appointment = getSelection();
+				openAppointmentDialog(appointment, true, true);
 			}
 		};
+
 		printAction = new Action(Messages.BaseAgendaView_printDayList) {
 			{
 				setImageDescriptor(Images.IMG_PRINTER.getImageDescriptor());
@@ -608,4 +588,25 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 				"000000"); //$NON-NLS-1$
 		return UiDesk.getColorFromRGB(coldesc);
 	}
+
+	private void openAppointmentDialog(IAppointment appointment, boolean expanded, boolean scheduleChangeMode) {
+		appointment.setType(AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
+		appointment.setState(AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT));
+		final int minutes = getPreferredDuration(appointment.getSchedule(), appointment.getType());
+		appointment.setEndTime(appointment.getStartTime().plusMinutes(minutes));
+
+		appointment.setSubjectOrPatient(
+				ContextServiceHolder.get().getActivePatient().map(p -> p.getId()).orElse(StringUtils.EMPTY));
+
+		AppointmentDialog dlg = new AppointmentDialog(appointment);
+		dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
+		dlg.setExpanded(expanded);
+		dlg.setScheduleChangeMode(scheduleChangeMode);
+		dlg.open();
+
+		if (tv != null) {
+			tv.refresh(true);
+		}
+	}
+
 }

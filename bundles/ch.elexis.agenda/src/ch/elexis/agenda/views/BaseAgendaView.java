@@ -62,6 +62,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.agenda.CollisionErrorLevel;
+import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -454,7 +455,17 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 			@Override
 			public void doRun() {
 				IAppointment appointment = getSelection();
-				openAppointmentDialog(appointment, true, true);
+				if (appointment != null
+						&& appointmentService.getType(AppointmentType.FREE).equals(appointment.getType())) {
+					openAppointmentDialog(appointment, true, true);
+				} else {
+					LocalDateTime start = agenda.getActDate().toLocalDateTime();
+					LocalDateTime end = start.plusMinutes(30);
+					appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(), agenda.getActResource(), start,
+							end, AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
+							AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+					openAppointmentDialog(appointment, true, true);
+				}
 			}
 		};
 

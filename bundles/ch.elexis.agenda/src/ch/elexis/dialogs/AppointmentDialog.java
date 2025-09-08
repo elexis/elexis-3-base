@@ -117,7 +117,11 @@ public class AppointmentDialog extends Dialog {
 	@Override
 	protected Point getInitialSize() {
 		if (detailComposite != null && expanded) {
-			return new Point(1000, 800);
+			if (CoreUtil.isLinux()) {
+				return new Point(1000, 900);
+			} else {
+				return new Point(1000, 800);
+			}
 		} else {
 			if (CoreUtil.isLinux()) {
 				return new Point(800, 560);
@@ -130,11 +134,16 @@ public class AppointmentDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		if (CoreUtil.isLinux()) {
+			newShell.setMinimumSize(800, 560);
+		} else {
+			newShell.setMinimumSize(700, 500);
+		}
 		newShell.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
 				Point size = newShell.getSize();
-				if (size.x >= 880 && size.y >= 650) {
+				if (size.x >= 880 && size.y >= 750) {
 					if (!expanded) {
 						expanded = true;
 						detailComposite.setExpanded(true);

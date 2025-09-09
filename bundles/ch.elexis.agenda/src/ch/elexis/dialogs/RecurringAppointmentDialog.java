@@ -15,6 +15,7 @@ import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -85,7 +86,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 
 	private IAppointmentSeries appointment;
 
-	private boolean noedit;
+	private boolean isPersistent;
 
 	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("ddMMyyyy"); //$NON-NLS-1$
 	private DecimalFormat decimalFormat = new DecimalFormat("00"); //$NON-NLS-1$
@@ -94,13 +95,13 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		super(Display.getDefault().getActiveShell());
 
 		this.appointment = appointment;
-		this.noedit = appointment.isPersistent();
+		this.isPersistent = appointment.isPersistent();
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = (Composite) super.createDialogArea(parent);
-		if (noedit) {
+		if (isPersistent) {
 			setMessage(Messages.SerienTerminDialog_this_message_show);
 		} else {
 			setMessage(Messages.SerienTerminDialog_this_message_create);
@@ -345,7 +346,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 
 		initDialog();
 
-		if (noedit) {
+		if (isPersistent) {
 			disableAll(area);
 		}
 
@@ -513,30 +514,42 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		button.setText(Messages.SerienTerminDialog_other_text);
 		Button button_1 = createButton(parent, IDialogConstants.STOP_ID, "remove series", false); //$NON-NLS-1$
 		button_1.setText(Messages.SerienTerminDialog_other_text_1);
-
+		button_1.setEnabled(isPersistent);
 	}
 
 	@Override
 	protected void buttonPressed(int buttonId) {
 		updateModel();
-		super.buttonPressed(buttonId);
-		switch (buttonId) {
-		case IDialogConstants.OK_ID:
-			if (noedit) {
+		if (buttonId == IDialogConstants.OK_ID) {
+			if (isPersistent) {
 				close();
 			} else {
-				AppointmentServiceHolder.get().saveAppointmentSeries(appointment);
-				close();
+				int result = 0;
+				// ask user about next step (keep, change, cancel) in case of a lock time
+				// collision
+				if (AppointmentServiceHolder.get().isColliding(appointment)) {
+					MessageDialog collisionDialog = new MessageDialog(getShell(),
+							Messages.SerienTerminDialog_dlgLockTimesConflict, null,
+							Messages.SerienTerminDialog_dlgLockTimesSeriesConflict, MessageDialog.WARNING,
+							new String[] { Messages.SerienTerminDialog_dlgBtnApplyAnyway,
+									Messages.SerienTerminDialog_dlgBtnChange,
+									Messages.SerienTerminDialog_dlgBtnCancel },
+							0);
+
+					result = collisionDialog.open();
+				}
+				if (result == 0) {
+					AppointmentServiceHolder.get().saveAppointmentSeries(appointment);
+				} else if (result == 1) {
+					return;
+				}
 			}
-			break;
-		case IDialogConstants.STOP_ID:
+		} else if (buttonId == IDialogConstants.STOP_ID) {
 			AppointmentServiceHolder.get().deleteAppointmentSeries(appointment);
 			close();
-			break;
-		default:
-			break;
 		}
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+		super.buttonPressed(buttonId);
 	}
 
 	private void updateModel() {

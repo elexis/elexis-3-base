@@ -47,6 +47,7 @@ import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -386,26 +387,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private boolean isColliding() {
-		for (IAppointment iAppointment : list) {
-			if (!iAppointment.getId().equals(appointment.getId())) {
-				// skip all day appointments for collision detection
-				if (iAppointment.isAllDay()) {
-					continue;
-				}
-				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(), iAppointment.getStartTime(),
-						iAppointment.getEndTime())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isOverlapping(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
-		if (start1 != null && start2 != null && end1 != null && end2 != null) {
-			return start1.isBefore(end2) && start2.isBefore(end1);
-		}
-		return false;
+		return AppointmentServiceHolder.get().isColliding(appointment);
 	}
 
 	private int getRasterStartTime() {

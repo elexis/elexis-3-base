@@ -23,6 +23,10 @@ public class PreferenceConstants {
 	public static final String AG_TERMINTYPEN = "agenda/TerminTypen"; //$NON-NLS-1$
 	public static final String AG_TERMINSTATUS = "agenda/TerminStatus"; //$NON-NLS-1$
 	public static final String AG_KOMBITERMINE = "agenda/kombitermine"; // $NON-NLS-1$
+	/**
+	 * @deprecated never show deleted appointments
+	 */
+	@Deprecated
 	public static final String AG_SHOWDELETED = "agenda/zeige_geloeschte"; //$NON-NLS-1$
 	// public static final String AG_USERS = "agenda/anwender";
 	public static final String AG_TYPCOLOR_PREFIX = "agenda/farben/typ/"; //$NON-NLS-1$

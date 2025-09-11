@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.di.extensions.Service;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -27,9 +28,8 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.ITextReplacementService;
-import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.utils.CoreUtil;
 
@@ -38,7 +38,11 @@ public class AppointmentDialog extends Dialog {
 	private IAppointment appointment;
 
 	@Inject
-	IContextService contextService;
+	@Service(filterExpression = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
+	private IModelService coreModelService;
+
+	@Inject
+	private IContextService contextService;
 
 	@Inject
 	private IEventBroker eventBroker;
@@ -60,6 +64,7 @@ public class AppointmentDialog extends Dialog {
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
+		coreModelService.refresh(appointment);
 		this.appointment = appointment;
 		this.emailSender = new EmailSender(textReplacementService, contextService);
 	}
@@ -96,7 +101,7 @@ public class AppointmentDialog extends Dialog {
 			});
 		}
 
-		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
+		contextService.getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
 
 		return container;
 	}
@@ -169,9 +174,9 @@ public class AppointmentDialog extends Dialog {
 
 	@Override
 	protected void cancelPressed() {
-		CoreModelServiceHolder.get().refresh(appointment, false, true);
-		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
-		ContextServiceHolder.get().getRootContext().setNamed("mail.alreadySent", null);
+		coreModelService.refresh(appointment, false, true);
+		contextService.getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
+		contextService.getRootContext().setNamed("mail.alreadySent", null);
 		super.cancelPressed();
 	}
 
@@ -186,14 +191,14 @@ public class AppointmentDialog extends Dialog {
 
 	private void initializeAppointmentIfNecessary() {
 		if (appointment == null) {
-			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
+			appointment = coreModelService.create(IAppointment.class);
 			appointment.setStartTime(LocalDateTime.now());
 		}
 	}
 
 	private void saveAndReloadAppointment() {
 		if (appointment != null) {
-			CoreModelServiceHolder.get().save(detailComposite.setToModel());
+			coreModelService.save(detailComposite.setToModel());
 		}
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 		eventBroker.post(ElexisEventTopics.EVENT_UPDATE, appointment);
@@ -212,12 +217,12 @@ public class AppointmentDialog extends Dialog {
 	}
 
 	private void sendEmailIfConfirmationChecked() {
-		Boolean alreadySent = ContextServiceHolder.get().getNamed("mail.alreadySent").map(Boolean.class::cast)
+		Boolean alreadySent = contextService.getNamed("mail.alreadySent").map(Boolean.class::cast)
 				.orElse(false);
 		if (detailComposite.getEmailCheckboxStatus() && !alreadySent) {
 			EmailDetails emailDetails = detailComposite.getEmailDeteils();
 			emailSender.sendEmail(emailDetails, appointment);
 		}
-		ContextServiceHolder.get().getRootContext().setNamed("mail.alreadySent", null);
+		contextService.getRootContext().setNamed("mail.alreadySent", null);
 	}
 }

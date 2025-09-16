@@ -309,12 +309,11 @@ public class AdjustBundleIdentifiers {
 				java.util.List<Coding> keep = new java.util.ArrayList<>();
 				for (Coding cd : type.getCoding()) {
 					String sys = normalizeSystem(cd.getSystem());
-					if ("https://www.elexis.info/coverage/reason".equals(sys)) { //$NON-NLS-1$
+					if ("https://www.elexis.info/coverage/reason".equals(sys)) {
 						continue;
 					}
-
-					if ("https://www.elexis.info/coverage/type".equals(sys) //$NON-NLS-1$
-							|| "www.elexis.info/coverage/type".equals(sys)) { //$NON-NLS-1$
+					if ("https://www.elexis.info/coverage/type".equals(sys)
+							|| "www.elexis.info/coverage/type".equals(sys)) {
 						sys = FHIRConstants.COVERAGE_TYPE_SYSTEM;
 					}
 
@@ -325,23 +324,23 @@ public class AdjustBundleIdentifiers {
 					keep.add(cd);
 				}
 				type.setCoding(keep);
-			} else {
-				type.addCoding(
-						new Coding().setSystem(FHIRConstants.COVERAGE_TYPE_SYSTEM)
-								.setCode("KVG").setDisplay(getCoverageDisplay("KVG"))); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		for (Identifier identifier : coverage.getIdentifier()) {
-			if ("urn:oid:2.16.756.5.30.1.123.100.1.1.1".equals(identifier.getSystem())) { //$NON-NLS-1$
+			if ("urn:oid:2.16.756.5.30.1.123.100.1.1.1".equals(identifier.getSystem())) {
 				newValue = identifier.getValue();
 				break;
 			}
 		}
 		for (Identifier identifier : coverage.getIdentifier()) {
-			if ("https://www.elexis.info/objid".equals(identifier.getSystem()) && newValue != null) { //$NON-NLS-1$
+			if ("https://www.elexis.info/objid".equals(identifier.getSystem()) && newValue != null) {
 				identifier.setValue(newValue);
 			}
+		}
+
+		if (coverage.hasDependent()) {
+			coverage.setDependent(null);
 		}
 
 		if (coverage.hasText())
@@ -349,13 +348,21 @@ public class AdjustBundleIdentifiers {
 		coverage.getMeta().addProfile(FHIRConstants.PROFILE_COVERAGE);
 	}
 
-	private static String getCoverageDisplay(String code) {
+
+	public static String getCoverageDisplay(String code) {
+		if (code == null) {
+			return "Other";
+		}
+
 		return switch (code) {
-		case "KVG" -> "According to KVG"; //$NON-NLS-1$ //$NON-NLS-2$
-		case "VVG" -> "According to VVG"; //$NON-NLS-1$ //$NON-NLS-2$
-		case "UVG" -> "According to UVG"; //$NON-NLS-1$ //$NON-NLS-2$
-		case "IVG" -> "According to IVG"; //$NON-NLS-1$ //$NON-NLS-2$
-		default -> "Insurance";
+		case "KVG" -> "According to KVG";
+		case "UVG" -> "According to UVG";
+		case "VVG" -> "According to VVG";
+		case "IVG" -> "According to IVG";
+		case "MVG" -> "According to MVG";
+		case "Self" -> "Self";
+		case "Other" -> "Other";
+		default -> "Other";
 		};
 	}
 }

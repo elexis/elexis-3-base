@@ -309,11 +309,11 @@ public class AdjustBundleIdentifiers {
 				java.util.List<Coding> keep = new java.util.ArrayList<>();
 				for (Coding cd : type.getCoding()) {
 					String sys = normalizeSystem(cd.getSystem());
-					if ("https://www.elexis.info/coverage/reason".equals(sys)) {
+					if ("https://www.elexis.info/coverage/reason".equals(sys)) { //$NON-NLS-1$
 						continue;
 					}
-					if ("https://www.elexis.info/coverage/type".equals(sys)
-							|| "www.elexis.info/coverage/type".equals(sys)) {
+					if ("https://www.elexis.info/coverage/type".equals(sys) //$NON-NLS-1$
+							|| "www.elexis.info/coverage/type".equals(sys)) { //$NON-NLS-1$
 						sys = FHIRConstants.COVERAGE_TYPE_SYSTEM;
 					}
 
@@ -328,13 +328,13 @@ public class AdjustBundleIdentifiers {
 		}
 
 		for (Identifier identifier : coverage.getIdentifier()) {
-			if ("urn:oid:2.16.756.5.30.1.123.100.1.1.1".equals(identifier.getSystem())) {
+			if ("urn:oid:2.16.756.5.30.1.123.100.1.1.1".equals(identifier.getSystem())) { //$NON-NLS-1$
 				newValue = identifier.getValue();
 				break;
 			}
 		}
 		for (Identifier identifier : coverage.getIdentifier()) {
-			if ("https://www.elexis.info/objid".equals(identifier.getSystem()) && newValue != null) {
+			if ("https://www.elexis.info/objid".equals(identifier.getSystem()) && newValue != null) { //$NON-NLS-1$
 				identifier.setValue(newValue);
 			}
 		}
@@ -351,17 +351,17 @@ public class AdjustBundleIdentifiers {
 
 	public static String getCoverageDisplay(String code) {
 		if (code == null) {
-			return "Other";
+			return "Other"; //$NON-NLS-1$
 		}
 
 		return switch (code) {
-		case "KVG" -> "According to KVG";
-		case "UVG" -> "According to UVG";
-		case "VVG" -> "According to VVG";
-		case "IVG" -> "According to IVG";
-		case "MVG" -> "According to MVG";
-		case "Self" -> "Self";
-		case "Other" -> "Other";
+		case "KVG" -> "According to KVG"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "UVG" -> "According to UVG"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "VVG" -> "According to VVG"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "IVG" -> "According to IVG"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "MVG" -> "According to MVG"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "Self" -> "Self"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "Other" -> "Other"; //$NON-NLS-1$ //$NON-NLS-2$
 		default -> "Other";
 		};
 	}

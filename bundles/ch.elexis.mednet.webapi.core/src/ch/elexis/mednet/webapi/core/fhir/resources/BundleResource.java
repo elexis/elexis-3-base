@@ -420,17 +420,17 @@ public class BundleResource {
 
 	private static String mapLawToCode(BillingLaw law) {
 		if (law == null) {
-			return "Other";
+			return "Other"; //$NON-NLS-1$
 		}
 		return switch (law) {
-		case KVG -> "KVG";
-		case UVG -> "UVG";
-		case IV -> "IVG";
-		case MV -> "MVG";
-		case VVG -> "VVG";
-		case privat -> "Self";
-		case ORG, NONE -> "Other";
-		case OTHER -> "Other";
+		case KVG -> "KVG"; //$NON-NLS-1$
+		case UVG -> "UVG"; //$NON-NLS-1$
+		case IV -> "IVG"; //$NON-NLS-1$
+		case MV -> "MVG"; //$NON-NLS-1$
+		case VVG -> "VVG"; //$NON-NLS-1$
+		case privat -> "Self"; //$NON-NLS-1$
+		case ORG, NONE -> "Other"; //$NON-NLS-1$
+		case OTHER -> "Other"; //$NON-NLS-1$
 		};
 	}
 }

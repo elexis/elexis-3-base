@@ -42,6 +42,7 @@ import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.IRelatedContact;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
@@ -50,6 +51,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
+import ch.elexis.mednet.webapi.core.fhir.resources.util.AdjustBundleIdentifiers;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
 
 public class BundleResource {
@@ -137,7 +139,11 @@ public class BundleResource {
 				if (coveragePayor != null && coveragePayor.isOrganization()) {
 					Coverage coverage = resourceFactory.getResource(encounterCoverage, ICoverage.class, Coverage.class);
 					CoverageResource.toMednet(coverage, patientFullUrl);
-
+					BillingLaw law = encounterCoverage.getBillingSystem().getLaw();
+					String lawCode = mapLawToCode(law); // s.u.
+					coverage.setType(
+							new CodeableConcept().addCoding(new Coding().setSystem(FHIRConstants.COVERAGE_TYPE_SYSTEM)
+									.setCode(lawCode).setDisplay(AdjustBundleIdentifiers.getCoverageDisplay(lawCode))));
 					String coverageFullUrl = addEntryAndIndex(bundleEntries, coverage);
 
 					Organization organization = OrganizationResource.createOrganization(coveragePayor, resourceFactory);
@@ -412,4 +418,19 @@ public class BundleResource {
 		}
 	}
 
+	private static String mapLawToCode(BillingLaw law) {
+		if (law == null) {
+			return "Other"; //$NON-NLS-1$
+		}
+		return switch (law) {
+		case KVG -> "KVG"; //$NON-NLS-1$
+		case UVG -> "UVG"; //$NON-NLS-1$
+		case IV -> "IVG"; //$NON-NLS-1$
+		case MV -> "MVG"; //$NON-NLS-1$
+		case VVG -> "VVG"; //$NON-NLS-1$
+		case privat -> "Self"; //$NON-NLS-1$
+		case ORG, NONE -> "Other"; //$NON-NLS-1$
+		case OTHER -> "Other"; //$NON-NLS-1$
+		};
+	}
 }

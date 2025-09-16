@@ -312,7 +312,6 @@ public class AdjustBundleIdentifiers {
 					if ("https://www.elexis.info/coverage/reason".equals(sys)) { //$NON-NLS-1$
 						continue;
 					}
-
 					if ("https://www.elexis.info/coverage/type".equals(sys) //$NON-NLS-1$
 							|| "www.elexis.info/coverage/type".equals(sys)) { //$NON-NLS-1$
 						sys = FHIRConstants.COVERAGE_TYPE_SYSTEM;
@@ -325,10 +324,6 @@ public class AdjustBundleIdentifiers {
 					keep.add(cd);
 				}
 				type.setCoding(keep);
-			} else {
-				type.addCoding(
-						new Coding().setSystem(FHIRConstants.COVERAGE_TYPE_SYSTEM)
-								.setCode("KVG").setDisplay(getCoverageDisplay("KVG"))); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -344,18 +339,30 @@ public class AdjustBundleIdentifiers {
 			}
 		}
 
+		if (coverage.hasDependent()) {
+			coverage.setDependent(null);
+		}
+
 		if (coverage.hasText())
 			coverage.setText(null);
 		coverage.getMeta().addProfile(FHIRConstants.PROFILE_COVERAGE);
 	}
 
-	private static String getCoverageDisplay(String code) {
+
+	public static String getCoverageDisplay(String code) {
+		if (code == null) {
+			return "Other"; //$NON-NLS-1$
+		}
+
 		return switch (code) {
 		case "KVG" -> "According to KVG"; //$NON-NLS-1$ //$NON-NLS-2$
-		case "VVG" -> "According to VVG"; //$NON-NLS-1$ //$NON-NLS-2$
 		case "UVG" -> "According to UVG"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "VVG" -> "According to VVG"; //$NON-NLS-1$ //$NON-NLS-2$
 		case "IVG" -> "According to IVG"; //$NON-NLS-1$ //$NON-NLS-2$
-		default -> "Insurance";
+		case "MVG" -> "According to MVG"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "Self" -> "Self"; //$NON-NLS-1$ //$NON-NLS-2$
+		case "Other" -> "Other"; //$NON-NLS-1$ //$NON-NLS-2$
+		default -> "Other";
 		};
 	}
 }

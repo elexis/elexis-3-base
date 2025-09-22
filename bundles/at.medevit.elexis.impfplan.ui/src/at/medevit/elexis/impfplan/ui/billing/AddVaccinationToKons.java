@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Display;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.CodeElementServiceHolder;
-import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
@@ -32,7 +31,6 @@ import ch.elexis.core.ui.dialogs.SelectOrCreateOpenKonsDialog;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
-import ch.elexis.data.Patient;
 
 public class AddVaccinationToKons {
 	private static final String TARMED_5MIN_TARIF = "00.0010"; //$NON-NLS-1$
@@ -135,12 +133,10 @@ public class AddVaccinationToKons {
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						SelectOrCreateOpenKonsDialog dialog = new SelectOrCreateOpenKonsDialog(
-								Patient.load(patient.getId()),
+						SelectOrCreateOpenKonsDialog dialog = new SelectOrCreateOpenKonsDialog(patient,
 								"Konsultation für die automatische Verrechnung auswählen.");
 						if (dialog.open() == Dialog.OK) {
-							actEncounter = CoreModelServiceHolder.get()
-									.load(dialog.getKonsultation().getId(), IEncounter.class).orElse(null);
+							actEncounter = dialog.getKonsultation();
 						}
 					}
 				});

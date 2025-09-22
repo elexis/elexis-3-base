@@ -356,6 +356,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 					IAppointment appointment = (IAppointment) sel.getFirstElement();
 					if (appointmentService.getType(AppointmentType.FREE).equals(appointment.getType())) {
 						appointment.setSchedule(agenda.getActResource());
+						appointment.setSubjectOrPatient(StringUtils.EMPTY);
 						appointment.setType(appointmentService.getType(AppointmentType.BOOKED));
 						appointment.setState(appointmentService.getState(AppointmentState.EMPTY));
 						appointment.setCreated(Integer.toString(TimeTool.getTimeInSeconds() / 60));

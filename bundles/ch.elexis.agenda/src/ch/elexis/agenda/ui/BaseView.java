@@ -24,6 +24,7 @@ import java.util.TimerTask;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IStatus;
@@ -268,6 +269,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 				if (appointment != null) {
 					if (appointmentService.getType(AppointmentType.FREE).equals(appointment.getType())) {
 						appointment.setSchedule(agenda.getActResource());
+						appointment.setSubjectOrPatient(StringUtils.EMPTY);
 						appointment.setType(appointmentService.getType(AppointmentType.BOOKED));
 						appointment.setState(appointmentService.getState(AppointmentState.EMPTY));
 						appointment.setCreated(Integer.toString(TimeTool.getTimeInSeconds() / 60));

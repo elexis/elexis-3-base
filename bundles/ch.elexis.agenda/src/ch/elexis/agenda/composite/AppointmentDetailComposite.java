@@ -901,6 +901,11 @@ public class AppointmentDetailComposite extends Composite {
 		if (kombiTermineList.isEmpty()) {
 			return;
 		}
+
+		if (!AppointmentExtensionHandler.getLinkedAppointments(appointment).isEmpty()) {
+			return;
+		}
+
 		AppointmentExtensionHandler.setMainAppointmentId(appointment, appointment.getId());
 		List<String> kombiTerminIds = new ArrayList<>();
 		for (String kombiTermin : kombiTermineList) {

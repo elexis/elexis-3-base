@@ -170,7 +170,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		gPathForDocs.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		gPathForDocs.setLayout(new FillLayout());
 
-		bStoreFSGlobal = new BooleanFieldEditor(STOREFSGLOBAL, Messages.PreferencePage_0,
+		bStoreFSGlobal = new BooleanFieldEditor(STOREFSGLOBAL, "Dateisystem Einstellungen global speichern",
 				gPathForDocs) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
@@ -204,9 +204,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addField(dfStorePath);
 
 		Label label = new Label(gAllOmnivorePrefs, SWT.NONE);
-		label.setText(Messages.PreferencePage_2);
+		label.setText("Datenbankeinträge auf Filesystem auslagern");
 		outsource = new Button(gAllOmnivorePrefs, SWT.PUSH);
-		outsource.setText(Messages.PreferencePage_3);
+		outsource.setText("Auslagern");
 		outsource.setEnabled(false);
 		outsource.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -215,11 +215,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				job.execute(getShell());
 			}
 		});
-
-		if (!StringUtils.isEmpty(debugPath)) {
-			outsource.setEnabled(false);
-			SWTHelper.createDemoInfoLabel(outsource.getParent(), Messages.Omnivore_demo_outsource_disabled);
-		}
 
 		Group gPathForMaxChars = new Group(gGeneralOptions, SWT.NONE);
 		gPathForMaxChars.setLayout(new FillLayout());
@@ -385,7 +380,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		enableOutsourceButton();
 
 		bAutomaticBilling = new BooleanFieldEditor(PreferenceConstants.AUTO_BILLING,
-				Messages.PreferencePage_4, gAllOmnivorePrefs);
+				"Automatische Verrechnung (bei Drag and Drop)", gAllOmnivorePrefs);
 		addField(bAutomaticBilling);
 
 		Composite billingBlockComposite = new Composite(gAllOmnivorePrefs, SWT.NONE);
@@ -463,11 +458,11 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addSeparator();
 
 		btnSaveColumnWidths = new Button(getFieldEditorParent(), SWT.CHECK);
-		btnSaveColumnWidths.setText(Messages.PreferencePage_6);
+		btnSaveColumnWidths.setText("Spaltenbreite speichern (für Ihren Benutzer)");
 		btnSaveColumnWidths.setSelection(ConfigServiceHolder.getUser(PreferencePage.SAVE_COLUM_WIDTH, false));
 
 		btnSaveSortDirection = new Button(getFieldEditorParent(), SWT.CHECK);
-		btnSaveSortDirection.setText(Messages.PreferencePage_7);
+		btnSaveSortDirection.setText("Sortierung speichern (für Ihren Benutzer)");
 		btnSaveSortDirection.setSelection(ConfigServiceHolder.getUser(PreferencePage.SAVE_SORT_DIRECTION, false));
 
 		return c;

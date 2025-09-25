@@ -55,11 +55,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.omnivore.PreferenceConstants;
@@ -168,7 +170,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		gPathForDocs.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		gPathForDocs.setLayout(new FillLayout());
 
-		bStoreFSGlobal = new BooleanFieldEditor(STOREFSGLOBAL, "Dateisystem Einstellungen global speichern",
+		bStoreFSGlobal = new BooleanFieldEditor(STOREFSGLOBAL, Messages.PreferencePage_0,
 				gPathForDocs) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
@@ -192,13 +194,19 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		dfStorePath = new URIFieldEditor(BASEPATH, ch.elexis.omnivore.data.Messages.Preferences_pathForDocs,
 				gPathForDocs);
 		Preferences.getBasepath();
+		String debugPath = System.getProperty("ch.elexis.documents"); //$NON-NLS-1$
+		if (!StringUtils.isEmpty(debugPath)) {
+			dfStorePath.setEnabled(false, gPathForDocs);
+			SWTHelper.createDemoInfoLabel(gPathForDocs, Messages.Texterstellung_demo_browse_disabled);
+		}
+
 		dfStorePath.setEmptyStringAllowed(true);
 		addField(dfStorePath);
 
 		Label label = new Label(gAllOmnivorePrefs, SWT.NONE);
-		label.setText("Datenbankeinträge auf Filesystem auslagern");
+		label.setText(Messages.PreferencePage_2);
 		outsource = new Button(gAllOmnivorePrefs, SWT.PUSH);
-		outsource.setText("Auslagern");
+		outsource.setText(Messages.PreferencePage_3);
 		outsource.setEnabled(false);
 		outsource.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -207,6 +215,11 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				job.execute(getShell());
 			}
 		});
+
+		if (!StringUtils.isEmpty(debugPath)) {
+			outsource.setEnabled(false);
+			SWTHelper.createDemoInfoLabel(outsource.getParent(), Messages.Omnivore_demo_outsource_disabled);
+		}
 
 		Group gPathForMaxChars = new Group(gGeneralOptions, SWT.NONE);
 		gPathForMaxChars.setLayout(new FillLayout());
@@ -372,7 +385,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		enableOutsourceButton();
 
 		bAutomaticBilling = new BooleanFieldEditor(PreferenceConstants.AUTO_BILLING,
-				"Automatische Verrechnung (bei Drag and Drop)", gAllOmnivorePrefs);
+				Messages.PreferencePage_4, gAllOmnivorePrefs);
 		addField(bAutomaticBilling);
 
 		Composite billingBlockComposite = new Composite(gAllOmnivorePrefs, SWT.NONE);
@@ -414,8 +427,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	}
 
 	private void enableOutsourceButton() {
-		if (storeFs && basePathSet)
+		if (storeFs && basePathSet) {
+			String debugPath = System.getProperty("ch.elexis.documents"); //$NON-NLS-1$
+			if (!StringUtils.isEmpty(debugPath)) {
+				outsource.setEnabled(false);
+			}else {
 			outsource.setEnabled(true);
+		}
+	}
 		else
 			outsource.setEnabled(false);
 	}
@@ -444,11 +463,11 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addSeparator();
 
 		btnSaveColumnWidths = new Button(getFieldEditorParent(), SWT.CHECK);
-		btnSaveColumnWidths.setText("Spaltenbreite speichern (für Ihren Benutzer)");
+		btnSaveColumnWidths.setText(Messages.PreferencePage_6);
 		btnSaveColumnWidths.setSelection(ConfigServiceHolder.getUser(PreferencePage.SAVE_COLUM_WIDTH, false));
 
 		btnSaveSortDirection = new Button(getFieldEditorParent(), SWT.CHECK);
-		btnSaveSortDirection.setText("Sortierung speichern (für Ihren Benutzer)");
+		btnSaveSortDirection.setText(Messages.PreferencePage_7);
 		btnSaveSortDirection.setSelection(ConfigServiceHolder.getUser(PreferencePage.SAVE_SORT_DIRECTION, false));
 
 		return c;

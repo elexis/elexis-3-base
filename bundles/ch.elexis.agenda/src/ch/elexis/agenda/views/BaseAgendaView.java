@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -34,6 +35,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -313,6 +315,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 			if ((sel == null) || sel.isEmpty()) {
 				ContextServiceHolder.get().removeTyped(IAppointment.class);
+				getSite().getService(ESelectionService.class).setSelection(StructuredSelection.EMPTY);
 			} else {
 				Object o = sel.getFirstElement();
 				if (o instanceof IAppointment) {

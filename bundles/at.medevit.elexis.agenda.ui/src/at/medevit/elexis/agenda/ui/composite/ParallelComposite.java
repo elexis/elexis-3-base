@@ -48,6 +48,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import jakarta.inject.Inject;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
@@ -241,6 +242,14 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 			((ISelectionChangedListener) listener).selectionChanged(new SelectionChangedEvent(this, selection));
 		}
 		selectionService.setSelection(currentSelection);
+		if (selection instanceof StructuredSelection structured && !structured.isEmpty()) {
+			Object element = structured.getFirstElement();
+			if (element instanceof IAppointment appointment) {
+				ContextServiceHolder.get().setTyped(appointment);
+			}
+		} else {
+			ContextServiceHolder.get().removeTyped(IAppointment.class);
+		}
 	}
 
 	@Override

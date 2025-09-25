@@ -228,6 +228,14 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 			((ISelectionChangedListener) listener).selectionChanged(new SelectionChangedEvent(this, selection));
 		}
 		selectionService.setSelection(currentSelection);
+		if (selection instanceof StructuredSelection structured && !structured.isEmpty()) {
+			Object element = structured.getFirstElement();
+			if (element instanceof IAppointment appointment) {
+				ch.elexis.core.services.holder.ContextServiceHolder.get().setTyped(appointment);
+			}
+		} else {
+			ch.elexis.core.services.holder.ContextServiceHolder.get().removeTyped(IAppointment.class);
+		}
 	}
 
 	@Override

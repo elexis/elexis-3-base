@@ -24,7 +24,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -34,9 +33,11 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
@@ -52,7 +53,7 @@ import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 public class AgendaActions {
 
 	/** delete an appointment */
-	private static LockRequestingRestrictedAction<Termin> delTerminAction;
+	private static LockRequestingRestrictedAction<IAppointment> delTerminAction;
 	/** Display or change the state of an appointment */
 	private static IAction terminStatusAction;
 
@@ -79,7 +80,7 @@ public class AgendaActions {
 	}
 
 	private static void makeActions() {
-		delTerminAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.DELETE),
+		delTerminAction = new LockRequestingRestrictedAction<IAppointment>(EvACE.of(IAppointment.class, Right.DELETE),
 				Messages.AgendaActions_deleteDate) {
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
@@ -87,19 +88,20 @@ public class AgendaActions {
 			}
 
 			@Override
-			public Termin getTargetedObject() {
-				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			public IAppointment getTargetedObject() {
+			    return ContextServiceHolder.get()
+						.getTyped(IAppointment.class)
+			        .orElse(null);
 			}
 
 			@Override
-			public void doRun(Termin element) {
+			public void doRun(IAppointment element) {
 				ECommandService cmdSvc = PlatformUI.getWorkbench().getService(ECommandService.class);
 				EHandlerService hdlSvc = PlatformUI.getWorkbench().getService(EHandlerService.class);
 				ParameterizedCommand cmd = cmdSvc.createCommand("ch.elexis.agenda.commands.delete", //$NON-NLS-1$
 						java.util.Collections.emptyMap());
 				hdlSvc.executeHandler(cmd);
-
-				ElexisEventDispatcher.reload(Termin.class);
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		};
 
@@ -141,24 +143,20 @@ public class AgendaActions {
 					private void addShowListener() {
 						if (mine != null) {
 							removeShowListener();
-							showListener = new Listener() {
-								@Override
-								public void handleEvent(Event event) {
-									Menu menu = (Menu) event.widget;
-									Termin actTermin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-									if (actTermin != null) {
-										String actTerminStatus = actTermin.getStatus();
-										if (actTerminStatus != null) {
-											for (MenuItem menuItem : menu.getItems()) {
-												menuItem.setSelection(
-														StringUtils.equals(actTerminStatus, menuItem.getText()));
-											}
+							showListener = event -> {
+								Menu menu = (Menu) event.widget;
+								ContextServiceHolder.get().getTyped(IAppointment.class).ifPresent(appt -> {
+									String actStatus = appt.getState();
+									if (actStatus != null) {
+										for (MenuItem menuItem : menu.getItems()) {
+											menuItem.setSelection(StringUtils.equals(actStatus, menuItem.getText()));
 										}
 									}
-								}
+								});
 							};
 							mine.addListener(SWT.Show, showListener);
 						}
+
 					}
 				});
 			}
@@ -170,22 +168,25 @@ public class AgendaActions {
 					it.addSelectionListener(new SelectionAdapter() {
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							Termin act = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-							AcquireLockBlockingUi.aquireAndRun(act, new ILockHandler() {
-								@Override
-								public void lockFailed() {
-									// do nothing
+							ContextServiceHolder.get().getTyped(IAppointment.class).ifPresent(appt -> {
+								AcquireLockBlockingUi.aquireAndRun(appt, new ILockHandler() {
+									@Override
+									public void lockFailed() {
+										/* nichts */
+									}
 
-								}
-
-								@Override
-								public void lockAcquired() {
-									MenuItem it = (MenuItem) e.getSource();
-									act.setStatus(it.getText());
-									ElexisEventDispatcher.reload(Termin.class);
-								}
+									@Override
+									public void lockAcquired() {
+										MenuItem it = (MenuItem) e.getSource();
+										appt.setState(it.getText());
+										CoreModelServiceHolder.get().save(appt);
+										ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
+												IAppointment.class);
+									}
+								});
 							});
 						}
+
 					});
 				}
 			}

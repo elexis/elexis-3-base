@@ -181,6 +181,10 @@ public class DeleteHandler {
 	}
 
 	private Optional<IPeriod> getSelectedPeriod() {
+		Optional<IAppointment> contextAppointment = contextService.getTyped(IAppointment.class);
+		if (contextAppointment.isPresent()) {
+			return contextAppointment.map(a -> (IPeriod) a);
+		}
 		Object activeSelection = selectionService.getSelection();
 		if (activeSelection instanceof StructuredSelection && !((StructuredSelection) activeSelection).isEmpty()) {
 			Object element = ((StructuredSelection) activeSelection).getFirstElement();
@@ -188,6 +192,6 @@ public class DeleteHandler {
 				return Optional.of((IPeriod) element);
 			}
 		}
-		return contextService.getTyped(IAppointment.class).map(a -> (IPeriod) a);
+		return Optional.empty();
 	}
 }

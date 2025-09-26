@@ -1,7 +1,10 @@
 package ch.elexis.omnivore.model.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -11,15 +14,21 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.common.ElexisEvent;
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.model.adapter.AbstractIdModelAdapter;
 import ch.elexis.core.jpa.model.adapter.AbstractModelService;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IStoreToStringContribution;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.utils.CoreUtil;
+import ch.elexis.omnivore.PreferenceConstants;
 import jakarta.persistence.EntityManager;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.omnivore.data.model")
@@ -49,6 +58,9 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 	@Activate
 	public void activate() {
 		adapterFactory = OmnivoreModelAdapterFactory.getInstance();
+		ContextServiceHolder.runIfActiveUserAvailable(() -> {
+			initDebugPaths();
+		});
 	}
 
 	@Override
@@ -74,7 +86,6 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 		if (storeToString.startsWith("ch.elexis.omnivore.data")) { //$NON-NLS-1$
 			String[] split = splitIntoTypeAndId(storeToString);
 
-			// map string to classname
 			String className = split[0];
 			String id = split[1];
 			Class<? extends EntityWithId> clazz = ElexisTypeMap.get(className);
@@ -135,5 +146,43 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 	@Override
 	protected IModelService getCoreModelService() {
 		return null;
+	}
+
+	private void initDebugPaths() {
+		String debugDocuments = System.getProperty("ch.elexis.documents"); //$NON-NLS-1$
+		if (StringUtils.isNotEmpty(debugDocuments)) {
+			try {
+				File f = new File(debugDocuments).getCanonicalFile();
+				if (!f.exists()) {
+					f.mkdirs();
+				}
+				String uri = f.toURI().toString();
+				LoggerFactory.getLogger(getClass())
+						.info("Omnivore basepath overridden via -Dch.elexis.documents: " + uri); //$NON-NLS-1$
+				ConfigServiceHolder.get().set(PreferenceConstants.BASEPATH, uri);
+			} catch (IOException e) {
+				LoggerFactory.getLogger(getClass()).error("Could not resolve debug path for Omnivore", e); //$NON-NLS-1$
+			}
+		}
+
+		String debugBrief = System.getProperty("ch.elexis.brief"); //$NON-NLS-1$
+		if (StringUtils.isNotEmpty(debugBrief)) {
+			try {
+				File f = new File(debugBrief).getCanonicalFile();
+				if (!f.exists()) {
+					f.mkdirs();
+				}
+				String uri = f.toPath().toUri().toString();
+				LoggerFactory.getLogger(getClass())
+						.info("Letter creation basepath overridden via -Dch.elexis.brief: " + uri); //$NON-NLS-1$
+				CoreUtil.OS os = CoreUtil.getOperatingSystemType();
+				String osSpecificDebugKey = PreferencesUtil.getOsSpecificPreferenceName(os,
+						Preferences.P_TEXT_EXTERN_FILE_PATH);
+				ConfigServiceHolder.get().set(osSpecificDebugKey, uri);
+
+			} catch (IOException e) {
+				LoggerFactory.getLogger(getClass()).error("Could not resolve debug path for Texterstellung", e); //$NON-NLS-1$
+			}
+		}
 	}
 }

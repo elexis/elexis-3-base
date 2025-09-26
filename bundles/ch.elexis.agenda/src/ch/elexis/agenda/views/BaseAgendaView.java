@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -217,6 +218,22 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 		Menu cMenu = menu.createContextMenu(tv.getControl());
 		tv.getControl().setMenu(cMenu);
+		tv.getControl().addListener(SWT.MenuDetect, e -> {
+			IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
+			if (sel != null && !sel.isEmpty()) {
+				Object o = sel.getFirstElement();
+				if (o instanceof IAppointment appointment) {
+					if (!appointmentService.getType(AppointmentType.FREE).equals(appointment.getType())) {
+						ContextServiceHolder.get().setTyped(appointment);
+						getSite().getService(ESelectionService.class)
+								.setSelection(new StructuredSelection(appointment));
+					}
+				}
+			} else {
+				ContextServiceHolder.get().removeTyped(IAppointment.class);
+				getSite().getService(ESelectionService.class).setSelection(StructuredSelection.EMPTY);
+			}
+		});
 
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
@@ -325,6 +342,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 						ContextServiceHolder.get().removeTyped(IAppointment.class);
 					} else {
 						setAppointment(appointment);
+						getSite().getService(ESelectionService.class)
+								.setSelection(new StructuredSelection(appointment));
 					}
 				}
 			}

@@ -1,10 +1,8 @@
 package ch.elexis.omnivore.model.service;
 
-import java.io.File;
-import java.io.IOException;
+
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -14,19 +12,15 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.common.ElexisEvent;
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.model.adapter.AbstractIdModelAdapter;
 import ch.elexis.core.jpa.model.adapter.AbstractModelService;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IStoreToStringContribution;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.utils.CoreUtil;
 import jakarta.persistence.EntityManager;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.omnivore.data.model")

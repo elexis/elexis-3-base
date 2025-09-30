@@ -23,5 +23,4 @@ Service-Component: OSGI-INF/ch.elexis.omnivore.ui.service.OmnivoreModelServiceHo
  OSGI-INF/ch.elexis.omnivore.ui.inbox.DocHandleInboxService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.io;version="2.5.0",
- org.apache.commons.lang3;version="2.6.0",
- org.eclipse.wb.swt
+ org.apache.commons.lang3;version="2.6.0"

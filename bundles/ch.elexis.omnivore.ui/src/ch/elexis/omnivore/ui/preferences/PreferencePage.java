@@ -195,7 +195,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				gPathForDocs);
 		Preferences.getBasepath();
 		String debugPath = System.getProperty("ch.elexis.documents"); //$NON-NLS-1$
-		if (!StringUtils.isEmpty(debugPath)) {
+		if (StringUtils.isNotEmpty(debugPath)) {
 			dfStorePath.setEnabled(false, gPathForDocs);
 			SWTHelper.createDemoInfoLabel(gPathForDocs, Messages.Texterstellung_demo_browse_disabled);
 		}
@@ -424,7 +424,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	private void enableOutsourceButton() {
 		if (storeFs && basePathSet) {
 			String debugPath = System.getProperty("ch.elexis.documents"); //$NON-NLS-1$
-			if (!StringUtils.isEmpty(debugPath)) {
+			if (StringUtils.isNotEmpty(debugPath)) {
 				outsource.setEnabled(false);
 			}else {
 			outsource.setEnabled(true);

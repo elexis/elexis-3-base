@@ -1,0 +1,140 @@
+//
+// Diese Datei wurde mit der Eclipse Implementation of JAXB, v3.0.2 generiert 
+// Siehe https://eclipse-ee4j.github.io/jaxb-ri 
+// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+// Generiert: 2025.10.01 um 10:54:57 AM CEST 
+//
+
+
+package ch.fd.invoice500.request;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlValue;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+
+/**
+ * <p>Java-Klasse für diagnosisType complex type.
+ * 
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * 
+ * <pre>
+ * &lt;complexType name="diagnosisType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://www.forum-datenaustausch.ch/invoice&gt;stringType0_350"&gt;
+ *       &lt;attribute name="type" default="by_contract"&gt;
+ *         &lt;simpleType&gt;
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN"&gt;
+ *             &lt;enumeration value="ICD"/&gt;
+ *             &lt;enumeration value="cantonal"/&gt;
+ *             &lt;enumeration value="DRG"/&gt;
+ *             &lt;enumeration value="by_contract"/&gt;
+ *             &lt;enumeration value="freetext"/&gt;
+ *             &lt;enumeration value="birthdefect"/&gt;
+ *             &lt;enumeration value="ICPC"/&gt;
+ *           &lt;/restriction&gt;
+ *         &lt;/simpleType&gt;
+ *       &lt;/attribute&gt;
+ *       &lt;attribute name="code" type="{http://www.forum-datenaustausch.ch/invoice}stringType1_12" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "diagnosisType", propOrder = {
+    "value"
+})
+public class DiagnosisType {
+
+    @XmlValue
+    protected String value;
+    @XmlAttribute(name = "type")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    protected String type;
+    @XmlAttribute(name = "code")
+    protected String code;
+
+    /**
+     * Ruft den Wert der value-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Legt den Wert der value-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /**
+     * Ruft den Wert der type-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        if (type == null) {
+            return "by_contract";
+        } else {
+            return type;
+        }
+    }
+
+    /**
+     * Legt den Wert der type-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
+    }
+
+    /**
+     * Ruft den Wert der code-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Legt den Wert der code-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCode(String value) {
+        this.code = value;
+    }
+
+}

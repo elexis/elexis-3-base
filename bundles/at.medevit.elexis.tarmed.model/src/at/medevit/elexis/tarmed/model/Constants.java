@@ -11,4 +11,6 @@ public class Constants {
 	public static final String INVOICE_RESPONSE_400_LOCATION = "http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceResponse_400.xsd"; //$NON-NLS-1$
 	public static final String INVOICE_REQUEST_450_LOCATION = "http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_450.xsd"; //$NON-NLS-1$
 	public static final String INVOICE_RESPONSE_450_LOCATION = "http://www.forum-datenaustausch.ch/invoice generalInvoiceResponse_450.xsd"; //$NON-NLS-1$
+	public static final String INVOICE_REQUEST_500_LOCATION = "http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_500.xsd"; //$NON-NLS-1$
+	public static final String INVOICE_RESPONSE_500_LOCATION = "http://www.forum-datenaustausch.ch/invoice generalInvoiceResponse_500.xsd"; //$NON-NLS-1$
 }

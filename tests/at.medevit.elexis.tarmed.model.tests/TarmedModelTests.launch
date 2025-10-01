@@ -53,9 +53,9 @@
         <setEntry value="ch.elexis.core.persistence.feature:default"/>
     </setAttribute>
     <setAttribute key="selected_target_bundles">
-        <setEntry value="ch.qos.logback.classic@default:default"/>
+        <setEntry value="ch.qos.logback.classic@1:true"/>
         <setEntry value="ch.qos.logback.core@2:true"/>
-        <setEntry value="com.google.gson@default:default"/>
+        <setEntry value="com.google.gson*2.12.1@default:default"/>
         <setEntry value="com.h2database@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.mysql.cj@default:default"/>

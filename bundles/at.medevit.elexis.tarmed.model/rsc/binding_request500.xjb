@@ -1,0 +1,14 @@
+<jxb:bindings 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jxb="https://jakarta.ee/xml/ns/jaxb"
+    jxb:version="3.0">
+
+    <jxb:bindings schemaLocation="./xenc-schema.xsd">
+            <jxb:bindings node="//xs:complexType[@name='ReferenceType']">
+                <jxb:class name="XReferenceType"/>
+            </jxb:bindings>
+            <jxb:bindings node="//xs:complexType[@name='TransformsType']">
+            	<jxb:class name="XTransformsType"/>
+            </jxb:bindings>
+    </jxb:bindings>
+</jxb:bindings>

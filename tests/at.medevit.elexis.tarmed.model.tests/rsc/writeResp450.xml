@@ -6,12 +6,12 @@
         </transport>
     </processing>
     <payload storno="false" response_timestamp="1262874342">
-        <invoice request_timestamp="1255521474" request_date="2015-02-21T13:30:52.713+01:00" request_id="001163000564"/>
+        <invoice request_timestamp="1255521474" request_date="2015-02-21T13:30:54.342+01:00" request_id="001163000564"/>
         <body>
             <biller ean_party="2011234567890"/>
             <provider ean_party="7634567890111"/>
             <insurance ean_party="2034567890222"/>
-            <patient gender="female" birthdate="1980-05-01T00:00:00.000+01:00" ssn="7561234567890">
+            <patient gender="female" birthdate="1980-05-01T00:00:00.000+02:00" ssn="7561234567890">
                 <person title="Dr.">
                     <familyname>Armeswesen</familyname>
                     <givenname>Edeltraud</givenname>

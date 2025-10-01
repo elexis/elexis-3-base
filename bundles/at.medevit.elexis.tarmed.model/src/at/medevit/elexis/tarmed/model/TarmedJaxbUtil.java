@@ -82,6 +82,25 @@ public class TarmedJaxbUtil {
 	}
 
 	/**
+	 * creates an invoice request xml (XML5.0 RequestType)
+	 *
+	 * @param request   RequestType to write to the xml
+	 * @param outStream of the file to write to
+	 * @return true if success, false if an exception occurred
+	 */
+	public static boolean marshallInvoiceRequest(ch.fd.invoice500.request.RequestType request, OutputStream outStream) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(ch.fd.invoice500.request.RequestType.class);
+			Marshaller marshaller = initMarshaller(jaxbContext, Constants.INVOICE_REQUEST_500_LOCATION);
+			marshaller.marshal(request, outStream);
+			return true;
+		} catch (JAXBException e) {
+			log.error("Marshalling generalInvoiceRequest_500 failed", e); //$NON-NLS-1$
+			return false;
+		}
+	}
+
+	/**
 	 * creates an invoice response xml (XML4.0 ResponseType)
 	 *
 	 * @param response  ResponeType object to write to the xml
@@ -136,6 +155,26 @@ public class TarmedJaxbUtil {
 			return true;
 		} catch (JAXBException e) {
 			log.error("Marshalling generalInvoiceResponse_450 failed", e); //$NON-NLS-1$
+			return false;
+		}
+	}
+
+	/**
+	 * creates an invoice response xml (XML5.0 ResponseType)
+	 *
+	 * @param response  ResponeType object to write to the xml
+	 * @param outStream of the file to write to
+	 * @return true if success, false if an exception occurred
+	 */
+	public static boolean marshallInvoiceResponse(ch.fd.invoice500.response.ResponseType response,
+			OutputStream outStream) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(ch.fd.invoice500.response.ResponseType.class);
+			Marshaller marshaller = initMarshaller(jaxbContext, Constants.INVOICE_RESPONSE_450_LOCATION);
+			marshaller.marshal(response, outStream);
+			return true;
+		} catch (JAXBException e) {
+			log.error("Marshalling generalInvoiceResponse_500 failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -244,6 +283,33 @@ public class TarmedJaxbUtil {
 	}
 
 	/**
+	 * loads elements from a XML5.0 request file into java objects
+	 *
+	 * @param inStream of an inovice response file (based on
+	 *                 {@link www.forum-datenaustausch.ch/invoice
+	 *                 generalInvoiceRequest_500.xsd}
+	 * @return {@link RequestType} request root element containing the child objects
+	 *         or null if unable to resolve
+	 */
+	@SuppressWarnings("unchecked")
+	public static ch.fd.invoice500.request.RequestType unmarshalInvoiceRequest500(InputStream inStream) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(ch.fd.invoice500.request.RequestType.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			JAXBElement<Object> jaxElement = (JAXBElement<Object>) unmarshaller.unmarshal(inStream);
+
+			if (jaxElement.getValue() instanceof ch.fd.invoice500.request.RequestType) {
+				ch.fd.invoice500.request.RequestType request = (ch.fd.invoice500.request.RequestType) jaxElement
+						.getValue();
+				return request;
+			}
+		} catch (JAXBException e) {
+			log.error("Unmarshalling generalInvoiceRequest_500 failed", e); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	/**
 	 * loads elements from a XML4.0 response file into java objects
 	 *
 	 * @param inStream of an invoice response file (base on
@@ -321,6 +387,33 @@ public class TarmedJaxbUtil {
 		return null;
 	}
 
+	/**
+	 * loads elements from a XML5.0 response file into java objects
+	 *
+	 * @param inStream of an invoce response file (base on
+	 *                 {@link www.forum-datenaustausch.ch/invoice
+	 *                 generalInvoiceResponse_500.xsd})
+	 * @return {@link ResponseType} response root element containing the child
+	 *         objects or null if unable to resolve
+	 */
+	@SuppressWarnings("unchecked")
+	public static ch.fd.invoice500.response.ResponseType unmarshalInvoiceResponse500(InputStream inStream) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(ch.fd.invoice500.response.ResponseType.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			JAXBElement<Object> jaxElement = (JAXBElement<Object>) unmarshaller.unmarshal(inStream);
+
+			if (jaxElement.getValue() instanceof ch.fd.invoice500.response.ResponseType) {
+				ch.fd.invoice500.response.ResponseType response = (ch.fd.invoice500.response.ResponseType) jaxElement
+						.getValue();
+				return response;
+			}
+		} catch (JAXBException e) {
+			log.error("Unmarshalling generalInvoiceResponse_500 failed", e); //$NON-NLS-1$
+		}
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static RequestType unmarshalInvoiceRequest440(org.jdom2.Document jdomDoc) {
 		try {
@@ -364,6 +457,28 @@ public class TarmedJaxbUtil {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static ch.fd.invoice500.request.RequestType unmarshalInvoiceRequest500(org.jdom2.Document jdomDoc) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(ch.fd.invoice500.request.RequestType.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+			DOMOutputter outputter = new DOMOutputter();
+			Document document = outputter.output(jdomDoc);
+			JAXBElement<Object> jaxElement = (JAXBElement<Object>) unmarshaller.unmarshal(document);
+
+			if (jaxElement.getValue() instanceof ch.fd.invoice500.request.RequestType) {
+				ch.fd.invoice500.request.RequestType request = (ch.fd.invoice500.request.RequestType) jaxElement
+						.getValue();
+				return request;
+			}
+
+		} catch (JDOMException | JAXBException e) {
+			log.error("Unmarshalling generalInvoiceRequest_500 from jDom document failed", e); //$NON-NLS-1$
+		}
+		return null;
+	}
+
 	public static String getXMLVersion(org.jdom2.Document jdomDoc) {
 		Element root = jdomDoc.getRootElement();
 		String location = root.getAttributeValue(Constants.SCHEMA_LOCATION,
@@ -379,6 +494,9 @@ public class TarmedJaxbUtil {
 			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_450_LOCATION)
 					|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_450_LOCATION)) {
 				return "4.5"; //$NON-NLS-1$
+			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_500_LOCATION)
+					|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_500_LOCATION)) {
+				return "5.0"; //$NON-NLS-1$
 			}
 		}
 		return location;

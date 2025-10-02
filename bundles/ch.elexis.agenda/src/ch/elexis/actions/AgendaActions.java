@@ -180,6 +180,7 @@ public class AgendaActions {
 										CoreModelServiceHolder.get().save(appt);
 										ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
 												IAppointment.class);
+										ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appt);
 									}
 								});
 							});

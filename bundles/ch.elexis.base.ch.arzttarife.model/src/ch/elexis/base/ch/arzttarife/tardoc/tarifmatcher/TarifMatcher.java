@@ -70,7 +70,7 @@ public class TarifMatcher<T extends IBillable> {
 		if (!result.errors.isEmpty()) {
 			if (result.errors.get(0).type == CasemasterErrorType.MISSING_OR_INVALID_DIAGNOSIS) {
 				return new Result<IBilled>(Result.SEVERITY.WARNING, KOMBINATION,
-						"Abrechnung einer Trigger Position " + billed.getCode() + " ohne ICD Diagnose nicht möglich.",
+						"Abrechnung einer Trigger Position " + billed.getCode() + " ohne ICD Diagnose nicht erlaubt.",
 						null, false);
 			}
 		}
@@ -148,21 +148,20 @@ public class TarifMatcher<T extends IBillable> {
 			if (mapperLogEntry.message != null && mapperLogEntry.message.contains("side")) {
 				return "Bei der Leistung  " +  mapperLogEntry.tardocCode + "  muss die Seite angegeben werden.";
 			}
-			return "Die Leistung " +  mapperLogEntry.tardocCode + " ist nicht möglich.";
+			return "Die Leistung " + mapperLogEntry.tardocCode + " ist nicht erlaubt.";
 		case TARDOC_VALIDATION_UPDATE:
 			if (StringUtils.isNotBlank(mapperLogEntry.message)) {
-				return "Die Leistung " + mapperLogEntry.tardocCode + " ist nicht möglich.\n"
+				return "Die Leistung " + mapperLogEntry.tardocCode + " muss angepasst werden.\n"
 						+ getMessage(mapperLogEntry);
 			}
-			return "Die Leistung ist nicht möglich.";
+			return "Die Leistung muss angepasst werden.";
 		case LKAAT_VALIDATION_TRIGGER:
 			return "Für die Trigger Position " + mapperLogEntry.tardocCode
 					+ " konnte keine passende Pauschale abgerechnet werden.";
 		case LKAAT_VALIDATION_NOT_FOUND:
-			return "Die Position ist neben der Pauschale "
-					+ mapperLogEntry.serviceCode + " nicht möglich.";
+			return "Die Position konnte nich im Katalog gefunden werden.";
 		case LKAAT_VALIDATION_DUPLICATE:
-			return "Die Position ist wurde dupliziert.";
+			return "Doppelte Position (inkl. Seite) ist nicht erlaubt.";
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + mapperLogEntry.level);
 		}

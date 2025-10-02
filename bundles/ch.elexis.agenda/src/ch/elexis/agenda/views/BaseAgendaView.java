@@ -130,6 +130,14 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 		}
 	}
 
+	@Optional
+	@Inject
+	void createAppointment(@UIEventTopic(ElexisEventTopics.EVENT_CREATE) IAppointment appointment) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			tv.refresh(true);
+		}, tv);
+	}
+
 	@Inject
 	void activeUser(@Optional IUser user) {
 		Display.getDefault().asyncExec(() -> {

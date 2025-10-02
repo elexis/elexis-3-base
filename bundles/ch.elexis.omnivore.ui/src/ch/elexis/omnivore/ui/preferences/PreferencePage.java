@@ -55,15 +55,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.omnivore.PreferenceConstants;
 import ch.elexis.omnivore.data.Preferences;
+import ch.elexis.omnivore.model.util.Utils;
 import ch.elexis.omnivore.ui.jobs.OutsourceUiJob;
 
 //FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
@@ -192,6 +195,12 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		dfStorePath = new URIFieldEditor(BASEPATH, ch.elexis.omnivore.data.Messages.Preferences_pathForDocs,
 				gPathForDocs);
 		Preferences.getBasepath();
+		String debugPath = System.getProperty(Utils.DEMO_DOCUMENTS); // $NON-NLS-1$
+		if (StringUtils.isNotEmpty(debugPath)) {
+			dfStorePath.setEnabled(false, gPathForDocs);
+			SWTHelper.createDemoInfoLabel(gPathForDocs, Messages.Texterstellung_demo_browse_disabled);
+		}
+
 		dfStorePath.setEmptyStringAllowed(true);
 		addField(dfStorePath);
 
@@ -414,8 +423,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	}
 
 	private void enableOutsourceButton() {
-		if (storeFs && basePathSet)
+		if (storeFs && basePathSet) {
+			String debugPath = System.getProperty(Utils.DEMO_DOCUMENTS); // $NON-NLS-1$
+			if (StringUtils.isNotEmpty(debugPath)) {
+				outsource.setEnabled(false);
+			}else {
 			outsource.setEnabled(true);
+		}
+	}
 		else
 			outsource.setEnabled(false);
 	}

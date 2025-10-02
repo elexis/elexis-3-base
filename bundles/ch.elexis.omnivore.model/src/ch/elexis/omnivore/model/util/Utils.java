@@ -25,6 +25,8 @@ import ch.elexis.omnivore.model.service.OmnivoreModelServiceHolder;
 
 public class Utils {
 
+	public static final String DEMO_DOCUMENTS = "ch.elexis.documents"; //$NON-NLS-1$
+
 	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {
 		IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
 		query.and("category", COMPARATOR.EQUALS, dh.getTitle()); //$NON-NLS-1$

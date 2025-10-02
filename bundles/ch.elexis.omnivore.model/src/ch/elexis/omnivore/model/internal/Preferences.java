@@ -13,7 +13,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class Preferences {
 
-	private static final String DEMO_DOCUMENTS = "ch.elexis.documents"; //$NON-NLS-1$
+	public static final String DEMO_DOCUMENTS = "ch.elexis.documents"; //$NON-NLS-1$
 
 	public static boolean storeInFilesystem() {
 		if (StringUtils.isNotEmpty(System.getProperty(DEMO_DOCUMENTS))) {

@@ -1,6 +1,5 @@
 package ch.elexis.omnivore.model.service;
 
-
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Activate;
@@ -75,6 +74,7 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 		if (storeToString.startsWith("ch.elexis.omnivore.data")) { //$NON-NLS-1$
 			String[] split = splitIntoTypeAndId(storeToString);
 
+			// map string to classname
 			String className = split[0];
 			String id = split[1];
 			Class<? extends EntityWithId> clazz = ElexisTypeMap.get(className);
@@ -136,5 +136,4 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 	protected IModelService getCoreModelService() {
 		return null;
 	}
-
 }

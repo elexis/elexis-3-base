@@ -194,7 +194,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		dfStorePath = new URIFieldEditor(BASEPATH, ch.elexis.omnivore.data.Messages.Preferences_pathForDocs,
 				gPathForDocs);
 		Preferences.getBasepath();
-		String debugPath = System.getProperty("ch.elexis.documents"); //$NON-NLS-1$
+		String debugPath = System.getProperty(ch.elexis.omnivore.model.internal.Preferences.DEMO_DOCUMENTS); // $NON-NLS-1$
 		if (StringUtils.isNotEmpty(debugPath)) {
 			dfStorePath.setEnabled(false, gPathForDocs);
 			SWTHelper.createDemoInfoLabel(gPathForDocs, Messages.Texterstellung_demo_browse_disabled);
@@ -423,7 +423,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	private void enableOutsourceButton() {
 		if (storeFs && basePathSet) {
-			String debugPath = System.getProperty("ch.elexis.documents"); //$NON-NLS-1$
+			String debugPath = System.getProperty(ch.elexis.omnivore.model.internal.Preferences.DEMO_DOCUMENTS); // $NON-NLS-1$
 			if (StringUtils.isNotEmpty(debugPath)) {
 				outsource.setEnabled(false);
 			}else {

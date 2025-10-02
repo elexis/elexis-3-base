@@ -4,13 +4,21 @@ import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFS;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.omnivore.model.util.Utils;
 
 public class Preferences {
 
+
 	public static boolean storeInFilesystem() {
+		if (StringUtils.isNotEmpty(System.getProperty(Utils.DEMO_DOCUMENTS))) {
+			return true;
+		}
 		if (ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false)) {
 			return ConfigServiceHolder.getGlobal(STOREFS, false);
 		} else {
@@ -19,6 +27,19 @@ public class Preferences {
 	}
 
 	public static String getBasepath() {
+		String demoPath = System.getProperty(Utils.DEMO_DOCUMENTS);
+		if (StringUtils.isNotEmpty(demoPath)) {
+			File f = new File(demoPath);
+			if (!f.isAbsolute()) {
+				f = new File(System.getProperty("user.dir"), demoPath);
+			}
+			try {
+				return f.getCanonicalPath();
+			} catch (IOException e) {
+				return f.getAbsolutePath();
+			}
+		}
+
 		String ret = StringUtils.EMPTY;
 		if (ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false)) {
 			ret = ConfigServiceHolder.getGlobal(BASEPATH, null);

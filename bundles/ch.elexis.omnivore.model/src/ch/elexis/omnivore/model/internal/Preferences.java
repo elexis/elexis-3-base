@@ -10,13 +10,13 @@ import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.omnivore.model.util.Utils;
 
 public class Preferences {
 
-	public static final String DEMO_DOCUMENTS = "ch.elexis.documents"; //$NON-NLS-1$
 
 	public static boolean storeInFilesystem() {
-		if (StringUtils.isNotEmpty(System.getProperty(DEMO_DOCUMENTS))) {
+		if (StringUtils.isNotEmpty(System.getProperty(Utils.DEMO_DOCUMENTS))) {
 			return true;
 		}
 		if (ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false)) {
@@ -27,7 +27,7 @@ public class Preferences {
 	}
 
 	public static String getBasepath() {
-		String demoPath = System.getProperty(DEMO_DOCUMENTS);
+		String demoPath = System.getProperty(Utils.DEMO_DOCUMENTS);
 		if (StringUtils.isNotEmpty(demoPath)) {
 			File f = new File(demoPath);
 			if (!f.isAbsolute()) {

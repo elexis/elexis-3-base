@@ -34,7 +34,7 @@ import ch.oaat_otma.casemaster.Session;
 @Component(service = CasemasterService.class)
 public class CasemasterService {
 
-	private static final String CAP_ASSIGNMENT_FILENAME = "system_ambP_11b_cap_assignment.json";
+	private static final String CAP_ASSIGNMENT_FILENAME = "system_ambP_11c_cap_assignment.json";
 	
 	private Casemaster caseMaster;
 

@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.utils.CoreUtil;
 import ch.oaat_otma.PatientCase;
 import ch.oaat_otma.grouper.ClassificationSystemReader;
-import ch.oaat_otma.grouper.GrouperDecision;
+import ch.oaat_otma.grouper.GrouperResult;
 import ch.oaat_otma.grouper.PCSError;
 import ch.oaat_otma.grouper.PatientClassificationSystem;
 
 @Component(service = PatientClassificationSystemService.class)
 public class PatientClassificationSystemService {
 
-	private static final String LKAAT_FILENAME = "system_ambP_11b_lkaat.json";
+	private static final String LKAAT_FILENAME = "system_ambP_11c_lkaat.json";
 	
 	private PatientClassificationSystem classificationSystem;
 
@@ -46,7 +46,7 @@ public class PatientClassificationSystemService {
 		}
 	}
 
-	public List<GrouperDecision> getResult(PatientCase patientCase) {
+	public GrouperResult getResult(PatientCase patientCase) {
 		return classificationSystem.evaluate(patientCase);
 	}
 }

@@ -21,8 +21,8 @@ import ch.oaat_otma.mapper.TardocCatalog;
 @Component(service = MapperService.class)
 public class MapperService {
 
-	private static final String TARDOC_FILENAME = "tardoc_TARDOC_1.4b_de.json";
-	private static final String LKAAT_FILENAME = "lkaat_1.0b.json";
+	private static final String TARDOC_FILENAME = "tardoc_TARDOC_1.4c_de.json";
+	private static final String LKAAT_FILENAME = "lkaat_1.0c.json";
 	
 	private Mapper mapper;
 

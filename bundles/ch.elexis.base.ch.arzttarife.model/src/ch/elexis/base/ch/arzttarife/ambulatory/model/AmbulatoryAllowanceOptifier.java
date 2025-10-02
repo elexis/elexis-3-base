@@ -43,6 +43,8 @@ public class AmbulatoryAllowanceOptifier extends AbstractOptifier<AmbulatoryAllo
 
 		if (matcherResult.isOK()) {
 			if (save) {
+				// make sure trigger gets added
+				CoreModelServiceHolder.get().save(billed);
 				CoreModelServiceHolder.get().save(encounter);
 				CoreModelServiceHolder.get().save(matcherResult.get());
 			}

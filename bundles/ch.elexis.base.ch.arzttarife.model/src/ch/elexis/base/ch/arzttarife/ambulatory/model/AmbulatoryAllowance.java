@@ -71,7 +71,7 @@ public class AmbulatoryAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.
 
 	@Override
 	public String getCodeSystemCode() {
-		return "003";
+		return getTyp() == AmbulantePauschalenTyp.PAUSCHALE ? "005" : "TMA";
 	}
 
 	@Override

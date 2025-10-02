@@ -3,7 +3,6 @@ package ch.elexis.base.ch.arzttarife.model.tardoc.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
@@ -19,7 +18,6 @@ import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
-import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.Result;
@@ -121,54 +119,5 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertFalse(status.getMessages().toString(), status.isOK());
 
 		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
-	}
-
-	@Test
-	public void triggerTardocPositions() {
-		encounter.setDate(LocalDate.of(2026, 1, 1));
-		CoreModelServiceHolder.get().save(encounter);
-
-		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor(coverage.getBillingSystem().getName(),
-				0.89, LocalDate.of(2000, 1, 1));
-
-		Result<IBilled> status = billingService.bill(code_000010, encounter, 1);
-		assertTrue(status.getMessages().toString(), status.isOK());
-		billed = status.get();
-		assertNotNull(billed);
-		assertEquals("AA.00.0010", billed.getCode());
-		assertTrue(getEncounterBilled("AA.00.0010") != null);
-
-		/** C06.CB.0010 is a trigger code. */
-		status = billingService.bill(code_C06CB0010, encounter, 1);
-		assertFalse(status.getMessages().toString(), status.isOK());
-		billed = status.get();
-		assertNull(billed);
-		assertTrue(getEncounterBilled("C06.CB.0010") == null);
-
-		IDiagnosisReference diagnosis = CoreModelServiceHolder.get().create(IDiagnosisReference.class);
-		diagnosis.setCode("A54.4");
-		diagnosis.setReferredClass("ch.elexis.data.ICD10");
-		encounter.addDiagnosis(diagnosis);
-		CoreModelServiceHolder.get().save(encounter);
-
-		/** C06.CB.0010 is a trigger code. */
-		status = billingService.bill(code_C06CB0010, encounter, 1);
-		assertTrue(status.getMessages().toString(), status.isOK());
-		billed = status.get();
-		assertNotNull(billed);
-		assertEquals("C90.01B", billed.getCode());
-		assertTrue(getEncounterBilled("C90.01B") != null);
-
-		status = billingService.bill(code_000020, encounter, 1);
-		assertFalse(status.getMessages().toString(), status.isOK());
-	}
-
-	private IBilled getEncounterBilled(String code) {
-		for (IBilled billed : encounter.getBilled()) {
-			if (code.equals(billed.getBillable().getCode())) {
-				return billed;
-			}
-		}
-		return null;
 	}
 }

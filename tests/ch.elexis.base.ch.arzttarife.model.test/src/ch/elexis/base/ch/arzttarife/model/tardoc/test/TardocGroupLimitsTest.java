@@ -157,13 +157,4 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		status = billingService.bill(code_AA050020, encounter5, 1);
 		assertFalse(status.getMessages().toString(), status.isOK());
 	}
-
-	private IBilled getEncounterBilled(String code) {
-		for (IBilled billed : encounter.getBilled()) {
-			if (code.equals(billed.getBillable().getCode())) {
-				return billed;
-			}
-		}
-		return null;
-	}
 }

@@ -59,4 +59,17 @@ public abstract class AbstractTardocTest {
 	Result<IBilled> billSingle(IEncounter encounter, TarmedLeistung billable) {
 		return billingService.bill(billable, encounter, 1);
 	}
+
+	protected IBilled getEncounterBilled(String code, IEncounter encounter) {
+		for (IBilled billed : encounter.getBilled()) {
+			if (code.equals(billed.getBillable().getCode())) {
+				return billed;
+			}
+		}
+		return null;
+	}
+
+	protected IBilled getEncounterBilled(String code) {
+		return getEncounterBilled(code, encounter);
+	}
 }

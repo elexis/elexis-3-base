@@ -17,7 +17,6 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.oaat_otma.PatientCase;
-import ch.oaat_otma.Service;
 import ch.oaat_otma.casemaster.CasemasterError.CasemasterErrorType;
 import ch.oaat_otma.casemaster.CasemasterResult;
 import ch.oaat_otma.mapper.MapperLogEntry;
@@ -89,12 +88,8 @@ public class TarifMatcher<T extends IBillable> {
 							ret = optifier.add((T) pauschale, encounter, 1, false);
 							if (ret.isOK()) {
 								for (IBilled encounterBilled : encounter.getBilled()) {
-									for (Service service : new ArrayList<>(patientCase.getServices())) {
-										if (service.isUsed()
-												&& encounterBilled.getCode().replace(".", "").equals(service.code)) {
-											optifier.remove(encounterBilled, encounter);
-											break;
-										}
+									if (!(encounterBilled.getBillable() instanceof IAmbulatoryAllowance)) {
+										optifier.remove(encounterBilled, encounter);
 									}
 								}
 							}

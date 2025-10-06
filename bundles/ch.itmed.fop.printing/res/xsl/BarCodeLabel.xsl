@@ -44,7 +44,7 @@
 				<fo:flow flow-name="xsl-region-body"
 				 font="8pt Helvetica"
 						font-weight="normal">
-					<fo:block-container reference-orientation="{$textOrientation}" text-align="center">
+					<fo:block-container reference-orientation="{$textOrientation}" text-align="start">
 						<fo:block>
 							<fo:instream-foreign-object>
 								<barcode:barcode xmlns:barcode="http://barcode4j.krysalis.org/ns"

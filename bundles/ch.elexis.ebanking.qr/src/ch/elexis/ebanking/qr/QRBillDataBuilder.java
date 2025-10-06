@@ -1,6 +1,7 @@
 package ch.elexis.ebanking.qr;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.StringJoiner;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -109,15 +110,22 @@ public class QRBillDataBuilder {
 
 	private void setAddress(QRBillData qrBillData, String prefix, IContact contact) throws QRBillDataException {
 		try {
-			BeanUtils.setProperty(qrBillData, prefix + "AdrTp", "K"); //$NON-NLS-1$ //$NON-NLS-2$
+			BeanUtils.setProperty(qrBillData, prefix + "AdrTp", "S"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			BeanUtils.setProperty(qrBillData, prefix + "Name", AddressFormatUtil.getFullnameWithSalutation(contact) //$NON-NLS-1$
 					.replaceAll(StringUtils.LF, StringUtils.SPACE).trim());
 
-			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine1", contact.getStreet().trim()); //$NON-NLS-1$
-
+			System.out.println("");
+			String street = getStreet(contact);
+			String houseNr = getHouseNr(contact);
+			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine1", street); //$NON-NLS-1$
 			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine2", //$NON-NLS-1$
-					StringUtils.left(contact.getZip().trim() + StringUtils.SPACE + contact.getCity().trim(), 16));
+					StringUtils.left(houseNr, 16));
+
+			String postalCode = contact.getZip().trim();
+			String town = contact.getCity().trim();
+			BeanUtils.setProperty(qrBillData, prefix + "PstCd", postalCode); //$NON-NLS-1$
+			BeanUtils.setProperty(qrBillData, prefix + "TwnNm", town); // $NON-NLS-1$
 
 			Country country = contact.getCountry();
 			if (Country.NDF == country) {
@@ -133,5 +141,36 @@ public class QRBillDataBuilder {
 				throw new QRBillDataException(SourceType.UNKNOWN, e.getMessage());
 			}
 		}
+	}
+
+	private String getHouseNr(IContact contact) {
+		String street = contact.getStreet().trim();
+		if (StringUtils.isNotBlank(street)) {
+			String[] parts = street.split(" ");
+			if (parts.length > 1) {
+				if (Character.isDigit(parts[parts.length - 1].charAt(0))) {
+					return parts[parts.length - 1];
+				}
+			}
+		}
+		return StringUtils.EMPTY;
+	}
+
+	private String getStreet(IContact contact) {
+		String street = contact.getStreet().trim();
+		if (StringUtils.isNotBlank(street)) {
+			String[] parts = street.split(" ");
+			if (parts.length > 1) {
+				if (Character.isDigit(parts[parts.length - 1].charAt(0))) {
+					StringJoiner sj = new StringJoiner(" ");
+					for (int i = 0; i < parts.length - 1; i++) {
+						sj.add(parts[i]);
+					}
+					return sj.toString();
+				}
+			}
+			return street;
+		}
+		return StringUtils.EMPTY;
 	}
 }

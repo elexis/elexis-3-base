@@ -55,17 +55,18 @@ public class QRBillDataBuilderTest {
 		assertEquals(31, parts.length);
 
 		assertEquals("CH4431999123000889012", parts[3]);
-		assertEquals("Grosse Marktgasse 28", parts[6]);
-		assertEquals("9400 Rorschach", parts[7]);
-		assertEquals("", parts[8]);
-		assertEquals("", parts[9]);
+		assertEquals("Grosse Marktgasse", parts[6]);
+		assertEquals("28", parts[7]);
+		assertEquals("9400", parts[8]);
+		assertEquals("Rorschach", parts[9]);
 		assertEquals("CH", parts[10]);
 
 		assertEquals("12.00", parts[18]);
 		assertEquals("CHF", parts[19]);
 
 		assertEquals("DbtrOrg", parts[21]);
-		assertEquals("Rue du Lac 1268", parts[22]);
+		assertEquals("Rue du Lac", parts[22]);
+		assertEquals("1268", parts[23]);
 		assertEquals("CH", parts[26]);
 
 		assertEquals("QRR", parts[27]);

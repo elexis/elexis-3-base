@@ -174,6 +174,7 @@ public class QRBillData {
 	}
 
 	public void setCdtrInfTwnNm(String cdtrInfTwnNm) throws QRBillDataException {
+		cdtrInfTwnNm = cdtrInfTwnNm.replaceAll(notPattern(cdtrInfTwnNmPattern), StringUtils.EMPTY);
 		if (!cdtrInfTwnNm.matches(cdtrInfTwnNmPattern)) {
 			throw new QRBillDataException(SourceType.CREDITOR,
 					"Invalid value [" + cdtrInfTwnNm + "] for [" + cdtrInfTwnNmPattern + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -260,6 +261,7 @@ public class QRBillData {
 	}
 
 	public void setUltmtCdtrTwnNm(String ultmtCdtrTwnNm) throws QRBillDataException {
+		ultmtCdtrTwnNm = ultmtCdtrTwnNm.replaceAll(notPattern(ultmtCdtrTwnNmPattern), StringUtils.EMPTY);
 		if (!ultmtCdtrTwnNm.matches(ultmtCdtrTwnNmPattern)) {
 			throw new QRBillDataException(SourceType.CREDITOR,
 					"Invalid value [" + ultmtCdtrTwnNm + "] for [" + ultmtCdtrTwnNmPattern + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -384,6 +386,7 @@ public class QRBillData {
 	}
 
 	public void setUltmtDbtrTwnNm(String ultmtDbtrTwnNm) throws QRBillDataException {
+		ultmtDbtrTwnNm = ultmtDbtrTwnNm.replaceAll(notPattern(ultmtDbtrTwnNmPattern), StringUtils.EMPTY);
 		if (!ultmtDbtrTwnNm.matches(ultmtDbtrTwnNmPattern)) {
 			throw new QRBillDataException(SourceType.DEBITOR,
 					"Invalid value [" + ultmtDbtrTwnNm + "] for [" + ultmtDbtrTwnNmPattern + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

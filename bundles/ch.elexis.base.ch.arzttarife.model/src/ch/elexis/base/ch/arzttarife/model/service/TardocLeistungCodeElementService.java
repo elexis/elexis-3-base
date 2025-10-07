@@ -46,7 +46,7 @@ public class TardocLeistungCodeElementService implements ICodeElementServiceCont
 
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
-		return Optional.ofNullable(TardocLeistung.getFromCode(code, getDate(context), getLaw(context)));
+		return Optional.ofNullable(TardocLeistung.getFromCode(code, getDate(context), null));
 	}
 
 	private LocalDate getDate(Map<Object, Object> context) {

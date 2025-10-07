@@ -75,7 +75,10 @@ public class CasemasterService {
 				addBilled(billed, session);
 			}
 			for (IBilled encounterBilled : iEncounter.getBilled()) {
-				addBilled(encounterBilled, session);
+				// can be samed billed if incremented, added before skip
+				if (!encounterBilled.equals(billed)) {
+					addBilled(encounterBilled, session);
+				}
 			}
 			sessions.add(session);
 		}

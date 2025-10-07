@@ -11,13 +11,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
-import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
-import ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowance;
-import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.Result;
@@ -31,8 +26,6 @@ public class TardocBillingTest extends AbstractTardocTest {
 	private TardocLeistung code_RG050010;
 	private TardocLeistung code_RG000040;
 
-	private IAmbulatoryAllowance code_C06CB0010;
-
 	@Override
 	@Before
 	public void before() {
@@ -44,9 +37,6 @@ public class TardocBillingTest extends AbstractTardocTest {
 		
 		code_RG050010 = TardocLeistung.getFromCode("RG.05.0010", LocalDate.of(2026, 1, 1), null);
 		code_RG000040 = TardocLeistung.getFromCode("RG.00.0040", LocalDate.of(2026, 1, 1), null);
-
-		code_C06CB0010 = AmbulatoryAllowance.getFromCode("C06.CB.0010", AmbulantePauschalenTyp.TRIGGER,
-				LocalDate.of(2026, 1, 1));
 	}
 
 	@Override
@@ -59,9 +49,6 @@ public class TardocBillingTest extends AbstractTardocTest {
 	public void basicTardocPositions() {
 		encounter.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter);
-
-		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor(coverage.getBillingSystem().getName(),
-				0.89, LocalDate.of(2000, 1, 1));
 
 		Result<IBilled> status = billingService.bill(code_000010, encounter, 1);
 		assertTrue(status.getMessages().toString(), status.isOK());
@@ -81,6 +68,21 @@ public class TardocBillingTest extends AbstractTardocTest {
 
 		status = billingService.bill(code_000040, encounter, 1);
 		assertFalse(status.getMessages().toString(), status.isOK());
+	}
+
+	@Test
+	public void incrementTardocPositions() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService.bill(code_000010, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(code_000020, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(code_000020, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
 	}
 
 	@Test

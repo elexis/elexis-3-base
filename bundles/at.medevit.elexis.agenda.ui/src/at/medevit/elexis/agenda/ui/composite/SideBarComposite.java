@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import at.medevit.elexis.agenda.ui.function.LoadEventTimeSpan;
+import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IDayMessage;
@@ -567,6 +568,13 @@ public class SideBarComposite extends Composite {
 			return resource;
 		}
 		public void movePeriod(IPeriod iPeriod) {
+			if (iPeriod instanceof IAppointment && AppointmentUtil.checkLocked((IAppointment) iPeriod)) {
+				if (sideBar != null && !sideBar.isDisposed()) {
+					sideBar.removeMovePeriod(iPeriod);
+					sideBar.eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+				}
+				return;
+			}
 			AcquireLockBlockingUi.aquireAndRun(iPeriod, new ILockHandler() {
 				@Override
 				public void lockAcquired() {

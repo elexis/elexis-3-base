@@ -125,6 +125,8 @@ public class AppointmentDetailComposite extends Composite {
 	private Label lblDateFrom;
 	private Composite dateArea;
 	private boolean scheduleChangeMode = false;
+	private Button chkLocked;
+
 
 	private static final int[] SASH_WEIGHTS_EXPANDED = { 25, 75 };
 
@@ -566,7 +568,10 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	public void setShowAllDay(boolean showAllDay) {
+		GridData gd = (GridData) btnIsAllDay.getLayoutData();
+		gd.exclude = !showAllDay;
 		btnIsAllDay.setVisible(showAllDay);
+		btnIsAllDay.getParent().layout(true, true);
 	}
 
 	public void setScheduleChangeMode(boolean mode) {
@@ -705,7 +710,7 @@ public class AppointmentDetailComposite extends Composite {
 		});
 
 		Composite compTime = new Composite(compDateTime, SWT.NONE);
-		GridLayout gl = new GridLayout(8, false);
+		GridLayout gl = new GridLayout(10, false);
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		gl.verticalSpacing = 2;
@@ -756,16 +761,32 @@ public class AppointmentDetailComposite extends Composite {
 			}
 		});
 
+		chkLocked = new Button(compTime, SWT.CHECK);
+		chkLocked.setText(Messages.Agenda_Appointement_Locked);
+		chkLocked.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+
+		chkLocked.setSelection(appointment.isLocked());
+
+		chkLocked.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				appointment.setLocked(chkLocked.getSelection());
+				CoreModelServiceHolder.get().save(appointment);
+			}
+		});
+
 		Composite compArea = new Composite(compTime, SWT.NONE);
-		GridLayout glArea = new GridLayout(2, false);
+		GridLayout glArea = new GridLayout(4, false);
 		glArea.marginHeight = 0;
 		glArea.marginWidth = 0;
-		glArea.horizontalSpacing = 6;
-		glArea.marginLeft = 8;
+		glArea.horizontalSpacing = 2;
+		glArea.marginLeft = 0;
 		compArea.setLayout(glArea);
 		GridData gdCompArea = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gdCompArea.horizontalSpan = 1;
 		compArea.setLayoutData(gdCompArea);
+
+
 
 		Label lblArea = new Label(compArea, SWT.NONE);
 		lblArea.setText(Messages.AppointmentDetailComposite_range);
@@ -816,6 +837,7 @@ public class AppointmentDetailComposite extends Composite {
 	private void loadFromModel() {
 		comboStatus.setText(appointment.getState());
 		comboType.setText(appointment.getType());
+		chkLocked.setSelection(appointment.isLocked());
 		comboArea.setText(appointment.getSchedule());
 		txtReason.setText(appointment.getReason());
 		if (appointment.getContact() == null) {
@@ -874,6 +896,7 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			appointment.setSubjectOrPatient(null);
 		}
+		appointment.setLocked(chkLocked.getSelection());
 		createKombiTermineIfApplicable();
 		return appointment;
 	}

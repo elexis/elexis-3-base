@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.util.AppointmentExtensionHandler;
+import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
@@ -52,6 +53,12 @@ public class DeleteHandler {
 	}
 
 	public void handleAppointmentDeletion(IAppointment appointment, Shell shell) {
+		if (AppointmentUtil.checkLocked(appointment)) {
+			selectionService.setSelection(StructuredSelection.EMPTY);
+			contextService.removeTyped(IAppointment.class);
+			return;
+		}
+
 		if (AppointmentExtensionHandler.isMainAppointment(appointment)) {
 			handleMainAppointmentDeletion(appointment, shell);
 		} else {
@@ -124,6 +131,8 @@ public class DeleteHandler {
 				} else {
 					appointmentService.delete(appointment, false);
 				}
+				selectionService.setSelection(StructuredSelection.EMPTY);
+				contextService.removeTyped(IAppointment.class);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		});
@@ -158,6 +167,8 @@ public class DeleteHandler {
 			@Override
 			public void lockAcquired() {
 				appointmentService.delete(appointment, false);
+				selectionService.setSelection(StructuredSelection.EMPTY);
+				contextService.removeTyped(IAppointment.class);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		});

@@ -55,6 +55,7 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.BereichMenuCreator;
+import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
@@ -446,6 +447,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 			@Override
 			public void doRun(IAppointment element) {
+				if (AppointmentUtil.checkLocked(element))
+					return;
 				element.setEndTime(element.getStartTime().plusMinutes(element.getDurationMinutes() >> 1));
 				CoreModelServiceHolder.get().save(element);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
@@ -461,6 +464,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 			@Override
 			public void doRun(IAppointment t) {
+				if (AppointmentUtil.checkLocked(t))
+					return;
 				LocalDateTime oldEndTime = t.getEndTime();
 				agenda.setActDate(new TimeTool(t.getStartTime().toLocalDate()));
 				List<IAppointment> appointments = appointmentService.getAppointments(agenda.getActResource(),

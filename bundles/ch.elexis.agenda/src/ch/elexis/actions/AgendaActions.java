@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
@@ -94,6 +95,8 @@ public class AgendaActions {
 
 			@Override
 			public void doRun(IAppointment element) {
+				if (AppointmentUtil.checkLocked(element))
+					return;
 				ECommandService cmdSvc = PlatformUI.getWorkbench().getService(ECommandService.class);
 				EHandlerService hdlSvc = PlatformUI.getWorkbench().getService(EHandlerService.class);
 				ParameterizedCommand cmd = cmdSvc.createCommand("ch.elexis.agenda.commands.delete", //$NON-NLS-1$

@@ -30,9 +30,9 @@ public class QRBillData {
 	private String cdtrInfName;
 	private String cdtrInfNamePattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String cdtrInfStrtNmOrAdrLine1;
-	private String cdtrInfStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}"; //$NON-NLS-1$ //$NON-NLS-2$
+	private String cdtrInfStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{0,70}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String cdtrInfStrtNmOrAdrLine2;
-	private String cdtrInfStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,16}"; //$NON-NLS-1$ //$NON-NLS-2$
+	private String cdtrInfStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{0,16}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String cdtrInfPstCd;
 	private String cdtrInfPstCdPattern = "[\\w]{0,16}"; //$NON-NLS-1$
 	private String cdtrInfTwnNm;
@@ -45,9 +45,9 @@ public class QRBillData {
 	private String ultmtCdtrName;
 	private String ultmtCdtrNamePattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String ultmtCdtrStrtNmOrAdrLine1;
-	private String ultmtCdtrStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}"; //$NON-NLS-1$ //$NON-NLS-2$
+	private String ultmtCdtrStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{0,70}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String ultmtCdtrStrtNmOrAdrLine2;
-	private String ultmtCdtrStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,16}"; //$NON-NLS-1$ //$NON-NLS-2$
+	private String ultmtCdtrStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{0,16}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String ultmtCdtrPstCd;
 	private String ultmtCdtrPstCdPattern = "[\\w]{0,16}"; //$NON-NLS-1$
 	private String ultmtCdtrTwnNm;
@@ -65,9 +65,9 @@ public class QRBillData {
 	private String ultmtDbtrName;
 	private String ultmtDbtrNamePattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String ultmtDbtrStrtNmOrAdrLine1;
-	private String ultmtDbtrStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}"; //$NON-NLS-1$ //$NON-NLS-2$
+	private String ultmtDbtrStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{0,70}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String ultmtDbtrStrtNmOrAdrLine2;
-	private String ultmtDbtrStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,16}"; //$NON-NLS-1$ //$NON-NLS-2$
+	private String ultmtDbtrStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{0,16}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String ultmtDbtrPstCd;
 	private String ultmtDbtrPstCdPattern = "[\\w]{0,16}"; //$NON-NLS-1$
 	private String ultmtDbtrTwnNm;

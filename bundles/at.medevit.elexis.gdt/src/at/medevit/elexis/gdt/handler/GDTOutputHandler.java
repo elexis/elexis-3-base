@@ -76,12 +76,17 @@ public class GDTOutputHandler {
 			}
 			logger.info("Handler program of [" + cp.getLabel() + "] [" + handlerProgram + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (handlerProgram != null) {
+				Boolean externalHandlerWait = cp.getExternalHandlerProgramWait();
 				Runtime runtime = Runtime.getRuntime();
 				logger.info("Command line [" + handlerProgram + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					Process exec = runtime.exec(handlerProgram);
-					int exitValue = exec.waitFor();
-					logger.debug("Return value of " + handlerProgram + ": " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
+					if (externalHandlerWait) {
+						int exitValue = exec.waitFor();
+						logger.debug("Return value of " + handlerProgram + ": " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						logger.debug("Execution of " + handlerProgram + ": no wait"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} catch (IOException | InterruptedException e) {
 					String message = "Fehler beim Ausführen von " + handlerProgram;
 					Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, e);

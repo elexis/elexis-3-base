@@ -21,6 +21,7 @@ public class FileCommPartner {
 	private static final String FILETRANSFER_LONG_ID_RECEIVER = "longIDReceiver"; //$NON-NLS-1$
 	private static final String FILETRANSFER_SHORT_ID_RECEIVER = "longIDReceiver"; //$NON-NLS-1$
 	private static final String FILETRANSFER_EXECUTABLE = "executable"; //$NON-NLS-1$
+	private static final String FILETRANSFER_EXECUTABLE_WAIT = "executableWait"; //$NON-NLS-1$
 	private static final String FILETRANSFER_VIEWEREXECUTABLE = "viewerexecutable"; //$NON-NLS-1$
 	private static final String FILETRANSFER_ADDITIONAL_PARAMS = "additionalParams"; //$NON-NLS-1$
 
@@ -56,6 +57,8 @@ public class FileCommPartner {
 			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/longIDReceiver", getFileTransferIdReceiver(), false); //$NON-NLS-1$
 			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/executable", getFileTransferExecuteable(), false); //$NON-NLS-1$
 		}
+
+		getSettings().setDefault(getFileTransferExecuteableWait(), Boolean.TRUE);
 	}
 
 	public static String[][] comboCharsetSelektor = new String[][] {
@@ -101,6 +104,10 @@ public class FileCommPartner {
 
 	public String getFileAdditionalParams() {
 		return CFG_GDT + "/" + getId() + "/" + FILETRANSFER_ADDITIONAL_PARAMS; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public String getFileTransferExecuteableWait() {
+		return CFG_GDT + "/" + getId() + "/" + FILETRANSFER_EXECUTABLE_WAIT; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getId() {

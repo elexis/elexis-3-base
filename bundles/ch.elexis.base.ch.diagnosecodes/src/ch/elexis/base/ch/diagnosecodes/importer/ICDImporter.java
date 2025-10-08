@@ -27,6 +27,7 @@ import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class ICDImporter extends ImporterPage {
 
@@ -39,7 +40,9 @@ public class ICDImporter extends ImporterPage {
 
 	@Override
 	public Composite createPage(Composite parent) {
-		return new FileBasedImporter(parent, this);
+		FileBasedImporter ret = new FileBasedImporter(parent, this);
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		return ret;
 	}
 
 	@Override
@@ -52,7 +55,7 @@ public class ICDImporter extends ImporterPage {
 
 	@Override
 	public String getDescription() {
-		return "Import einer ICD-10 CodeSystem JSON Datei";
+		return "Import einer ICD-10 CodeSystem JSON Datei. (Z.B.: CodeSystem-icd10gm-2025.json)";
 	}
 
 	@Override

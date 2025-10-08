@@ -169,7 +169,7 @@ public class AmbulatoryTarifsReferenceDataImporter extends AbstractReferenceData
 
 	private List<AmbulantePauschalen> getExisting(String code, LocalDate validFrom) {
 		Map<String, Object> propertyMap = new LinkedHashMap<String, Object>();
-		propertyMap.put("typ", AmbulantePauschalenTyp.TRIGGER);
+		propertyMap.put("typ", AmbulantePauschalenTyp.TRIGGER.getCode());
 		propertyMap.put("code", code);
 		propertyMap.put("validFrom", validFrom);
 		return EntityUtil.loadByNamedQuery(propertyMap, AmbulantePauschalen.class);

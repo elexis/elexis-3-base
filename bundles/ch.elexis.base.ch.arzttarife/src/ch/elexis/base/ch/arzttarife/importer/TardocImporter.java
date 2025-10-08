@@ -19,6 +19,8 @@ import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
@@ -29,7 +31,6 @@ import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
-import jakarta.inject.Inject;
 
 public class TardocImporter extends ImporterPage {
 
@@ -65,7 +66,7 @@ public class TardocImporter extends ImporterPage {
 
 	@Override
 	public String getDescription() {
-		return "Bitte geben Sie den Namen der heruntergeladene (entzippten) Tardoc-Datei an (z.B. 250410_TARDOC_1.4b_ohne_001_4.mdb.";
+		return "Bitte geben Sie den Namen der heruntergeladenen (entzippten) Tardoc-Datei an (z.B. 250410_TARDOC_1.4b_ohne_001_4.mdb)";
 	}
 
 	@Override

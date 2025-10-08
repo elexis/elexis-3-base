@@ -127,6 +127,16 @@
             name="TardocLeistung"
             system="TARDOC">
       </Leistung>
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.AmbulatoryAllowanceDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.AmbulatoryAllowanceCodeSelectorFactory"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.AmbulatoryAllowanceImporter"
+            OptifyerClass="ch.elexis.data.TarmedOptifier"
+            elexisClassName="ch.elexis.data.AmbulantePauschalen"
+            localizedName="%AmbulantePauschalen"
+            name="AmbulantePauschalen"
+            system="Ambulantepauschalen">
+      </Leistung>
    </extension>
    <extension
          point="ch.elexis.core.data.RechnungsManager">

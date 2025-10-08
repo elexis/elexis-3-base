@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowance;
+import ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowanceOptifier;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
@@ -79,7 +80,8 @@ public class TarifMatcher<T extends IBillable> {
 
 				if (patientCase.getGrouperResult() != null) {
 					if (StringUtils.isNoneBlank(patientCase.getGrouperResult().group)
-							&& !"NO.ambP".equals(patientCase.getGrouperResult().group)) {
+							&& !"NO.ambP".equals(patientCase.getGrouperResult().group)
+							&& optifier instanceof AmbulatoryAllowanceOptifier) {
 						// TRIGGER
 						AmbulatoryAllowance pauschale = AmbulatoryAllowance.getFromCode(
 								patientCase.getGrouperResult().group, AmbulantePauschalenTyp.PAUSCHALE,
@@ -151,7 +153,7 @@ public class TarifMatcher<T extends IBillable> {
 			}
 			return "Die Leistung muss angepasst werden.";
 		case LKAAT_VALIDATION_TRIGGER:
-			return "Für die Trigger Position " + mapperLogEntry.tardocCode
+			return "Für die Trigger Position " + mapperLogEntry.serviceCode
 					+ " konnte keine passende Pauschale abgerechnet werden.";
 		case LKAAT_VALIDATION_NOT_FOUND:
 			return "Die Position konnte nich im Katalog gefunden werden.";

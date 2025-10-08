@@ -65,7 +65,7 @@ public class TardocImporter extends ImporterPage {
 
 	@Override
 	public String getDescription() {
-		return "Bitte geben Sie den Namen der heruntergeladene (entzippten) Tardoc-Datei an (z.B. 250410_TARDOC_1.4b_ohne_001_4.mdb.";
+		return "Bitte geben Sie den Namen der heruntergeladenen (entzippten) Tardoc-Datei an (z.B. 250410_TARDOC_1.4b_ohne_001_4.mdb)";
 	}
 
 	@Override

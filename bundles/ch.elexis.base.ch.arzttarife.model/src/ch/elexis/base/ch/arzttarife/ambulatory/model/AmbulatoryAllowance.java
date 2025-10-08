@@ -118,7 +118,7 @@ public class AmbulatoryAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.
 
 	@Override
 	public String getChapter() {
-		return getEntity().getChapter();
+		return StringUtils.defaultString(getEntity().getChapter());
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class AmbulatoryAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.
 
 	@Override
 	public String getLabel() {
-		return "(" + getCode() + ") " + getChapter() + " - " + getText();
+		return "(" + getCode() + ") " + getTyp().getCode() + StringUtils.SPACE + getChapter() + " - " + getText();
 	}
 
 	@Override

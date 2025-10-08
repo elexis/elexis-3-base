@@ -43,6 +43,7 @@ public class FileCommPartnerComposite extends Composite {
 	private Text txtExecutable;
 	private Text txtViewerExecutable;
 	private Text txtAdditionalParam;
+	private Button btnExecutableWait;
 	private Button[] btnFileTypes = new Button[2];
 
 	public FileCommPartnerComposite(IPreferencePage preferencePage, ScrolledComposite scrolledComposite,
@@ -92,6 +93,7 @@ public class FileCommPartnerComposite extends Composite {
 		Button btnExchangeDir = new Button(this, SWT.PUSH);
 		btnExchangeDir.setText("Browse...");
 		btnExchangeDir.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				DirectoryDialog dlg = new DirectoryDialog(getShell());
 				dlg.setFilterPath(txtExchangeDir.getText());
@@ -112,6 +114,7 @@ public class FileCommPartnerComposite extends Composite {
 		Button btnExchangeInDir = new Button(this, SWT.PUSH);
 		btnExchangeInDir.setText("Browse...");
 		btnExchangeInDir.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				DirectoryDialog dlg = new DirectoryDialog(getShell());
 				dlg.setFilterPath(txtExchangeInDir.getText());
@@ -132,6 +135,7 @@ public class FileCommPartnerComposite extends Composite {
 		Button btnExchangeOutDir = new Button(this, SWT.PUSH);
 		btnExchangeOutDir.setText("Browse...");
 		btnExchangeOutDir.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				DirectoryDialog dlg = new DirectoryDialog(getShell());
 				dlg.setFilterPath(txtExchangeOutDir.getText());
@@ -167,6 +171,7 @@ public class FileCommPartnerComposite extends Composite {
 		btnExecutable.setText("Browse...");
 
 		btnExecutable.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				FileDialog dlg = new FileDialog(getShell());
 				dlg.setFilterPath(txtExecutable.getText());
@@ -188,6 +193,7 @@ public class FileCommPartnerComposite extends Composite {
 		btnViewerExecutable.setText("Browse...");
 
 		btnViewerExecutable.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				FileDialog dlg = new FileDialog(getShell());
 				dlg.setFilterPath(txtViewerExecutable.getText());
@@ -207,6 +213,11 @@ public class FileCommPartnerComposite extends Composite {
 
 		Label seperator = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
 		seperator.setLayoutData((new GridData(SWT.FILL, SWT.NONE, true, true, 3, 1)));
+
+		new Label(this, SWT.NONE).setText("Auf Programm Antwort warten");
+		btnExecutableWait = new Button(this, SWT.CHECK);
+		btnExecutableWait.setLayoutData(gridData2Col);
+		btnExecutableWait.setSelection(getBooleanValueByConfigKey(fileCommPartner.getFileTransferExecuteableWait()));
 
 		Label itemText = new Label(this, SWT.NONE);
 		itemText.setText("Gerät");
@@ -239,6 +250,10 @@ public class FileCommPartnerComposite extends Composite {
 			}
 		});
 		btnAdd.setText("Hinzufügen");
+	}
+
+	private Boolean getBooleanValueByConfigKey(String cfgKey) {
+		return fileCommPartner.getSettings().getBoolean(cfgKey);
 	}
 
 	private String getValueByConfigKey(String cfgKey) {
@@ -291,6 +306,7 @@ public class FileCommPartnerComposite extends Composite {
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferOutDirectory(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferUsedType(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteable(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteableWait(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferViewerExecuteable(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileAdditionalParams(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferName(), null);
@@ -317,6 +333,8 @@ public class FileCommPartnerComposite extends Composite {
 							: GDTConstants.GDT_FILETRANSFER_TYP_FEST);
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteable(),
 					txtExecutable.getText());
+			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteableWait(),
+					btnExecutableWait.getSelection());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferViewerExecuteable(),
 					txtViewerExecutable.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileAdditionalParams(),

@@ -136,6 +136,11 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	}
 
 	@Override
+	public Boolean getExternalHandlerProgramWait() {
+		return defaultFileCommPartner.getSettings().getBoolean(defaultFileCommPartner.getFileTransferExecuteableWait());
+	}
+
+	@Override
 	public String getFixedCommmunicationFileName() {
 		return null;
 	}

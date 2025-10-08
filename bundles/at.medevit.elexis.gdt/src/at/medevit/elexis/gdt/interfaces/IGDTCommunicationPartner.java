@@ -156,6 +156,16 @@ public interface IGDTCommunicationPartner {
 	String getExternalHandlerProgram(HandlerProgramType handlerType);
 
 	/**
+	 * Test if Elexis should wait for the external handler program to display
+	 * success. Default is true.
+	 * 
+	 * @return
+	 */
+	default Boolean getExternalHandlerProgramWait() {
+		return Boolean.TRUE;
+	}
+
+	/**
 	 * The "long" ID of the receiver which will be embedded into the GDT
 	 * Satznachricht at {@link GDTConstants#FELDKENNUNG_GDT_ID_EMPFAENGER} when an
 	 * outgoing message is created.
@@ -185,5 +195,4 @@ public interface IGDTCommunicationPartner {
 	 */
 	default void handleOutput(GDTSatzNachricht gdtSatzNachricht) {
 	}
-
 }

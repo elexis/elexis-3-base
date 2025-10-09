@@ -1,8 +1,12 @@
 package ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -18,6 +22,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.oaat_otma.PatientCase;
+import ch.oaat_otma.Service;
 import ch.oaat_otma.casemaster.CasemasterError.CasemasterErrorType;
 import ch.oaat_otma.casemaster.CasemasterResult;
 import ch.oaat_otma.mapper.MapperLogEntry;
@@ -110,7 +115,7 @@ public class TarifMatcher<T extends IBillable> {
 									.filter(l -> l.level != MapperLogEntryLevel.WARNING).toList();
 							if (!errorLog.isEmpty()) {
 								return new Result<IBilled>(Result.SEVERITY.WARNING, getWarningCode(noneInfoLog.get(0)),
-										getWarningMessage(noneInfoLog.get(0)), null, false);
+										getWarningMessage(noneInfoLog.get(0), patientCase), null, false);
 							}
 						}
 					}
@@ -136,7 +141,7 @@ public class TarifMatcher<T extends IBillable> {
 				&& ((IAmbulatoryAllowance) billed.getBillable()).getTyp() == AmbulantePauschalenTyp.PAUSCHALE;
 	}
 
-	private String getWarningMessage(MapperLogEntry mapperLogEntry) {
+	private String getWarningMessage(MapperLogEntry mapperLogEntry, PatientCase patientCase) {
 		switch (mapperLogEntry.level) {
 		case MISSING_MASTER:
 			return "Für die Zuschlagsleistung " + mapperLogEntry.tardocCode
@@ -145,7 +150,19 @@ public class TarifMatcher<T extends IBillable> {
 			if (mapperLogEntry.message != null && mapperLogEntry.message.contains("side")) {
 				return "Bei der Leistung  " +  mapperLogEntry.tardocCode + "  muss die Seite angegeben werden.";
 			}
-			return "Die Leistung " + mapperLogEntry.tardocCode + " ist nicht erlaubt.";
+			if (mapperLogEntry.message != null
+					&& mapperLogEntry.message.toLowerCase().contains("not combinable with")) {
+				return "Die Leistung  " + mapperLogEntry.tardocCode + " ist nicht kombinierbar mit "
+						+ getLogEntryMessageCodes(mapperLogEntry) + ".";
+			}
+			if (mapperLogEntry.message != null
+					&& mapperLogEntry.message.toLowerCase().contains("only combinable with")) {
+				return "Die Leistung  " + mapperLogEntry.tardocCode + " ist nicht kombinierbar mit "
+						+ getDiffServiceCodes(patientCase.groupServicesByCode(),
+								getLogEntryMessageCodes(mapperLogEntry))
+						+ ".";
+			}
+			return "Die Leistung " + mapperLogEntry.tardocCode + " ist nicht erlaubt.\n" + getMessage(mapperLogEntry);
 		case TARDOC_VALIDATION_UPDATE:
 			if (StringUtils.isNotBlank(mapperLogEntry.message)) {
 				return "Die Leistung " + mapperLogEntry.tardocCode + " muss angepasst werden.\n"
@@ -164,6 +181,33 @@ public class TarifMatcher<T extends IBillable> {
 		}
 	}
 
+	/**
+	 * Get the service codes which are not contained in onlyWithCodes.
+	 * 
+	 * @param groupServicesByCode
+	 * @param logEntryMessageCodes
+	 * @return
+	 */
+	private String getDiffServiceCodes(List<Service> services, String onlyWithCodes) {
+		List<String> ret = new ArrayList<String>();
+		Set<String> onlyWithCodesSet = new HashSet<>();
+		Arrays.asList(onlyWithCodes.split(", ")).forEach(s -> onlyWithCodesSet.add(s));
+		services.forEach(s -> {
+			if (!onlyWithCodesSet.contains(s.code)) {
+				ret.add(s.code);
+			}
+		});
+		return ret.stream().collect(Collectors.joining(", "));
+	}
+
+	private String getLogEntryMessageCodes(MapperLogEntry mapperLogEntry) {
+		if (mapperLogEntry.message.indexOf("[") > -1 && mapperLogEntry.message.indexOf("]") > -1) {
+			return mapperLogEntry.message.substring(mapperLogEntry.message.indexOf("[") + 1,
+					mapperLogEntry.message.indexOf("]"));
+		}
+		return StringUtils.EMPTY;
+	}
+
 	private String getMessage(MapperLogEntry mapperLogEntry) {
 		if (mapperLogEntry.message != null) {
 			return StringEscapeUtils.unescapeHtml4(mapperLogEntry.message);
@@ -176,7 +220,7 @@ public class TarifMatcher<T extends IBillable> {
 		case MISSING_MASTER:
 			return KOMBINATION;
 		case TARDOC_VALIDATION_DELETE:
-			return LEISTUNGSTYP;
+			return KOMBINATION;
 		case TARDOC_VALIDATION_UPDATE:
 			return LEISTUNGSTYP;
 		case LKAAT_VALIDATION_TRIGGER:

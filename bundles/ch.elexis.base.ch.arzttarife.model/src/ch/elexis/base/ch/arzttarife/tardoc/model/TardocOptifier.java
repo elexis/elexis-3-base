@@ -108,6 +108,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 		Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, code, newBilled);
 		if (!limitationsResult.isOK()) {
+			// reset possible modifications
+			CoreModelServiceHolder.get().refresh(newBilled, true, true);
 			return limitationsResult;
 		}
 
@@ -395,8 +397,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 	private IBilled getOrInitializeBilled(TardocLeistung code, IEncounter kons, boolean save) {
 		IBilled ret = null;
-		// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann
-		// nur Zahl erhöhen.
+		// if code already billed increment amount
 		for (IBilled billed : kons.getBilled()) {
 			if (isInstance(billed, code)) {
 				ret = billed;

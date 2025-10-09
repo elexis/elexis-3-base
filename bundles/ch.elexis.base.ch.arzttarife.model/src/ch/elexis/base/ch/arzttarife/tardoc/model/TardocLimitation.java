@@ -308,10 +308,14 @@ public class TardocLimitation {
 			if (tarmedGroup == null) {
 				List<IBilled> verrechnetByMandant = getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons,
 						verrechnet.getBillable().getCode());
-				if (getVerrechnetCount(verrechnetByMandant) > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
-							verrechnet,
-							false);
+				if (!verrechnetByMandant.isEmpty()) {
+					// replace value from database with current
+					verrechnetByMandant.remove(verrechnet);
+					verrechnetByMandant.add(verrechnet);
+					if (getVerrechnetCount(verrechnetByMandant) > amount) {
+						ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
+								verrechnet, false);
+					}
 				}
 			} else {
 				List<IBilled> allVerrechnetOfGroup = new ArrayList<>();

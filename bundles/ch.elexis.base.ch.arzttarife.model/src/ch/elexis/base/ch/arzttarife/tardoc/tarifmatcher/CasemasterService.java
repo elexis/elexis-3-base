@@ -63,12 +63,14 @@ public class CasemasterService {
 		for (IEncounter iEncounter : encounters) {
 			Session session = new Session(sessionIdx++, iEncounter.getDate());
 			for (IDiagnosisReference diagnose : iEncounter.getDiagnoses()) {
-				if (diagnose.getCodeSystemName().toLowerCase().contains("icd")) {
-					session.setDiagnosis(new Diagnosis(diagnose.getCode()));
-					break;
-				}
-				if (diagnose.getCodeSystemName().toLowerCase().contains("ti-code")) {
-					session.setDiagnosis(new Diagnosis(diagnose.getCode()));
+				if (StringUtils.isNoneBlank(diagnose.getCodeSystemCode())) {
+					if (diagnose.getCodeSystemName().toLowerCase().contains("icd")) {
+						session.setDiagnosis(new Diagnosis(diagnose.getCode()));
+						break;
+					}
+					if (diagnose.getCodeSystemName().toLowerCase().contains("ti-code")) {
+						session.setDiagnosis(new Diagnosis(diagnose.getCode()));
+					}
 				}
 			}
 			if (iEncounter.equals(encounter)) {

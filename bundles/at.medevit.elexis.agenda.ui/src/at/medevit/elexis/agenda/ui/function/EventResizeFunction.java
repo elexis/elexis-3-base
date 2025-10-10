@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.equo.chromium.swt.Browser;
 
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
+import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
@@ -28,6 +29,10 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 					.orElse(null);
 			final LocalDateTime startDate = getDateTimeArg(arguments[1]);
 			final LocalDateTime endDate = getDateTimeArg(arguments[2]);
+			if (termin == null || AppointmentUtil.checkLocked(termin)) {
+				new ScriptingHelper(getBrowser()).refetchEvents();
+				return null;
+			}
 
 			if (termin != null) {
 

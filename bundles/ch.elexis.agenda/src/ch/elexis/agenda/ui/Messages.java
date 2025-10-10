@@ -105,5 +105,8 @@ public class Messages {
 	public static String SerienTerminDialog_dlgBtnChange = ch.elexis.core.l10n.Messages.SerienTerminDialog_dlgBtnChange;
 	public static String SerienTerminDialog_dlgBtnCancel = ch.elexis.core.l10n.Messages.SerienTerminDialog_dlgBtnCancel;
 	public static String TerminDialog_remarks = ch.elexis.core.l10n.Messages.TerminDialog_remarks;
+	public static String Termin_appointment_locked = ch.elexis.core.l10n.Messages.Termin_appointment_locked;
+	public static String Termin_appCantBeChanged = ch.elexis.core.l10n.Messages.Termin_appCantBeChanged;
+	public static String Agenda_Appointement_Locked = ch.elexis.core.l10n.Messages.Agenda_Appointement_Locked;
 
 }

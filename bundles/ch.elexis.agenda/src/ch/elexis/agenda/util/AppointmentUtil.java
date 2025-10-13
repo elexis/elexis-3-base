@@ -28,7 +28,7 @@ public final class AppointmentUtil {
 	 * @param appointment the {@link IAppointment} to check (may be {@code null})
 	 * @return {@code true} if the appointment is locked, {@code false} otherwise
 	 */
-	public static boolean checkLocked(IAppointment appointment) {
+	public static boolean isLocked(IAppointment appointment) {
 		if (appointment != null && appointment.isLocked()) {
 			SWTHelper.alert(Messages.Termin_appointment_locked, Messages.Termin_appCantBeChanged);
 			return true;
@@ -77,6 +77,10 @@ public final class AppointmentUtil {
 	 */
 	public static boolean isModified(IAppointment original, IAppointment current) {
 		if (original == null || current == null) {
+			return false;
+		}
+
+		if (!original.isLocked()) {
 			return false;
 		}
 

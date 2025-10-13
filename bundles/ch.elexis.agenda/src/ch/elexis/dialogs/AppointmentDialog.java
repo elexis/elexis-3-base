@@ -193,7 +193,7 @@ public class AppointmentDialog extends Dialog {
 			super.okPressed();
 			return;
 		}
-		if (AppointmentUtil.checkLocked(appointment)) {
+		if (AppointmentUtil.isLocked(appointment)) {
 			cancelPressed();
 			return;
 		}

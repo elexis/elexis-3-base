@@ -447,7 +447,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 			@Override
 			public void doRun(IAppointment element) {
-				if (AppointmentUtil.checkLocked(element))
+				if (AppointmentUtil.isLocked(element))
 					return;
 				element.setEndTime(element.getStartTime().plusMinutes(element.getDurationMinutes() >> 1));
 				CoreModelServiceHolder.get().save(element);
@@ -464,7 +464,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 			@Override
 			public void doRun(IAppointment t) {
-				if (AppointmentUtil.checkLocked(t))
+				if (AppointmentUtil.isLocked(t))
 					return;
 				LocalDateTime oldEndTime = t.getEndTime();
 				agenda.setActDate(new TimeTool(t.getStartTime().toLocalDate()));

@@ -29,7 +29,7 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 					.orElse(null);
 			final LocalDateTime startDate = getDateTimeArg(arguments[1]);
 			final LocalDateTime endDate = getDateTimeArg(arguments[2]);
-			if (termin == null || AppointmentUtil.checkLocked(termin)) {
+			if (termin == null || AppointmentUtil.isLocked(termin)) {
 				new ScriptingHelper(getBrowser()).refetchEvents();
 				return null;
 			}

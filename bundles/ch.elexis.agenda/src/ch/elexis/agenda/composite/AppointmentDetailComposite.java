@@ -786,8 +786,6 @@ public class AppointmentDetailComposite extends Composite {
 		gdCompArea.horizontalSpan = 1;
 		compArea.setLayoutData(gdCompArea);
 
-
-
 		Label lblArea = new Label(compArea, SWT.NONE);
 		lblArea.setText(Messages.AppointmentDetailComposite_range);
 
@@ -896,7 +894,6 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			appointment.setSubjectOrPatient(null);
 		}
-		appointment.setLocked(chkLocked.getSelection());
 		createKombiTermineIfApplicable();
 		return appointment;
 	}

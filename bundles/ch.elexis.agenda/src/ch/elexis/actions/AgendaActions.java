@@ -95,7 +95,7 @@ public class AgendaActions {
 
 			@Override
 			public void doRun(IAppointment element) {
-				if (AppointmentUtil.checkLocked(element))
+				if (AppointmentUtil.isLocked(element))
 					return;
 				ECommandService cmdSvc = PlatformUI.getWorkbench().getService(ECommandService.class);
 				EHandlerService hdlSvc = PlatformUI.getWorkbench().getService(EHandlerService.class);

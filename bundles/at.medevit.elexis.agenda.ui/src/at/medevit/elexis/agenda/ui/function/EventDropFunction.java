@@ -41,7 +41,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
 					.orElse(null);
 
-			if (termin == null || AppointmentUtil.checkLocked(termin)) {
+			if (termin == null || AppointmentUtil.isLocked(termin)) {
 				new ScriptingHelper(getBrowser()).refetchEvents();
 				return null;
 			}

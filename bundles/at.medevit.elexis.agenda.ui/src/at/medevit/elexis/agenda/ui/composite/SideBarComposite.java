@@ -568,10 +568,9 @@ public class SideBarComposite extends Composite {
 			return resource;
 		}
 		public void movePeriod(IPeriod iPeriod) {
-			if (iPeriod instanceof IAppointment && AppointmentUtil.checkLocked((IAppointment) iPeriod)) {
+			if (iPeriod instanceof IAppointment && AppointmentUtil.isLocked((IAppointment) iPeriod)) {
 				if (sideBar != null && !sideBar.isDisposed()) {
 					sideBar.removeMovePeriod(iPeriod);
-					sideBar.eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 				}
 				return;
 			}

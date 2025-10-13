@@ -53,9 +53,7 @@ public class DeleteHandler {
 	}
 
 	public void handleAppointmentDeletion(IAppointment appointment, Shell shell) {
-		if (AppointmentUtil.checkLocked(appointment)) {
-			selectionService.setSelection(StructuredSelection.EMPTY);
-			contextService.removeTyped(IAppointment.class);
+		if (AppointmentUtil.isLocked(appointment)) {
 			return;
 		}
 
@@ -131,8 +129,6 @@ public class DeleteHandler {
 				} else {
 					appointmentService.delete(appointment, false);
 				}
-				selectionService.setSelection(StructuredSelection.EMPTY);
-				contextService.removeTyped(IAppointment.class);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		});
@@ -167,8 +163,6 @@ public class DeleteHandler {
 			@Override
 			public void lockAcquired() {
 				appointmentService.delete(appointment, false);
-				selectionService.setSelection(StructuredSelection.EMPTY);
-				contextService.removeTyped(IAppointment.class);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		});

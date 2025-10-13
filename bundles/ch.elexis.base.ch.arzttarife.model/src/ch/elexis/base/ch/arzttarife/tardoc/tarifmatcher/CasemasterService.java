@@ -64,7 +64,7 @@ public class CasemasterService {
 		for (IEncounter iEncounter : encounters) {
 			Session session = new Session(sessionIdx++, iEncounter.getDate());
 			for (IDiagnosisReference diagnose : iEncounter.getDiagnoses()) {
-				if (StringUtils.isNotBlank(diagnose.getCodeSystemCode())) {
+				if (StringUtils.isNotBlank(diagnose.getCodeSystemName())) {
 					if (diagnose.getCodeSystemName().toLowerCase().contains("icd")) {
 						session.setDiagnosis(new Diagnosis(diagnose.getCode()));
 						break;

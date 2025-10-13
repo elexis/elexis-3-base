@@ -135,7 +135,8 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
 					int index = 0;
 					row[index++] = mandant.getBiller().getLabel();
-					row[index++] = mandant.getLabel();
+					String desc = mandant.getDescription3();
+					row[index++] = mandant.getLabel() + (desc != null ? " (" + desc + ")" : "");
 
 					if (hasUserId) { // $NON-NLS-1$
 						IContact user = verrechnet.getBiller();

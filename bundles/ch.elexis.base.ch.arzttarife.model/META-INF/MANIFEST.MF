@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: ch.elexis.base.ch.arzttarife.model;singleton:=true
 Bundle-Version: 3.12.0.qualifier
 Bundle-ClassPath: .,
- lib/tarifmatcher-0.8.0-BETA-standalone.jar
+ lib/tarifmatcher-1.0.0-standalone.jar
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model

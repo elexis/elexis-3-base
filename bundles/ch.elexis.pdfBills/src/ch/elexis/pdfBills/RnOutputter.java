@@ -135,6 +135,12 @@ public class RnOutputter implements IRnOutputter {
 			modifyInvoiceState = true;
 		}
 
+		if (StringUtils.isEmpty(OutputterUtil.getXmlOutputDir(CFG_ROOT))) {
+			String msg = "Es ist kein Ausgabe-Verzeichnis konfiguriert.\nBitte konfigurieren Sie dieses in den Einstellungen.";
+			SWTHelper.showError("Fehler beim Rechnungsdruck", msg);
+			return new Result<Rechnung>(Result.SEVERITY.ERROR, 2, msg, null, true);
+		}
+
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
 		final File rsc = new File(PlatformHelper.getBasePath(PLUGIN_ID), "rsc"); //$NON-NLS-1$

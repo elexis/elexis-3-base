@@ -343,21 +343,22 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		return (int) minutesIntoTheDay;
 	}
 
-	private void setTimeTo(int i) {
+	private void setTimeTo(int minutesSinceStartOfDay) {
 		if (txtTimeTo.getSelection() != null) {
-			LocalDateTime localDateTime = txtTimeTo.getSelection().toInstant().atZone(ZoneId.systemDefault())
-					.toLocalDate().atStartOfDay();
-			appointment.setEndTime(localDateTime.plusMinutes(i));
-			txtTimeTo.setSelection(Date.from(appointment.getEndTime().atZone(ZoneId.systemDefault()).toInstant()));
+			var baseDate = appointment.getStartTime().toLocalDate();
+			var newEnd = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
+			appointment.setEndTime(newEnd);
+			txtTimeTo.setSelection(Date.from(newEnd.atZone(ZoneId.systemDefault()).toInstant()));
 		}
 	}
 
-	private void setTimeFrom(int i) {
-		LocalDateTime localDateTime = txtTimeFrom.getSelection().toInstant().atZone(ZoneId.systemDefault())
-				.toLocalDate().atStartOfDay();
-		appointment.setStartTime(localDateTime.plusMinutes(i));
-		txtTimeFrom.setSelection(Date.from(appointment.getStartTime().atZone(ZoneId.systemDefault()).toInstant()));
+	private void setTimeFrom(int minutesSinceStartOfDay) {
+		var baseDate = appointment.getStartTime().toLocalDate();
+		var newStart = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
+		appointment.setStartTime(newStart);
+		txtTimeFrom.setSelection(Date.from(newStart.atZone(ZoneId.systemDefault()).toInstant()));
 	}
+
 
 	private void updateCollision() {
 		updateMessage(isColliding());

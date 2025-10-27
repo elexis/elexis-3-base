@@ -30,6 +30,42 @@ import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
 
 public class PatientResource {
 
+	public static void addTelecomInformation(IPatient source, Patient target) {
+		List<ContactPoint> telecomList = new ArrayList<>();
+
+		if (source.getMobile() != null && !source.getMobile().isEmpty()) {
+			telecomList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE)
+					.setUse(ContactPoint.ContactPointUse.MOBILE).setRank(1).setValue(source.getMobile()));
+		}
+
+		if (source.getPhone1() != null && !source.getPhone1().isEmpty()) {
+			telecomList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE)
+					.setUse(ContactPoint.ContactPointUse.HOME).setRank(2).setValue(source.getPhone1()));
+		}
+
+		if (source.getPhone2() != null && !source.getPhone2().isEmpty()) {
+			telecomList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE)
+					.setUse(ContactPoint.ContactPointUse.TEMP).setRank(3).setValue(source.getPhone2()));
+		}
+
+		if (source.getEmail() != null && !source.getEmail().isEmpty()) {
+			telecomList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL)
+					.setUse(ContactPoint.ContactPointUse.HOME).setValue(source.getEmail()));
+		}
+
+		if (source.getFax() != null && !source.getFax().isEmpty()) {
+			telecomList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.FAX)
+					.setUse(ContactPoint.ContactPointUse.WORK).setValue(source.getFax()));
+		}
+
+		if (source.getWebsite() != null && !source.getWebsite().isEmpty()) {
+			telecomList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.URL)
+					.setUse(ContactPoint.ContactPointUse.WORK).setValue(source.getWebsite()));
+		}
+
+		target.setTelecom(telecomList);
+	}
+
 	public static void addContactInformation(IPatient source, Patient target, Bundle bundle,
 			FhirResourceFactory resourceFactory) {
 		List<ContactComponent> contacts = new ArrayList<>();
@@ -38,11 +74,9 @@ public class PatientResource {
 			IContact otherContact = relatedContact.getOtherContact();
 
 			if (otherContact != null) {
-
 				ContactComponent contactComponent = createContactComponent(relatedContact, otherContact, bundle);
 
 				if (otherContact.isOrganization()) {
-
 					String organizationId = otherContact.getId();
 					String organizationFullUrl = FHIRConstants.UUID_PREFIX
 							+ UUID.nameUUIDFromBytes(organizationId.getBytes()).toString();
@@ -51,7 +85,6 @@ public class PatientResource {
 								resourceFactory);
 						bundle.addEntry().setFullUrl(organizationFullUrl).setResource(organization);
 					}
-
 					contactComponent.setOrganization(new Reference(organizationFullUrl));
 				}
 
@@ -63,83 +96,69 @@ public class PatientResource {
 
 	private static ContactComponent createContactComponent(IRelatedContact relatedContact, IContact otherContact,
 			Bundle bundle) {
-	    ContactComponent contactComponent = new ContactComponent();
+		ContactComponent contactComponent = new ContactComponent();
 
-	    String fhirCode = mapRelationshipToRoleCode(relatedContact.getOtherType());
-
-	    CodeableConcept relationship = new CodeableConcept()
+		String fhirCode = mapRelationshipToRoleCode(relatedContact.getOtherType());
+		CodeableConcept relationship = new CodeableConcept()
 				.addCoding(new Coding().setSystem(FHIRConstants.ROLE_CODE_SYSTEM_V2).setCode(fhirCode)
-	                    .setDisplay(relatedContact.getRelationshipDescription()));
+						.setDisplay(relatedContact.getRelationshipDescription()));
+		contactComponent.setRelationship(Collections.singletonList(relationship));
 
-	    contactComponent.setRelationship(Collections.singletonList(relationship));
+		if (otherContact.isPerson()) {
+			IPerson person = CoreModelServiceHolder.get().load(otherContact.getId(), IPerson.class).get();
+			HumanName humanName = new HumanName().setFamily(person.getLastName()).addGiven(person.getFirstName())
+					.addPrefix(person.getTitel()).addSuffix(person.getTitelSuffix()).setUse(HumanName.NameUse.USUAL);
+			contactComponent.setName(humanName);
 
-	   if (otherContact.isPerson()) {
-
-	        IPerson person = CoreModelServiceHolder.get().load(otherContact.getId(), IPerson.class).get();
-	        HumanName humanName = new HumanName().setFamily(person.getLastName()).addGiven(person.getFirstName())
-	                .addPrefix(person.getTitel()).addSuffix(person.getTitelSuffix()).setUse(HumanName.NameUse.USUAL);
-	        contactComponent.setName(humanName);
-
-	        AdministrativeGender gender = AdministrativeGender.UNKNOWN;
-	        Gender personGender = person.getGender();
-	        if (personGender != null) {
-	            switch (personGender) {
-	                case MALE:
-	                    gender = AdministrativeGender.MALE;
-	                    break;
-	                case FEMALE:
-	                    gender = AdministrativeGender.FEMALE;
-	                    break;
-	                default:
-	                    gender = AdministrativeGender.UNKNOWN;
-	                    break;
-	            }
-	        }
-	        contactComponent.setGender(gender);
+			AdministrativeGender gender = AdministrativeGender.UNKNOWN;
+			Gender personGender = person.getGender();
+			if (personGender != null) {
+				switch (personGender) {
+				case MALE -> gender = AdministrativeGender.MALE;
+				case FEMALE -> gender = AdministrativeGender.FEMALE;
+				default -> gender = AdministrativeGender.UNKNOWN;
+				}
+			}
+			contactComponent.setGender(gender);
 
 			Address address = new Address().setUse(Address.AddressUse.HOME).addLine(otherContact.getStreet())
 					.setCity(otherContact.getCity()).setPostalCode(otherContact.getZip())
-					.setCountry(otherContact.getCountry().toString());
+					.setCountry(otherContact.getCountry() != null ? otherContact.getCountry().toString() : null);
 			contactComponent.setAddress(address);
 
 			List<ContactPoint> contactPoints = new ArrayList<>();
 			if (otherContact.getMobile() != null) {
-				ContactPoint phone = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE)
-						.setValue(otherContact.getMobile()).setUse(ContactPoint.ContactPointUse.HOME);
-				contactPoints.add(phone);
+				contactPoints.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE)
+						.setValue(otherContact.getMobile()).setUse(ContactPoint.ContactPointUse.MOBILE));
+			}
+			if (otherContact.getPhone1() != null) {
+				contactPoints.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE)
+						.setValue(otherContact.getPhone1()).setUse(ContactPoint.ContactPointUse.HOME));
+			}
+			if (otherContact.getPhone2() != null) {
+				contactPoints.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE)
+						.setValue(otherContact.getPhone2()).setUse(ContactPoint.ContactPointUse.TEMP));
 			}
 			if (otherContact.getEmail() != null) {
-				ContactPoint email = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL)
-						.setValue(otherContact.getEmail()).setUse(ContactPoint.ContactPointUse.HOME);
-				contactPoints.add(email);
+				contactPoints.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL)
+						.setValue(otherContact.getEmail()).setUse(ContactPoint.ContactPointUse.HOME));
 			}
 			contactComponent.setTelecom(contactPoints);
-	    }
-
-
-
-	    return contactComponent;
+		}
+		return contactComponent;
 	}
-
 
 	private static String mapRelationshipToRoleCode(RelationshipType relationshipType) {
 		if (relationshipType == null) {
 			return "U";
 		}
-		switch (relationshipType) {
-		case FAMILY_PARENT:
-			return "PRN";
-		case FAMILY_CHILD:
-			return "CHILD";
-		case BUSINESS_EMPLOYER:
-			return "E";
-		case BUSINESS_EMPLOYEE:
-			return "E";
-		case FAMILY_ICE:
-			return "C";
-		default:
-			return "U";
-		}
+		return switch (relationshipType) {
+		case FAMILY_PARENT -> "PRN";
+		case FAMILY_CHILD -> "CHILD";
+		case BUSINESS_EMPLOYER, BUSINESS_EMPLOYEE -> "E";
+		case FAMILY_ICE -> "C";
+		default -> "U";
+		};
 	}
 
 	public static String[] getBezugKontaktTypes() {

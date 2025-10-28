@@ -110,7 +110,7 @@ public class FHIRConstants {
 	public static final String RESULTS_DISPLAY = "Relevant diagnostic tests/laboratory data Narrative"; //$NON-NLS-1$
 
 	public static final String SOCIAL_HISTORY_CODE = "29762-2"; //$NON-NLS-1$
-	public static final String SOCIAL_HISTORY_DISPLAY = "Social history Narrative"; //$NON-NLS-1$
+	public static final String SOCIAL_HISTORY_DISPLAY = "Social history note"; //$NON-NLS-1$
 
 	public static final String ANNOTATIONS_CODE = "48767-8"; //$NON-NLS-1$
 	public static final String ANNOTATIONS_DISPLAY = "Annotation comment [Interpretation] Narrative"; //$NON-NLS-1$

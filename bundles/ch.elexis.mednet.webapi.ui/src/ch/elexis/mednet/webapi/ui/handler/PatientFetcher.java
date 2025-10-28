@@ -210,6 +210,7 @@ public class PatientFetcher {
 		fhirPatient.setId(UUID.nameUUIDFromBytes(sourcePatient.getId().getBytes()).toString());
 		fhirPatient.getMeta().addProfile(FHIRConstants.PROFILE_PATIENT);
 		removeDuplicates(fhirPatient);
+		PatientResource.addTelecomInformation(sourcePatient, fhirPatient);
 		PatientResource.addContactInformation(sourcePatient, fhirPatient, patientOverviewBundle, resourceFactory);
 		patientOverviewBundle = BundleResource.createPatientOverviewBundle(fhirPatient, sourcePatient,
 				selectedDocuments, isEpdSelected, resourceFactory, coreModelService, findingsService);

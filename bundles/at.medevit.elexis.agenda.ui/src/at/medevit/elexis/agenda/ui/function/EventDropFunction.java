@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.equo.chromium.swt.Browser;
 
+import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import ch.elexis.agenda.composite.AppointmentDetailComposite;
 import ch.elexis.agenda.util.AppointmentExtensionHandler;
+import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
@@ -38,6 +40,11 @@ public class EventDropFunction extends AbstractBrowserFunction {
 		if (arguments.length >= 3) {
 			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
 					.orElse(null);
+
+			if (termin == null || AppointmentUtil.isLocked(termin)) {
+				new ScriptingHelper(getBrowser()).refetchEvents();
+				return null;
+			}
 
 			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
 				@Override

@@ -345,7 +345,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private void setTimeTo(int minutesSinceStartOfDay) {
-		if (txtTimeTo.getSelection() != null) {
+		if (txtTimeTo != null) {
 			LocalDate baseDate = appointment.getStartTime().toLocalDate();
 			LocalDateTime newEnd = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
 			appointment.setEndTime(newEnd);
@@ -354,12 +354,13 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private void setTimeFrom(int minutesSinceStartOfDay) {
-		LocalDate baseDate = appointment.getStartTime().toLocalDate();
-		LocalDateTime newStart = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
-		appointment.setStartTime(newStart);
-		txtTimeFrom.setSelection(Date.from(newStart.atZone(ZoneId.systemDefault()).toInstant()));
+		if (txtTimeFrom != null) {
+			LocalDate baseDate = appointment.getStartTime().toLocalDate();
+			LocalDateTime newStart = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
+			appointment.setStartTime(newStart);
+			txtTimeFrom.setSelection(Date.from(newStart.atZone(ZoneId.systemDefault()).toInstant()));
+		}
 	}
-
 
 	private void updateCollision() {
 		updateMessage(isColliding());

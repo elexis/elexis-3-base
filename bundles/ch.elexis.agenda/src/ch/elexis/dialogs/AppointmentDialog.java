@@ -190,6 +190,8 @@ public class AppointmentDialog extends Dialog {
 	@Override
 	protected void okPressed() {
 		if (!AppointmentUtil.isModified(originalAppointment, appointment)) {
+			saveAndReloadAppointment();
+			sendEmailIfConfirmationChecked();
 			super.okPressed();
 			return;
 		}

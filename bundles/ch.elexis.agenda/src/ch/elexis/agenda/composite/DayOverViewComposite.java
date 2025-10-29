@@ -1,5 +1,6 @@
 package ch.elexis.agenda.composite;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -343,20 +344,22 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		return (int) minutesIntoTheDay;
 	}
 
-	private void setTimeTo(int i) {
-		if (txtTimeTo.getSelection() != null) {
-			LocalDateTime localDateTime = txtTimeTo.getSelection().toInstant().atZone(ZoneId.systemDefault())
-					.toLocalDate().atStartOfDay();
-			appointment.setEndTime(localDateTime.plusMinutes(i));
-			txtTimeTo.setSelection(Date.from(appointment.getEndTime().atZone(ZoneId.systemDefault()).toInstant()));
+	private void setTimeTo(int minutesSinceStartOfDay) {
+		if (txtTimeTo != null) {
+			LocalDate baseDate = appointment.getStartTime().toLocalDate();
+			LocalDateTime newEnd = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
+			appointment.setEndTime(newEnd);
+			txtTimeTo.setSelection(Date.from(newEnd.atZone(ZoneId.systemDefault()).toInstant()));
 		}
 	}
 
-	private void setTimeFrom(int i) {
-		LocalDateTime localDateTime = txtTimeFrom.getSelection().toInstant().atZone(ZoneId.systemDefault())
-				.toLocalDate().atStartOfDay();
-		appointment.setStartTime(localDateTime.plusMinutes(i));
-		txtTimeFrom.setSelection(Date.from(appointment.getStartTime().atZone(ZoneId.systemDefault()).toInstant()));
+	private void setTimeFrom(int minutesSinceStartOfDay) {
+		if (txtTimeFrom != null) {
+			LocalDate baseDate = appointment.getStartTime().toLocalDate();
+			LocalDateTime newStart = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
+			appointment.setStartTime(newStart);
+			txtTimeFrom.setSelection(Date.from(newStart.atZone(ZoneId.systemDefault()).toInstant()));
+		}
 	}
 
 	private void updateCollision() {

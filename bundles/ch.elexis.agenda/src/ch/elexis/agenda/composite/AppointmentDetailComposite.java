@@ -126,6 +126,7 @@ public class AppointmentDetailComposite extends Composite {
 	private Composite dateArea;
 	private boolean scheduleChangeMode = false;
 	private Button chkLocked;
+	private boolean changeLocked = false;
 
 
 	private static final int[] SASH_WEIGHTS_EXPANDED = { 25, 75 };
@@ -136,6 +137,10 @@ public class AppointmentDetailComposite extends Composite {
 			updateDateTimeFields(e.getSource());
 		}
 	};
+
+	public boolean isChangeLocked() {
+		return changeLocked;
+	}
 
 	private static LocalDate toLocalDate(Date date) {
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -773,7 +778,7 @@ public class AppointmentDetailComposite extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				appointment.setLocked(chkLocked.getSelection());
-				CoreModelServiceHolder.get().save(appointment);
+				changeLocked = true;
 			}
 		});
 

@@ -380,6 +380,7 @@ public class AppointmentDetailComposite extends Composite {
 	private void onContextDateSelected() {
 		txtDateFrom.setSelection(getDateFromCalendar());
 		setCompTimeToModel();
+		dayBar.setAppointment(appointment);
 		dayBar.refresh();
 	}
 
@@ -701,6 +702,7 @@ public class AppointmentDetailComposite extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setCompTimeToModel();
+				dayBar.setAppointment(appointment);
 				dayBar.refresh();
 			}
 		});

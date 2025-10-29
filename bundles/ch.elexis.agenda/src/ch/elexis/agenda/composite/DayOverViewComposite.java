@@ -1,5 +1,6 @@
 package ch.elexis.agenda.composite;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -345,16 +346,16 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private void setTimeTo(int minutesSinceStartOfDay) {
 		if (txtTimeTo.getSelection() != null) {
-			var baseDate = appointment.getStartTime().toLocalDate();
-			var newEnd = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
+			LocalDate baseDate = appointment.getStartTime().toLocalDate();
+			LocalDateTime newEnd = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
 			appointment.setEndTime(newEnd);
 			txtTimeTo.setSelection(Date.from(newEnd.atZone(ZoneId.systemDefault()).toInstant()));
 		}
 	}
 
 	private void setTimeFrom(int minutesSinceStartOfDay) {
-		var baseDate = appointment.getStartTime().toLocalDate();
-		var newStart = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
+		LocalDate baseDate = appointment.getStartTime().toLocalDate();
+		LocalDateTime newStart = baseDate.atStartOfDay().plusMinutes(minutesSinceStartOfDay);
 		appointment.setStartTime(newStart);
 		txtTimeFrom.setSelection(Date.from(newStart.atZone(ZoneId.systemDefault()).toInstant()));
 	}

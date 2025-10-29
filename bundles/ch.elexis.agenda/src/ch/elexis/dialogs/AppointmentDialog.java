@@ -37,7 +37,6 @@ import ch.elexis.agenda.commands.EmailSender;
 import ch.elexis.agenda.composite.AppointmentDetailComposite;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.ui.Messages;
-import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IImage;
@@ -46,6 +45,7 @@ import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.utils.CoreUtil;
 import jakarta.inject.Inject;
 
@@ -75,7 +75,6 @@ public class AppointmentDialog extends Dialog {
 	private boolean initColliding = false;
 	private boolean showAllDay = false;
 	private boolean scheduleChangeMode = false;
-	private IAppointment originalAppointment;
 
 
 	public AppointmentDialog(IAppointment appointment) {
@@ -83,11 +82,6 @@ public class AppointmentDialog extends Dialog {
 		CoreUiUtil.injectServicesWithContext(this);
 		coreModelService.refresh(appointment);
 		this.appointment = appointment;
-		if (appointment != null && appointment.getId() != null) {
-			this.originalAppointment = AppointmentUtil.shallowCopy(appointment);
-		} else {
-			this.originalAppointment = null;
-		}
 		this.emailSender = new EmailSender(textReplacementService, contextService);
 	}
 
@@ -189,11 +183,8 @@ public class AppointmentDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		if (!AppointmentUtil.isModified(originalAppointment, appointment)) {
-			super.okPressed();
-			return;
-		}
-		if (AppointmentUtil.isLocked(appointment)) {
+		if (appointment.isLocked() && !detailComposite.isChangeLocked()) {
+			SWTHelper.alert(Messages.Termin_appointment_locked, Messages.Termin_appCantBeChanged);
 			cancelPressed();
 			return;
 		}

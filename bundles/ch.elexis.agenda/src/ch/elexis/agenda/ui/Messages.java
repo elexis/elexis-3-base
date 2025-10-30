@@ -54,7 +54,7 @@ public class Messages {
 	public static String Warnung = ch.elexis.core.l10n.Messages.Warning;
 	public static String Warning_Kein_Pea = ch.elexis.core.l10n.Messages.Warning_No_Pea;
 	public static String Appointment_TrminLinks = ch.elexis.core.l10n.Messages.Appointment_TrminLinks;
-	public static Object AddCombiTerminDialogBefore = ch.elexis.core.l10n.Messages.AddCombiTerminDialogBefore;
+	public static String AddCombiTerminDialogBefore = ch.elexis.core.l10n.Messages.AddCombiTerminDialogBefore;
 
 	public static String AgendaUI_WeeklySeries_week_year = ch.elexis.core.l10n.Messages.AgendaUI_WeeklySeries_week_year;
 	public static String WeeklySeriesComposite_lblEvery_text = ch.elexis.core.l10n.Messages.WeeklySeriesComposite_lblEvery_text;
@@ -108,5 +108,9 @@ public class Messages {
 	public static String Termin_appointment_locked = ch.elexis.core.l10n.Messages.Termin_appointment_locked;
 	public static String Termin_appCantBeChanged = ch.elexis.core.l10n.Messages.Termin_appCantBeChanged;
 	public static String Agenda_Appointement_Locked = ch.elexis.core.l10n.Messages.Agenda_Appointement_Locked;
+	public static String TermineLockedTimesUpdater_4 = ch.elexis.core.l10n.Messages.TermineLockedTimesUpdater_4;
+	public static String UNKNOWN = ch.elexis.core.l10n.Messages.UNKNOWN;
+	public static String Core_Info = ch.elexis.core.l10n.Messages.Core_Info;
+	public static String AgendaUI_DayOverView_collisions = ch.elexis.core.l10n.Messages.AgendaUI_DayOverView_collisions;
 
 }

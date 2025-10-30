@@ -909,6 +909,7 @@ public class AppointmentDetailComposite extends Composite {
 		String selectedType = comboType.getText();
 		List<String> kombiTermineList = ConfigServiceHolder.get()
 				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType); //$NON-NLS-1$
+		dayBar.setAppointmentType(selectedType);
 		if (!StringUtils.isBlank(selectedType) && !kombiTermineList.isEmpty()) {
 			chkTerminLinks.setEnabled(true);
 		} else {
@@ -953,7 +954,7 @@ public class AppointmentDetailComposite extends Composite {
 			}
 			LocalDateTime startTime = appointment.getStartTime();
 			int offset = Integer.parseInt(elements[4]);
-			if (((String) Messages.AddCombiTerminDialogBefore).equalsIgnoreCase(elements[3])) {
+			if ((Messages.AddCombiTerminDialogBefore).equalsIgnoreCase(elements[3])) {
 				startTime = startTime.minusMinutes(offset);
 			} else {
 				startTime = startTime.plusMinutes(offset);

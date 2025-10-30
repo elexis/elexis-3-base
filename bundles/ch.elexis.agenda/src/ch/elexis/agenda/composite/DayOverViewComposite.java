@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Spinner;
 
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.Messages;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.model.IAppointment;
@@ -47,6 +49,7 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -77,7 +80,6 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private Slider slider;
 
-	private boolean bModified;
 	private String msg;
 
 	private Point d;
@@ -90,7 +92,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.WARNING;
 	private Consumer<Boolean> collisionCallback;
-
+	private String appointmentType;
 	public DayOverViewComposite(final Group parent, IAppointment appointment, CDateTime txtTimeFrom,
 			CDateTime txtTimeTo, Spinner txtDuration) {
 		super(parent, SWT.NONE);
@@ -128,6 +130,11 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	public void setAppointment(IAppointment appointment) {
 		this.appointment = appointment;
+	}
+
+	public void setAppointmentType(String type) {
+		refresh();
+		this.appointmentType = type;
 	}
 
 	/**
@@ -250,7 +257,6 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			int w = (int) Math.round(d * pixelPerMinute);
 			setBounds(x, 0, w, r.height / 2);
 			setTimeTo(v + d);
-			bModified = true;
 			updateCollision();
 		}
 
@@ -363,7 +369,8 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private void updateCollision() {
-		updateMessage(isColliding());
+		List<IAppointment> linkedCollisions = findCollisions(appointment);
+		updateMessage(isColliding(), linkedCollisions);
 		if (collisionCallback != null) {
 			collisionCallback.accept(isColliding());
 		}
@@ -426,26 +433,46 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 				.ifPresent(c -> configService.set(c, "agenda/dayView/raster", String.valueOf(rasterIndex))); //$NON-NLS-1$
 	}
 
-	private void updateMessage(final boolean collision) {
+	private void updateMessage(final boolean collision, List<IAppointment> linkedCollisions) {
 		msg = Messages.AgendaUI_DayOverView_create_or_change;
 
 		slider.setBackground(getColor(SWT.COLOR_GRAY)); // $NON-NLS-1$ //TODO LIGHTGREY
 
 		if (collision) {
-			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); // $NON-NLS-1$
+			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY));
 			msg += Messages.AgendaUI_DayOverView_date_collision;
-		}
 
-		getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
-					setMessage(msg, collision ? IMessageProvider.ERROR : IMessageProvider.NONE);
-				} else if (collisionErrorLevel == CollisionErrorLevel.WARNING) {
-					setMessage(msg, collision ? IMessageProvider.WARNING : IMessageProvider.NONE);
+			getShell().getDisplay().asyncExec(() -> {
+				setMessage(msg, IMessageProvider.ERROR);
+			});
+
+		} else if (!linkedCollisions.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(Messages.Core_Info + ": ").append(linkedCollisions.size()).append(StringUtils.SPACE)
+					.append(Messages.AgendaUI_DayOverView_collisions);
+			boolean first = true;
+			for (IAppointment c : linkedCollisions) {
+				String bereich = (c.getSchedule() != null) ? c.getSchedule().toString()
+						: Messages.UNKNOWN + StringUtils.SPACE + Messages.AppointmentDetailComposite_range;
+				if (!first) {
+					sb.append(" | ");
+				} else {
+					sb.append(StringUtils.SPACE);
+					first = false;
 				}
+				sb.append("(").append(bereich).append(") ").append(c.getStartTime().toLocalTime()).append("–")
+						.append(c.getEndTime().toLocalTime()).append(StringUtils.SPACE);
 			}
-		});
+			slider.setBackground(getColor(SWT.COLOR_YELLOW));
+			msg = sb.toString();
+			getShell().getDisplay().asyncExec(() -> {
+				setMessage(msg, IMessageProvider.WARNING);
+			});
+		} else {
+			getShell().getDisplay().asyncExec(() -> {
+				setMessage(msg, IMessageProvider.NONE);
+			});
+		}
 	}
 
 	private void setMessage(String msg, int i) {
@@ -504,5 +531,45 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);
+	}
+
+	private List<IAppointment> findCollisions(IAppointment newApp) {
+		List<String> allKombiTermine = ConfigServiceHolder.get()
+				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + appointmentType);
+		if (allKombiTermine.isEmpty()) {
+			return new ArrayList<>();
+		}
+		List<IAppointment> collisions = new ArrayList<>();
+		for (String kombi : allKombiTermine) {
+			kombi = kombi.replaceAll("[{}]", StringUtils.EMPTY);
+			String[] e = kombi.split(";");
+			if (e.length < 6)
+				continue;
+
+			String bereich = e[1].trim();
+			String richtung = e[3].trim();
+			int offset = Integer.parseInt(e[4].trim());
+			int dauer = Integer.parseInt(e[5].trim());
+
+			LocalDateTime start = newApp.getStartTime();
+			if (Messages.AddCombiTerminDialogBefore.equalsIgnoreCase(richtung)) {
+				start = start.minusMinutes(offset);
+			} else {
+				start = start.plusMinutes(offset);
+			}
+
+			IAppointment virt = CoreModelServiceHolder.get().create(IAppointment.class);
+			virt.setSchedule(bereich);
+			virt.setReason(StringUtils.EMPTY);
+			virt.setStartTime(start);
+			virt.setEndTime(start.plusMinutes(dauer));
+
+			boolean kollidiert = AppointmentServiceHolder.get().isColliding(virt);
+
+			if (kollidiert) {
+				collisions.add(virt);
+			}
+		}
+		return collisions;
 	}
 }

@@ -18,5 +18,7 @@ Export-Package: at.medevit.elexis.tarmed.model,
  ch.fd.invoice440.request,
  ch.fd.invoice440.response,
  ch.fd.invoice450.request,
- ch.fd.invoice450.response
+ ch.fd.invoice450.response,
+ ch.fd.invoice500.request,
+ ch.fd.invoice500.response
 Require-Bundle: org.apache.commons.lang3;bundle-version="3.12.0"

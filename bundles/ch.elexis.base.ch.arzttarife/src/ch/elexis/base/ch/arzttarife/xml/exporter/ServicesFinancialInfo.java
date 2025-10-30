@@ -39,6 +39,26 @@ public class ServicesFinancialInfo {
 		return ret;
 	}
 
+	public static ServicesFinancialInfo of(ch.fd.invoice500.request.ServicesType services, LocalDate localDate) {
+		ServicesFinancialInfo ret = new ServicesFinancialInfo(localDate);
+
+		for (Object obj : services.getServiceExOrService()) {
+			if (obj instanceof ch.fd.invoice500.request.ServiceExType) {
+				ret.addTariffAmount(((ch.fd.invoice500.request.ServiceExType) obj).getTariffType(),
+						((ch.fd.invoice500.request.ServiceExType) obj).getAmount());
+				ret.addVatAmount(((ch.fd.invoice500.request.ServiceExType) obj).getVatRate(),
+						((ch.fd.invoice500.request.ServiceExType) obj).getAmount());
+			} else if (obj instanceof ch.fd.invoice500.request.ServiceType) {
+				ret.addTariffAmount(((ch.fd.invoice500.request.ServiceType) obj).getTariffType(),
+						((ch.fd.invoice500.request.ServiceType) obj).getAmount());
+				ret.addVatAmount(((ch.fd.invoice500.request.ServiceType) obj).getVatRate(),
+						((ch.fd.invoice500.request.ServiceType) obj).getAmount());
+			}
+		}
+
+		return ret;
+	}
+
 	public ServicesFinancialInfo(LocalDate localDate) {
 		tariffSum = new HashMap<>();
 		vatRateSum = new VatRateSum(localDate);

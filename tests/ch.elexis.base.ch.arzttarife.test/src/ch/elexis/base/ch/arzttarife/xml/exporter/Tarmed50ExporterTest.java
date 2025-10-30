@@ -19,19 +19,19 @@ import org.junit.Test;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
-import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50Exporter.EsrType;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.data.Verrechnet;
-import ch.fd.invoice450.request.BalanceTGType;
-import ch.fd.invoice450.request.PatientAddressType;
-import ch.fd.invoice450.request.RequestType;
-import ch.fd.invoice450.request.VatRateType;
-import ch.fd.invoice450.request.VatType;
+import ch.fd.invoice500.request.BalanceTGType;
+import ch.fd.invoice500.request.PatientAddressType;
+import ch.fd.invoice500.request.RequestType;
+import ch.fd.invoice500.request.VatRateType;
+import ch.fd.invoice500.request.VatType;
 import ch.rgw.tools.Money;
 
-public class Tarmed45ExporterTest {
+public class Tarmed50ExporterTest {
 
 	@AfterClass
 	public static void afterClass() throws IOException {
@@ -44,7 +44,7 @@ public class Tarmed45ExporterTest {
 		assertNotNull(szenario);
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
-		Tarmed45Exporter exporter = new Tarmed45Exporter();
+		Tarmed50Exporter exporter = new Tarmed50Exporter();
 		List<IInvoice> invoices = szenario.getInvoices();
 		Optional<IInvoice> vatInvoice = invoices.stream().filter(i -> i.getBilled().stream()
 				.filter(b -> b.getExtInfo(Verrechnet.VATSCALE) != null).findFirst().isPresent()).findFirst();
@@ -53,13 +53,13 @@ public class Tarmed45ExporterTest {
 		assertTrue(exporter.doExport(vatInvoice.get(), output, IRnOutputter.TYPE.ORIG));
 
 		// ensure xsd conformity
-		Tarmed45Validator validator = new Tarmed45Validator();
+		Tarmed50Validator validator = new Tarmed50Validator();
 		List<String> errors = validator.validateRequest(new ByteArrayInputStream(output.toByteArray()));
 		assertTrue(Arrays.toString(errors.toArray()), errors.isEmpty());
 
 		// unmarshall and check vat values
 		RequestType vatRequest = TarmedJaxbUtil
-				.unmarshalInvoiceRequest450(new ByteArrayInputStream(output.toByteArray()));
+				.unmarshalInvoiceRequest500(new ByteArrayInputStream(output.toByteArray()));
 		assertNotNull(vatRequest.getPayload().getBody().getTiersGarant());
 		VatType vat = vatRequest.getPayload().getBody().getTiersGarant().getBalance().getVat();
 		assertNotNull(vat);
@@ -80,7 +80,7 @@ public class Tarmed45ExporterTest {
 		assertNotNull(szenario);
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
-		Tarmed45Exporter exporter = new Tarmed45Exporter();
+		Tarmed50Exporter exporter = new Tarmed50Exporter();
 		exporter.setEsrType(EsrType.esrQR);
 
 		List<IInvoice> invoices = szenario.getInvoices();
@@ -91,7 +91,7 @@ public class Tarmed45ExporterTest {
 		assertTrue(exporter.doExport(vatInvoice.get(), output, IRnOutputter.TYPE.ORIG));
 
 		// ensure xsd conformity
-		Tarmed45Validator validator = new Tarmed45Validator();
+		Tarmed50Validator validator = new Tarmed50Validator();
 		List<String> errors = validator.validateRequest(new ByteArrayInputStream(output.toByteArray()));
 		assertTrue(Arrays.toString(errors.toArray()), errors.isEmpty());
 	}
@@ -102,7 +102,7 @@ public class Tarmed45ExporterTest {
 		assertNotNull(szenario);
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
-		Tarmed45Exporter exporter = new Tarmed45Exporter();
+		Tarmed50Exporter exporter = new Tarmed50Exporter();
 
 		List<IInvoice> invoices = szenario.getInvoices();
 		Optional<IInvoice> mobileInvoice = invoices.stream()
@@ -112,7 +112,7 @@ public class Tarmed45ExporterTest {
 		assertTrue(exporter.doExport(mobileInvoice.get(), output, IRnOutputter.TYPE.ORIG));
 
 		RequestType invoiceRequest = TarmedJaxbUtil
-				.unmarshalInvoiceRequest450(new ByteArrayInputStream(output.toByteArray()));
+				.unmarshalInvoiceRequest500(new ByteArrayInputStream(output.toByteArray()));
 		assertNotNull(invoiceRequest);
 		assertNotNull(invoiceRequest.getPayload().getBody().getTiersGarant().getPatient());
 		PatientAddressType patient = invoiceRequest.getPayload().getBody().getTiersGarant().getPatient();
@@ -147,13 +147,13 @@ public class Tarmed45ExporterTest {
 		assertEquals(0, invoice.getTotalAmount().subtractMoney(totalAmount).getCents());
 		assertEquals(3000, invoice.getDemandAmount().getCents());
 
-		Tarmed45Exporter exporter = new Tarmed45Exporter();
+		Tarmed50Exporter exporter = new Tarmed50Exporter();
 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		assertTrue(exporter.doExport(invoice, output, IRnOutputter.TYPE.ORIG));
 
 		RequestType invoiceRequest = TarmedJaxbUtil
-				.unmarshalInvoiceRequest450(new ByteArrayInputStream(output.toByteArray()));
+				.unmarshalInvoiceRequest500(new ByteArrayInputStream(output.toByteArray()));
 		assertNotNull(invoiceRequest);
 		assertNotNull(invoiceRequest.getPayload().getBody().getTiersGarant().getBalance());
 		BalanceTGType balance = invoiceRequest.getPayload().getBody().getTiersGarant().getBalance();

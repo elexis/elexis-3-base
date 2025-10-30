@@ -11,6 +11,7 @@ import org.junit.runners.Suite;
 import ch.elexis.TarmedRechnung.XMLExporterTest;
 import ch.elexis.TarmedRechnung.XMLExporterTiersTest;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45ExporterTest;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50ExporterTest;
 import ch.elexis.base.ch.arzttarife.xml.update.XmlVersionUpdate44to45Test;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.l10n.Messages;
@@ -21,7 +22,7 @@ import ch.elexis.tarmedprefs.TarmedRequirementsTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TarmedRequirementsTest.class, XMLExporterTest.class, XMLExporterTiersTest.class,
-		Tarmed45ExporterTest.class, XmlVersionUpdate44to45Test.class })
+		Tarmed50ExporterTest.class, Tarmed45ExporterTest.class, XmlVersionUpdate44to45Test.class })
 public class AllPluginTests {
 
 	public static final String UVG_NAME = Messages.Case_UVG_Short;

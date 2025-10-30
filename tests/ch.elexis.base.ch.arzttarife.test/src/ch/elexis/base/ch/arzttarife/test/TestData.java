@@ -106,6 +106,11 @@ public class TestData {
 		return testSzenarioInstance;
 	}
 
+	public static void disposeTestSzenarioInstance() {
+		testSzenarioInstance.dispose();
+		testSzenarioInstance = null;
+	}
+
 	private static void validateSzenario(TestSzenario szenario) {
 		List<IInvoice> invoices = szenario.getInvoices();
 		assertNotNull(invoices);
@@ -197,6 +202,20 @@ public class TestData {
 				}
 			}
 
+			createInvoices();
+
+			importExistingXml();
+		}
+
+		public void dispose() {
+			CoreModelServiceHolder.get().remove(invoices);
+			konsultationen.forEach(k -> k.removeFromDatabase());
+			faelle.forEach(f -> f.removeFromDatabase());
+			patienten.forEach(p -> p.removeFromDatabase());
+			mandanten.forEach(m -> m.removeFromDatabase());
+		}
+
+		private void createInvoices() throws IOException {
 			for (Fall fall : faelle) {
 				ICoverage coverage = CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class).get();
 				Result<IInvoice> result = InvoiceServiceHolder.get().invoice(coverage.getEncounters());
@@ -222,8 +241,6 @@ public class TestData {
 
 			invoice.addAttachment(document);
 			CoreModelServiceHolder.get().save(invoice);
-
-			importExistingXml();
 		}
 
 		private void initBillingSystems() {

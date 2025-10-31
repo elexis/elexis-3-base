@@ -14,11 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -157,8 +157,8 @@ public class Tarmed50Exporter {
 			RequestType requestType = new RequestType();
 			requestType.setModus(getModus(invoice.getCoverage()));
 			requestType.setLanguage(Locale.getDefault().getLanguage());
-			String md5Hex = DigestUtils.md5Hex(invoice.getNumber());
-			requestType.setGuid(md5Hex);
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+			requestType.setGuid(uuid);
 
 			requestType.setProcessing(getProcessing(invoice));
 			requestType.setPayload(getPayload(invoice, type));

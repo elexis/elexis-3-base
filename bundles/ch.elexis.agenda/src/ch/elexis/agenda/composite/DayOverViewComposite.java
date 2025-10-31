@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Spinner;
 
-import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.Messages;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.model.IAppointment;
@@ -49,7 +48,6 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -369,7 +367,8 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private void updateCollision() {
-		List<IAppointment> linkedCollisions = findCollisions(appointment);
+		List<IAppointment> linkedCollisions = appointmentService.findCollisionsForKombiAppointment(appointment,
+				appointmentType);
 		updateMessage(isColliding(), linkedCollisions);
 		if (collisionCallback != null) {
 			collisionCallback.accept(isColliding());
@@ -443,7 +442,13 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			msg += Messages.AgendaUI_DayOverView_date_collision;
 
 			getShell().getDisplay().asyncExec(() -> {
-				setMessage(msg, IMessageProvider.ERROR);
+				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
+					setMessage(msg, IMessageProvider.ERROR);
+				} else if (collisionErrorLevel == CollisionErrorLevel.WARNING) {
+					setMessage(msg, IMessageProvider.WARNING);
+				} else {
+					setMessage(msg, IMessageProvider.NONE);
+				}
 			});
 
 		} else if (!linkedCollisions.isEmpty()) {
@@ -531,45 +536,5 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);
-	}
-
-	private List<IAppointment> findCollisions(IAppointment newApp) {
-		List<String> allKombiTermine = ConfigServiceHolder.get()
-				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + appointmentType);
-		if (allKombiTermine.isEmpty()) {
-			return new ArrayList<>();
-		}
-		List<IAppointment> collisions = new ArrayList<>();
-		for (String kombi : allKombiTermine) {
-			kombi = kombi.replaceAll("[{}]", StringUtils.EMPTY);
-			String[] e = kombi.split(";");
-			if (e.length < 6)
-				continue;
-
-			String bereich = e[1].trim();
-			String richtung = e[3].trim();
-			int offset = Integer.parseInt(e[4].trim());
-			int dauer = Integer.parseInt(e[5].trim());
-
-			LocalDateTime start = newApp.getStartTime();
-			if (Messages.AddCombiTerminDialogBefore.equalsIgnoreCase(richtung)) {
-				start = start.minusMinutes(offset);
-			} else {
-				start = start.plusMinutes(offset);
-			}
-
-			IAppointment virt = CoreModelServiceHolder.get().create(IAppointment.class);
-			virt.setSchedule(bereich);
-			virt.setReason(StringUtils.EMPTY);
-			virt.setStartTime(start);
-			virt.setEndTime(start.plusMinutes(dauer));
-
-			boolean kollidiert = AppointmentServiceHolder.get().isColliding(virt);
-
-			if (kollidiert) {
-				collisions.add(virt);
-			}
-		}
-		return collisions;
 	}
 }

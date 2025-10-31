@@ -11,12 +11,12 @@ import com.equo.chromium.swt.Browser;
 
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import ch.elexis.agenda.composite.AppointmentDetailComposite;
-import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.agenda.RecurringAppointment;
+import ch.elexis.core.services.handler.AppointmentExtensionHandler;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;

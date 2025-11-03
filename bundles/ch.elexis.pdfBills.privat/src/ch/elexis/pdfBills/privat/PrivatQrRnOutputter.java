@@ -102,9 +102,6 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 	public static final String CFG_PRINT_COMMAND = CFG_ROOT + "print.command"; //$NON-NLS-1$
 	public static final String CFG_PRINT_USE_SCRIPT = CFG_ROOT + "print.usescript"; //$NON-NLS-1$
 
-	protected static final String CFG_PRINT_BESR = "print.besr"; //$NON-NLS-1$
-	protected static final String CFG_PRINT_RF = "print.rf"; //$NON-NLS-1$
-
 	protected static final String CFG_MAIL_CPY = "mail.copy"; //$NON-NLS-1$
 	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account"; //$NON-NLS-1$
 
@@ -136,8 +133,13 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 			modifyInvoiceState = true;
 		}
 
-		if (StringUtils.isEmpty(OutputterUtil.getXmlOutputDir(CFG_ROOT))) {
-			String msg = "Es ist kein Ausgabe-Verzeichnis konfiguriert.\nBitte konfigurieren Sie dieses in den Einstellungen.";
+		if (StringUtils.isEmpty(OutputterUtil.getXmlOutputDir(CFG_ROOT_PRIVAT))) {
+			String msg = "Es ist kein XML Ausgabe-Verzeichnis konfiguriert.\nBitte konfigurieren Sie dieses in den Einstellungen.";
+			SWTHelper.showError("Fehler beim Rechnungsdruck", msg);
+			return new Result<Rechnung>(Result.SEVERITY.ERROR, 2, msg, null, true);
+		}
+		if (!OutputterUtil.isPdfOutputDirValid(CFG_ROOT_PRIVAT)) {
+			String msg = "Es ist kein PDF Ausgabe-Verzeichnis konfiguriert.\nBitte konfigurieren Sie dieses in den Einstellungen.";
 			SWTHelper.showError("Fehler beim Rechnungsdruck", msg);
 			return new Result<Rechnung>(Result.SEVERITY.ERROR, 2, msg, null, true);
 		}
@@ -304,11 +306,11 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR);
-			LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_BESR, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM);
-			LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_RF, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL);
@@ -399,11 +401,11 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		ret.setLayout(new GridLayout(2, false));
 		bWithEsr = new Button(ret, SWT.CHECK);
 		bWithEsr.setText("Mit Einzahlungsschein");
-		bWithEsr.setSelection(LocalConfigService.get(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, true));
+		bWithEsr.setSelection(LocalConfigService.get(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_BESR, true));
 		bWithEsr.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
+				LocalConfigService.set(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_BESR, bWithEsr.getSelection());
 				updateButtonStates(rnOutputDialog);
 			}
 		});
@@ -411,11 +413,11 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 
 		bWithRf = new Button(ret, SWT.CHECK);
 		bWithRf.setText("Mit Rechnungsformular");
-		bWithRf.setSelection(LocalConfigService.get(CFG_ROOT_PRIVAT + CFG_PRINT_RF, true));
+		bWithRf.setSelection(LocalConfigService.get(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_RF, true));
 		bWithRf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
+				LocalConfigService.set(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_RF, bWithRf.getSelection());
 				updateButtonStates(rnOutputDialog);
 			}
 		});
@@ -503,8 +505,8 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 
 	@Override
 	public void saveComposite() {
-		LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
-		LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
+		LocalConfigService.set(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_BESR, bWithEsr.getSelection());
+		LocalConfigService.set(CFG_ROOT_PRIVAT + OutputterUtil.CFG_PRINT_RF, bWithRf.getSelection());
 		if (!OutputterUtil.useGlobalOutputDirs()) {
 			LocalConfigService.set(CFG_ROOT_PRIVAT + XMLDIR, tXml.getText());
 			LocalConfigService.set(CFG_ROOT_PRIVAT + PDFDIR, tPdf.getText());

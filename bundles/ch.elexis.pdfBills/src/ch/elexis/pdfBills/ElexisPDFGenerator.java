@@ -61,7 +61,6 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.ebanking.esr.ESR;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IContact;
@@ -74,6 +73,7 @@ import ch.elexis.core.services.IFormattedOutput;
 import ch.elexis.core.services.IFormattedOutputFactory;
 import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
 import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
@@ -235,12 +235,12 @@ public class ElexisPDFGenerator {
 					if (withQr) {
 						parameters.put("qrJpeg", getEncodedQr(rechnung)); //$NON-NLS-1$
 					}
-					if (CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL, false)) {
+					if (LocalConfigService.get(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL, false)) {
 						parameters.put("guarantorPostal", getGuarantorPostal(rechnung)); //$NON-NLS-1$
 					} else {
 						parameters.put("guarantorPostal", StringUtils.EMPTY); //$NON-NLS-1$
 					}
-					if (CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_LEFT, false)) {
+					if (LocalConfigService.get(RnOutputter.CFG_ESR_COUVERT_LEFT, false)) {
 						parameters.put("couvertLeft", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						parameters.put("couvertLeft", StringUtils.EMPTY); //$NON-NLS-1$
@@ -517,7 +517,7 @@ public class ElexisPDFGenerator {
 	public void printBill(File rsc) {
 		printed = new ArrayList<>();
 		try {
-			if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_BESR, true)) {
+			if (LocalConfigService.get(RnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_BESR, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
 						.of(OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf") //$NON-NLS-1$
 						.toFile().orElse(null);
@@ -525,7 +525,7 @@ public class ElexisPDFGenerator {
 				printPdf(pdf, true);
 				printed.add(pdf);
 			}
-			if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_RF, true)) {
+			if (LocalConfigService.get(RnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_RF, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
 						.of(OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf") //$NON-NLS-1$
 						.toFile().orElse(null);
@@ -541,7 +541,7 @@ public class ElexisPDFGenerator {
 	public void printQrBill(File rsc) {
 		printed = new ArrayList<>();
 		try {
-			if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_BESR, true)) {
+			if (LocalConfigService.get(QrRnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_BESR, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
 						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
 								+ "_esr.pdf") //$NON-NLS-1$
@@ -550,7 +550,7 @@ public class ElexisPDFGenerator {
 				printPdf(pdf, false);
 				printed.add(pdf);
 			}
-			if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_RF, true)) {
+			if (LocalConfigService.get(QrRnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_RF, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
 						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf") //$NON-NLS-1$
 						.toFile().orElse(null);
@@ -590,17 +590,17 @@ public class ElexisPDFGenerator {
 	private boolean printPdf(File pdf, boolean useEsrPrinter) {
 		if (print && isPrintingConfigured()) {
 			// check if script initialization for windows should be performed
-			if (CoreUtil.isWindows() && CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USE_SCRIPT, false)
+			if (CoreUtil.isWindows() && LocalConfigService.get(RnOutputter.CFG_PRINT_USE_SCRIPT, false)
 					&& !isScriptWinInitialized()) {
 				initializeScriptWin();
 			}
-			String toPrinter = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY);
-			String toTray = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY);
+			String toPrinter = LocalConfigService.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY);
+			String toTray = LocalConfigService.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY);
 			if (useEsrPrinter) {
-				toPrinter = CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY);
-				toTray = CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY);
+				toPrinter = LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY);
+				toTray = LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY);
 			}
-			String printCommand = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY);
+			String printCommand = LocalConfigService.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY);
 			if (printCommand != null) {
 				PrintProcess process = new PrintProcess(printCommand);
 				process.setPrinter(toPrinter);
@@ -613,8 +613,8 @@ public class ElexisPDFGenerator {
 	}
 
 	private boolean isPrintingConfigured() {
-		return CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false)
-				&& !CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY).isEmpty();
+		return LocalConfigService.get(RnOutputter.CFG_PRINT_DIRECT, false)
+				&& !LocalConfigService.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY).isEmpty();
 	}
 
 	private boolean isScriptWinInitialized() {

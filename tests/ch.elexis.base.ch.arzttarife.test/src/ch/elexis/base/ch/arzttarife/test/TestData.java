@@ -80,6 +80,10 @@ public class TestData {
 
 	public static final String EXISTING_45_3_RNR = "4503";
 
+	public static final String EXISTING_50_RNR = "5000";
+
+	public static final String EXISTING_50_3_RNR = "5003";
+
 	public static final String EXISTING_44_RNR = "4400";
 
 	public static final String EXISTING_44_2_RNR = "4402";
@@ -355,6 +359,18 @@ public class TestData {
 			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
 			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_45_3_RNR);
 			blob.putString(stringWriter.toString());
+
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing50_1.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_50_RNR);
+			blob.putString(stringWriter.toString());
+
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing50_3.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_50_3_RNR);
+			blob.putString(stringWriter.toString());
 		}
 
 		private void createLeistungen() {
@@ -594,6 +610,13 @@ public class TestData {
 					}
 				}
 			} else if (rechnungNr.equals(EXISTING_45_RNR) || rechnungNr.equals(EXISTING_45_3_RNR)) {
+				for (IBillable leistung : leistungen) {
+					Result<IBilled> result = BillingServiceHolder.get().bill(leistung, encounter, 1);
+					if (!result.isOK()) {
+						throw new IllegalStateException(result.toString());
+					}
+				}
+			} else if (rechnungNr.equals(EXISTING_50_RNR) || rechnungNr.equals(EXISTING_50_3_RNR)) {
 				for (IBillable leistung : leistungen) {
 					Result<IBilled> result = BillingServiceHolder.get().bill(leistung, encounter, 1);
 					if (!result.isOK()) {

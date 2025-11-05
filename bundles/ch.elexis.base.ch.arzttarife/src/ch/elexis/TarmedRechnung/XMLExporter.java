@@ -76,6 +76,8 @@ import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Validator;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50Exporter;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50Validator;
 import ch.elexis.base.ch.arzttarife.xml.update.XmlVersionUpdate44to45;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.Preferences;
@@ -206,12 +208,18 @@ public class XMLExporter implements IRnOutputter {
 	private Tarmed45Exporter exporter;
 	private Tarmed45Validator validator;
 
+	private Tarmed50Exporter exporter50;
+	private Tarmed50Validator validator50;
+
 	private EsrType esrType;
 
 	public XMLExporter() {
 		ta = TarmedACL.getInstance();
 		exporter = new Tarmed45Exporter();
 		validator = new Tarmed45Validator();
+
+		exporter50 = new Tarmed50Exporter();
+		validator50 = new Tarmed50Validator();
 	}
 
 	/**
@@ -434,10 +442,10 @@ public class XMLExporter implements IRnOutputter {
 				ret = getExistingXml(invoice).get();
 				root = ret.getRootElement();
 			}
-
-			if (getXmlVersion(root).equals("4.0")) {
+			String xmlVersion = getXmlVersion(root);
+			if (xmlVersion.equals("4.0")) {
 				updateExisting4Xml(root, type, invoice);
-			} else if (getXmlVersion(root).equals("4.4")) {
+			} else if (xmlVersion.equals("4.4")) {
 				updateExisting44Xml(root, type, invoice);
 
 				InvoiceState state = invoice.getState();
@@ -457,7 +465,7 @@ public class XMLExporter implements IRnOutputter {
 					}
 					addReminderEntry(root, invoice, "3");
 				}
-			} else if (getXmlVersion(root).equals("4.5")) {
+			} else if (xmlVersion.equals("4.5")) {
 				Optional<?> invoiceRequest = getExistingXmlModel(invoice, "4.5");
 				if (invoiceRequest.isPresent()) {
 					exporter.updateExistingXml((ch.fd.invoice450.request.RequestType) invoiceRequest.get(), type,
@@ -489,6 +497,38 @@ public class XMLExporter implements IRnOutputter {
 					}
 					ret = getAsJdomDocument((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).orElse(null);
 				}
+			} else if (xmlVersion.equals("5.0")) {
+				Optional<?> invoiceRequest = getExistingXmlModel(invoice, "5.0");
+				if (invoiceRequest.isPresent()) {
+					exporter50.updateExistingXml((ch.fd.invoice500.request.RequestType) invoiceRequest.get(), type,
+							invoice, this);
+
+					InvoiceState state = invoice.getState();
+					if (state == InvoiceState.DEMAND_NOTE_1 || state == InvoiceState.DEMAND_NOTE_1_PRINTED) {
+						if (dest != null) {
+							dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m1.xml");
+						}
+						exporter50.addReminderEntry((ch.fd.invoice500.request.RequestType) invoiceRequest.get(),
+								invoice, "1");
+					} else if (state == InvoiceState.DEMAND_NOTE_2 || state == InvoiceState.DEMAND_NOTE_2_PRINTED) {
+						if (dest != null) {
+							dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m2.xml");
+						}
+						exporter50.addReminderEntry((ch.fd.invoice500.request.RequestType) invoiceRequest.get(),
+								invoice, "2");
+					} else if (state == InvoiceState.DEMAND_NOTE_3 || state == InvoiceState.DEMAND_NOTE_3_PRINTED) {
+						if (dest != null) {
+							dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m3.xml");
+						}
+						exporter50.addReminderEntry((ch.fd.invoice500.request.RequestType) invoiceRequest.get(),
+								invoice, "3");
+					} else if (state.getState() < InvoiceState.DEMAND_NOTE_1.getState()
+							&& exporter50.isReminder((ch.fd.invoice500.request.RequestType) invoiceRequest.get())) {
+						exporter50.removeReminderEntry((ch.fd.invoice500.request.RequestType) invoiceRequest.get(),
+								invoice);
+					}
+					ret = getAsJdomDocument((ch.fd.invoice500.request.RequestType) invoiceRequest.get()).orElse(null);
+				}
 			} else {
 				logger.warn("Bill in unknown XML version " + getXmlVersion(root) + ", recreating bill.");
 				return null;
@@ -519,6 +559,10 @@ public class XMLExporter implements IRnOutputter {
 				ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
 						.unmarshalInvoiceRequest450(new ByteArrayInputStream(blob.getStringContent().getBytes()));
 				return Optional.ofNullable(invoiceRequest);
+			} else if ("5.0".equals(version)) {
+				ch.fd.invoice500.request.RequestType invoiceRequest = TarmedJaxbUtil
+						.unmarshalInvoiceRequest500(new ByteArrayInputStream(blob.getStringContent().getBytes()));
+				return Optional.ofNullable(invoiceRequest);
 			}
 		}
 		return Optional.empty();
@@ -537,6 +581,15 @@ public class XMLExporter implements IRnOutputter {
 	}
 
 	public Optional<Document> getAsJdomDocument(ch.fd.invoice450.request.RequestType request) {
+		if (request != null) {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			TarmedJaxbUtil.marshallInvoiceRequest(request, outputStream);
+			return getAsJdomDocument(outputStream);
+		}
+		return Optional.empty();
+	}
+
+	public Optional<Document> getAsJdomDocument(ch.fd.invoice500.request.RequestType request) {
 		if (request != null) {
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			TarmedJaxbUtil.marshallInvoiceRequest(request, outputStream);
@@ -841,6 +894,8 @@ public class XMLExporter implements IRnOutputter {
 				return "4.4";//$NON-NLS-1$
 			} else if (location.contains("InvoiceRequest_450")) {//$NON-NLS-1$
 				return "4.5";//$NON-NLS-1$
+			} else if (location.contains("InvoiceRequest_500")) {//$NON-NLS-1$
+				return "5.0";//$NON-NLS-1$
 			}
 		}
 		return location;// $NON-NLS-1$
@@ -928,6 +983,9 @@ public class XMLExporter implements IRnOutputter {
 			} else if (getXmlVersion(xmlDoc.getRootElement()).equals("4.5")) {
 				logger.info("Validating XML against generalInvoiceRequest_450.xsd");
 				errs = validator.validateRequest(toInputStream(xmlDoc));
+			} else if (getXmlVersion(xmlDoc.getRootElement()).equals("5.0")) {
+				logger.info("Validating XML against generalInvoiceRequest_500.xsd");
+				errs = validator50.validateRequest(toInputStream(xmlDoc));
 			} else {
 				errs = Collections
 						.singletonList("Bill in unknown XML version " + getXmlVersion(xmlDoc.getRootElement()));

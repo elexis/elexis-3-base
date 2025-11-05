@@ -900,7 +900,7 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			appointment.setSubjectOrPatient(null);
 		}
-		List<IAppointment> kombiAppointments = appointmentService.createKombiTermineIfApplicable(appointment,
+		List<IAppointment> kombiAppointments = appointmentService.getKombiTermineIfApplicable(appointment,
 				getSelectedContact(), comboType.getText(), txtPatSearch.getText());
 		if (!kombiAppointments.isEmpty()) {
 			for (IAppointment kombi : kombiAppointments) {

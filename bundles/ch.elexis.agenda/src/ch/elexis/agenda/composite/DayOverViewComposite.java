@@ -367,9 +367,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private void updateCollision() {
-		List<IAppointment> linkedCollisions = appointmentService.findCollisionsForKombiAppointment(appointment,
-				appointmentType);
-		updateMessage(isColliding(), linkedCollisions);
+		updateMessage(isColliding());
 		if (collisionCallback != null) {
 			collisionCallback.accept(isColliding());
 		}
@@ -432,52 +430,26 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 				.ifPresent(c -> configService.set(c, "agenda/dayView/raster", String.valueOf(rasterIndex))); //$NON-NLS-1$
 	}
 
-	private void updateMessage(final boolean collision, List<IAppointment> linkedCollisions) {
+	private void updateMessage(final boolean collision) {
 		msg = Messages.AgendaUI_DayOverView_create_or_change;
-
-		slider.setBackground(getColor(SWT.COLOR_GRAY)); // $NON-NLS-1$ //TODO LIGHTGREY
+		slider.setBackground(getColor(SWT.COLOR_GRAY));
+		int messageLevel = IMessageProvider.NONE;
 
 		if (collision) {
 			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY));
 			msg += Messages.AgendaUI_DayOverView_date_collision;
-
-			getShell().getDisplay().asyncExec(() -> {
-				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
-					setMessage(msg, IMessageProvider.ERROR);
-				} else if (collisionErrorLevel == CollisionErrorLevel.WARNING) {
-					setMessage(msg, IMessageProvider.WARNING);
-				} else {
-					setMessage(msg, IMessageProvider.NONE);
-				}
-			});
-
-		} else if (!linkedCollisions.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(Messages.Core_Info + ": ").append(linkedCollisions.size()).append(StringUtils.SPACE)
-					.append(Messages.AgendaUI_DayOverView_collisions);
-			boolean first = true;
-			for (IAppointment c : linkedCollisions) {
-				String bereich = (c.getSchedule() != null) ? c.getSchedule().toString()
-						: Messages.UNKNOWN + StringUtils.SPACE + Messages.AppointmentDetailComposite_range;
-				if (!first) {
-					sb.append(" | ");
-				} else {
-					sb.append(StringUtils.SPACE);
-					first = false;
-				}
-				sb.append("(").append(bereich).append(") ").append(c.getStartTime().toLocalTime()).append("–")
-						.append(c.getEndTime().toLocalTime()).append(StringUtils.SPACE);
-			}
-			slider.setBackground(getColor(SWT.COLOR_YELLOW));
-			msg = sb.toString();
-			getShell().getDisplay().asyncExec(() -> {
-				setMessage(msg, IMessageProvider.WARNING);
-			});
+			messageLevel = (collisionErrorLevel == CollisionErrorLevel.ERROR) ? IMessageProvider.ERROR
+					: IMessageProvider.WARNING;
 		} else {
-			getShell().getDisplay().asyncExec(() -> {
-				setMessage(msg, IMessageProvider.NONE);
-			});
+			List<IAppointment> linkedCollisions = appointmentService.isColliding(appointment, appointmentType);
+			if (linkedCollisions != null && !linkedCollisions.isEmpty()) {
+				msg = buildCollisionInfoMessage(linkedCollisions);
+				slider.setBackground(getColor(SWT.COLOR_YELLOW));
+				messageLevel = IMessageProvider.WARNING;
+			}
 		}
+		final int level = messageLevel;
+		getShell().getDisplay().asyncExec(() -> setMessage(msg, level));
 	}
 
 	private void setMessage(String msg, int i) {
@@ -536,5 +508,21 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);
+	}
+
+	private String buildCollisionInfoMessage(List<IAppointment> linkedCollisions) {
+		if (linkedCollisions == null || linkedCollisions.isEmpty()) {
+			return StringUtils.EMPTY;
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(Messages.Core_Info).append(": ").append(linkedCollisions.size()).append(" ")
+				.append(Messages.AgendaUI_DayOverView_collisions);
+		linkedCollisions.forEach(c -> {
+			String bereich = (c.getSchedule() != null) ? c.getSchedule().toString()
+					: Messages.UNKNOWN + " " + Messages.AppointmentDetailComposite_range;
+			sb.append(" | (").append(bereich).append(") ").append(c.getStartTime().toLocalTime()).append("–")
+					.append(c.getEndTime().toLocalTime());
+		});
+		return sb.toString();
 	}
 }

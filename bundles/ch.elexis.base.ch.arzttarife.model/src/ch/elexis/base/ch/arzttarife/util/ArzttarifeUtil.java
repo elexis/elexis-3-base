@@ -1,11 +1,15 @@
 package ch.elexis.base.ch.arzttarife.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
+import ch.elexis.core.findings.ICoding;
+import ch.elexis.core.findings.util.model.TransientCoding;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
@@ -17,6 +21,8 @@ import ch.rgw.tools.Money;
 public class ArzttarifeUtil {
 
 	private static String MANDANT_TYPE_EXTINFO_KEY = "ch.elexis.data.tarmed.mandant.type";
+
+	private static String MANDANT_TARDOC_SPECIALIST_EXTINFO_KEY = "ch.elexis.data.tardoc.mandant.dignitaet";
 
 	/**
 	 * Set the {@link MandantType} of the {@link IMandator}.
@@ -42,6 +48,45 @@ public class ArzttarifeUtil {
 			return MandantType.valueOf((String) typeObj);
 		}
 		return MandantType.SPECIALIST;
+	}
+
+	/**
+	 * Set the TARDOC specialist codes of the {@link IMandator}.
+	 *
+	 * @param mandant
+	 * @param type
+	 */
+	public static void setMandantTardocSepcialist(IMandator mandator, List<ICoding> specialistCodes) {
+		if (specialistCodes != null) {
+			mandator.setExtInfo(MANDANT_TARDOC_SPECIALIST_EXTINFO_KEY, specialistCodes.stream()
+					.map(c -> c.getCode() + "|" + c.getDisplay()).collect(Collectors.joining("::")));
+		} else {
+			mandator.setExtInfo(MANDANT_TARDOC_SPECIALIST_EXTINFO_KEY, null);
+		}
+	}
+
+	/**
+	 * Get the {@link MandantType} of the {@link IMandator}. If not found the
+	 * default value is {@link MandantType#SPECIALIST}.
+	 *
+	 * @param mandant
+	 * @return
+	 * @since 3.4
+	 */
+	public static List<ICoding> getMandantTardocSepcialist(IMandator mandator) {
+		Object typeObj = mandator.getExtInfo(MANDANT_TARDOC_SPECIALIST_EXTINFO_KEY);
+		if (typeObj instanceof String) {
+			List<ICoding> ret = new ArrayList<ICoding>();
+			String[] codesString = ((String) typeObj).split("::");
+			for (String codeString : codesString) {
+				String[] codeParts = codeString.split("\\|");
+				if (codeParts.length == 2) {
+					ret.add(new TransientCoding("tardoc_dignitaet", codeParts[0], codeParts[1]));
+				}
+			}
+			return ret;
+		}
+		return Collections.emptyList();
 	}
 
 	/**

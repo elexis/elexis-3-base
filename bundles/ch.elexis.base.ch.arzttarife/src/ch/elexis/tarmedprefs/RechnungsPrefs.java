@@ -103,6 +103,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	private ComboViewer cvMandantType;
 	private Label lblFixProvider;
 
+	private TardocSpecialistComposite tardocSpecialist;
+
 	static TarmedACL ta = TarmedACL.getInstance();
 
 	static final String[] ExtFlds = { 
@@ -214,6 +216,14 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			}
 		});
 		cvMandantType.getCombo().setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+
+		// TARDOC mandant type
+		Label lTardocSpecialist = new Label(adrs, SWT.NONE);
+		lTardocSpecialist.setText("TARDOC-Dignität"); // $NON-NLS-1$
+		lTardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+
+		tardocSpecialist = new TardocSpecialistComposite(adrs, SWT.NONE);
+		tardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		// bills electronically
 		bBillsElec = new Button(adrs, SWT.CHECK);
@@ -678,6 +688,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 		tTreat.setText(actMandant.getLabel());
 		cvMandantType.setSelection(new StructuredSelection(ArzttarifeUtil.getMandantType(actMandant)));
+
+		tardocSpecialist.setMandator(m);
 
 		actBank = CoreModelServiceHolder.get().load((String) actMandant.getExtInfo(ta.RNBANK), IContact.class)
 				.orElse(null);

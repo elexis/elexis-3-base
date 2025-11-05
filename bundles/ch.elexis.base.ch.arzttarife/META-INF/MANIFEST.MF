@@ -21,7 +21,9 @@ Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.tarmedprefs,
  ch.elexis.views
 Bundle-ClassPath: .
-Import-Package: org.apache.commons.beanutils;version="1.9.4",
+Import-Package: ch.elexis.core.findings,
+ ch.elexis.core.findings.codes,
+ org.apache.commons.beanutils;version="1.9.4",
  org.apache.commons.io;version="2.6.0",
  org.apache.commons.lang3;version="3.12.0",
  org.eclipse.ui.forms,

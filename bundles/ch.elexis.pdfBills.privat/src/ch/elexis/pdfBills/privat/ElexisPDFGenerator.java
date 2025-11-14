@@ -491,7 +491,7 @@ public class ElexisPDFGenerator {
 				return mandantValue;
 			}
 		}
-		return CoreHub.localCfg.get(configId, defaultValue);
+		return PreferencePage.getConfigTransferGlobal(configId, defaultValue);
 	}
 
 	public void printBill(File rsc) {

@@ -15,7 +15,6 @@ import ch.elexis.omnivore.model.util.Utils;
 
 public class Preferences {
 
-
 	public static boolean storeInFilesystem() {
 		if (StringUtils.isNotEmpty(System.getProperty(Utils.DEMO_DOCUMENTS))) {
 			return true;
@@ -60,7 +59,7 @@ public class Preferences {
 		} else {
 			ret = ConfigServiceHolder.getLocal(BASEPATH, null);
 		}
-		if (ret.contains("no protocol: ")) { //$NON-NLS-1$
+		if (StringUtils.contains(ret, "no protocol: ")) { //$NON-NLS-1$
 			ret = ret.replaceAll("no protocol: ", StringUtils.EMPTY); //$NON-NLS-1$
 		}
 		return ret;

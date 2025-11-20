@@ -441,10 +441,12 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			messageLevel = (collisionErrorLevel == CollisionErrorLevel.ERROR) ? IMessageProvider.ERROR
 					: IMessageProvider.WARNING;
 		} else {
-			List<IAppointment> linkedCollisions = appointmentService.isColliding(appointment, appointmentType);
+			List<IAppointment> kombiAppointments = appointmentType != null
+					? appointmentService.getKombiTermineIfApplicable(appointment, null, appointmentType, null)
+					: new ArrayList<>();
+			List<IAppointment> linkedCollisions = appointmentService.getCollidingAppointments(kombiAppointments);
 			if (linkedCollisions != null && !linkedCollisions.isEmpty()) {
 				msg = buildCollisionInfoMessage(linkedCollisions);
-				slider.setBackground(getColor(SWT.COLOR_YELLOW));
 				messageLevel = IMessageProvider.WARNING;
 			}
 		}

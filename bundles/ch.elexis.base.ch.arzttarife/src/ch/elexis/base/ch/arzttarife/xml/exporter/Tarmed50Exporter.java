@@ -197,14 +197,6 @@ public class Tarmed50Exporter {
 		return esrType;
 	}
 
-	public void setEsrType(EsrType esrType) {
-		if (esrType == null) {
-			this.esrType = EsrType.esrQR;
-		} else {
-			this.esrType = esrType;
-		}
-	}
-
 	public boolean isPrintAtIntermediate() {
 		return printAtIntermediate;
 	}

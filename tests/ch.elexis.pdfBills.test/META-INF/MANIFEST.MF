@@ -8,5 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit;bundle-version="4.10.0",
  ch.elexis.fop.service;bundle-version="3.2.0",
  ch.elexis.fop_wrapper;bundle-version="3.2.0"
-Import-Package: org.jdom2;version="2.0.6",
- org.jdom2.input;version="2.0.6"
+Import-Package: org.jdom2,
+ org.jdom2.input

@@ -88,13 +88,30 @@ public class ElexisPDFGeneratorTest {
 		generator.printBill(AllTests.pluginRsc);
 	}
 
-	// @Test
-	// public void generate450TGQRBill(){
-	// String billXmlFile = AllTests.getBillXmlFilePath("450_qr_tg_mvg_de");
-	// assertNotNull(billXmlFile);
-	// AllTests.setOutputDir("output");
-	// ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile,
-	// "450_qr_tg_mvg");
-	// generator.printQrBill(AllTests.pluginRsc);
-	// }
+	@Test
+	public void generate450TGQRBill() {
+		String billXmlFile = AllTests.getBillXmlFilePath("450_qr_tg_mvg_de");
+		assertNotNull(billXmlFile);
+		AllTests.setOutputDir("output");
+		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "450_qr_tg_mvg");
+		generator.printQrBill(AllTests.pluginRsc);
+	}
+
+	@Test
+	public void generate500TGQRBill() {
+		String billXmlFile = AllTests.getBillXmlFilePath("500_qr_tg_vvg_de");
+		assertNotNull(billXmlFile);
+		AllTests.setOutputDir("output");
+		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "500_qr_tg_vvg");
+		generator.printQrBill(AllTests.pluginRsc);
+	}
+
+	@Test
+	public void generate500TPQRBill() {
+		String billXmlFile = AllTests.getBillXmlFilePath("500_qr_tp_kvg_de");
+		assertNotNull(billXmlFile);
+		AllTests.setOutputDir("output");
+		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "500_qr_tp_kvg");
+		generator.printQrBill(AllTests.pluginRsc);
+	}
 }

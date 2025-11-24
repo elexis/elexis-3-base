@@ -19,7 +19,6 @@ import org.junit.Test;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
-import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50Exporter.EsrType;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
@@ -81,7 +80,6 @@ public class Tarmed50ExporterTest {
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
 		Tarmed50Exporter exporter = new Tarmed50Exporter();
-		exporter.setEsrType(EsrType.esrQR);
 
 		List<IInvoice> invoices = szenario.getInvoices();
 		Optional<IInvoice> vatInvoice = invoices.stream().filter(i -> i.getBilled().stream()

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice:request xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:invoice="http://www.forum-datenaustausch.ch/invoice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" language="de" modus="production" guid="294a523e33504efba36510d666871ad7" xsi:schemaLocation="http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_500.xsd">
+    <invoice:processing print_copy_to_guarantor="false">
+        <invoice:transport from="2000000000002" to="2000000000000">
+            <invoice:via via="2000000000000" sequence_id="1"/>
+        </invoice:transport>
+    </invoice:processing>
+    <invoice:payload request_type="invoice" request_subtype="normal">
+        <invoice:invoice request_timestamp="1762251624" request_date="2025-11-04T00:00:00.000+01:00" request_id="000001000001"/>
+        <invoice:body role="physician" place="practice">
+            <invoice:prolog>
+                <invoice:package name="Elexis" version="3130"/>
+                <invoice:generator name="JAXB" version="21"/>
+            </invoice:prolog>
+            <invoice:tiers_garant>
+                <invoice:billers>
+                    <invoice:biller_gln gln="2000000000002">
+                        <invoice:person salutation="Frau">
+                            <invoice:familyname>Mandant.tarmed</invoice:familyname>
+                            <invoice:givenname>Mandant.tarmed</invoice:givenname>
+                            <invoice:postal>
+<invoice:zip>0000</invoice:zip>
+<invoice:city>Unbekannt</invoice:city>
+<invoice:country country_code="CH">CH</invoice:country>
+                            </invoice:postal>
+                        </invoice:person>
+                    </invoice:biller_gln>
+                    <invoice:biller_zsr zsr="C000002">
+                        <invoice:person salutation="Frau">
+                            <invoice:familyname>Mandant.tarmed</invoice:familyname>
+                            <invoice:givenname>Mandant.tarmed</invoice:givenname>
+                            <invoice:postal>
+<invoice:zip>0000</invoice:zip>
+<invoice:city>Unbekannt</invoice:city>
+<invoice:country country_code="CH">CH</invoice:country>
+                            </invoice:postal>
+                        </invoice:person>
+                    </invoice:biller_zsr>
+                </invoice:billers>
+                <invoice:debitor gln="2000000000000">
+                    <invoice:person salutation="Frau">
+                        <invoice:familyname>Spitzkiel</invoice:familyname>
+                        <invoice:givenname>Beatrice</invoice:givenname>
+                        <invoice:postal>
+                            <invoice:zip>0000</invoice:zip>
+                            <invoice:city>Unbekannt</invoice:city>
+                            <invoice:country country_code="CH">CH</invoice:country>
+                        </invoice:postal>
+                        <invoice:telecom>
+                            <invoice:phone>444-444 44 44</invoice:phone>
+                            <invoice:phone>555-555 55 55</invoice:phone>
+                        </invoice:telecom>
+                    </invoice:person>
+                </invoice:debitor>
+                <invoice:providers>
+                    <invoice:provider_gln gln="2000000000002" gln_location="2000000000002">
+                        <invoice:person salutation="Frau">
+                            <invoice:familyname>Mandant.tarmed</invoice:familyname>
+                            <invoice:givenname>Mandant.tarmed</invoice:givenname>
+                            <invoice:postal>
+<invoice:zip>0000</invoice:zip>
+<invoice:city>Unbekannt</invoice:city>
+<invoice:country country_code="CH">CH</invoice:country>
+                            </invoice:postal>
+                        </invoice:person>
+                    </invoice:provider_gln>
+                    <invoice:provider_zsr zsr="C000002">
+                        <invoice:person salutation="Frau">
+                            <invoice:familyname>Mandant.tarmed</invoice:familyname>
+                            <invoice:givenname>Mandant.tarmed</invoice:givenname>
+                            <invoice:postal>
+<invoice:zip>0000</invoice:zip>
+<invoice:city>Unbekannt</invoice:city>
+<invoice:country country_code="CH">CH</invoice:country>
+                            </invoice:postal>
+                        </invoice:person>
+                    </invoice:provider_zsr>
+                </invoice:providers>
+                <invoice:patient gender="female" sex="female" birthdate="1957-04-14+01:00" ssn="7560000000011">
+                    <invoice:person salutation="Frau">
+                        <invoice:familyname>Spitzkiel</invoice:familyname>
+                        <invoice:givenname>Beatrice</invoice:givenname>
+                        <invoice:postal>
+                            <invoice:zip>0000</invoice:zip>
+                            <invoice:city>Unbekannt</invoice:city>
+                            <invoice:country country_code="CH">CH</invoice:country>
+                        </invoice:postal>
+                        <invoice:telecom>
+                            <invoice:phone>444-444 44 44</invoice:phone>
+                            <invoice:phone>555-555 55 55</invoice:phone>
+                        </invoice:telecom>
+                    </invoice:person>
+                </invoice:patient>
+                <invoice:guarantor>
+                    <invoice:person salutation="Frau">
+                        <invoice:familyname>Spitzkiel</invoice:familyname>
+                        <invoice:givenname>Beatrice</invoice:givenname>
+                        <invoice:postal>
+                            <invoice:zip>0000</invoice:zip>
+                            <invoice:city>Unbekannt</invoice:city>
+                            <invoice:country country_code="CH">CH</invoice:country>
+                        </invoice:postal>
+                        <invoice:telecom>
+                            <invoice:phone>444-444 44 44</invoice:phone>
+                            <invoice:phone>555-555 55 55</invoice:phone>
+                        </invoice:telecom>
+                    </invoice:person>
+                </invoice:guarantor>
+                <invoice:insured gender="female" sex="female" birthdate="1957-04-14+01:00" ssn="7560000000011">
+                    <invoice:person salutation="Frau">
+                        <invoice:familyname>Spitzkiel</invoice:familyname>
+                        <invoice:givenname>Beatrice</invoice:givenname>
+                        <invoice:postal>
+                            <invoice:zip>0000</invoice:zip>
+                            <invoice:city>Unbekannt</invoice:city>
+                            <invoice:country country_code="CH">CH</invoice:country>
+                        </invoice:postal>
+                        <invoice:telecom>
+                            <invoice:phone>444-444 44 44</invoice:phone>
+                            <invoice:phone>555-555 55 55</invoice:phone>
+                        </invoice:telecom>
+                    </invoice:person>
+                </invoice:insured>
+                <invoice:partners>
+                    <invoice:partner type="referrer" gln="7634567800333">
+                        <invoice:person salutation="Herr" title="Dr. med.">
+                            <invoice:familyname>Ueberweiser</invoice:familyname>
+                            <invoice:givenname>Herbert</invoice:givenname>
+                            <invoice:postal>
+                                <invoice:street street_name="Referrerstrasse" house_no="11">Referrerstrasse 11</invoice:street>
+                                <invoice:zip state_code="AG">5000</invoice:zip>
+                                <invoice:city>Aarau</invoice:city>
+                            </invoice:postal>
+                            <invoice:telecom>
+                                <invoice:phone>061 956 99 00</invoice:phone>
+                            </invoice:telecom>
+                        </invoice:person>
+                    </invoice:partner>
+                    <invoice:partner type="employer" gln="2034567890333">
+                        <invoice:company>
+                            <invoice:companyname>Arbeitgeber AG</invoice:companyname>
+                            <invoice:department>R&amp;D</invoice:department>
+                            <invoice:postal>
+                                <invoice:street street_name="Arbeitsplatz" house_no="3-5">Arbeitsplatz 3-5</invoice:street>
+                                <invoice:zip state_code="BL">4410</invoice:zip>
+                                <invoice:city>Liestal</invoice:city>
+                            </invoice:postal>
+                        </invoice:company>
+                    </invoice:partner>
+                    <invoice:partner type="lead_doctor" gln="7600345600123">
+                        <invoice:person salutation="Frau" title="Prof. Dr. med.">
+                            <invoice:familyname>Musterfrau - Tester</invoice:familyname>
+                            <invoice:givenname>Sabine</invoice:givenname>
+                            <invoice:postal>
+                                <invoice:street street_name="Spital am Ring" house_no="16b">Spital am Ring 16b</invoice:street>
+                                <invoice:zip state_code="ZH">8008</invoice:zip>
+                                <invoice:city>Zürich</invoice:city>
+                            </invoice:postal>
+                        </invoice:person>
+                    </invoice:partner>
+                </invoice:partners>
+                <invoice:balance currency="CHF" amount="5232.99" amount_reminder="30.0" amount_prepaid="5.0" amount_due="5258.0">
+                    <invoice:vat vat="260.98">
+                        <invoice:vat_rate vat_rate="0.0" amount="32.99" vat="0.0"/>
+                        <invoice:vat_rate vat_rate="2.5" amount="2500.0" vat="60.98"/>
+                        <invoice:vat_rate vat_rate="8.0" amount="2700.0" vat="200.0"/>
+                    </invoice:vat>
+                </invoice:balance>
+            </invoice:tiers_garant>
+            <invoice:esrQR iban="CH5800791123000889012" reference_number="154530000000000000010000018" payment_period="P30D">
+                <invoice:creditor>
+                    <invoice:person salutation="Frau">
+                        <invoice:familyname>Mandant.tarmed</invoice:familyname>
+                        <invoice:givenname>Mandant.tarmed</invoice:givenname>
+                        <invoice:postal>
+                            <invoice:zip>0000</invoice:zip>
+                            <invoice:city>Unbekannt</invoice:city>
+                            <invoice:country country_code="CH">CH</invoice:country>
+                        </invoice:postal>
+                    </invoice:person>
+                </invoice:creditor>
+            </invoice:esrQR>
+            <invoice:law type="VVG" insured_id="123456" case_id="123456" case_date="2025-11-04+01:00"/>
+            <invoice:treatment date_begin="2025-11-04+01:00" date_end="2025-11-04+01:00" canton="AG" reason="disease">
+                <invoice:diagnosis type="by_contract" code="A1"/>
+            </invoice:treatment>
+            <invoice:services>
+                <invoice:service_ex record_id="1" tariff_type="001" code="00.0010" name="Konsultation, erste 5 Min. (Grundkonsultation)" session="1" quantity="1.0" date_begin="2025-11-04T00:00:00.000+01:00" provider_id="2000000000002" responsible_id="2000000000002" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="9.57" unit_factor_mt="1.0" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.57" unit_tt="8.19" unit_factor_tt="1.0" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="8.19" amount="17.76" vat_rate="0.0"/>
+                <invoice:service record_id="2" tariff_type="999" code="123456789" name="test article" session="1" quantity="1.0" date_begin="2025-11-04T00:00:00.000+01:00" provider_id="2000000000002" responsible_id="2000000000002" unit="10.15" unit_factor="1.0" amount="10.15" vat_rate="0.0">
+                    <invoice:xtra_drug/>
+                </invoice:service>
+                <invoice:service record_id="3" tariff_type="999" code="1234567890" name="test article fractional" session="1" quantity="0.5" date_begin="2025-11-04T00:00:00.000+01:00" provider_id="2000000000002" responsible_id="2000000000002" unit="10.15" unit_factor="1.0" amount="5.08" vat_rate="0.0">
+                    <invoice:xtra_drug/>
+                </invoice:service>
+                <invoice:service record_id="4" tariff_type="999" code="GA" name="Gutachten A" session="1" quantity="1.0" date_begin="2025-11-04T00:00:00.000+01:00" provider_id="2000000000002" responsible_id="2000000000002" unit="2700.0" unit_factor="1.0" amount="2700.0" vat_rate="8.0"/>
+                <invoice:service record_id="5" tariff_type="999" code="GB" name="Gutachten B" session="1" quantity="1.0" date_begin="2025-11-04T00:00:00.000+01:00" provider_id="2000000000002" responsible_id="2000000000002" unit="2500.0" unit_factor="1.0" amount="2500.0" vat_rate="2.5"/>
+            </invoice:services>
+        </invoice:body>
+    </invoice:payload>
+</invoice:request>

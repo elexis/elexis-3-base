@@ -37,6 +37,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		
 		code_RG050010 = TardocLeistung.getFromCode("RG.05.0010", LocalDate.of(2026, 1, 1), null);
 		code_RG000040 = TardocLeistung.getFromCode("RG.00.0040", LocalDate.of(2026, 1, 1), null);
+
 	}
 
 	@Override

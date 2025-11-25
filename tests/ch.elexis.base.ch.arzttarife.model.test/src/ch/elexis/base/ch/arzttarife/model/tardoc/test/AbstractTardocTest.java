@@ -1,7 +1,11 @@
 package ch.elexis.base.ch.arzttarife.model.tardoc.test;
 
+import java.util.List;
+
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.findings.util.model.TransientCoding;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -45,6 +49,14 @@ public abstract class AbstractTardocTest {
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+
+		ArzttarifeUtil.setMandantTardocSepcialist(mandator,
+				List.of(new TransientCoding("tardoc_dignitaet", "0010", null),
+						new TransientCoding("tardoc_dignitaet", "0100", null),
+						new TransientCoding("tardoc_dignitaet", "1000", null),
+						new TransientCoding("tardoc_dignitaet", "0026", null),
+						new TransientCoding("tardoc_dignitaet", "9971", null)));
+		coreModelService.save(mandator);
 	}
 
 	public void after() {

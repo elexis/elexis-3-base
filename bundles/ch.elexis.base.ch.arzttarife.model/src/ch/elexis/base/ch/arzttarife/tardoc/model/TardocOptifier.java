@@ -113,6 +113,13 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			return limitationsResult;
 		}
 
+		Result<IBilled> digniResult = verifier.checkDigni(encounter, code, newBilled);
+		if (!digniResult.isOK()) {
+			// reset possible modifications
+			CoreModelServiceHolder.get().refresh(newBilled, true, true);
+			return digniResult;
+		}
+
 		Result<IBilled> matcherResult = tarifMatcher.evaluate(newBilled, encounter);
 
 		if (matcherResult.isOK()) {

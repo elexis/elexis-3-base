@@ -18,7 +18,6 @@ import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.XidServiceHolder;
@@ -34,7 +33,7 @@ public class AmbulatoryAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.
 
 	public AmbulatoryAllowance(AmbulantePauschalen entity) {
 		super(entity);
-		verifier = new DefaultVerifier();
+		verifier = new AmbulatoryAllowanceVerifier();
 	}
 
 	@Override

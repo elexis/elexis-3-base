@@ -8,7 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocGroup;
+import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
@@ -69,6 +72,10 @@ public class TardocVerifier implements IBillableVerifier {
 				if (!limitResult.isOK()) {
 					ret.add(limitResult);
 				}
+				Result<IBilled> digniResult = checkDigni(encounter, tardocLeistung, vv);
+				if (!digniResult.isOK()) {
+					ret.add(digniResult);
+				}
 			}
 		}
 		return ret;
@@ -111,5 +118,21 @@ public class TardocVerifier implements IBillableVerifier {
 			}
 		}
 		return new Result<IBilled>(newVerrechnet);
+	}
+
+	public Result<IBilled> checkDigni(IEncounter encounter, TardocLeistung tardocLeistung, IBilled newBilled) {
+		String digni = tardocLeistung.getDigniQuali();
+		if (StringUtils.isNotBlank(digni) && !digni.contains("9999")) {
+			if (encounter.getMandator() != null) {
+				List<ICoding> tardocSpecialist = ArzttarifeUtil.getMandantTardocSepcialist(encounter.getMandator());
+				if (!tardocSpecialist.stream().anyMatch(c -> digni.contains(c.getCode()))) {
+					String msg = "Der Mandant hat keine der benötigten Dignitäten [" + digni + "] der Leistung "
+							+ tardocLeistung.getCode() + ".";
+					return new Result<IBilled>(Result.SEVERITY.WARNING, TarifMatcher.LEISTUNGSTYP, msg, null,
+							false);
+				}
+			}
+		}
+		return new Result<IBilled>(null);
 	}
 }

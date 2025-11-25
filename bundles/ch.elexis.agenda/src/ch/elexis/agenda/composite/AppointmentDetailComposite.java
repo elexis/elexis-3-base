@@ -260,6 +260,7 @@ public class AppointmentDetailComposite extends Composite {
 			txtPatSearch.setText(prop.getLabel());
 			txtPatSearch.setData(prop.getIdentifiable());
 			appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
+			txtPatSearch.setSelection(txtPatSearch.getText().length());
 			refreshPatientModel();
 		});
 
@@ -293,17 +294,17 @@ public class AppointmentDetailComposite extends Composite {
 		reloadContactLabel();
 		String searchText = txtPatSearch.getText();
 		if (StringUtils.isBlank(searchText)) {
-			txtPatSearch.setData(null);
 			tBem.setText(StringUtils.EMPTY);
 			if (appointmentsViewer != null) {
 				appointmentsViewer.setInput(Collections.emptyList());
 			}
 		} else if (!txtDataIsMatchingContact()) {
-			txtPatSearch.setData(null);
 			tBem.setText(StringUtils.EMPTY);
 			if (appointmentsViewer != null) {
 				appointmentsViewer.setInput(Collections.emptyList());
 			}
+		} else {
+			refreshPatientModel();
 		}
 		emailComposite.updateEmailControlsStatus(getSelectedContact());
 	}
@@ -894,8 +895,9 @@ public class AppointmentDetailComposite extends Composite {
 		}
 		appointment.setLastEdit(createTimeStamp());
 		appointment.setReason(txtReason.getText());
-		if (txtDataIsMatchingContact()) {
-			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
+		IContact currentContact = resolveCurrentContactFromText();
+		if (currentContact != null) {
+			appointment.setSubjectOrPatient(currentContact.getId());
 		} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
 			appointment.setSubjectOrPatient(txtPatSearch.getText());
 		} else {
@@ -946,8 +948,9 @@ public class AppointmentDetailComposite extends Composite {
 			newAppointment.setCreated(createTimeStamp());
 			newAppointment.setLastEdit(createTimeStamp());
 			newAppointment.setReason(elements[0]);
-			if (txtDataIsMatchingContact()) {
-				newAppointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
+			IContact currentContact = resolveCurrentContactFromText();
+			if (currentContact != null) {
+				newAppointment.setSubjectOrPatient(currentContact.getId());
 			} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
 				newAppointment.setSubjectOrPatient(txtPatSearch.getText());
 			}
@@ -970,8 +973,23 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private boolean txtDataIsMatchingContact() {
-		return txtPatSearch.getData() instanceof IContact
-				&& ((IContact) txtPatSearch.getData()).getLabel().equals(txtPatSearch.getText());
+		return resolveCurrentContactFromText() != null;
+	}
+
+	private IContact resolveCurrentContactFromText() {
+		Object data = txtPatSearch.getData();
+		if (data instanceof IContact) {
+			IContact contact = (IContact) data;
+			if (StringUtils.equals(contact.getLabel(), txtPatSearch.getText())) {
+				return contact;
+			}
+		}
+		Optional<IContact> appointmentContact = reloadAsPatient(getAppointmentContact());
+		if (appointmentContact.isPresent()
+				&& StringUtils.equals(appointmentContact.get().getLabel(), txtPatSearch.getText())) {
+			return appointmentContact.get();
+		}
+		return null;
 	}
 
 	private void cloneAndReloadAppointment() {
@@ -1022,11 +1040,7 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	public IContact getSelectedContact() {
-		Object data = txtPatSearch.getData();
-		if (data instanceof IContact) {
-			return (IContact) data;
-		}
-		return null;
+		return resolveCurrentContactFromText();
 	}
 
 	public boolean getEmailCheckboxStatus() {

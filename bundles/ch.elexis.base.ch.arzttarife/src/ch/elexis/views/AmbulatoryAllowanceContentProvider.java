@@ -2,6 +2,7 @@ package ch.elexis.views;
 
 import java.util.List;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
 import ch.elexis.core.model.IEncounter;
@@ -48,6 +49,7 @@ public class AmbulatoryAllowanceContentProvider extends CommonViewerContentProvi
 	protected IQuery<?> getBaseQuery() {
 		IQuery<IAmbulatoryAllowance> query = ArzttarifeModelServiceHolder.get().getQuery(IAmbulatoryAllowance.class);
 		query.and("id", COMPARATOR.NOT_EQUALS, "VERSION");
+		query.and("typ", COMPARATOR.EQUALS, AmbulantePauschalenTyp.TRIGGER.getCode());
 		return query;
 	}
 }

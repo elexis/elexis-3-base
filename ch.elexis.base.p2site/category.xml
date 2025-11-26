@@ -277,6 +277,9 @@
    <feature id="at.medevit.ch.artikelstamm.elexis.open.feature">
       <category name="basepackages"/>
    </feature>
+   <feature id="at.medevit.elexis.loinc.feature">
+      <category name="libraries"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

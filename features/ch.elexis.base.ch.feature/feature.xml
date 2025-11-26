@@ -18,128 +18,72 @@
       Eclipse Public License v1.0
    </license>
 
-   <includes
-         id="at.medevit.elexis.loinc.feature"
+   <plugin
+         id="ch.elexis.base.ch.ebanking"
          version="0.0.0"/>
 
    <plugin
-         id="ch.elexis.base.ch.ebanking"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="ch.elexis.ebanking"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.arzttarife"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.labortarif_2009"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.diagnosecodes"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.ch.artikelstamm"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.ch.artikelstamm.elexis.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="at.medevit.ch.artikelstamm.elexis.open"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.ch.artikelstamm.ui"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.atc_codes"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="at.medevit.elexis.tarmed.model"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.ticode"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.migel"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.icd10"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="at.medevit.ch.artikelstamm.model"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.arzttarife.model"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.base.ch.labortarif.model"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.elexis.ebanking.qr"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

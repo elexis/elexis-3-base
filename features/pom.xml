@@ -13,6 +13,7 @@
     <module>ch.elexis.base.ch.feature</module>
     <module>ch.elexis.hl7.message.feature</module>
     <module>at.gruber.elexis.mythic22.feature</module>
+    <module>at.medevit.ch.artikelstamm.elexis.open.feature</module>
     <module>at.medevit.elexis.corona123.feature</module>
     <module>at.medevit.elexis.kapsch.referral.feature</module>
     <module>at.medevit.elexis.agenda.feature</module>

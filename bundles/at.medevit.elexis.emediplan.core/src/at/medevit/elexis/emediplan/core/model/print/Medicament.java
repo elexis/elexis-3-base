@@ -53,7 +53,11 @@ public class Medicament {
 		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty() && signature[2].isEmpty()
 				&& signature[3].isEmpty();
 		if (isFreetext) {
-			ret.dosageText = signature[0];
+			String raw = prescription.getDosageInstruction();
+			if (raw == null) {
+				raw = signature[0];
+			}
+			ret.dosageText = raw;
 		} else {
 			ret.dosageMorning = signature[0];
 			ret.dosageNoon = signature[1];

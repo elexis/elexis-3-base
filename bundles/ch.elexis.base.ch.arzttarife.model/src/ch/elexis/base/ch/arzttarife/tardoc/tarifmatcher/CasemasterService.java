@@ -91,14 +91,23 @@ public class CasemasterService {
 
 	private void addBilled(IBilled billed, Session session) {
 		IBillable billable = billed.getBillable();
-		if (billable.getCodeSystemName().toLowerCase().contains("tardoc")
-				|| billable.getCodeSystemName().toLowerCase().contains("ambulantepauschalen")) {
-			session.addService(new Service(billable.getCode(), getSide(billed),
-					Double.valueOf(billed.getAmount()).intValue(), billed.getEncounter().getDate(), session.number));
-		} else if (!(billable instanceof IArticle) || billable.getCodeSystemCode().equals("402")) {
-			session.addTarpo(new Tarpo(billable.getCode(), billable.getCodeSystemCode(), billed.getAmount(),
-					billed.getEncounter().getDate(), billed.getAmount(), (billed.getPrice().getCents() / 100),
-					Side.NONE));
+		if (billable != null) {
+			if (billable.getCodeSystemName() != null) {
+				if (billable.getCodeSystemName().toLowerCase().contains("tardoc")
+						|| billable.getCodeSystemName().toLowerCase().contains("ambulantepauschalen")) {
+					session.addService(new Service(billable.getCode(), getSide(billed),
+							Double.valueOf(billed.getAmount()).intValue(), billed.getEncounter().getDate(),
+							session.number));
+				} else if (!(billable instanceof IArticle) || billable.getCodeSystemCode().equals("402")) {
+					session.addTarpo(new Tarpo(billable.getCode(), billable.getCodeSystemCode(), billed.getAmount(),
+							billed.getEncounter().getDate(), billed.getAmount(), (billed.getPrice().getCents() / 100),
+							Side.NONE));
+				}
+			} else {
+				LoggerFactory.getLogger(getClass()).warn("No code system name for billable [" + billable.getId() + "]");
+			}
+		} else {
+			LoggerFactory.getLogger(getClass()).warn("No billable for billed [" + billed.getId() + "]");
 		}
 	}
 

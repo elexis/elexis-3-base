@@ -50,6 +50,8 @@ public class AmbulatoryTarifsReferenceDataImporter extends AbstractReferenceData
 
 	private InputStream input;
 
+	private DateTimeFormatter compactFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
 	@Override
 	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion) {
 		if (monitor == null) {
@@ -102,6 +104,8 @@ public class AmbulatoryTarifsReferenceDataImporter extends AbstractReferenceData
 							ambulantePauschale.setText(getText(line.get()));
 							ambulantePauschale.setValidFrom(getValidFrom(line.get()));
 							ambulantePauschale.setValidTo(getValidTo(line.get()));
+							ambulantePauschale.setId(ambulantePauschale.getCode() + "-"
+									+ compactFormatter.format(ambulantePauschale.getValidFrom()));
 							imported.add(ambulantePauschale);
 					}
 				}
@@ -209,7 +213,7 @@ public class AmbulatoryTarifsReferenceDataImporter extends AbstractReferenceData
 	public static void setCurrentVersion(int newVersion) {
 		AmbulantePauschalen versionEntry = EntityUtil.load("VERSION", AmbulantePauschalen.class);
 		if (versionEntry != null) {
-			versionEntry.setChapter(Integer.toString(newVersion));
+			versionEntry.setDigniQuali(Integer.toString(newVersion));
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
@@ -220,10 +224,10 @@ public class AmbulatoryTarifsReferenceDataImporter extends AbstractReferenceData
 	public int getCurrentVersion() {
 		AmbulantePauschalen versionEntry = EntityUtil.load("VERSION", AmbulantePauschalen.class);
 		if (versionEntry != null) {
-			String chapter = versionEntry.getChapter();
-			if (chapter != null) {
+			String digni = versionEntry.getDigniQuali();
+			if (digni != null) {
 				try {
-					return Integer.parseInt(chapter.trim());
+					return Integer.parseInt(digni.trim());
 				} catch (NumberFormatException e) {
 					// ignore return 0
 				}

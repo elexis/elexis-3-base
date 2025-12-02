@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class TardocDignitaetCodingContribution implements ICodingContribution {
 				.withCSVParser(new CSVParserBuilder().withSeparator(',').withQuoteChar('"').build())
 				.withKeepCarriageReturn(false).build()) {
 			for (String[] line : reader.readAll()) {
-				codes.add(new TransientCoding("tardoc_dignitaet", line[0], line[1]));
+				codes.add(new TransientCoding("tardoc_dignitaet", StringUtils.leftPad(line[0], 4, '0'), line[1]));
 			}
 			codes.sort((l, r) -> {
 				return l.getCode().compareTo(r.getCode());

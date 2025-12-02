@@ -38,28 +38,36 @@
     <stringAttribute key="product" value="ch.elexis.core.application.product"/>
     <booleanAttribute key="run_in_ui_thread" value="true"/>
     <setAttribute key="selected_target_bundles">
+        <setEntry value="bcprov@default:default"/>
+        <setEntry value="ch.elexis.core.logback.rocketchat@default:default"/>
         <setEntry value="ch.qos.logback.classic@default:default"/>
         <setEntry value="ch.qos.logback.core@default:default"/>
         <setEntry value="ch.qos.logback.slf4j@default:false"/>
-        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
         <setEntry value="com.fasterxml.jackson.core.jackson-annotations@default:default"/>
         <setEntry value="com.fasterxml.jackson.core.jackson-core@default:default"/>
         <setEntry value="com.fasterxml.jackson.core.jackson-databind@default:default"/>
-        <setEntry value="com.google.gson@default:default"/>
+        <setEntry value="com.google.gson*2.10.1@default:default"/>
+        <setEntry value="com.google.guava.failureaccess@default:default"/>
         <setEntry value="com.google.guava@default:default"/>
+        <setEntry value="com.google.protobuf@default:default"/>
         <setEntry value="com.h2database@default:default"/>
         <setEntry value="com.healthmarketscience.jackcess@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.mysql.cj@default:default"/>
         <setEntry value="com.opencsv@default:default"/>
         <setEntry value="com.sun.xml.bind.jaxb-osgi@default:default"/>
+        <setEntry value="info.elexis.target.hapi.fhir@default:default"/>
+        <setEntry value="info.elexis.target.jaxws.core@default:default"/>
+        <setEntry value="jakarta.mail-api@default:default"/>
         <setEntry value="jakarta.persistence@default:default"/>
+        <setEntry value="jakarta.servlet-api@default:default"/>
+        <setEntry value="jakarta.validation.jakarta.validation-api@default:default"/>
         <setEntry value="jakarta.ws.rs-api@default:default"/>
-        <setEntry value="jakarta.xml.bind-api@default:false"/>
         <setEntry value="javax.activation@default:default"/>
         <setEntry value="javax.annotation@default:default"/>
         <setEntry value="jaxb-api@default:default"/>
         <setEntry value="org.apache-extras.beanshell.bsh@default:default"/>
+        <setEntry value="org.apache.aries.spifly.dynamic.bundle@default:default"/>
         <setEntry value="org.apache.commons.codec@default:default"/>
         <setEntry value="org.apache.commons.collections@default:default"/>
         <setEntry value="org.apache.commons.commons-beanutils@default:default"/>
@@ -68,10 +76,10 @@
         <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
         <setEntry value="org.apache.commons.commons-io@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
-        <setEntry value="org.apache.commons.commons-text@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
         <setEntry value="org.apache.commons.logging*1.2.0@default:default"/>
         <setEntry value="org.apache.commons.math3@default:default"/>
+        <setEntry value="org.apache.commons.text@default:default"/>
         <setEntry value="org.apache.felix.gogo.command@default:default"/>
         <setEntry value="org.apache.felix.gogo.runtime@default:default"/>
         <setEntry value="org.apache.felix.gogo.shell@default:default"/>
@@ -83,7 +91,6 @@
         <setEntry value="org.apache.poi.ooxml@default:default"/>
         <setEntry value="org.apache.poi@default:default"/>
         <setEntry value="org.apache.xmlbeans@default:default"/>
-        <setEntry value="org.bouncycastle.bcprov@default:default"/>
         <setEntry value="org.eclipse.core.contenttype@default:default"/>
         <setEntry value="org.eclipse.core.jobs@default:default"/>
         <setEntry value="org.eclipse.core.runtime@default:true"/>
@@ -113,16 +120,24 @@
         <setEntry value="org.glassfish.hk2.osgi-resource-locator@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-client@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-common@default:default"/>
+        <setEntry value="org.glassfish.jersey.ext.jersey-proxy-client@default:default"/>
         <setEntry value="org.glassfish.jersey.media.jersey-media-multipart@default:default"/>
         <setEntry value="org.hamcrest.core@default:default"/>
+        <setEntry value="org.hamcrest@default:default"/>
         <setEntry value="org.jaxen@default:default"/>
         <setEntry value="org.jdom2@default:default"/>
         <setEntry value="org.junit@default:default"/>
         <setEntry value="org.jvnet.mimepull@default:default"/>
+        <setEntry value="org.keycloak.keycloak-adapter-core@default:default"/>
+        <setEntry value="org.keycloak.keycloak-adapter-spi@default:default"/>
         <setEntry value="org.keycloak.keycloak-authz-client@default:default"/>
         <setEntry value="org.keycloak.keycloak-common@default:default"/>
         <setEntry value="org.keycloak.keycloak-core@default:default"/>
-        <setEntry value="org.osgi.framework.system.packages.extra@default:false"/>
+        <setEntry value="org.objectweb.asm.commons@default:default"/>
+        <setEntry value="org.objectweb.asm.tree.analysis@default:default"/>
+        <setEntry value="org.objectweb.asm.tree@default:default"/>
+        <setEntry value="org.objectweb.asm.util@default:default"/>
+        <setEntry value="org.objectweb.asm@default:default"/>
         <setEntry value="org.osgi.service.cm@default:default"/>
         <setEntry value="org.osgi.service.component@default:default"/>
         <setEntry value="org.osgi.service.device@default:default"/>
@@ -145,6 +160,8 @@
         <setEntry value="ch.elexis.base.ch.arzttarife.model.test@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model@default:default"/>
         <setEntry value="ch.elexis.base.ch.ticode@default:default"/>
+        <setEntry value="ch.elexis.core.findings.util@default:default"/>
+        <setEntry value="ch.elexis.core.findings@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x.tests@default:false"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.importer.div@default:default"/>
@@ -157,9 +174,10 @@
         <setEntry value="ch.elexis.core.jpa.test@default:false"/>
         <setEntry value="ch.elexis.core.jpa@default:default"/>
         <setEntry value="ch.elexis.core.l10n@default:default"/>
-        <setEntry value="ch.elexis.core.logback.rocketchat@default:false"/>
         <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
         <setEntry value="ch.elexis.core.model@default:default"/>
+        <setEntry value="ch.elexis.core.services.test.ws-bind@default:default"/>
+        <setEntry value="ch.elexis.core.services.test.ws@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.test.context@default:default"/>
@@ -169,7 +187,6 @@
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.rgw.utility.tests@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="info.elexis.server.core.logging@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>

@@ -26,6 +26,10 @@ public class TardocBillingTest extends AbstractTardocTest {
 	private TardocLeistung code_RG050010;
 	private TardocLeistung code_RG000040;
 
+	private TardocLeistung code_MK250020;
+	private TardocLeistung code_MK250090;
+	private TardocLeistung code_MK200300;
+
 	@Override
 	@Before
 	public void before() {
@@ -38,6 +42,12 @@ public class TardocBillingTest extends AbstractTardocTest {
 		code_RG050010 = TardocLeistung.getFromCode("RG.05.0010", LocalDate.of(2026, 1, 1), null);
 		code_RG000040 = TardocLeistung.getFromCode("RG.00.0040", LocalDate.of(2026, 1, 1), null);
 
+		// MK25.0020 - Hauptleistung
+		code_MK250020 = TardocLeistung.getFromCode("MK.25.0020", LocalDate.of(2026, 1, 1), null);
+		// MK25.0090 - Zuschalgsleistung
+		code_MK250090 = TardocLeistung.getFromCode("MK.25.0090", LocalDate.of(2026, 1, 1), null);
+		// MK20.0300 - Zuschlag-Zuschlagsleistung
+		code_MK200300 = TardocLeistung.getFromCode("MK.20.0300", LocalDate.of(2026, 1, 1), null);
 	}
 
 	@Override
@@ -120,6 +130,36 @@ public class TardocBillingTest extends AbstractTardocTest {
 		status = billingService.bill(code_RG000040, encounter, 1);
 		billed = status.get();
 		assertFalse(status.getMessages().toString(), status.isOK());
+
+		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+	}
+
+	@Test
+	public void zuschlagZuschlagTardocPositions() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService.bill(code_MK250020, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// zuschlag
+		status = billingService.bill(code_MK250090, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		String bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("MK.25.0020", bezug);
+
+		// zuschlag - zuschlag
+		status = billingService.bill(code_MK200300, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("MK.25.0090", bezug);
 
 		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 	}

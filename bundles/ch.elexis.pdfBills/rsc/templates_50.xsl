@@ -64,16 +64,29 @@
 											<xsl:if test="contains($Type, 'GR')">
 												Der Versicherung zustellen
 											</xsl:if>
+											<xsl:if test="contains($Type, 'AX')">
+												Der Versicherung zustellen
+											</xsl:if>											
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
 							</fo:table-body>
 						</fo:table>
-
-
 					</fo:table-cell>
 				</fo:table-row>
 			</fo:table-body>
 		</fo:table>
+	</xsl:template>
+	
+	<xsl:template name="FormatGender">
+		<xsl:choose>
+			<xsl:when
+				test="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/@gender = 'male'">
+				<xsl:value-of select="'Mann / M'" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="'Frau / F'" />
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

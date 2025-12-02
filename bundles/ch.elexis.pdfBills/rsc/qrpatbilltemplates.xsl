@@ -1533,16 +1533,4 @@
 		<xsl:value-of select="' '" />
 		<xsl:value-of select="substring($Input,21,1)" />
 	</xsl:template>
-	
-	<xsl:template name="FormatGender">
-		<xsl:choose>
-			<xsl:when
-				test="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/@gender = 'male'">
-				<xsl:value-of select="'Mann / M'" />
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="'Frau / F'" />
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
 </xsl:stylesheet>

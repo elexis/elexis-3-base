@@ -26,27 +26,40 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.zip.Deflater;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -58,6 +71,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -127,7 +147,7 @@ public class ElexisPDFGenerator {
 	private boolean print;
 
 	private enum XsltType {
-		RECLAIM, PATBILL, PATBILL_M1, PATBILL_M2, PATBILL_M3
+		RECLAIM, PATBILL, PATBILL_M1, PATBILL_M2, PATBILL_M3, QRPAGE
 	}
 
 	public ElexisPDFGenerator(String billXmlFile, String nr) {
@@ -267,7 +287,13 @@ public class ElexisPDFGenerator {
 					if (mReminders != null && !mReminders.isZero()) {
 						parameters.put("amountReminders", XMLTool.moneyToXmlDouble(mReminders)); //$NON-NLS-1$
 					}
-
+					if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+						List<String> xmlQrJpegs = getEncodedXmlQrs();
+						for (int i = 0; i < xmlQrJpegs.size(); i++) {
+							String string = xmlQrJpegs.get(i);
+							parameters.put("xmlQr" + i, string);
+						}
+					}
 					foOutputt.transform(inputStream, xsltStream, out, parameters, new BundleURIResolver());
 				} catch (IllegalStateException e) {
 					ExHandler.handle(e);
@@ -280,6 +306,55 @@ public class ElexisPDFGenerator {
 			LoggerFactory.getLogger(getClass()).error("Error outputting bill", e); //$NON-NLS-1$
 			throw new IllegalStateException("Error outputting bill", e); //$NON-NLS-1$
 		}
+	}
+
+	private List<String> getEncodedXmlQrs() {
+		Document cloneDocument = (Document) domDocument.cloneNode(true);
+		try {
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			XPathExpression expr = xPath.compile("/request/payload/body/documents"); // $NON-NLS-1$
+			Object documentsResult = expr.evaluate(cloneDocument, XPathConstants.NODE);
+			if (documentsResult instanceof Element) {
+				Element element = (Element) documentsResult;
+				element.getParentNode().removeChild(element);
+			}
+			// write xml
+			DOMSource domSource = new DOMSource(cloneDocument);
+			StringWriter writer = new StringWriter();
+			StreamResult result = new StreamResult(writer);
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.transform(domSource, result);
+			// compress
+			byte[] inputData = writer.toString().getBytes();
+			Deflater deflater = new Deflater();
+			deflater.setInput(inputData);
+			deflater.finish();
+			byte[] compressedData = new byte[inputData.length];
+			int compressedSize = deflater.deflate(compressedData);
+			byte[] compressedResult = new byte[compressedSize];
+			System.arraycopy(compressedData, 0, compressedResult, 0, compressedSize);
+			deflater.end();
+			// base64 encode
+			byte[] base64Result = Base64.getEncoder().encode(compressedResult);
+			// split into chunks of 1264 bytes
+			List<byte[]> chunks = new ArrayList<byte[]>();
+			int startIndex = 0;
+			while (startIndex < base64Result.length) {
+				byte[] chunk = new byte[1264];
+				Arrays.fill(chunk, (byte) 0x20);
+				System.arraycopy(base64Result, startIndex, chunk, 0,
+						startIndex + 1264 > base64Result.length ? base64Result.length - startIndex : 1264);
+				startIndex += 1264;
+				chunks.add(chunk);
+			}
+			if (!chunks.isEmpty()) {
+				return chunks.stream().map(chunk -> getXmlQrImage(chunk)).map(image -> getEncodedImage(image)).toList();
+			}
+		} catch (TransformerException | XPathExpressionException e) {
+			LoggerFactory.getLogger(getClass()).error("Error encoded xml qrs", e); //$NON-NLS-1$
+		}
+		return Collections.emptyList();
 	}
 
 	private String getMessagePDFText(final InvoiceState invoiceState) {
@@ -415,17 +490,6 @@ public class ElexisPDFGenerator {
 		return StringUtils.EMPTY;
 	}
 
-	private String getEncodedCopy() {
-		try (InputStream input = getClass().getResourceAsStream("/rsc/kopie.jpeg"); //$NON-NLS-1$
-				ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-			IOUtils.copy(input, output);
-			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
-		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error encoding logo", e); //$NON-NLS-1$
-		}
-		return StringUtils.EMPTY;
-	}
-
 	private String getEncodedQr(Rechnung rechnung) {
 		if (rechnung != null) {
 			Optional<IInvoice> invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class);
@@ -461,6 +525,51 @@ public class ElexisPDFGenerator {
 			}
 		}
 		return StringUtils.EMPTY;
+	}
+
+	private Image getXmlQrImage(byte[] data) {
+		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
+		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+		hintMap.put(EncodeHintType.QR_VERSION, 29);
+
+		QRCodeWriter qrCodeWriter = new QRCodeWriter();
+		try {
+			BitMatrix bitMatrix = qrCodeWriter.encode(new String(data), BarcodeFormat.QR_CODE, 1330, 1330, hintMap);
+			int width = bitMatrix.getWidth();
+			int height = bitMatrix.getHeight();
+
+			ImageData imageData = new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					imageData.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
+				}
+			}
+			return new Image(Display.getDefault(), imageData);
+		} catch (WriterException e) {
+			LoggerFactory.getLogger(getClass()).error("Error creating XML QR image", e); //$NON-NLS-1$
+		}
+		throw new IllegalStateException("Could not create XML QR image");
+	}
+
+	/**
+	 * Get the image as base64 encoded jpg with header "data:image/jpg;base64," for
+	 * use with pdf output.
+	 *
+	 * @return
+	 */
+	private String getEncodedImage(Image image) {
+		try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+			ImageLoader imageLoader = new ImageLoader();
+			imageLoader.data = new ImageData[] { image.getImageData() };
+			imageLoader.compression = 100;
+			imageLoader.save(output, SWT.IMAGE_JPEG);
+
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
+
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e); //$NON-NLS-1$
+		}
+		throw new IllegalStateException("Could not encode QR image");
 	}
 
 	private String getErrorMessage(QRBillDataException e, Optional<IInvoice> invoice) {
@@ -564,6 +673,16 @@ public class ElexisPDFGenerator {
 				generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 				printPdf(pdf, false);
 				printed.add(pdf);
+
+				if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+					pdf = VirtualFilesystemServiceHolder.get()
+							.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
+									+ "_qr.pdf") //$NON-NLS-1$
+							.toFile().orElse(null);
+					generatePdf(getXsltForBill(rsc, XsltType.QRPAGE), pdf);
+					printPdf(pdf, false);
+					printed.add(pdf);
+				}
 			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error printing QR bill", e);
@@ -645,22 +764,6 @@ public class ElexisPDFGenerator {
 		} else {
 			initializer.init();
 		}
-	}
-
-	protected boolean isTierGarant() {
-		if ("4.4".equals(billVersion)) { //$NON-NLS-1$
-			try {
-				XPath xPath = XPathFactory.newInstance().newXPath();
-				XPathExpression expr = xPath.compile("/request/payload/body/tiers_garant"); //$NON-NLS-1$
-				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
-				NodeList nodes = (NodeList) result;
-				return nodes.getLength() > 0;
-			} catch (XPathExpressionException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e); //$NON-NLS-1$
-			}
-		}
-		// default is garant
-		return true;
 	}
 
 	private IContact getDebitor(IInvoice invoice) {
@@ -1079,6 +1182,8 @@ public class ElexisPDFGenerator {
 				return new File(rsc, "50_patbill_m3.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.RECLAIM) {
 				return new File(rsc, "50_reclaim.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.QRPAGE) {
+				return new File(rsc, "50_qr_page.xsl"); //$NON-NLS-1$
 			}
 		}
 		return null;

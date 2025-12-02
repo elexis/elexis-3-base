@@ -190,7 +190,9 @@ public class QrRnOutputter implements IRnOutputter {
 							// consider fallback to non QR bill, always fall back for tarmed xml version
 							// lower 4.5
 							EsrType outputEsrType = ex.getEsrTypeOrFallback(invoice);
-							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
+							if ("5.0".equals(epdf.getBillVersion())) {
+								epdf.printQrBill(rsc);
+							} else if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
 								epdf.printQrBill(rsc);
 							} else {
 								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version [" //$NON-NLS-1$

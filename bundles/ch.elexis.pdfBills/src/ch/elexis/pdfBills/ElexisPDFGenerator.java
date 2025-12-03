@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -117,6 +116,8 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.XMLTool;
 
 public class ElexisPDFGenerator {
+	private static final boolean DEBUG = false;
+
 	public String leftMargin;
 	public String rightMargin;
 	public String topMargin;
@@ -325,9 +326,12 @@ public class ElexisPDFGenerator {
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer transformer = tf.newTransformer();
 			transformer.transform(domSource, result);
+			if (DEBUG) {
+				writeDebugFile(writer.toString().getBytes(), ".xml");
+			}
 			// compress
 			byte[] inputData = writer.toString().getBytes();
-			Deflater deflater = new Deflater();
+			Deflater deflater = new Deflater(Deflater.DEFLATED, true);
 			deflater.setInput(inputData);
 			deflater.finish();
 			byte[] compressedData = new byte[inputData.length];
@@ -335,16 +339,21 @@ public class ElexisPDFGenerator {
 			byte[] compressedResult = new byte[compressedSize];
 			System.arraycopy(compressedData, 0, compressedResult, 0, compressedSize);
 			deflater.end();
+			if (DEBUG) {
+				writeDebugFile(compressedResult, ".deflated");
+			}
 			// base64 encode
 			byte[] base64Result = Base64.getEncoder().encode(compressedResult);
+			if (DEBUG) {
+				writeDebugFile(base64Result, ".base64");
+			}
 			// split into chunks of 1264 bytes
 			List<byte[]> chunks = new ArrayList<byte[]>();
 			int startIndex = 0;
 			while (startIndex < base64Result.length) {
-				byte[] chunk = new byte[1264];
-				Arrays.fill(chunk, (byte) 0x20);
-				System.arraycopy(base64Result, startIndex, chunk, 0,
-						startIndex + 1264 > base64Result.length ? base64Result.length - startIndex : 1264);
+				int size = startIndex + 1264 > base64Result.length ? base64Result.length - startIndex : 1264;
+				byte[] chunk = new byte[size];
+				System.arraycopy(base64Result, startIndex, chunk, 0, size);
 				startIndex += 1264;
 				chunks.add(chunk);
 			}
@@ -355,6 +364,18 @@ public class ElexisPDFGenerator {
 			LoggerFactory.getLogger(getClass()).error("Error encoded xml qrs", e); //$NON-NLS-1$
 		}
 		return Collections.emptyList();
+	}
+
+	private void writeDebugFile(byte[] content, String ending) {
+		File userDir = CoreUtil.getWritableUserDir();
+		File output = new File(userDir, "elexis_pdf_debug." + ending);
+		try (FileOutputStream writer = new FileOutputStream(output)) {
+			writer.write(content);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Could not write debug file", e);
+		}
+		LoggerFactory.getLogger(getClass())
+				.info("Wrote [" + output.getAbsolutePath() + "] with size [" + output.length() + "]");
 	}
 
 	private String getMessagePDFText(final InvoiceState invoiceState) {

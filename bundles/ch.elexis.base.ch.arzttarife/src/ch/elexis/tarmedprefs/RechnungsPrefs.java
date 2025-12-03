@@ -218,9 +218,18 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType.getCombo().setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		// TARDOC mandant type
-		Label lTardocSpecialist = new Label(adrs, SWT.NONE);
-		lTardocSpecialist.setText("TARDOC-Dignität"); // $NON-NLS-1$
-		lTardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		Hyperlink hTardocSpecialist = new Hyperlink(adrs, SWT.NONE);
+		hTardocSpecialist.setText("TARDOC-Dignit\u00E4ht");
+		hTardocSpecialist.setForeground(blau);
+		hTardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		hTardocSpecialist.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				if (tardocSpecialist != null && !tardocSpecialist.isDisposed()) {
+					tardocSpecialist.openSelectionDialog();
+				}
+			}
+		});
 
 		tardocSpecialist = new TardocSpecialistComposite(adrs, SWT.NONE);
 		tardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));

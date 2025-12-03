@@ -21,10 +21,11 @@
 				<fo:simple-page-master master-name="Page"
 					page-height="29.7cm" page-width="21cm" margin-top="1cm"
 					margin-bottom="1.3cm" margin-left="1cm" margin-right="1cm">
-					<fo:region-body margin-top="3cm" margin-bottom="2cm" />
-					<fo:region-before extent="3cm" />
-					<fo:region-after region-name="footer"
-						extent="2cm" display-align="after" />
+					<fo:region-body margin-top="1.5cm"
+						margin-bottom="2cm" />
+					<fo:region-before extent="1.5cm" />
+					<fo:region-after region-name="footer" extent="2cm"
+						display-align="after" />
 				</fo:simple-page-master>
 			</fo:layout-master-set>
 			<fo:page-sequence master-reference="Page">
@@ -56,7 +57,7 @@
 					</fo:block>
 				</fo:static-content>
 				<fo:static-content flow-name="footer">
-					
+
 				</fo:static-content>
 				<!-- document body -->
 				<fo:flow flow-name="xsl-region-body">
@@ -73,7 +74,8 @@
 	</xsl:template>
 
 	<xsl:template name="qr_header">
-		<fo:table table-layout="fixed" width="100%" font-size="8px" font-family="tahoma,arial,helvetica,sans-serif">
+		<fo:table table-layout="fixed" width="100%" font-size="8px"
+			font-family="tahoma,arial,helvetica,sans-serif">
 			<fo:table-body>
 				<fo:table-row>
 					<fo:table-cell width="2cm">
@@ -92,12 +94,12 @@
 									select="/invoice:request/invoice:payload/invoice:invoice/@request_date" />
 							</xsl:call-template>
 							/
-							<xsl:value-of
-								select="/invoice:request/@guid" />
+							<xsl:value-of select="/invoice:request/@guid" />
 						</fo:block>
 					</fo:table-cell>
 				</fo:table-row>
-				<fo:table-row>
+				<fo:table-row border-bottom-style="solid"
+					border-bottom-width="1pt">
 					<fo:table-cell width="2cm">
 						<fo:block font-size="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
@@ -109,12 +111,40 @@
 							<xsl:choose>
 								<xsl:when
 									test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+
+									<xsl:value-of
+										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/invoice:person/invoice:familyname)" />
+									 · 
+									<xsl:value-of
+										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/invoice:person/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/invoice:person/invoice:postal/invoice:city)" />
+
+									· Geburtsdatum:
+									<xsl:call-template name="FormatDate">
+										<xsl:with-param name="DateTime"
+											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/@birthdate" />
+									</xsl:call-template>
+
+									· Geschlecht:
 									<xsl:call-template name="FormatGender">
 										<xsl:with-param name="Gender"
 											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/@gender" />
 									</xsl:call-template>
 								</xsl:when>
 								<xsl:otherwise>
+
+									<xsl:value-of
+										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/invoice:person/invoice:familyname)" />
+ 									 · 
+									<xsl:value-of
+										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/invoice:person/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/invoice:person/invoice:postal/invoice:city)" />
+
+									· Geburtsdatum:
+									<xsl:call-template name="FormatDate">
+										<xsl:with-param name="DateTime"
+											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/@birthdate" />
+									</xsl:call-template>
+
+									· Geschlecht:
 									<xsl:call-template name="FormatGender">
 										<xsl:with-param name="Gender"
 											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:patient/@gender" />
@@ -124,7 +154,7 @@
 							<xsl:value-of select="' '" />
 						</fo:block>
 					</fo:table-cell>
-				</fo:table-row>				
+				</fo:table-row>
 			</fo:table-body>
 		</fo:table>
 	</xsl:template>
@@ -135,11 +165,13 @@
 				<xsl:if test="string-length($xmlQr0) > 0">
 					<fo:table-row>
 						<fo:table-cell>
-							<fo:block-container text-align="left" margin-left="-1mm" margin-top="0mm" margin-bottom="0mm" width="50mm" height="50mm">
+							<fo:block-container text-align="center"
+								font-size="7px" width="55mm" height="55mm">
 								<fo:block>
 									<xsl:choose>
 										<xsl:when test="string-length($xmlQr0) > 0">
-											<fo:external-graphic src="{$xmlQr0}" width="100%" content-width="scale-to-fit"/>
+											<fo:external-graphic src="{$xmlQr0}"
+												width="100%" content-width="scale-to-fit" />
 										</xsl:when>
 										<xsl:otherwise>
 											<fo:block font-weight="bold">
@@ -148,28 +180,132 @@
 										</xsl:otherwise>
 									</xsl:choose>
 								</fo:block>
-							</fo:block-container>						
+							</fo:block-container>
+							<fo:block text-align="center" font-size="7px">
+								QR-Code 1
+							</fo:block>
 						</fo:table-cell>
 						<xsl:if test="string-length($xmlQr1) > 0">
-						<fo:table-cell>
-							<fo:block-container text-align="left" margin-left="-1mm" margin-top="0mm" margin-bottom="0mm" width="50mm" height="50mm">
-								<fo:block>
-									<xsl:choose>
-										<xsl:when test="string-length($xmlQr1) > 0">
-											<fo:external-graphic src="{$xmlQr1}" width="100%" content-width="scale-to-fit"/>
-										</xsl:when>
-										<xsl:otherwise>
-											<fo:block font-weight="bold">
-												Error no QR Code
-											</fo:block>
-										</xsl:otherwise>
-									</xsl:choose>
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr1) > 0">
+												<fo:external-graphic src="{$xmlQr1}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 2
 								</fo:block>
-							</fo:block-container>						
-						</fo:table-cell>
+							</fo:table-cell>
+						</xsl:if>
+						<xsl:if test="string-length($xmlQr2) > 0">
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr2) > 0">
+												<fo:external-graphic src="{$xmlQr2}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 3
+								</fo:block>
+							</fo:table-cell>
 						</xsl:if>
 					</fo:table-row>
 				</xsl:if>
+
+				<xsl:if test="string-length($xmlQr3) > 0">
+					<fo:table-row>
+						<fo:table-cell>
+							<fo:block-container text-align="center"
+								font-size="7px" width="55mm" height="55mm">
+								<fo:block>
+									<xsl:choose>
+										<xsl:when test="string-length($xmlQr3) > 0">
+											<fo:external-graphic src="{$xmlQr3}"
+												width="100%" content-width="scale-to-fit" />
+										</xsl:when>
+										<xsl:otherwise>
+											<fo:block font-weight="bold">
+												Error no QR Code
+											</fo:block>
+										</xsl:otherwise>
+									</xsl:choose>
+								</fo:block>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 4
+								</fo:block>
+							</fo:block-container>
+						</fo:table-cell>
+						<xsl:if test="string-length($xmlQr4) > 0">
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr4) > 0">
+												<fo:external-graphic src="{$xmlQr4}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 5
+								</fo:block>
+							</fo:table-cell>
+						</xsl:if>
+						<xsl:if test="string-length($xmlQr5) > 0">
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr5) > 0">
+												<fo:external-graphic src="{$xmlQr5}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 6
+								</fo:block>
+							</fo:table-cell>
+						</xsl:if>
+					</fo:table-row>
+				</xsl:if>
+
 			</fo:table-body>
 		</fo:table>
 	</xsl:template>

@@ -35,7 +35,15 @@
 										<fo:block padding-bottom="1mm" padding-top="1mm"
 											border-bottom-style="solid" border-bottom-width="1pt"
 											text-align="right">
-											Release 5.0/QR/de
+											<xsl:if test="contains($Type, 'SR')">
+												Release 5.0/QR/de
+											</xsl:if>
+											<xsl:if test="contains($Type, 'GR')">
+												Release 5.0/General/de
+											</xsl:if>
+											<xsl:if test="contains($Type, 'AX')">
+												Release 5.0/Annex/de
+											</xsl:if>
 										</fo:block>
 									</fo:table-cell>
 									<fo:table-cell padding-left="2mm"
@@ -66,7 +74,7 @@
 											</xsl:if>
 											<xsl:if test="contains($Type, 'AX')">
 												Der Versicherung zustellen
-											</xsl:if>											
+											</xsl:if>
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>

@@ -16,13 +16,13 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.agenda.util.AppointmentUtil;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.handler.AppointmentExtensionHandler;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;

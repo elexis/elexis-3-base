@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,6 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private Slider slider;
 
-	private boolean bModified;
 	private String msg;
 
 	private Point d;
@@ -91,7 +91,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.WARNING;
 	private Consumer<Boolean> collisionCallback;
-
+	private String appointmentType;
 	public DayOverViewComposite(final Group parent, IAppointment appointment, CDateTime txtTimeFrom,
 			CDateTime txtTimeTo, Spinner txtDuration) {
 		super(parent, SWT.NONE);
@@ -129,6 +129,11 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	public void setAppointment(IAppointment appointment) {
 		this.appointment = appointment;
+	}
+
+	public void setAppointmentType(String type) {
+		refresh();
+		this.appointmentType = type;
 	}
 
 	/**
@@ -251,7 +256,6 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			int w = (int) Math.round(d * pixelPerMinute);
 			setBounds(x, 0, w, r.height / 2);
 			setTimeTo(v + d);
-			bModified = true;
 			updateCollision();
 		}
 
@@ -429,24 +433,26 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private void updateMessage(final boolean collision) {
 		msg = Messages.AgendaUI_DayOverView_create_or_change;
-
-		slider.setBackground(getColor(SWT.COLOR_GRAY)); // $NON-NLS-1$ //TODO LIGHTGREY
+		slider.setBackground(getColor(SWT.COLOR_GRAY));
+		int messageLevel = IMessageProvider.NONE;
 
 		if (collision) {
-			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); // $NON-NLS-1$
+			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY));
 			msg += Messages.AgendaUI_DayOverView_date_collision;
-		}
-
-		getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
-					setMessage(msg, collision ? IMessageProvider.ERROR : IMessageProvider.NONE);
-				} else if (collisionErrorLevel == CollisionErrorLevel.WARNING) {
-					setMessage(msg, collision ? IMessageProvider.WARNING : IMessageProvider.NONE);
-				}
+			messageLevel = (collisionErrorLevel == CollisionErrorLevel.ERROR) ? IMessageProvider.ERROR
+					: IMessageProvider.WARNING;
+		} else {
+			List<IAppointment> kombiAppointments = appointmentType != null
+					? appointmentService.getKombiTermineIfApplicable(appointment, null, appointmentType, null)
+					: new ArrayList<>();
+			List<IAppointment> linkedCollisions = appointmentService.getCollidingAppointments(kombiAppointments);
+			if (linkedCollisions != null && !linkedCollisions.isEmpty()) {
+				msg = buildCollisionInfoMessage(linkedCollisions);
+				messageLevel = IMessageProvider.WARNING;
 			}
-		});
+		}
+		final int level = messageLevel;
+		getShell().getDisplay().asyncExec(() -> setMessage(msg, level));
 	}
 
 	private void setMessage(String msg, int i) {
@@ -505,5 +511,21 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);
+	}
+
+	private String buildCollisionInfoMessage(List<IAppointment> linkedCollisions) {
+		if (linkedCollisions == null || linkedCollisions.isEmpty()) {
+			return StringUtils.EMPTY;
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(Messages.Core_Info).append(": ").append(linkedCollisions.size()).append(" ")
+				.append(Messages.AgendaUI_DayOverView_collisions);
+		linkedCollisions.forEach(c -> {
+			String bereich = (c.getSchedule() != null) ? c.getSchedule().toString()
+					: Messages.UNKNOWN + " " + Messages.AppointmentDetailComposite_range;
+			sb.append(" | (").append(bereich).append(") ").append(c.getStartTime().toLocalTime()).append("–")
+					.append(c.getEndTime().toLocalTime());
+		});
+		return sb.toString();
 	}
 }

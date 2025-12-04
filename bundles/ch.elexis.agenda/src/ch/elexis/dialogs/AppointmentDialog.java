@@ -90,7 +90,7 @@ public class AppointmentDialog extends Dialog {
 					if (okButton != null) {
 						if (colliding) {
 							okButton.setEnabled(false);
-							okButton.setText(Messages.AgendaUI_DayOverView_date_collision);
+							okButton.setText(Messages.TermineLockedTimesUpdater_4);
 						} else {
 							okButton.setEnabled(true);
 							okButton.setText(IDialogConstants.OK_LABEL);
@@ -114,7 +114,7 @@ public class AppointmentDialog extends Dialog {
 			Button okButton = getButton(IDialogConstants.OK_ID);
 			if (okButton != null) {
 				okButton.setEnabled(false);
-				okButton.setText(Messages.AgendaUI_DayOverView_date_collision);
+				okButton.setText(Messages.TermineLockedTimesUpdater_4);
 			}
 		}
 		return ret;

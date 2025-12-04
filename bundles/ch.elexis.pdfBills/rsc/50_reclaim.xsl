@@ -3154,6 +3154,8 @@
 		<xsl:param name="DateTime" />
 
 		<!-- new date format 2006-01-14T08:55:22 -->
+		<!-- new date format 2024-11-30T00:00:00 -->
+		<!-- new date format 2025-11-04T00:00:00.000+01:00 -->
 		<xsl:variable name="year">
 			<xsl:value-of select="substring($DateTime,1,4)" />
 		</xsl:variable>
@@ -3170,7 +3172,7 @@
 			<xsl:value-of select="substring($day-temp,1,2)" />
 		</xsl:variable>
 		<xsl:variable name="time">
-			<xsl:value-of select="substring-after($DateTime,'T')" />
+			<xsl:value-of select="substring(substring-after($DateTime,'T'),1,8)" />
 		</xsl:variable>
 
 		<xsl:value-of select="$day" />

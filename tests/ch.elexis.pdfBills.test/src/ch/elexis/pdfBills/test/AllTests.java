@@ -10,9 +10,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.pdfBills.ElexisPDFGeneratorTest;
+import ch.elexis.pdfBills.QrRnOutputter;
 import ch.elexis.pdfBills.RnOutputter;
 
 @RunWith(Suite.class)
@@ -28,7 +29,7 @@ public class AllTests {
 		if (xmlFile.exists()) {
 			try {
 				SAXBuilder builder = new SAXBuilder();
-				return (Document) builder.build(xmlFile);
+				return builder.build(xmlFile);
 			} catch (JDOMException | IOException e) {
 				LoggerFactory.getLogger(AllTests.class).error("Error loading XML document", e);
 			}
@@ -42,7 +43,9 @@ public class AllTests {
 	}
 
 	public static void setOutputDir(String string) {
-		CoreHub.localCfg.set(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR,
+		LocalConfigService.set(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR,
+				fragmentRsc.getAbsolutePath() + File.separator + string);
+		LocalConfigService.set(QrRnOutputter.CFG_ROOT + QrRnOutputter.PDFDIR,
 				fragmentRsc.getAbsolutePath() + File.separator + string);
 		String pdfDir = fragmentRsc.getAbsolutePath() + File.separator + string;
 		File patPath = new File(pdfDir);

@@ -1,65 +1,96 @@
-0015,Nuklearmedizin
-0100,Anästhesiologie
-0300,Dermatologie und Venerologie
-1000,Oto-Rhino-Laryngologie
-1200,Pathologie
-1900,Kinderchirurgie
-2000,"Plastische, Rekonstruktive und Ästhetische Chirurgie"
-0021,Angiologie
-0504,Kardiologie
-1600,Radiologie
-9973,SP Pädiatrische Kardiologie
-9978,Gefässchirurgie
-9996,FA Point of Care-Ultraschall POCUS (SGUM)
-0502,Gastroenterologie
-1800,Urologie
-9936,FA Sonographie (SGUM) - Modul Pädiatrie
-9937,FA Sonographie (SGUM) - Modul Abdomen
-9972,"SP Pädiatrische Gastroenterologie, Hepatologie und Ernährung"
-0200,Chirurgie
-0400,Gynäkologie und Geburtshilfe
-2900,Herz- und thorakale Gefässchirurgie
-0505,Pneumologie
-9976,SP Pädiatrische Pneumologie
-9997,SP Sport- und Bewegungsmedizin (SEMS)
-9916,FA Schwangerschaftsultraschall (SGUM)
-0401,SP Fetomaternale Medizin
-0022,Intensivmedizin
-0600,Neurochirurgie
-9912,SP Interventionelle Schmerztherapie (SSIPM)
-0011,Handchirurgie
-0900,Orthopädische Chirurgie und Traumotologie des Bewegungsapparates
-2100,"Mund-, Kiefer- und Gesichtschirurgie"
-9935,FA Sonographie (SGUM) - Modul Mammasonographie
-0008,Nephrologie
-9974,SP Pädiatrische Nephrologie
-0016,Radio-Onkologie / Strahlentherapie
+9999,Alle
+9989,Alle (Konsilium)
+9,Allergologie und klinische Immunologie
+3010,Allgemeine Innere Medizin
+21,Angiologie
+100,Anästhesiologie
+9986,Arbeitsmedizin
+200,Chirurgie
+300,Dermatologie und Venerologie
+501,Endokrinologie-Diabetologie
+9918,FA Akupunktur - Chinesische Arzneitherapie - TCM (ASA)
 9957,FA Dermatologische Radiotherapie (SGDV)
+9945,FA Elektroencephalographie (SGKN)
+9946,FA Elektroneuromyographie (SGKN)
+9952,FA Endovenöse thermische Ablation von Stammvenen bei Varikose (USGG)
+9929,FA Gastroskopie (SGG)
+9920,FA Homöopathie (SVHA)
+9940,FA Hüftsonographie nach Graf beim Neugeborenen und Säugling (SGUM)
+9960,FA Interventionelle Psychiatrie (SGIP)
+9941,FA Laserbehandlungen der Haut und hautnahen Schleimhäute (FMCH)
+9987,FA Medizinische Hypnose (SMSH/GHypS)
+9955,FA Phlebologie (USGG)
+9921,FA Phytotherapie (SMGP)
+9996,FA Point of Care-Ultraschall POCUS (SGUM)
+9926,FA Schlafmedizin (SGSSC)
+9916,FA Schwangerschaftsultraschall (SGUM)
+9937,FA Sonographie (SGUM) - Modul Abdomen
+9931,FA Sonographie (SGUM) - Modul Bewegungsapparat
 9932,FA Sonographie (SGUM) - Modul Gefässe
 9933,FA Sonographie (SGUM) - Modul Gynäkologie
-1802,SP Neuro-Urologie
-9985,SP Alterspsychiatrie und -psychotherapie
-9992,SP Altersmedizin (Geriatrie)
-9931,FA Sonographie (SGUM) - Modul Bewegungsapparat
-9946,FA Elektroneuromyographie (SGKN)
-0009,Allergologie und klinische Immunologie
-9945,FA Elektroencephalographie (SGKN)
-0810,SP Ophthalmochirurgie
-9991,SP Dermatopathologie
-0800,Ophthalmologie
-1100,Kinder- und Jugendmedizin
 9934,FA Sonographie (SGUM) - Modul Halsorgane
-9960,FA Interventionelle Psychiatrie (SGIP)
-9943,SP Klinische Notfallmedizin (SGNOR)
-3010,Allgemeine Innere Medizin
-0501,Endokrinologie-Diabetologie
-9971,SP Pädiatrische Endokrinologie-Diabetologie
+9935,FA Sonographie (SGUM) - Modul Mammasonographie
+9936,FA Sonographie (SGUM) - Modul Pädiatrie
+9928,FA Tauch- und Hyperbarmedizin (SUHMS)
 9924,FA Zerebrovaskuläre Sonographie (SGKN)
-0700,Neurologie
-9970,SP Neuropädiatrie
-1400,Psychiatrie und Psychotherapie
-1101,SP Neonatologie
-1005,SP Hals- und Gesichtschirurgie
-0506,Rheumatologie
+9922,FA Ärztin oder Arzt für anthroposophisch erweiterte Medizin (VAOAS)
+502,Gastroenterologie
+9978,Gefässchirurgie
+400,Gynäkologie und Geburtshilfe
+11,Handchirurgie
+2900,Herz- und thorakale Gefässchirurgie
+503,Hämatologie
+26,Infektiologie
+22,Intensivmedizin
+504,Kardiologie
+1100,Kinder- und Jugendmedizin
+1500,Kinder- und Jugendpsychiatrie und -psychotherapie
+1900,Kinderchirurgie
+3020,Klinische Pharmakologie und Toxikologie
+2200,Medizinische Genetik
+10,Medizinische Onkologie
+2100,"Mund-, Kiefer- und Gesichtschirurgie"
+8,Nephrologie
+600,Neurochirurgie
+700,Neurologie
+15,Nuklearmedizin
+800,Ophthalmologie
+900,Orthopädische Chirurgie und Traumotologie des Bewegungsapparates
+1000,Oto-Rhino-Laryngologie
+1200,Pathologie
 1300,Physikalische Medizin und Rehabilitation
-9955,FA Phlebologie (USGG)
+2000,"Plastische, Rekonstruktive und Ästhetische Chirurgie"
+505,Pneumologie
+3000,Praktischer Arzt / Praktische Ärztin
+1400,Psychiatrie und Psychotherapie
+16,Radio-Onkologie / Strahlentherapie
+1600,Radiologie
+506,Rheumatologie
+9992,SP Altersmedizin (Geriatrie)
+9985,SP Alterspsychiatrie und -psychotherapie
+9991,SP Dermatopathologie
+24,SP Diagnostische Neuroradiologie
+9990,SP Entwicklungspädiatrie
+401,SP Fetomaternale Medizin
+1005,SP Hals- und Gesichtschirurgie
+9912,SP Interventionelle Schmerztherapie (SSIPM)
+25,SP Invasive Neuroradiologie
+9943,SP Klinische Notfallmedizin (SGNOR)
+9980,SP Manuelle Medizin (SAMM)
+1101,SP Neonatologie
+1802,SP Neuro-Urologie
+9970,SP Neuropädiatrie
+810,SP Ophthalmochirurgie
+17,SP Phoniatrie
+9951,SP Psychosomatische und Psychosoziale Medizin (SAPPM)
+9971,SP Pädiatrische Endokrinologie-Diabetologie
+9972,"SP Pädiatrische Gastroenterologie, Hepatologie und Ernährung"
+9973,SP Pädiatrische Kardiologie
+9974,SP Pädiatrische Nephrologie
+9975,SP Pädiatrische Onkologie-Hämatologie
+9976,SP Pädiatrische Pneumologie
+9977,SP Pädiatrische Rheumatologie
+9997,SP Sport- und Bewegungsmedizin (SEMS)
+405,SP Urogynäkologie
+1700,Tropen- und Reisemedizin
+1800,Urologie

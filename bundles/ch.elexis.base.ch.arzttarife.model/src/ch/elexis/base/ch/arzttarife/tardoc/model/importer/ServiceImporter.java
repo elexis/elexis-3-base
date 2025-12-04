@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -527,7 +528,7 @@ public class ServiceImporter {
 					TardocReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
-				ret = ImporterUtil.getLatestMap(validResults).get("QL_DIGNITAET");
+				ret = validResults.stream().map(m -> m.get("QL_DIGNITAET")).sorted().collect(Collectors.joining("|"));
 			}
 			rsub.close();
 		} finally {

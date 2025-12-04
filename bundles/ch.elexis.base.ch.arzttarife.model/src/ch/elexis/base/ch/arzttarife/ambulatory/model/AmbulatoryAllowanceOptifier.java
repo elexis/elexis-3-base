@@ -15,9 +15,11 @@ import ch.rgw.tools.Result;
 public class AmbulatoryAllowanceOptifier extends AbstractOptifier<AmbulatoryAllowance> {
 
 	private TarifMatcher<AmbulatoryAllowance> tarifMatcher;
+	private AmbulatoryAllowanceVerifier verifier;
 
 	public AmbulatoryAllowanceOptifier(IModelService coreModelService, IContextService contextService) {
 		super(coreModelService, contextService);
+		verifier = new AmbulatoryAllowanceVerifier();
 	}
 
 	@Override
@@ -35,6 +37,12 @@ public class AmbulatoryAllowanceOptifier extends AbstractOptifier<AmbulatoryAllo
 	public Result<IBilled> add(AmbulatoryAllowance billable, IEncounter encounter, double amount, boolean save) {
 		if (tarifMatcher == null) {
 			tarifMatcher = new TarifMatcher<AmbulatoryAllowance>(this);
+		}
+
+		Result<IBilled> digniResult = verifier.checkDigni(encounter, billable);
+		if (!digniResult.isOK()) {
+			// fail before modification happened
+			return digniResult;
 		}
 
 		IBilled billed = super.add(billable, encounter, amount, false).get();

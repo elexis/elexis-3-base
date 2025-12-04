@@ -73,7 +73,8 @@ public class TarifMatcher<T extends IBillable> {
 
 		CasemasterResult result = casemasterService.getResult(billed, encounter);
 		if (!result.errors.isEmpty()) {
-			if (result.errors.get(0).type == CasemasterErrorType.MISSING_OR_INVALID_DIAGNOSIS) {
+			if (result.errors.stream().filter(e -> e.type == CasemasterErrorType.MISSING_OR_INVALID_DIAGNOSIS).findAny()
+					.isPresent()) {
 				return new Result<IBilled>(Result.SEVERITY.WARNING, KOMBINATION,
 						"Abrechnung einer Trigger Position " + billed.getCode() + " ohne ICD Diagnose nicht erlaubt.",
 						null, false);

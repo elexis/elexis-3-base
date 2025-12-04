@@ -1533,5 +1533,4 @@
 		<xsl:value-of select="' '" />
 		<xsl:value-of select="substring($Input,21,1)" />
 	</xsl:template>
-
 </xsl:stylesheet>

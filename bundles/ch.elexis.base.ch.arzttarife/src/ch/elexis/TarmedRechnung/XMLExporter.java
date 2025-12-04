@@ -363,36 +363,74 @@ public class XMLExporter implements IRnOutputter {
 
 		logger.info("Creating new bill for " + rechnung.getNr());
 		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
-		if (exporter.doExport(invoice, xmlOutput, type)) {
-			Document xmlRn = getAsJdomDocument(xmlOutput).orElse(null);
-			ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
-					.unmarshalInvoiceRequest450(new ByteArrayInputStream(xmlOutput.toByteArray()));
-			if (doVerify) {
-				Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
-				// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
-			}
-			// save rounded amount
-			CoreModelServiceHolder.get().save(invoice);
-
-			checkXML(xmlRn, dest, invoice, doVerify);
-
-			if (invoice.getState() != InvoiceState.DEFECTIVE) {
-				try {
-
-					setExistingXml(invoice, xmlRn);
-					if (dest != null) {
-						writeFile(xmlRn, dest);
-					}
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
-					SWTHelper.alert(Messages.XMLExporter_ErrorCaption,
-							MessageFormat.format(Messages.XMLExporter_CouldNotWriteFile, dest));
-					return null;
+		if (containsTardocOrAllowance(invoice)) {
+			if (exporter50.doExport(invoice, xmlOutput, type)) {
+				Document xmlRn = getAsJdomDocument(xmlOutput).orElse(null);
+				ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
+						.unmarshalInvoiceRequest450(new ByteArrayInputStream(xmlOutput.toByteArray()));
+				if (doVerify) {
+					Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
+					// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
 				}
+				// save rounded amount
+				CoreModelServiceHolder.get().save(invoice);
+
+				checkXML(xmlRn, dest, invoice, doVerify);
+
+				if (invoice.getState() != InvoiceState.DEFECTIVE) {
+					try {
+
+						setExistingXml(invoice, xmlRn);
+						if (dest != null) {
+							writeFile(xmlRn, dest);
+						}
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+						SWTHelper.alert(Messages.XMLExporter_ErrorCaption,
+								MessageFormat.format(Messages.XMLExporter_CouldNotWriteFile, dest));
+						return null;
+					}
+				}
+				return xmlRn;
 			}
-			return xmlRn;
+		} else {
+			if (exporter.doExport(invoice, xmlOutput, type)) {
+				Document xmlRn = getAsJdomDocument(xmlOutput).orElse(null);
+				ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
+						.unmarshalInvoiceRequest450(new ByteArrayInputStream(xmlOutput.toByteArray()));
+				if (doVerify) {
+					Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
+					// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
+				}
+				// save rounded amount
+				CoreModelServiceHolder.get().save(invoice);
+
+				checkXML(xmlRn, dest, invoice, doVerify);
+
+				if (invoice.getState() != InvoiceState.DEFECTIVE) {
+					try {
+
+						setExistingXml(invoice, xmlRn);
+						if (dest != null) {
+							writeFile(xmlRn, dest);
+						}
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+						SWTHelper.alert(Messages.XMLExporter_ErrorCaption,
+								MessageFormat.format(Messages.XMLExporter_CouldNotWriteFile, dest));
+						return null;
+					}
+				}
+				return xmlRn;
+			}
 		}
 		return null;
+	}
+
+	private boolean containsTardocOrAllowance(IInvoice invoice) {
+		return invoice.getBilled().stream().filter(b -> "007".equals(b.getBillable().getCodeSystemCode())
+				|| "005".equals(b.getBillable().getCodeSystemCode())).findAny()
+				.isPresent();
 	}
 
 	/**

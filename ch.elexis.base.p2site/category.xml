@@ -113,7 +113,7 @@
       <category name="clinicrecordkeeping"/>
    </feature>
    <feature id="ch.framsteg.elexis.docbox.feature" version="0.0.0">
-   	  <category name="clinicrecordkeeping"/>
+      <category name="clinicrecordkeeping"/>
    </feature>
    <feature url="features/ch.elexis.molemax.feature_0.0.0.jar" id="ch.elexis.molemax.feature" version="0.0.0">
       <category name="clinicrecordkeeping"/>
@@ -273,6 +273,12 @@
    </feature>
    <feature id="ch.elexis.mednet.webapi.feature">
       <category name="dataexchange"/>
+   </feature>
+   <feature id="at.medevit.ch.artikelstamm.elexis.open.feature">
+      <category name="basepackages"/>
+   </feature>
+   <feature id="at.medevit.elexis.loinc.feature">
+      <category name="libraries"/>
    </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>

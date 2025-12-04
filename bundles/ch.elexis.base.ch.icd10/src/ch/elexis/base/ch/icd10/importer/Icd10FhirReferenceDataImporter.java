@@ -23,9 +23,12 @@ import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jpa.entities.ICD10;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=icd10_fhir")
 public class Icd10FhirReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
+
+	private static final String REFERENCEDATA_ICD10FHIR_VERSION = "referencedata/icd10_fhir/version";
 
 	@Override
 	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion) {
@@ -78,6 +81,9 @@ public class Icd10FhirReferenceDataImporter extends AbstractReferenceDataImporte
 						}
 					}
 				}
+				if (newVersion != null) {
+					ConfigServiceHolder.get().set(REFERENCEDATA_ICD10FHIR_VERSION, newVersion);
+				}
 				return Status.OK_STATUS;
 			} catch (IOException e) {
 				LoggerFactory.getLogger(getClass()).error("Error importing ICD10 FHIR resource", e);
@@ -100,6 +106,6 @@ public class Icd10FhirReferenceDataImporter extends AbstractReferenceDataImporte
 
 	@Override
 	public int getCurrentVersion() {
-		return -1;
+		return ConfigServiceHolder.get().get(REFERENCEDATA_ICD10FHIR_VERSION, 0);
 	}
 }

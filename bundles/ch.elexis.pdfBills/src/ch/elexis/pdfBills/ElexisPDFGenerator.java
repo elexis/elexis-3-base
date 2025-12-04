@@ -26,25 +26,39 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
+import java.util.zip.Deflater;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -56,6 +70,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -95,6 +116,8 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.XMLTool;
 
 public class ElexisPDFGenerator {
+	private static final boolean DEBUG = false;
+
 	public String leftMargin;
 	public String rightMargin;
 	public String topMargin;
@@ -111,6 +134,8 @@ public class ElexisPDFGenerator {
 	private String eanList;
 	private String vatList;
 
+	private String eanTable;
+
 	private Money mReminders;
 	private Money mTotal;
 	private Money mDue;
@@ -123,7 +148,7 @@ public class ElexisPDFGenerator {
 	private boolean print;
 
 	private enum XsltType {
-		RECLAIM, PATBILL, PATBILL_M1, PATBILL_M2, PATBILL_M3
+		RECLAIM, PATBILL, PATBILL_M1, PATBILL_M2, PATBILL_M3, QRPAGE
 	}
 
 	public ElexisPDFGenerator(String billXmlFile, String nr) {
@@ -228,6 +253,9 @@ public class ElexisPDFGenerator {
 					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE)); //$NON-NLS-1$
 					parameters.put("messageText", getMessagePDFText(invoiceState));// $NON-NLS-1$
 					parameters.put("eanList", eanList); //$NON-NLS-1$
+					if (StringUtils.isNotBlank(eanTable)) {
+						parameters.put("eanTable", eanTable); //$NON-NLS-1$
+					}
 					parameters.put("vatList", vatList); //$NON-NLS-1$
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal)); //$NON-NLS-1$
 					parameters.put("amountDue", XMLTool.moneyToXmlDouble(mDue)); //$NON-NLS-1$
@@ -260,7 +288,13 @@ public class ElexisPDFGenerator {
 					if (mReminders != null && !mReminders.isZero()) {
 						parameters.put("amountReminders", XMLTool.moneyToXmlDouble(mReminders)); //$NON-NLS-1$
 					}
-
+					if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+						List<String> xmlQrJpegs = getEncodedXmlQrs();
+						for (int i = 0; i < xmlQrJpegs.size(); i++) {
+							String string = xmlQrJpegs.get(i);
+							parameters.put("xmlQr" + i, string);
+						}
+					}
 					foOutputt.transform(inputStream, xsltStream, out, parameters, new BundleURIResolver());
 				} catch (IllegalStateException e) {
 					ExHandler.handle(e);
@@ -275,10 +309,79 @@ public class ElexisPDFGenerator {
 		}
 	}
 
+	private List<String> getEncodedXmlQrs() {
+		Document cloneDocument = (Document) domDocument.cloneNode(true);
+		try {
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			XPathExpression expr = xPath.compile("/request/payload/body/documents"); // $NON-NLS-1$
+			Object documentsResult = expr.evaluate(cloneDocument, XPathConstants.NODE);
+			if (documentsResult instanceof Element) {
+				Element element = (Element) documentsResult;
+				element.getParentNode().removeChild(element);
+			}
+			// write xml
+			DOMSource domSource = new DOMSource(cloneDocument);
+			StringWriter writer = new StringWriter();
+			StreamResult result = new StreamResult(writer);
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.transform(domSource, result);
+			if (DEBUG) {
+				writeDebugFile(writer.toString().getBytes(), ".xml");
+			}
+			// compress
+			byte[] inputData = writer.toString().getBytes();
+			Deflater deflater = new Deflater(Deflater.DEFLATED, true);
+			deflater.setInput(inputData);
+			deflater.finish();
+			byte[] compressedData = new byte[inputData.length];
+			int compressedSize = deflater.deflate(compressedData);
+			byte[] compressedResult = new byte[compressedSize];
+			System.arraycopy(compressedData, 0, compressedResult, 0, compressedSize);
+			deflater.end();
+			if (DEBUG) {
+				writeDebugFile(compressedResult, ".deflated");
+			}
+			// base64 encode
+			byte[] base64Result = Base64.getEncoder().encode(compressedResult);
+			if (DEBUG) {
+				writeDebugFile(base64Result, ".base64");
+			}
+			// split into chunks of 1264 bytes
+			List<byte[]> chunks = new ArrayList<byte[]>();
+			int startIndex = 0;
+			while (startIndex < base64Result.length) {
+				int size = startIndex + 1264 > base64Result.length ? base64Result.length - startIndex : 1264;
+				byte[] chunk = new byte[size];
+				System.arraycopy(base64Result, startIndex, chunk, 0, size);
+				startIndex += 1264;
+				chunks.add(chunk);
+			}
+			if (!chunks.isEmpty()) {
+				return chunks.stream().map(chunk -> getXmlQrImage(chunk)).map(image -> getEncodedImage(image)).toList();
+			}
+		} catch (TransformerException | XPathExpressionException e) {
+			LoggerFactory.getLogger(getClass()).error("Error encoded xml qrs", e); //$NON-NLS-1$
+		}
+		return Collections.emptyList();
+	}
+
+	private void writeDebugFile(byte[] content, String ending) {
+		File userDir = CoreUtil.getWritableUserDir();
+		File output = new File(userDir, "elexis_pdf_debug." + ending);
+		try (FileOutputStream writer = new FileOutputStream(output)) {
+			writer.write(content);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Could not write debug file", e);
+		}
+		LoggerFactory.getLogger(getClass())
+				.info("Wrote [" + output.getAbsolutePath() + "] with size [" + output.length() + "]");
+	}
+
 	private String getMessagePDFText(final InvoiceState invoiceState) {
 		String key = "";
-		String invStateTxt = rechnung.getInvoiceState().toString();
-		ch.elexis.data.Fall.Tiers tiers = rechnung.getFall().getTiersType();
+		String invStateTxt = rechnung != null ? rechnung.getInvoiceState().toString() : Messages.BillingDefaultMsg;
+		ch.elexis.data.Fall.Tiers tiers = rechnung != null ? rechnung.getFall().getTiersType() : Fall.Tiers.GARANT;
 
 		switch (invoiceState) {
 		case UNKNOWN:
@@ -408,17 +511,6 @@ public class ElexisPDFGenerator {
 		return StringUtils.EMPTY;
 	}
 
-	private String getEncodedCopy() {
-		try (InputStream input = getClass().getResourceAsStream("/rsc/kopie.jpeg"); //$NON-NLS-1$
-				ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-			IOUtils.copy(input, output);
-			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
-		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error encoding logo", e); //$NON-NLS-1$
-		}
-		return StringUtils.EMPTY;
-	}
-
 	private String getEncodedQr(Rechnung rechnung) {
 		if (rechnung != null) {
 			Optional<IInvoice> invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class);
@@ -454,6 +546,51 @@ public class ElexisPDFGenerator {
 			}
 		}
 		return StringUtils.EMPTY;
+	}
+
+	private Image getXmlQrImage(byte[] data) {
+		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
+		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+		hintMap.put(EncodeHintType.QR_VERSION, 29);
+
+		QRCodeWriter qrCodeWriter = new QRCodeWriter();
+		try {
+			BitMatrix bitMatrix = qrCodeWriter.encode(new String(data), BarcodeFormat.QR_CODE, 1330, 1330, hintMap);
+			int width = bitMatrix.getWidth();
+			int height = bitMatrix.getHeight();
+
+			ImageData imageData = new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					imageData.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
+				}
+			}
+			return new Image(Display.getDefault(), imageData);
+		} catch (WriterException e) {
+			LoggerFactory.getLogger(getClass()).error("Error creating XML QR image", e); //$NON-NLS-1$
+		}
+		throw new IllegalStateException("Could not create XML QR image");
+	}
+
+	/**
+	 * Get the image as base64 encoded jpg with header "data:image/jpg;base64," for
+	 * use with pdf output.
+	 *
+	 * @return
+	 */
+	private String getEncodedImage(Image image) {
+		try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+			ImageLoader imageLoader = new ImageLoader();
+			imageLoader.data = new ImageData[] { image.getImageData() };
+			imageLoader.compression = 100;
+			imageLoader.save(output, SWT.IMAGE_JPEG);
+
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
+
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e); //$NON-NLS-1$
+		}
+		throw new IllegalStateException("Could not encode QR image");
 	}
 
 	private String getErrorMessage(QRBillDataException e, Optional<IInvoice> invoice) {
@@ -557,6 +694,16 @@ public class ElexisPDFGenerator {
 				generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 				printPdf(pdf, false);
 				printed.add(pdf);
+
+				if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+					pdf = VirtualFilesystemServiceHolder.get()
+							.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
+									+ "_qr.pdf") //$NON-NLS-1$
+							.toFile().orElse(null);
+					generatePdf(getXsltForBill(rsc, XsltType.QRPAGE), pdf);
+					printPdf(pdf, false);
+					printed.add(pdf);
+				}
 			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error printing QR bill", e);
@@ -638,22 +785,6 @@ public class ElexisPDFGenerator {
 		} else {
 			initializer.init();
 		}
-	}
-
-	protected boolean isTierGarant() {
-		if ("4.4".equals(billVersion)) { //$NON-NLS-1$
-			try {
-				XPath xPath = XPathFactory.newInstance().newXPath();
-				XPathExpression expr = xPath.compile("/request/payload/body/tiers_garant"); //$NON-NLS-1$
-				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
-				NodeList nodes = (NodeList) result;
-				return nodes.getLength() > 0;
-			} catch (XPathExpressionException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e); //$NON-NLS-1$
-			}
-		}
-		// default is garant
-		return true;
 	}
 
 	private IContact getDebitor(IInvoice invoice) {
@@ -746,7 +877,7 @@ public class ElexisPDFGenerator {
 					Node billerElement = billerElements.item(i);
 					if (billerElement instanceof Element) {
 						eanSet.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
-						billerEans.add(((Element) billerElement).getAttribute("ean_party"));
+						billerEans.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
 					}
 				}
 				expr = xPath.compile("/request/payload/body/tiers_payant/biller"); //$NON-NLS-1$
@@ -756,7 +887,7 @@ public class ElexisPDFGenerator {
 					Node billerElement = billerElements.item(i);
 					if (billerElement instanceof Element) {
 						eanSet.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
-						billerEans.add(((Element) billerElement).getAttribute("ean_party"));
+						billerEans.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
 					}
 				}
 
@@ -780,8 +911,165 @@ public class ElexisPDFGenerator {
 			} catch (XPathExpressionException e) {
 				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e); //$NON-NLS-1$
 			}
+		} else if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+			// produce string with 3 lines per EAN
+			// index-type\nEAN\Section\nAdress
+			Map<String, String> eanToIndexTypeMap = new HashMap<String, String>();
+			Map<String, String> eanToAdressMap = new HashMap<String, String>();
+
+			try {
+				// lookup partners
+				// provider_id/section_code != provider_gln
+				int eanIndex = 0;
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				XPathExpression expr = xPath.compile("/request/payload/body/tiers_garant/partners"); //$NON-NLS-1$
+				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
+				NodeList partnersElements = (NodeList) result;
+				if (partnersElements.getLength() == 0) {
+					expr = xPath.compile("/request/payload/body/tiers_payant/partners"); //$NON-NLS-1$
+					result = expr.evaluate(domDocument, XPathConstants.NODESET);
+					partnersElements = (NodeList) result;
+				}
+				for (int i = 0; i < partnersElements.getLength(); i++) {
+					Node partnersElement = partnersElements.item(i);
+					List<Element> partners = getChildElements((Element) partnersElement);
+					for (int partnerIdx = 0; partnerIdx < partners.size(); partnerIdx++) {
+						Element partnerElement = partners.get(partnerIdx);
+						String type = partnerElement.getAttribute("type"); //$NON-NLS-1$
+						String gln = partnerElement.getAttribute("gln"); //$NON-NLS-1$
+						eanToIndexTypeMap.put(gln, ++eanIndex + " - " + type);
+						Element personOrCompany = null;
+						List<Element> persons = getChildElements(partnerElement, "invoice:person");
+						if (!persons.isEmpty()) {
+							personOrCompany = persons.get(0);
+						}
+						List<Element> partnerCompanies = getChildElements(partnerElement, "invoice:company");
+						if (!partnerCompanies.isEmpty()) {
+							personOrCompany = partnerCompanies.get(0);
+						}
+						if(personOrCompany != null) {
+							StringJoiner addressBuilder = new StringJoiner(" ");
+							if (StringUtils.isNotBlank(personOrCompany.getAttribute("salutation"))) {
+								addressBuilder.add(personOrCompany.getAttribute("salutation")); //$NON-NLS-1$
+							}
+							if (StringUtils.isNotBlank(personOrCompany.getAttribute("title"))) {
+								addressBuilder.add(personOrCompany.getAttribute("title")); //$NON-NLS-1$
+							}
+
+							List<Element> familyElements = getChildElements(personOrCompany, "invoice:familyname"); //$NON-NLS-1$
+							if (!familyElements.isEmpty()) {
+								addressBuilder.add(familyElements.get(0).getTextContent()); // $NON-NLS-1$
+							}
+							List<Element> givenElements = getChildElements(personOrCompany, "invoice:givenname"); //$NON-NLS-1$
+							if (!givenElements.isEmpty()) {
+								addressBuilder.add(givenElements.get(0).getTextContent());
+							}
+							List<Element> namesElements = getChildElements(personOrCompany, "invoice:companyname"); //$NON-NLS-1$
+							if (!namesElements.isEmpty()) {
+								addressBuilder.add(namesElements.get(0).getTextContent());
+							}
+							List<Element> postalElements = getChildElements(personOrCompany, "invoice:postal"); //$NON-NLS-1$
+							if (!postalElements.isEmpty()) {
+								addressBuilder.add("·"); //$NON-NLS-1$
+//                                <invoice:street street_name="Referrerstrasse" house_no="11">Referrerstrasse 11</invoice:street>
+//                                <invoice:zip state_code="AG">5000</invoice:zip>
+//                                <invoice:city>Aarau</invoice:city>
+								List<Element> streetElements = getChildElements(postalElements.get(0),
+										"invoice:street");
+								if (!streetElements.isEmpty()) {
+									addressBuilder.add(streetElements.get(0).getTextContent());
+								}
+								List<Element> zipElements = getChildElements(postalElements.get(0), "invoice:zip");
+								if (!zipElements.isEmpty()) {
+									addressBuilder.add(zipElements.get(0).getTextContent());
+								}
+								List<Element> cityElements = getChildElements(postalElements.get(0), "invoice:city");
+								if (!cityElements.isEmpty()) {
+									addressBuilder.add(cityElements.get(0).getTextContent());
+								}
+							}
+							eanToAdressMap.put(gln, addressBuilder.toString());
+						}
+					}
+				}
+				// lookup service providers and responsibles
+				xPath = XPathFactory.newInstance().newXPath();
+				expr = xPath.compile("/request/payload/body/services"); //$NON-NLS-1$
+				result = expr.evaluate(domDocument, XPathConstants.NODESET);
+				NodeList servicesElements = (NodeList) result;
+				for (int i = 0; i < servicesElements.getLength(); i++) {
+					HashSet<String> eanSet = new HashSet<>();
+					Node serviceElement = servicesElements.item(i);
+					NodeList childNodes = serviceElement.getChildNodes();
+					for (int j = 0; j < childNodes.getLength(); j++) {
+						Node child = childNodes.item(j);
+						if (child instanceof Element) {
+							Element element = (Element) child;
+							String sectionCode = element.getAttribute("section_code"); //$NON-NLS-1$
+							eanSet.add(element.getAttribute("responsible_id") //$NON-NLS-1$
+									+ (StringUtils.isNotBlank(sectionCode) ? "/" + sectionCode : StringUtils.EMPTY)); //$NON-NLS-1$
+							eanSet.add(element.getAttribute("provider_id") //$NON-NLS-1$
+									+ (StringUtils.isNotBlank(sectionCode) ? "/" + sectionCode : StringUtils.EMPTY)); //$NON-NLS-1$
+						}
+					}
+					String[] uniqueEeans = eanSet.toArray(new String[eanSet.size()]);
+					for (String string : uniqueEeans) {
+						eanToIndexTypeMap.put(string, ++eanIndex + " - " + "service_provider");
+					}
+				}
+				StringJoiner eanList = new StringJoiner(StringUtils.SPACE);
+				StringJoiner eanTable = new StringJoiner("|");
+				List<String> eans = new ArrayList<String>(eanToIndexTypeMap.keySet());
+				Collections.sort(eans, (l, r) -> {
+					return eanToIndexTypeMap.get(l).compareTo(eanToIndexTypeMap.get(r));
+				});
+				for (String ean : eans) {
+					StringJoiner eanInfo = new StringJoiner("\n");
+					String indexType = eanToIndexTypeMap.get(ean);
+					Integer index = Integer.valueOf(indexType.split(" - ")[0]);
+					eanList.add(index + "/" + ean);
+					eanInfo.add(eanToIndexTypeMap.get(ean));
+					eanInfo.add(ean);
+					if (eanToAdressMap.containsKey(ean)) {
+						eanInfo.add(eanToAdressMap.get(ean));
+					} else {
+						eanInfo.add(StringUtils.EMPTY);
+					}
+					eanTable.add(eanInfo.toString());
+				}
+				this.eanTable = eanTable.toString();
+				return eanList.toString();
+			} catch (XPathExpressionException e) {
+				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e); //$NON-NLS-1$
+			}
 		}
 		return StringUtils.EMPTY;
+	}
+
+	private List<Element> getChildElements(Element parent, String name) {
+		ArrayList<Element> l = new ArrayList<Element>();
+
+		NodeList nl = parent.getElementsByTagName(name);
+		for (int i = 0; i < nl.getLength(); i++) {
+			Node n = nl.item(i);
+			if (n.getNodeType() == Node.ELEMENT_NODE) {
+				l.add((Element) n);
+			}
+		}
+		return l;
+	}
+
+	private List<Element> getChildElements(Element parent) {
+		ArrayList<Element> l = new ArrayList<Element>();
+
+		NodeList nl = parent.getChildNodes();
+		for (int i = 0; i < nl.getLength(); i++) {
+			Node n = nl.item(i);
+			if (n.getNodeType() == Node.ELEMENT_NODE) {
+				l.add((Element) n);
+			}
+		}
+		return l;
 	}
 
 	private String getVatList() {
@@ -809,7 +1097,7 @@ public class ElexisPDFGenerator {
 			} catch (XPathExpressionException e) {
 				LoggerFactory.getLogger(getClass()).error("Error getting vat rates", e); //$NON-NLS-1$
 			}
-		} else if ("4.5".equals(billVersion)) { //$NON-NLS-1$
+		} else if ("4.5".equals(billVersion) || "5.0".equals(billVersion)) { //$NON-NLS-1$
 			HashSet<String> vatrateSet = new HashSet<>();
 			try {
 				XPath xPath = XPathFactory.newInstance().newXPath();
@@ -866,6 +1154,8 @@ public class ElexisPDFGenerator {
 				return "4.4";//$NON-NLS-1$
 			} else if (location.contains("InvoiceRequest_450")) {//$NON-NLS-1$
 				return "4.5";//$NON-NLS-1$
+			} else if (location.contains("InvoiceRequest_500")) {//$NON-NLS-1$
+				return "5.0";//$NON-NLS-1$
 			}
 		}
 		return StringUtils.EMPTY;
@@ -902,6 +1192,20 @@ public class ElexisPDFGenerator {
 			} else if (type == XsltType.RECLAIM) {
 				return new File(rsc, "45_reclaim.xsl"); //$NON-NLS-1$
 			}
+		} else if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+			if (type == XsltType.PATBILL) {
+				return new File(rsc, "50_patbill.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M1) {
+				return new File(rsc, "50_patbill_m1.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M2) {
+				return new File(rsc, "50_patbill_m2.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M3) {
+				return new File(rsc, "50_patbill_m3.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.RECLAIM) {
+				return new File(rsc, "50_reclaim.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.QRPAGE) {
+				return new File(rsc, "50_qr_page.xsl"); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}
@@ -920,6 +1224,18 @@ public class ElexisPDFGenerator {
 				return new File(rsc, "45_qr_patbill_m3.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.RECLAIM) {
 				return new File(rsc, "45_reclaim.xsl"); //$NON-NLS-1$
+			}
+		} else if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+			if (type == XsltType.PATBILL) {
+				return new File(rsc, "50_qr_patbill.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M1) {
+				return new File(rsc, "50_qr_patbill_m1.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M2) {
+				return new File(rsc, "50_qr_patbill_m2.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M3) {
+				return new File(rsc, "50_qr_patbill_m3.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.RECLAIM) {
+				return new File(rsc, "50_reclaim.xsl"); //$NON-NLS-1$
 			}
 		}
 		return null;

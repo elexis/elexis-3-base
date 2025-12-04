@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -56,7 +55,6 @@ import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.Messages;
-import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
@@ -65,6 +63,7 @@ import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.handler.AppointmentExtensionHandler;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -903,7 +902,17 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			appointment.setSubjectOrPatient(null);
 		}
-		createKombiTermineIfApplicable();
+		List<IAppointment> kombiAppointments = appointmentService.getKombiTermineIfApplicable(appointment,
+				getSelectedContact(), comboType.getText(), txtPatSearch.getText());
+		if (!kombiAppointments.isEmpty()) {
+			for (IAppointment kombi : kombiAppointments) {
+				CoreModelServiceHolder.get().save(kombi);
+			}
+			appointment.setExtension(AppointmentExtensionHandler.addMultipleLinkedAppointmentsAndReturn(appointment,
+					kombiAppointments.stream().map(IAppointment::getId).toList()));
+
+		}
+
 		return appointment;
 	}
 
@@ -911,6 +920,7 @@ public class AppointmentDetailComposite extends Composite {
 		String selectedType = comboType.getText();
 		List<String> kombiTermineList = ConfigServiceHolder.get()
 				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType); //$NON-NLS-1$
+		dayBar.setAppointmentType(selectedType);
 		if (!StringUtils.isBlank(selectedType) && !kombiTermineList.isEmpty()) {
 			chkTerminLinks.setEnabled(true);
 		} else {

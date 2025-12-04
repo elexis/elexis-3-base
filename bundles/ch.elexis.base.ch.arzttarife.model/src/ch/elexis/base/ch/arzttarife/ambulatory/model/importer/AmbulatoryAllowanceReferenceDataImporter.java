@@ -53,6 +53,8 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 
 	private InputStream input;
 
+	private DateTimeFormatter compactFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
 	@Override
 	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion) {
 		if (monitor == null) {
@@ -91,6 +93,8 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 							ambulantePauschale.setChapter(getChapter(line.get()));
 							ambulantePauschale.setValidFrom(getValidFrom(line.get()));
 							ambulantePauschale.setValidTo(getValidTo(line.get()));
+							ambulantePauschale.setDigniQuali(line.get().get("valora"));
+							ambulantePauschale.setTp(getTP(line.get()));
 							imported.add(ambulantePauschale);
 						} else {
 							// update validto of existing
@@ -111,6 +115,8 @@ public class AmbulatoryAllowanceReferenceDataImporter extends AbstractReferenceD
 						ambulantePauschale.setValidTo(getValidTo(line.get()));
 						ambulantePauschale.setDigniQuali(line.get().get("valora"));
 						ambulantePauschale.setTp(getTP(line.get()));
+						ambulantePauschale.setId(ambulantePauschale.getCode() + "-"
+								+ compactFormatter.format(ambulantePauschale.getValidFrom()));
 						imported.add(ambulantePauschale);
 					}
 				}

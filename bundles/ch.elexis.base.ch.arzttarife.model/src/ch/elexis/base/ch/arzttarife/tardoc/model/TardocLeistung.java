@@ -117,7 +117,7 @@ public class TardocLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	@Override
 	public int getIPL() {
-		String tp_tl = getExtension().getLimits().get(ch.elexis.core.jpa.entities.TardocLeistung.EXT_FLD_TP_IPL);
+		String tp_tl = getExtension().getLimits().get(ch.elexis.core.jpa.entities.TardocLeistung.EXT_FLD_TP_TL);
 		return (int) Math.round(NumberUtils.toDouble(tp_tl) * 100);
 	}
 

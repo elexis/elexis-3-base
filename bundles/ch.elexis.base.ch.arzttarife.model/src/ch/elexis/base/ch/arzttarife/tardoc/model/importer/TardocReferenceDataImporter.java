@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
-import ch.elexis.base.ch.arzttarife.tarmed.model.VersionUtil;
+import ch.elexis.base.ch.arzttarife.tardoc.model.VersionUtil;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.importer.div.importers.AccessWrapper;

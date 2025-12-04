@@ -3,6 +3,7 @@ package ch.elexis.tarmedprefs;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -63,7 +64,8 @@ public class TardocSpecialistComposite extends Composite {
 			return;
 		}
 		List<ICoding> codes = codingService.getAvailableCodes("tardoc_dignitaet");
-		GenericSelectionDialog gsd = new GenericSelectionDialog(getShell(), codes, "TARDOC Dignit\u00E4hten w\u00E4hlen", "");
+		GenericSelectionDialog gsd = new GenericSelectionDialog(getShell(), codes,
+				Messages.TardocSpecialistComposite_selectDignitiesTitle, StringUtils.EMPTY);
 		gsd.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -97,7 +99,7 @@ public class TardocSpecialistComposite extends Composite {
 		List<ICoding> specialist = ArzttarifeUtil.getMandantTardocSepcialist(mandator);
 		specialist.sort(Comparator.comparingInt(c -> {
 			try {
-				return Integer.parseInt(c.getCode().replaceAll("\\D", ""));
+				return Integer.parseInt(c.getCode().replaceAll("\\D", StringUtils.EMPTY));
 			} catch (NumberFormatException e) {
 
 				return Integer.MAX_VALUE;

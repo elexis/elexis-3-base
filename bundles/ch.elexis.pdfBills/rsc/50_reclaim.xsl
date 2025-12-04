@@ -2188,14 +2188,14 @@
 							MWSt
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
 							font-weight="bold"
 							font-family="tahoma,arial,helvetica,sans-serif">
 							MwSt.Nr.:
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="left" font-size="7px"
 							white-space-treatment="preserve"
 							font-family="tahoma,arial,helvetica,sans-serif">
@@ -2205,22 +2205,6 @@
 								select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/invoice:vat/@vat_number" />
 							<xsl:value-of select="' '" />
 							MWST
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="right" font-size="7px"
-							font-weight="bold"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							Anzahlung:
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="right" font-size="7px"
-							white-space-treatment="preserve"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:value-of select="' '" />
-							<xsl:value-of select="' '" />
-							<xsl:value-of select="$amountPrepaid" />
 						</fo:block>
 					</fo:table-cell>
 					<fo:table-cell>
@@ -2285,7 +2269,7 @@
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
 							font-weight="bold" padding-right="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
@@ -2300,26 +2284,6 @@
 							<xsl:value-of select="' '" />
 							<xsl:value-of
 								select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@currency" />
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="left" font-size="7px"
-							font-weight="bold"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:if
-								test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_reminder) > 0">
-								Mahngebühr:
-							</xsl:if>
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="right" font-size="7px"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:if
-								test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_reminder) > 0">
-								<xsl:value-of
-									select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_reminder" />
-							</xsl:if>
 						</fo:block>
 					</fo:table-cell>
 					<fo:table-cell>
@@ -2381,17 +2345,20 @@
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
 							font-weight="bold" padding-right="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
 							IBAN:
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell number-columns-spanned="5">
-						<fo:block text-align="left" font-size="7px"
+					<fo:table-cell>
+						<fo:block white-space-treatment="preserve" text-align="left" font-size="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
-
+							<xsl:value-of select="' '" />
+							<xsl:value-of select="' '" />							
+							<xsl:value-of
+								select="/invoice:request/invoice:payload/invoice:body/invoice:esrQR/@iban" />
 						</fo:block>
 					</fo:table-cell>
 				</fo:table-row>
@@ -2441,15 +2408,20 @@
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
+							font-weight="bold" padding-right="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
+							Referenz-Nr.:
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell number-columns-spanned="3">
-						<fo:block text-align="left" font-size="7px"
+					<fo:table-cell number-columns-spanned="2">
+						<fo:block white-space-treatment="preserve" text-align="left" font-size="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
-
+							<xsl:value-of select="' '" />
+							<xsl:value-of select="' '" />							
+							<xsl:value-of
+								select="/invoice:request/invoice:payload/invoice:body/invoice:esrQR/@reference_number" />
 						</fo:block>
 					</fo:table-cell>
 					<fo:table-cell>

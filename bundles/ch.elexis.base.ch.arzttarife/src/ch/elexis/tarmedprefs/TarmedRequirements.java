@@ -26,6 +26,7 @@ import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.data.Xid;
 
 public class TarmedRequirements {
@@ -214,6 +215,10 @@ public class TarmedRequirements {
 		String ret = ahv != null ? ahv.getDomainId() : StringUtils.EMPTY;
 		if (StringUtils.isBlank(ret)) {
 			ret = StringUtils.defaultString((String) p.getExtInfo(SSN));
+			if (StringUtils.isBlank(ret)) {
+				ret = StringUtils.defaultString(
+						(String) p.getExtInfo(XidServiceHolder.get().getDomain(DOMAIN_AHV).getSimpleName()));
+			}
 			if (StringUtils.isBlank(ret)) {
 				ret = StringUtils.defaultString((String) p.getExtInfo(INSURANCE_NUMBER));
 			}

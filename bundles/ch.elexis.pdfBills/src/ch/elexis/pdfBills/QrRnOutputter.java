@@ -529,6 +529,8 @@ public class QrRnOutputter implements IRnOutputter {
 					+ File.separator + invoice.getNumber() + "_esr.pdf").toFile().orElse(null);
 			File rfFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
 					+ File.separator + invoice.getNumber() + "_rf.pdf").toFile().orElse(null);
+			File qrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
+					+ File.separator + invoice.getNumber() + "_qr.pdf").toFile().orElse(null);
 			if (esrFile.exists()) {
 				Program.launch(esrFile.getAbsolutePath());
 			} else {
@@ -538,6 +540,11 @@ public class QrRnOutputter implements IRnOutputter {
 				Program.launch(rfFile.getAbsolutePath());
 			} else {
 				LoggerFactory.getLogger(getClass()).info("File [" + rfFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+			}
+			if (qrFile.exists()) {
+				Program.launch(qrFile.getAbsolutePath());
+			} else {
+				LoggerFactory.getLogger(getClass()).info("File [" + qrFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error opening output", e);

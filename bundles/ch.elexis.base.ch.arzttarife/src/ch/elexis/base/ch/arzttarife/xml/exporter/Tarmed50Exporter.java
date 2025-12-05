@@ -34,6 +34,7 @@ import ch.elexis.TarmedRechnung.XMLExporterProcessing;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.arzttarife.xml.exporter.VatRateSum.VatRateElement;
@@ -647,7 +648,7 @@ public class Tarmed50Exporter {
 		}
 		if (StringUtils.isNotBlank(contact.getStreet())) {
 			StreetType street = new StreetType();
-			street.setStreetName(StringUtils.abbreviate(contact.getStreet(), 35));
+			street.setValue(StringUtils.abbreviate(contact.getStreet(), 35));
 			postalAddressType.setStreet(street);
 		}
 		postalAddressType.setCity(StringUtils
@@ -699,10 +700,13 @@ public class Tarmed50Exporter {
 						continue;
 					}
 
-					if ("001".equals(billable.getCodeSystemCode())) { // tarmed service
+					if ("001".equals(billable.getCodeSystemCode()) || "007".equals(billable.getCodeSystemCode())) { // tarmed
+																													// or
+																													// tardoc
+																													// service
 						ServiceExType serviceExType = new ServiceExType();
 
-						String bezug = (String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+						String bezug = getBezug(billable);
 						if (StringTool.isNothing(bezug)) {
 							bezug = (String) billed.getExtInfo("Bezug"); //$NON-NLS-1$
 						}
@@ -867,6 +871,15 @@ public class Tarmed50Exporter {
 		}
 
 		return servicesType;
+	}
+
+	private String getBezug(IBillable billable) {
+		if (billable instanceof ITarmedLeistung) {
+			return (String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+		} else if (billable instanceof ITardocLeistung) {
+			return (String) ((ITardocLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+		}
+		return StringUtils.EMPTY;
 	}
 
 	private String getServiceCode(IBilled billed) {

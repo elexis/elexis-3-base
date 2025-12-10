@@ -106,29 +106,53 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			}
 		}
 
-		Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, code, newBilled);
-		if (!limitationsResult.isOK()) {
-			// reset possible modifications
-			CoreModelServiceHolder.get().refresh(newBilled, true, true);
-			return limitationsResult;
-		}
+		if (bOptify) {
+			Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, code, newBilled);
+			if (!limitationsResult.isOK()) {
+				if (bAllowOverrideStrict) {
+					if (save) {
+						CoreModelServiceHolder.get().save(newBilled);
+					}
+					return limitationsResult;
+				} else {
+					// reset possible modifications
+					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					return limitationsResult;
+				}
+			}
 
-		Result<IBilled> digniResult = verifier.checkDigni(encounter, code, newBilled);
-		if (!digniResult.isOK()) {
-			// reset possible modifications
-			CoreModelServiceHolder.get().refresh(newBilled, true, true);
-			return digniResult;
+			Result<IBilled> digniResult = verifier.checkDigni(encounter, code, newBilled);
+			if (!digniResult.isOK()) {
+				if (bAllowOverrideStrict) {
+					if (save) {
+						CoreModelServiceHolder.get().save(newBilled);
+					}
+					return digniResult;
+				} else {
+					// reset possible modifications
+					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					return digniResult;
+				}
+			}
 		}
 
 		Result<IBilled> matcherResult = tarifMatcher.evaluate(newBilled, encounter);
 
-		if (matcherResult.isOK()) {
+		if (!matcherResult.isOK()) {
+			if (bAllowOverrideStrict) {
+				if (save) {
+					CoreModelServiceHolder.get().save(newBilled);
+					CoreModelServiceHolder.get().save(encounter);
+					CoreModelServiceHolder.get().save(matcherResult.get());
+				}
+			} else {
+				CoreModelServiceHolder.get().refresh(encounter, true);
+			}
+		} else {
 			if (save) {
 				CoreModelServiceHolder.get().save(encounter);
 				CoreModelServiceHolder.get().save(matcherResult.get());
 			}
-		} else {
-			CoreModelServiceHolder.get().refresh(encounter, true);
 		}
 
 		return matcherResult;
@@ -378,10 +402,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 	}
 
 	private void deleteBilled(IBilled billed) {
-		if (!TarmedUtil.getConfigValue(getClass(), IUser.class, Preferences.LEISTUNGSCODES_ALLOWOVERRIDE_STRICT,
-				false)) {
-			CoreModelServiceHolder.get().delete(billed);
-		}
+		CoreModelServiceHolder.get().delete(billed);
 	}
 
 	private List<IBilled> getVerrechnetWithBezugMatchingCode(List<IBilled> lst, String code) {

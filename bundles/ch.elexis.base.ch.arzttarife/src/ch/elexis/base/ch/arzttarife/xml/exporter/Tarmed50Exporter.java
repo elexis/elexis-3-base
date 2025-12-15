@@ -913,9 +913,17 @@ public class Tarmed50Exporter {
 
 	private Integer getServiceExOrServiceTariffType(Object obj) {
 		if (obj instanceof ServiceType) {
-			return Integer.parseInt(((ServiceType) obj).getTariffType());
+			try {
+				return Integer.parseInt(((ServiceType) obj).getTariffType());
+			} catch (NumberFormatException e) {
+				return Integer.MAX_VALUE;
+			}
 		} else if (obj instanceof ServiceExType) {
-			return Integer.parseInt(((ServiceExType) obj).getTariffType());
+			try {
+				return Integer.parseInt(((ServiceExType) obj).getTariffType());
+			} catch (NumberFormatException e) {
+				return Integer.MAX_VALUE;
+			}
 		}
 		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
 	}

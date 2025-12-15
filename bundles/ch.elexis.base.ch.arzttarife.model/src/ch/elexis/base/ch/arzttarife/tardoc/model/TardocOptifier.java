@@ -17,6 +17,7 @@ import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation.LimitationUnit
 import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedUtil;
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
@@ -446,6 +447,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		IContact biller = ContextServiceHolder.get().getActiveUserContact().get();
 		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons, biller).build();
 		ret.setPoints(code.getAL(kons.getMandator()) + code.getIPL());
+		ret.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL, Integer.toString(code.getAL(kons.getMandator())));
+		ret.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL, Integer.toString(code.getIPL()));
 		Optional<IBillingSystemFactor> systemFactor = getFactor(kons);
 		if (systemFactor.isPresent()) {
 			ret.setFactor(systemFactor.get().getFactor());

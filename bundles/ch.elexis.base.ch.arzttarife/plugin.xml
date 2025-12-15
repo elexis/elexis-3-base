@@ -165,6 +165,16 @@
                label="Tarmedbezüge"
                style="push">
          </command>
+         <command
+               commandId="ch.elexis.base.ch.arzttarife.tardoc.detail"
+               label="Tardoc Detail"
+               style="push">
+         </command>
+         <command
+               commandId="ch.elexis.base.ch.arzttarife.tardoc.refcodes"
+               label="Tardocbezüge"
+               style="push">
+         </command>         
       </menuContribution>
    </extension>
    <extension
@@ -177,8 +187,18 @@
       <command
             defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.TarmedRefcodesHandler"
             id="ch.elexis.base.ch.arzttarife.tarmed.refcodes"
-            name="Reference Codes">
+            name="Tarmed Reference Codes">
       </command>
+      <command
+            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.TardocDetailHandler"
+            id="ch.elexis.base.ch.arzttarife.tardoc.detail"
+            name="Tardoc Detail">
+      </command>
+      <command
+            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.TardocRefcodesHandler"
+            id="ch.elexis.base.ch.arzttarife.tardoc.refcodes"
+            name="Tardoc Reference Codes">
+      </command>      
    </extension>
 
 </plugin>

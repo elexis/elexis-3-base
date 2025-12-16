@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -18,7 +19,6 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.IEncounter;
-import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.CoreUtil;
@@ -58,8 +58,9 @@ public class CasemasterService {
 	public CasemasterResult getResult(IBilled billed, IEncounter encounter) {
 		int sessionIdx = 1;
 		List<Session> sessions = new ArrayList<>();
-		List<IEncounter> encounters = encounter.getCoverage().getEncounters().stream()
-				.filter(e -> e.getInvoice() == null || e.getInvoiceState() == InvoiceState.CANCELLED).toList();
+//		List<IEncounter> encounters = encounter.getCoverage().getEncounters().stream()
+//				.filter(e -> e.getInvoice() == null || e.getInvoiceState() == InvoiceState.CANCELLED).toList();
+		List<IEncounter> encounters = Collections.singletonList(encounter);
 		for (IEncounter iEncounter : encounters) {
 			Session session = new Session(sessionIdx++, iEncounter.getDate());
 			for (IDiagnosisReference diagnose : iEncounter.getDiagnoses()) {

@@ -577,7 +577,8 @@
 							<xsl:call-template name="FormatNumber">
 								<xsl:with-param name="Number"
 									select="sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type='001']/@amount)
-									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type='007']/@amount)" />
+									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type='007']/@amount)
+									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service[@tariff_type='005']/@amount)" />
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
@@ -639,7 +640,7 @@
 						<fo:block text-align="right">
 							<xsl:call-template name="FormatNumber">
 								<xsl:with-param name="Number"
-									select="sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service[@tariff_type!='311' and @tariff_type!='317' and @tariff_type!='452' and @tariff_type!='400' and @tariff_type!='402' and @tariff_type!='406']/@amount)
+									select="sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service[@tariff_type!='311' and @tariff_type!='317' and @tariff_type!='452' and @tariff_type!='400' and @tariff_type!='402' and @tariff_type!='406' and @tariff_type!='005']/@amount)
 									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type!='001' and @tariff_type!='007']/@amount)" />
 							</xsl:call-template>
 						</fo:block>

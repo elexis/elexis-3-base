@@ -80,6 +80,7 @@ import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50Exporter;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50Validator;
 import ch.elexis.base.ch.arzttarife.xml.update.XmlVersionUpdate44to45;
 import ch.elexis.base.ch.ebanking.esr.ESR;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
@@ -93,6 +94,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -344,7 +346,26 @@ public class XMLExporter implements IRnOutputter {
 		// clear();
 		invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class)
 				.orElseThrow(() -> new IllegalStateException("Could not load invoice [" + rechnung.getId() + "]"));
+		return doExport(invoice, dest, type, doVerify);
+	}
 
+	/**
+	 * Export a {@link IInvoice} as XML. We do, in fact first check whether this
+	 * {@link IInvoice} was exported already. And if so we do not create it again
+	 * but load the old one. There is deliberately no possibility to avoid this
+	 * behaviour. (One can only delete or storno a {@link IInvoice} and recreate it
+	 * (even then the stored xml remains stored. Additionally, the caller can chose
+	 * to store the {@link IInvoice} as XML in the file system. This is done if the
+	 * parameter dest is given. On success the caller will receive a JDOM Document
+	 * containing the bill.
+	 * 
+	 * @param invoice
+	 * @param dest
+	 * @param type
+	 * @param doVerify
+	 * @return
+	 */
+	public Document doExport(IInvoice invoice, final String dest, final IRnOutputter.TYPE type, boolean doVerify) {
 		exporter.setEsrType(getEsrTypeOrFallback(invoice));
 
 		if (xmlBillExists(invoice)) {
@@ -361,7 +382,7 @@ public class XMLExporter implements IRnOutputter {
 			return null;
 		}
 
-		logger.info("Creating new bill for " + rechnung.getNr());
+		logger.info("Creating new bill for " + invoice.getNumber());
 		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
 		if (containsTardocOrAllowance(invoice)) {
 			if (exporter50.doExport(invoice, xmlOutput, type)) {
@@ -372,8 +393,6 @@ public class XMLExporter implements IRnOutputter {
 					Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
 					// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
 				}
-				// save rounded amount
-				CoreModelServiceHolder.get().save(invoice);
 
 				checkXML(xmlRn, dest, invoice, doVerify);
 
@@ -391,6 +410,7 @@ public class XMLExporter implements IRnOutputter {
 						return null;
 					}
 				}
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, invoice);
 				return xmlRn;
 			}
 		} else {
@@ -402,8 +422,6 @@ public class XMLExporter implements IRnOutputter {
 					Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
 					// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
 				}
-				// save rounded amount
-				CoreModelServiceHolder.get().save(invoice);
 
 				checkXML(xmlRn, dest, invoice, doVerify);
 
@@ -421,6 +439,7 @@ public class XMLExporter implements IRnOutputter {
 						return null;
 					}
 				}
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, invoice);
 				return xmlRn;
 			}
 		}

@@ -37,4 +37,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.adjuster.TarmedVerrechnebarAdjuster.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.ui.handler.StartupHandler.xml,
  OSGI-INF/ch.elexis.tarmedprefs.XidInitialization.xml

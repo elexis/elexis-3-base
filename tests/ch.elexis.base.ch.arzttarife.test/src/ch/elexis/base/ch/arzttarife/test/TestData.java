@@ -251,8 +251,6 @@ public class TestData {
 		private void initBillingSystems() {
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/name", //$NON-NLS-1$
 					BillingSystem.KVG_NAME);
-			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/leistungscodes", //$NON-NLS-1$
-					BillingSystem.CONST_TARMED_LEISTUNG);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/standardausgabe", //$NON-NLS-1$
 					BillingSystem.CONST_TARMED_DRUCKER);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/bedingungen", //$NON-NLS-1$
@@ -261,8 +259,6 @@ public class TestData {
 
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/name", //$NON-NLS-1$
 					BillingSystem.IV_NAME);
-			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/leistungscodes", //$NON-NLS-1$
-					BillingSystem.CONST_TARMED_LEISTUNG);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/standardausgabe", //$NON-NLS-1$
 					BillingSystem.CONST_TARMED_DRUCKER);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/bedingungen", //$NON-NLS-1$
@@ -271,16 +267,12 @@ public class TestData {
 
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/MV/name", //$NON-NLS-1$
 					BillingSystem.MV_NAME);
-			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/MV/leistungscodes", //$NON-NLS-1$
-					BillingSystem.CONST_TARMED_LEISTUNG);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/MV/standardausgabe", //$NON-NLS-1$
 					BillingSystem.CONST_TARMED_DRUCKER);
 			BillingSystem.setConfigurationValue("MV", BillingSystem.CFG_BILLINGLAW, BillingLaw.MV.name());
 
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/privat/name", //$NON-NLS-1$
 					BillingSystem.PRIVATE_NAME);
-			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/privat/leistungscodes", //$NON-NLS-1$
-					BillingSystem.CONST_TARMED_LEISTUNG);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/privat/standardausgabe", //$NON-NLS-1$
 					BillingSystem.CONST_TARMED_DRUCKER);
 			BillingSystem.setConfigurationValue("privat", BillingSystem.CFG_BILLINGLAW, BillingLaw.VVG.name());
@@ -288,8 +280,6 @@ public class TestData {
 
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/name", //$NON-NLS-1$
 					BillingSystem.VVG_NAME);
-			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/leistungscodes", //$NON-NLS-1$
-					BillingSystem.CONST_TARMED_LEISTUNG);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/standardausgabe", //$NON-NLS-1$
 					BillingSystem.CONST_TARMED_DRUCKER);
 			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/bedingungen", //$NON-NLS-1$

@@ -23,7 +23,7 @@ public class AllTardocTests {
 	public static void beforeClass() {
 		// initialize the required billing systems
 		IBillingSystemService billingSystemService = OsgiServiceUtil.getService(IBillingSystemService.class).get();
-		billingSystemService.addOrModifyBillingSystem(UVG_NAME, CONST_TARMED_LEISTUNG, CONST_TARMED_DRUCKER,
+		billingSystemService.addOrModifyBillingSystem(UVG_NAME, CONST_TARMED_DRUCKER,
 				UVG_REQUIREMENTS, BillingLaw.UVG);
 	}
 

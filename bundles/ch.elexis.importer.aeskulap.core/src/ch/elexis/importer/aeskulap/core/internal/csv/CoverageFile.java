@@ -131,15 +131,15 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 			if (!requirements.contains("Versicherungsnummer:T")) {
 				requirements = StringUtils.isBlank(requirements) ? "Versicherungsnummer:T"
 						: requirements + ";Versicherungsnummer:T";
-				BillingSystemServiceHolder.get().addOrModifyBillingSystem(system.getName(), system.getLaw().toString(),
-						system.getName(), requirements, system.getLaw());
+				BillingSystemServiceHolder.get().addOrModifyBillingSystem(system.getName(), null, requirements,
+						system.getLaw());
 			}
 			String optionals = StringUtils.defaultString(BillingSystemServiceHolder.get().getOptionals(system));
 			if (!optionals.contains("VEKANr:T")) {
 				optionals = StringUtils.isBlank(optionals) ? "VEKANr:T"
 						: appendWithoutDuplicateSeparator(optionals, "VEKANr:T");
-				BillingSystemServiceHolder.get().addOrModifyBillingSystem(system.getName(), system.getLaw().toString(),
-						system.getName(), BillingSystemServiceHolder.get().getRequirements(system), system.getLaw());
+				BillingSystemServiceHolder.get().addOrModifyBillingSystem(system.getName(), null,
+						BillingSystemServiceHolder.get().getRequirements(system), system.getLaw());
 			}
 		}
 	}

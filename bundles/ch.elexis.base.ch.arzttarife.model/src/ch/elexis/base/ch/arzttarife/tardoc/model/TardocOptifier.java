@@ -28,6 +28,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
@@ -420,8 +421,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 	@Override
 	public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return BillingServiceHolder.get().getBillingSystemFactor(encounter.getCoverage().getBillingSystem().getName(),
+				encounter.getDate());
 	}
 
 	private IBilled getOrInitializeBilled(TardocLeistung code, IEncounter kons, boolean save) {

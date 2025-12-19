@@ -1,12 +1,13 @@
 package ch.elexis.regiomed.order.handler;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,11 +76,7 @@ public class RegiomedSender implements IDataSender {
 
 		try {
 			RegiomedConfig config = RegiomedConfig.load();
-
-
-
 			RegiomedOrderRequest request = RegiomedOrderRequest.fromEntries(config, exportedEntries);
-
 			RegiomedOrderResponse response = orderClient.sendOrderWithToken(config, request);
 			finalResponse = response;
 
@@ -93,7 +90,7 @@ public class RegiomedSender implements IDataSender {
 
 			if (request.isCheckOrder()) {
 				RegiomedCheckDialog dialog = new RegiomedCheckDialog(
-						org.eclipse.ui.PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), response);
+						Display.getDefault().getActiveShell(), response);
 
 				int result = dialog.open();
 				if (result != org.eclipse.jface.window.Window.OK) {
@@ -124,8 +121,8 @@ public class RegiomedSender implements IDataSender {
 			}
 
 			if (finalResponse.articlesNOK > 0) {
-				String msg = NLS.bind(Messages.RegiomedSender_OrderPartiallySentText,
-						new Object[] { finalResponse.articlesOK, finalResponse.articlesNOK });
+				String msg = MessageFormat.format(Messages.RegiomedSender_OrderPartiallySentText,
+						finalResponse.articlesOK, finalResponse.articlesNOK);
 
 				SWTHelper.showInfo(Messages.RegiomedSender_OrderPartiallySentTitle, msg);
 			} else {
@@ -259,11 +256,11 @@ public class RegiomedSender implements IDataSender {
 			int quantity = item.getAmount();
 
 			boolean hasPharmacode = !StringTool.isNothing(pharmacode);
-			boolean hasEan = !StringTool.isNothing(eanId);
+			boolean hasEan = StringUtils.isNotBlank(eanId);
 			if ((!hasPharmacode && !hasEan) || quantity < 1) {
 				StringBuilder msg = new StringBuilder();
-				msg.append(NLS.bind(Messages.RegiomedSender_ArticleNotConfigured,
-						PersistentObject.checkNull(description)));
+				msg.append(MessageFormat.format(Messages.RegiomedSender_ArticleNotConfigured,
+						StringUtils.defaultString(description)));
 
 				if (!hasPharmacode && !hasEan) {
 					msg.append(Messages.RegiomedSender_NoPharmaNoEan);

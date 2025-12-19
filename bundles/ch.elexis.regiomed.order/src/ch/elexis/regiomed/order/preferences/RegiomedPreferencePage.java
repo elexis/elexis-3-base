@@ -17,6 +17,7 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.KontaktFieldEditor;
 import ch.elexis.regiomed.order.messages.Messages;
+import ch.rgw.tools.StringTool;
 
 public class RegiomedPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -90,7 +91,7 @@ public class RegiomedPreferencePage extends FieldEditorPreferencePage implements
 
 	private void updateErrorMailCheckboxState(Composite parent) {
 		String addr = StringUtils.trimToEmpty(errorMailAddressEditor.getStringValue());
-		boolean valid = isValidEmail(addr);
+		boolean valid = StringTool.isMailAddress(addr);
 
 		Control ctrl = errorMailEnabledEditor.getDescriptionControl(parent);
 		if (!(ctrl instanceof Button)) {
@@ -127,20 +128,13 @@ public class RegiomedPreferencePage extends FieldEditorPreferencePage implements
 			return false;
 		}
 
-		if (!isValidEmail(addr)) {
+		if (!StringTool.isMailAddress(addr)) {
 			MessageDialog.openError(getShell(), Messages.RegiomedPreferencePage_InvalidMailTitle,
 					Messages.RegiomedPreferencePage_InvalidMailMessage);
 			return false;
 		}
 
 		return true;
-	}
-
-	private boolean isValidEmail(String value) {
-		String v = StringUtils.trimToEmpty(value);
-		int at = v.indexOf('@');
-		int dot = v.lastIndexOf('.');
-		return at > 0 && dot > at + 1 && dot < v.length() - 1;
 	}
 
 	@Override

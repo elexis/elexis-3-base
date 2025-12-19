@@ -24,7 +24,7 @@ import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.regiomed.order.handler.RegiomedSender;
 import ch.elexis.regiomed.order.preferences.RegiomedConstants;
 
-public class RegiomedSenderTest {
+public class RegiomedSenderTest extends AbstractRegiomedTest {
 
 	private HttpTestServer server;
 	private IModelService modelService;

@@ -17,10 +17,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -35,20 +33,22 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav"; //$NON-NLS-1$
 
-	private Text txtSoundFilePath;
-	private Button btnBrowse, btnSoundOn, btnAnswerAutoclear;
+	private URIFieldEditor soundPathEditor;
+	private Button btnSoundOn, btnAnswerAutoclear;
 	private ComboViewer comboDefaultRecipient;
+	private Composite editorComposite;
 	private boolean soundOn, answerAutoclear;
-	String soundFilePath;
 
 	public MessagePreferences() {
 		super(Messages.Prefs_Messages);
 		soundOn = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true);
-		soundFilePath = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
 		answerAutoclear = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
 	}
 
@@ -58,48 +58,38 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		ret.setLayout(new GridLayout(1, false));
 
 		Group grpSound = new Group(ret, SWT.NONE);
-		grpSound.setLayout(new GridLayout(2, false));
-		GridData gd_grpSound = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		grpSound.setLayoutData(gd_grpSound);
+		grpSound.setLayout(new GridLayout(1, false));
+		grpSound.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		grpSound.setText(Messages.Prefs_SoundSettings);
 
 		btnSoundOn = new Button(grpSound, SWT.CHECK);
 		btnSoundOn.setText(Messages.Prefs_TurnOnSound);
 		btnSoundOn.setSelection(soundOn);
 		btnSoundOn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				txtSoundFilePath.setEnabled(btnSoundOn.getSelection());
-				btnBrowse.setEnabled(btnSoundOn.getSelection());
-			};
-		});
-		new Label(grpSound, SWT.NONE);
-
-		txtSoundFilePath = new Text(grpSound, SWT.BORDER);
-		txtSoundFilePath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtSoundFilePath.setText(soundFilePath);
-		txtSoundFilePath.setEnabled(soundOn);
-
-		btnBrowse = new Button(grpSound, SWT.NONE);
-		btnBrowse.setText(Messages.Prefs_BrowseFS);
-		btnBrowse.setEnabled(soundOn);
-		btnBrowse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fd = new FileDialog(btnBrowse.getShell(), SWT.OPEN);
-				fd.setText(Messages.Prefs_FS_Open);
-				fd.setFilterPath("C:/"); //$NON-NLS-1$
-				String[] filterExt = { "*.wav" }; //$NON-NLS-1$
-				fd.setFilterExtensions(filterExt);
-				String filePath = fd.open();
-				if (filePath != null) {
-					txtSoundFilePath.setText(filePath);
+				if (soundPathEditor != null && editorComposite != null) {
+					soundPathEditor.setEnabled(btnSoundOn.getSelection(), editorComposite);
 				}
 			}
 		});
 
+		editorComposite = new Composite(grpSound, SWT.NONE);
+		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		soundPathEditor = new URIFieldEditor(Preferences.USR_MESSAGES_SOUND_PATH, Messages.Prefs_SoundSettings,
+				editorComposite);
+		soundPathEditor.setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
+		soundPathEditor.setMigrateLegacyPaths(true);
+		soundPathEditor.setEmptyStringAllowed(true);
+		soundPathEditor.setUseFileMode(true);
+
+		soundPathEditor.load();
+		soundPathEditor.setEnabled(soundOn, editorComposite);
+
 		Group grpDialogConfig = new Group(ret, SWT.NONE);
 		grpDialogConfig.setLayout(new GridLayout(1, false));
-		grpDialogConfig.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		grpDialogConfig.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		grpDialogConfig.setText(Messages.Prefs_DialogSettings);
 
 		btnAnswerAutoclear = new Button(grpDialogConfig, SWT.CHECK);
@@ -108,39 +98,37 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 
 		Group grpDefaultRecipient = new Group(ret, SWT.NONE);
 		grpDefaultRecipient.setLayout(new GridLayout(2, false));
-		grpDefaultRecipient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpDefaultRecipient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		grpDefaultRecipient.setText(Messages.Prefs_DefaultMessageRecipient);
 
 		Label lblActiveUser = new Label(grpDefaultRecipient, SWT.NONE);
-		lblActiveUser.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblActiveUser.setText(Messages.Benutzer + ": " //$NON-NLS-1$
 				+ UserFormatUtil.getUserLabel(ContextServiceHolder.get().getActiveUserContact().get())
-				+ StringUtils.SPACE); // $NON-NLS-1$
+				+ StringUtils.SPACE);
 		comboDefaultRecipient = new ComboViewer(grpDefaultRecipient, SWT.READ_ONLY);
 		comboDefaultRecipient.setContentProvider(ArrayContentProvider.getInstance());
 		comboDefaultRecipient.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IContact) {
-					IContact anwender = (IContact) element;
-					return UserFormatUtil.getUserLabel(anwender);
+					return UserFormatUtil.getUserLabel((IContact) element);
 				}
 				return super.getText(element);
 			}
 		});
 		comboDefaultRecipient.setInput(getUsers());
+		loadSavedRecipient();
+		return ret;
+	}
+
+	private void loadSavedRecipient() {
 		String preferenceKey = getPreferenceKeyForUser();
 		String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
 		if (savedRecipientId != null && !savedRecipientId.isEmpty()) {
 			List<IContact> users = getUsers();
-			for (IContact user : users) {
-				if (user.getId().equals(savedRecipientId)) {
-					comboDefaultRecipient.setSelection(new StructuredSelection(user));
-					break;
-				}
-			}
+			users.stream().filter(u -> u.getId().equals(savedRecipientId)).findFirst()
+					.ifPresent(u -> comboDefaultRecipient.setSelection(new StructuredSelection(u)));
 		}
-		return ret;
 	}
 
 	@Override
@@ -149,28 +137,22 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 
 	@Override
 	protected void performDefaults() {
-		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_ON, true);
-		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
-		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
-
-		btnAnswerAutoclear.setSelection(false);
 		btnSoundOn.setSelection(true);
-		btnBrowse.setEnabled(true);
-		txtSoundFilePath.setEnabled(true);
-		txtSoundFilePath.setText(ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH));
-
+		btnAnswerAutoclear.setSelection(false);
+		soundPathEditor.loadDefault();
+		soundPathEditor.setEnabled(true, editorComposite);
 		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
 		StructuredSelection selection = (StructuredSelection) comboDefaultRecipient.getSelection();
-		IContact selectedUser = (IContact) selection.getFirstElement();
-		String selectedUserId = selectedUser.getId();
-		String preferenceKey = getPreferenceKeyForUser();
-		ConfigServiceHolder.setUser(preferenceKey, selectedUserId);
+		if (!selection.isEmpty()) {
+			IContact selectedUser = (IContact) selection.getFirstElement();
+			ConfigServiceHolder.setUser(getPreferenceKeyForUser(), selectedUser.getId());
+		}
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_ON, btnSoundOn.getSelection());
-		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_PATH, txtSoundFilePath.getText());
+		soundPathEditor.store();
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, btnAnswerAutoclear.getSelection());
 		return super.performOk();
 	}
@@ -178,24 +160,17 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	private List<IContact> getUsers() {
 		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
 		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);
-		List<IUser> users = userQuery.execute();
-		return users.stream().filter(u -> isActive(u)).map(u -> u.getAssignedContact())
+		return userQuery.execute().stream().filter(this::isActive).map(IUser::getAssignedContact)
 				.collect(Collectors.toList());
 	}
 
 	private boolean isActive(IUser user) {
-		if (user == null || user.getAssignedContact() == null) {
+		if (user == null || user.getAssignedContact() == null || !user.isActive())
 			return false;
-		}
-		if (!user.isActive()) {
-			return false;
-		}
-		if (user.getAssignedContact() != null && user.getAssignedContact().isMandator()) {
-			IMandator mandator = CoreModelServiceHolder.get().load(user.getAssignedContact().getId(), IMandator.class)
-					.orElse(null);
-			if (mandator != null && !mandator.isActive()) {
-				return false;
-			}
+		IContact contact = user.getAssignedContact();
+		if (contact.isMandator()) {
+			return CoreModelServiceHolder.get().load(contact.getId(), IMandator.class).map(IMandator::isActive)
+					.orElse(false);
 		}
 		return true;
 	}
@@ -204,5 +179,4 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		String userId = ContextServiceHolder.get().getActiveUserContact().get().getId();
 		return Preferences.USR_DEFAULT_MESSAGE_RECIPIENT + "_" + userId;
 	}
-
 }

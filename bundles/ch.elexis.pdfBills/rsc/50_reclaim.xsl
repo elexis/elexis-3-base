@@ -148,6 +148,8 @@
 					<fo:block>
 						<!-- sub header for the not-first pages -->
 						<fo:marker marker-class-name="subHeader">
+							<xsl:call-template name="reclaim_header">
+							</xsl:call-template>						
 							<xsl:call-template
 								name="reclaim_header_patient">
 							</xsl:call-template>

@@ -162,6 +162,7 @@
 	<xsl:template name="qr_body">
 		<fo:table table-layout="fixed" width="100%">
 			<fo:table-body>
+			
 				<xsl:if test="string-length($xmlQr0) > 0">
 					<fo:table-row>
 						<fo:table-cell>
@@ -300,6 +301,150 @@
 								</fo:block-container>
 								<fo:block text-align="center" font-size="7px">
 									QR-Code 6
+								</fo:block>
+							</fo:table-cell>
+						</xsl:if>
+					</fo:table-row>
+				</xsl:if>
+
+				<xsl:if test="string-length($xmlQr6) > 0">
+					<fo:table-row>
+						<fo:table-cell>
+							<fo:block-container text-align="center"
+								font-size="7px" width="55mm" height="55mm">
+								<fo:block>
+									<xsl:choose>
+										<xsl:when test="string-length($xmlQr6) > 0">
+											<fo:external-graphic src="{$xmlQr6}"
+												width="100%" content-width="scale-to-fit" />
+										</xsl:when>
+										<xsl:otherwise>
+											<fo:block font-weight="bold">
+												Error no QR Code
+											</fo:block>
+										</xsl:otherwise>
+									</xsl:choose>
+								</fo:block>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 7
+								</fo:block>
+							</fo:block-container>
+						</fo:table-cell>
+						<xsl:if test="string-length($xmlQr7) > 0">
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr7) > 0">
+												<fo:external-graphic src="{$xmlQr7}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 8
+								</fo:block>
+							</fo:table-cell>
+						</xsl:if>
+						<xsl:if test="string-length($xmlQr8) > 0">
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr8) > 0">
+												<fo:external-graphic src="{$xmlQr8}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 9
+								</fo:block>
+							</fo:table-cell>
+						</xsl:if>
+					</fo:table-row>
+				</xsl:if>
+
+				<xsl:if test="string-length($xmlQr9) > 0">
+					<fo:table-row>
+						<fo:table-cell>
+							<fo:block-container text-align="center"
+								font-size="7px" width="55mm" height="55mm">
+								<fo:block>
+									<xsl:choose>
+										<xsl:when test="string-length($xmlQr9) > 0">
+											<fo:external-graphic src="{$xmlQr9}"
+												width="100%" content-width="scale-to-fit" />
+										</xsl:when>
+										<xsl:otherwise>
+											<fo:block font-weight="bold">
+												Error no QR Code
+											</fo:block>
+										</xsl:otherwise>
+									</xsl:choose>
+								</fo:block>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 10
+								</fo:block>
+							</fo:block-container>
+						</fo:table-cell>
+						<xsl:if test="string-length($xmlQr10) > 0">
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr10) > 0">
+												<fo:external-graphic src="{$xmlQr10}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 11
+								</fo:block>
+							</fo:table-cell>
+						</xsl:if>
+						<xsl:if test="string-length($xmlQr11) > 0">
+							<fo:table-cell>
+								<fo:block-container text-align="center"
+									font-size="7px" width="55mm" height="55mm">
+									<fo:block>
+										<xsl:choose>
+											<xsl:when test="string-length($xmlQr11) > 0">
+												<fo:external-graphic src="{$xmlQr11}"
+													width="100%" content-width="scale-to-fit" />
+											</xsl:when>
+											<xsl:otherwise>
+												<fo:block font-weight="bold">
+													Error no QR Code
+												</fo:block>
+											</xsl:otherwise>
+										</xsl:choose>
+									</fo:block>
+								</fo:block-container>
+								<fo:block text-align="center" font-size="7px">
+									QR-Code 12
 								</fo:block>
 							</fo:table-cell>
 						</xsl:if>

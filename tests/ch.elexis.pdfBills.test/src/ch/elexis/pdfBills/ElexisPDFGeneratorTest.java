@@ -114,4 +114,13 @@ public class ElexisPDFGeneratorTest {
 		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "500_qr_tp_kvg");
 		generator.printQrBill(AllTests.pluginRsc);
 	}
+
+	@Test
+	public void generate500TP12QRBill() {
+		String billXmlFile = AllTests.getBillXmlFilePath("500_12qr_tp_kvg_de");
+		assertNotNull(billXmlFile);
+		AllTests.setOutputDir("output");
+		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "500_12qr_tp_kvg");
+		generator.printQrBill(AllTests.pluginRsc);
+	}
 }

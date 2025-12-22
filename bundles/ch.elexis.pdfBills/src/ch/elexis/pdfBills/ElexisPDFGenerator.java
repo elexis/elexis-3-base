@@ -999,21 +999,27 @@ public class ElexisPDFGenerator {
 				NodeList servicesElements = (NodeList) result;
 				for (int i = 0; i < servicesElements.getLength(); i++) {
 					HashSet<String> eanSet = new HashSet<>();
+					HashMap<String, String> eanSectionCodeMap = new HashMap<>();
 					Node serviceElement = servicesElements.item(i);
 					NodeList childNodes = serviceElement.getChildNodes();
 					for (int j = 0; j < childNodes.getLength(); j++) {
 						Node child = childNodes.item(j);
 						if (child instanceof Element) {
 							Element element = (Element) child;
+							eanSet.add(element.getAttribute("responsible_id")); //$NON-NLS-1$
+							eanSet.add(element.getAttribute("provider_id")); //$NON-NLS-1$
 							String sectionCode = element.getAttribute("section_code"); //$NON-NLS-1$
-							eanSet.add(element.getAttribute("responsible_id") //$NON-NLS-1$
-									+ (StringUtils.isNotBlank(sectionCode) ? "/" + sectionCode : StringUtils.EMPTY)); //$NON-NLS-1$
-							eanSet.add(element.getAttribute("provider_id") //$NON-NLS-1$
-									+ (StringUtils.isNotBlank(sectionCode) ? "/" + sectionCode : StringUtils.EMPTY)); //$NON-NLS-1$
+							if (StringUtils.isNotBlank(sectionCode)) {
+								eanSectionCodeMap.put(element.getAttribute("responsible_id"), sectionCode);
+								eanSectionCodeMap.put(element.getAttribute("provider_id"), sectionCode);
+							}
 						}
 					}
 					String[] uniqueEeans = eanSet.toArray(new String[eanSet.size()]);
 					for (String string : uniqueEeans) {
+						if (eanSectionCodeMap.get(string) != null) {
+							string = string + "/" + eanSectionCodeMap.get(string);
+						}
 						eanToIndexTypeMap.put(string, ++eanIndex + " - " + getLocalizedType("service_provider")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}

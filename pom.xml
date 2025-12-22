@@ -40,7 +40,7 @@
 	</organization>
 	<properties>
 		<elexis.target>2025-03-java21</elexis.target>
-		<git.core.branch>master</git.core.branch>
+		<git.core.branch>f29297</git.core.branch>
 		<formatterConfigFile>
 			https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
 		<tycho.version>4.0.12</tycho.version>

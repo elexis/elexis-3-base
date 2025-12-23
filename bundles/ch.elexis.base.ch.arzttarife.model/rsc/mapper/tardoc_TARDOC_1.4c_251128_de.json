@@ -200,15 +200,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.05.0130",
-            "JA.00.0050",
-            "KH.00.0100"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0300",
@@ -240,12 +231,21 @@
           ]
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 4 Mal pro 360 Tage"
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.05.0130",
+            "JA.00.0050",
+            "KH.00.0100"
+          ]
         },
         {
           "type": "UndecidableRule",
           "description": "&le; 1 Mal pro Tag"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 4 Mal pro 360 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -373,13 +373,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "VC.40.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0020",
@@ -408,6 +401,13 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "VC.40.0020"
           ]
         },
         {
@@ -803,16 +803,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0010"
+            "KH.00.0060"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "KH.00.0060"
+            "AR.00.0010"
           ]
         },
         {
@@ -836,6 +836,14 @@
         "9999"
       ],
       "rules": [
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.00.0140"
+          ]
+        },
         {
           "type": "CumulationRule",
           "cumulationType": "I",
@@ -867,14 +875,6 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.00.0140"
           ]
         },
         {
@@ -995,15 +995,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -1314,15 +1314,15 @@
       "rules": [
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -1770,19 +1770,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.10.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -2078,13 +2078,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "VG.00.0050"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0040",
@@ -2113,6 +2106,13 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "VG.00.0050"
           ]
         },
         {
@@ -3132,15 +3132,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 30 Mal pro Seite",
-          "maxNumber": 30,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 60 Mal pro Sitzung",
           "maxNumber": 60,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 30 Mal pro Seite",
+          "maxNumber": 30,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -4519,6 +4519,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MK.15.0100"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0020",
@@ -4547,13 +4554,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MK.15.0100"
           ]
         },
         {
@@ -4715,18 +4715,18 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.15.0260"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0090",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.15.0260"
           ]
         },
         {
@@ -5665,13 +5665,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -5680,6 +5673,13 @@
             "GM.00.0150",
             "GM.05.0010",
             "GM.05.0030"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
           ]
         },
         {
@@ -5761,14 +5761,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.00.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0020",
@@ -5798,6 +5790,14 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.00.0140"
           ]
         },
         {
@@ -6001,16 +6001,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "CG.10.0030"
+            "AR.00.0160"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0160"
+            "CG.10.0030"
           ]
         },
         {
@@ -6439,15 +6439,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.00.0030",
-            "AA.10.0010",
-            "JA.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AA.00.0060",
@@ -6605,6 +6596,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -7133,6 +7138,15 @@
             "VK.00.0040",
             "WA.25.0020",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.00.0030",
+            "AA.10.0010",
+            "JA.00.0010"
           ]
         },
         {
@@ -7974,6 +7988,14 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.10.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0030",
@@ -8003,14 +8025,6 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.10.0050"
           ]
         },
         {
@@ -8557,15 +8571,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -9168,6 +9182,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -11156,14 +11184,14 @@
           ]
         },
         {
+          "type": "UndecidableRule",
+          "description": "&le; 1 Mal pro 90 Tage"
+        },
+        {
           "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Sitzung",
           "maxNumber": 1,
           "context": "session"
-        },
-        {
-          "type": "UndecidableRule",
-          "description": "&le; 1 Mal pro 90 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -11746,15 +11774,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 4 Mal pro Sitzung",
-          "maxNumber": 4,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Seite",
           "maxNumber": 2,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 4 Mal pro Sitzung",
+          "maxNumber": 4,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -13574,14 +13602,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
@@ -13591,6 +13611,14 @@
             "GK.10.0100",
             "GK.10.0160",
             "MP.20.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050",
+            "WF.00.0010"
           ]
         },
         {
@@ -13835,6 +13863,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -15609,18 +15651,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
             "GK.35.0010",
             "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
           ]
         },
         {
@@ -15860,38 +15902,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0020",
-            "CA.00.0010",
-            "CA.00.0020",
-            "CA.00.0030",
-            "CA.00.0040",
-            "CA.00.0050",
-            "CA.00.0060",
-            "CA.00.0070",
-            "CA.05.0010",
-            "CA.05.0020",
-            "CA.05.0030",
-            "CA.10.0010",
-            "CA.15.0010",
-            "CA.15.0020",
-            "CA.15.0030",
-            "CA.15.0040",
-            "CA.15.0050",
-            "CA.15.0060",
-            "CA.15.0070",
-            "CA.15.0080",
-            "CA.15.0090",
-            "CA.15.0100",
-            "CA.15.0110",
-            "CA.15.0120",
-            "CA.15.0130",
-            "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
@@ -15964,6 +15974,38 @@
             "RC.50.0140",
             "VG.05.0060",
             "WA.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0020",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140"
           ]
         }
       ],
@@ -16839,6 +16881,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
@@ -16849,13 +16898,6 @@
             "GK.10.0070",
             "GK.10.0160",
             "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
           ]
         },
         {
@@ -17510,13 +17552,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "VA.15.0030"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0310",
@@ -17545,6 +17580,13 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "VA.15.0030"
           ]
         },
         {
@@ -18164,6 +18206,14 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MK.00.0060",
+            "MK.00.0070"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0030",
@@ -18192,14 +18242,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MK.00.0060",
-            "MK.00.0070"
           ]
         },
         {
@@ -19195,6 +19237,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
@@ -19217,13 +19266,6 @@
             "GK.10.0170",
             "GK.10.0180",
             "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
           ]
         },
         {
@@ -19606,18 +19648,18 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0370",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "GK.35.0080",
             "KF.10.0120"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0370",
+            "WF.00.0010"
           ]
         },
         {
@@ -19810,18 +19852,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MA.00.0040",
-            "TG.05.0280",
-            "TK.00.0050",
-            "TK.00.0080",
-            "TK.00.0110",
-            "TK.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0130",
@@ -19850,6 +19880,18 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MA.00.0040",
+            "TG.05.0280",
+            "TK.00.0050",
+            "TK.00.0080",
+            "TK.00.0110",
+            "TK.05.0080"
           ]
         }
       ],
@@ -19993,20 +20035,20 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0030",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
             "GG.10.0090",
             "VE.05.0010",
             "VE.05.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0030",
+            "WF.00.0010"
           ]
         },
         {
@@ -20032,13 +20074,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AR.00.0470"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "CA.15.0010",
@@ -20056,6 +20091,13 @@
             "CA.15.0130",
             "CA.15.0140",
             "WK.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AR.00.0470"
           ]
         },
         {
@@ -20457,13 +20499,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "GK.35.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0050",
@@ -20492,6 +20527,13 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "GK.35.0010"
           ]
         },
         {
@@ -20587,15 +20629,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GK.05.0010",
-            "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0050",
@@ -20624,6 +20657,15 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GK.05.0010",
+            "MP.20.0020"
           ]
         },
         {
@@ -20656,13 +20698,13 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 4 Mal pro Sitzung",
+          "description": "&le; 1 Mal pro Extremität",
           "maxNumber": 4,
           "context": "session"
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Extremität",
+          "description": "&le; 4 Mal pro Sitzung",
           "maxNumber": 4,
           "context": "session"
         }
@@ -20759,15 +20801,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -20925,6 +20967,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -20933,13 +20982,6 @@
             "GM.00.0120",
             "GM.05.0010",
             "GM.05.0030"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
           ]
         },
         {
@@ -20965,17 +21007,17 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "KD.05.0020",
-            "VG.00.0050"
+            "AR.00.0040"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0040"
+            "KD.05.0020",
+            "VG.00.0050"
           ]
         },
         {
@@ -21084,14 +21126,14 @@
           ]
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 1 Mal pro 90 Tage"
-        },
-        {
           "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Sitzung",
           "maxNumber": 1,
           "context": "session"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 1 Mal pro 90 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -21178,16 +21220,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "KD.05.0030"
+            "AR.00.0040"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0040"
+            "KD.05.0030"
           ]
         }
       ],
@@ -22012,32 +22054,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AM.00.0010",
-            "AM.05.0010",
-            "AM.05.0020",
-            "AM.05.0030",
-            "AM.05.0040",
-            "AM.05.0050",
-            "AM.05.0060",
-            "AM.05.0070",
-            "AM.05.0080",
-            "AM.05.0090",
-            "AM.05.0100",
-            "AM.10.0010",
-            "AM.10.0020",
-            "AM.10.0030",
-            "AM.10.0040",
-            "AM.10.0050",
-            "AM.10.0060",
-            "AM.10.0070",
-            "AM.10.0080",
-            "AM.15.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0030",
@@ -22066,6 +22082,32 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AM.00.0010",
+            "AM.05.0010",
+            "AM.05.0020",
+            "AM.05.0030",
+            "AM.05.0040",
+            "AM.05.0050",
+            "AM.05.0060",
+            "AM.05.0070",
+            "AM.05.0080",
+            "AM.05.0090",
+            "AM.05.0100",
+            "AM.10.0010",
+            "AM.10.0020",
+            "AM.10.0030",
+            "AM.10.0040",
+            "AM.10.0050",
+            "AM.10.0060",
+            "AM.10.0070",
+            "AM.10.0080",
+            "AM.15.0010"
           ]
         },
         {
@@ -22105,15 +22147,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -22134,14 +22176,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0370",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "GK.35.0080",
@@ -22149,16 +22183,24 @@
           ]
         },
         {
-          "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0370",
+            "WF.00.0010"
+          ]
         },
         {
           "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -22410,14 +22452,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "JE.00.0040"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0090",
@@ -22447,6 +22481,14 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "JE.00.0040"
           ]
         },
         {
@@ -22553,14 +22595,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MA.00.0040",
-            "TK.00.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0130",
@@ -22589,6 +22623,14 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MA.00.0040",
+            "TK.00.0080"
           ]
         }
       ],
@@ -23613,17 +23655,17 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "JX.30.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0370",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "JX.30.0010"
           ]
         },
         {
@@ -23649,17 +23691,17 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "RC.35.0100",
-            "RC.35.0130"
+            "AR.00.0250"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0250"
+            "RC.35.0100",
+            "RC.35.0130"
           ]
         },
         {
@@ -23856,6 +23898,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -25112,15 +25168,15 @@
       "rules": [
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -25630,7 +25686,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -25785,9 +25841,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
             "CA.05.0010",
             "CA.05.0020",
             "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -26320,7 +26384,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -26475,6 +26539,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -27915,6 +27990,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.05.0130",
+            "JA.00.0050",
+            "MP.00.0020",
+            "MP.00.0040",
+            "MP.00.0050",
+            "MP.00.0060"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0280",
@@ -27946,26 +28033,14 @@
           ]
         },
         {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.05.0130",
-            "JA.00.0050",
-            "MP.00.0020",
-            "MP.00.0040",
-            "MP.00.0050",
-            "MP.00.0060"
-          ]
+          "type": "UndecidableRule",
+          "description": "&le; 240 Mal pro 360 Tage"
         },
         {
           "type": "MaxNumberRule",
           "description": "&le; 60 Mal pro Sitzung",
           "maxNumber": 60,
           "context": "session"
-        },
-        {
-          "type": "UndecidableRule",
-          "description": "&le; 240 Mal pro 360 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -28022,15 +28097,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 30 Mal pro Seite",
-          "maxNumber": 30,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 60 Mal pro Sitzung",
           "maxNumber": 60,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 30 Mal pro Seite",
+          "maxNumber": 30,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -28183,15 +28258,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -28714,19 +28789,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -29759,6 +29834,15 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "VG.00.0020",
+            "VG.00.0050",
+            "VG.10.0100"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0040",
@@ -29787,15 +29871,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "VG.00.0020",
-            "VG.00.0050",
-            "VG.10.0100"
           ]
         },
         {
@@ -30312,17 +30387,17 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0030"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "MK.05.0010",
             "MK.05.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0030"
           ]
         },
         {
@@ -30896,14 +30971,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AM.00.0010",
-            "AR.00.0400"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AM.05.0010",
@@ -30939,6 +31006,14 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AM.00.0010",
+            "AR.00.0400"
           ]
         },
         {
@@ -31013,15 +31088,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -31040,6 +31115,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -31049,13 +31131,6 @@
             "GM.00.0140",
             "GM.05.0010",
             "GM.05.0030"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
           ]
         },
         {
@@ -31080,15 +31155,6 @@
         "3010"
       ],
       "rules": [
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.00.0030",
-            "AA.10.0010",
-            "JA.00.0010"
-          ]
-        },
         {
           "type": "CumulationRule",
           "cumulationType": "I",
@@ -31248,6 +31314,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -31776,6 +31856,15 @@
             "VK.00.0040",
             "WA.25.0020",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.00.0030",
+            "AA.10.0010",
+            "JA.00.0010"
           ]
         },
         {
@@ -33381,15 +33470,15 @@
       "rules": [
         {
           "type": "MaxNumberRule",
-          "description": "&le; 4 Mal pro Sitzung",
-          "maxNumber": 4,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Seite",
           "maxNumber": 2,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 4 Mal pro Sitzung",
+          "maxNumber": 4,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -33420,15 +33509,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -33783,14 +33872,14 @@
           "tolerance": 1
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 90 Mal pro 180 Tage"
-        },
-        {
           "type": "MaxNumberRule",
           "description": "&le; 45 Mal pro Sitzung",
           "maxNumber": 45,
           "context": "session"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 90 Mal pro 180 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -33882,15 +33971,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -33957,15 +34046,15 @@
       "rules": [
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -34030,6 +34119,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0270"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.05.0130",
@@ -34039,13 +34135,6 @@
             "MP.10.0050",
             "MP.10.0060",
             "MP.10.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0270"
           ]
         },
         {
@@ -34347,7 +34436,7 @@
       "taxpointsIPL": 2.83,
       "percentageAL": null,
       "percentageIPL": null,
-      "hasSide": true,
+      "hasSide": false,
       "masters": []
     },
     {
@@ -34359,56 +34448,700 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "AA.00.0030",
-            "AA.00.0080",
-            "AA.10.0010",
-            "AA.10.0020",
-            "AA.10.0030",
+            "AA.00.0060",
+            "AA.00.0070",
+            "AA.00.0090",
+            "AA.05.0010",
+            "AA.05.0020",
+            "AA.05.0030",
+            "AA.05.0040",
+            "AA.05.0050",
+            "AA.05.0060",
+            "AA.05.0070",
+            "AA.05.0080",
+            "AA.05.0090",
+            "AA.05.0100",
+            "AA.05.0110",
+            "AA.05.0120",
+            "AA.05.0130",
+            "AA.05.0140",
+            "AA.15.0010",
+            "AA.15.0020",
+            "AA.15.0030",
+            "AA.15.0040",
+            "AA.15.0050",
+            "AA.15.0060",
+            "AA.15.0070",
+            "AA.15.0090",
+            "AA.20.0010",
+            "AA.20.0020",
+            "AA.20.0030",
+            "AA.20.0040",
+            "AA.20.0050",
+            "AA.20.0060",
+            "AA.20.0070",
+            "AA.25.0010",
+            "AA.25.0020",
+            "AA.25.0030",
+            "AA.25.0040",
+            "AA.25.0050",
+            "AA.30.0010",
+            "AA.30.0020",
+            "AA.30.0030",
+            "AA.30.0040",
+            "AA.30.0050",
+            "AA.30.0060",
+            "AA.30.0070",
+            "AA.30.0080",
+            "AA.30.0090",
+            "AA.30.0100",
+            "AA.30.0110",
+            "AG.00.0010",
+            "AG.00.0020",
+            "AG.00.0030",
+            "AG.00.0040",
+            "AG.00.0050",
+            "AG.00.0060",
+            "AG.00.0070",
+            "AG.00.0080",
+            "AG.00.0090",
+            "AG.00.0100",
+            "AK.00.0010",
+            "AK.00.0020",
+            "AK.00.0030",
+            "AK.00.0040",
+            "AK.00.0050",
+            "AK.00.0060",
+            "AK.00.0070",
+            "AK.00.0080",
+            "AK.00.0090",
+            "AK.00.0100",
+            "AK.00.0110",
+            "AK.00.0120",
+            "AK.00.0130",
+            "AK.05.0010",
+            "AK.05.0020",
+            "AK.05.0030",
+            "AK.05.0040",
+            "AM.00.0010",
+            "AM.05.0010",
+            "AM.05.0020",
+            "AM.05.0030",
+            "AM.05.0040",
+            "AM.05.0050",
+            "AM.05.0060",
+            "AM.05.0070",
+            "AM.05.0080",
+            "AM.05.0090",
+            "AM.05.0100",
+            "AM.10.0010",
+            "AM.10.0020",
+            "AM.10.0030",
+            "AM.10.0040",
+            "AM.10.0050",
+            "AM.10.0060",
+            "AM.10.0070",
+            "AM.10.0080",
+            "AM.15.0010",
+            "AP.00.0010",
+            "AP.05.0010",
+            "AP.05.0020",
+            "AP.05.0030",
+            "AP.05.0040",
+            "AP.05.0050",
+            "AP.05.0060",
+            "AP.05.0070",
+            "AP.05.0080",
+            "AP.05.0090",
+            "AP.05.0100",
+            "AP.05.0110",
+            "AP.10.0010",
+            "AP.10.0020",
+            "AP.10.0030",
+            "AR.00.0010",
+            "AR.00.0020",
+            "AR.00.0030",
+            "AR.00.0040",
+            "AR.00.0050",
+            "AR.00.0060",
+            "AR.00.0070",
+            "AR.00.0090",
+            "AR.00.0100",
+            "AR.00.0130",
+            "AR.00.0140",
+            "AR.00.0160",
+            "AR.00.0170",
+            "AR.00.0180",
+            "AR.00.0190",
+            "AR.00.0200",
+            "AR.00.0210",
+            "AR.00.0220",
+            "AR.00.0230",
+            "AR.00.0240",
+            "AR.00.0250",
+            "AR.00.0260",
+            "AR.00.0270",
+            "AR.00.0280",
+            "AR.00.0290",
+            "AR.00.0300",
+            "AR.00.0310",
+            "AR.00.0320",
+            "AR.00.0330",
+            "AR.00.0370",
+            "AR.00.0380",
+            "AR.00.0390",
+            "AR.00.0400",
+            "AR.05.0010",
+            "AR.05.0020",
+            "AR.05.0030",
+            "AR.05.0040",
+            "AR.05.0050",
+            "AR.05.0060",
+            "AR.05.0070",
+            "AR.05.0080",
+            "AR.05.0090",
+            "AR.05.0100",
             "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
             "CA.00.0040",
-            "EA.00.0010",
-            "EA.00.0020",
-            "EA.00.0030",
-            "EA.00.0040",
-            "EA.00.0050",
-            "EA.00.0060",
-            "EA.00.0070",
-            "EA.00.0090",
-            "EA.00.0100",
-            "EA.00.0110",
-            "EA.00.0120",
-            "EA.00.0130",
-            "EA.00.0140",
-            "EA.00.0150",
-            "EA.00.0160",
-            "EA.00.0170",
-            "EA.00.0180",
-            "EA.00.0190",
-            "EA.00.0200",
-            "EA.00.0210",
-            "EA.00.0220",
-            "EA.00.0230",
-            "EA.00.0240",
-            "EA.00.0250",
-            "EA.05.0010",
-            "EA.05.0020",
-            "EA.05.0030",
-            "EA.05.0040",
-            "EA.05.0050",
-            "EA.05.0060",
-            "EA.05.0070",
-            "EA.05.0080",
-            "EA.05.0090",
-            "EA.05.0100",
-            "EA.05.0110",
-            "EA.05.0120",
-            "EA.05.0130",
-            "EA.05.0140",
-            "EA.05.0150",
-            "EA.10.0010",
-            "EA.10.0020"
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
+            "CG.00.0010",
+            "CG.00.0130",
+            "CG.00.0140",
+            "CG.00.0150",
+            "CG.00.0160",
+            "CG.00.0170",
+            "CG.05.0010",
+            "CG.05.0040",
+            "CG.05.0050",
+            "CG.05.0060",
+            "CG.05.0070",
+            "CG.05.0080",
+            "CG.10.0010",
+            "CG.10.0020",
+            "CG.10.0030",
+            "CG.10.0040",
+            "CG.10.0050",
+            "CG.15.0010",
+            "GA.00.0010",
+            "GA.05.0010",
+            "GA.05.0020",
+            "GG.00.0010",
+            "GG.00.0020",
+            "GG.00.0030",
+            "GG.00.0040",
+            "GG.00.0060",
+            "GG.00.0070",
+            "GG.00.0080",
+            "GG.00.0090",
+            "GG.00.0100",
+            "GG.00.0110",
+            "GG.00.0120",
+            "GG.00.0130",
+            "GG.00.0140",
+            "GG.00.0150",
+            "GG.00.0160",
+            "GG.00.0170",
+            "GG.00.0180",
+            "GG.00.0190",
+            "GG.00.0200",
+            "GG.00.0210",
+            "GG.00.0220",
+            "GG.00.0230",
+            "GG.00.0240",
+            "GG.00.0250",
+            "GG.00.0260",
+            "GG.00.0270",
+            "GG.00.0280",
+            "GG.00.0290",
+            "GG.00.0300",
+            "GG.00.0310",
+            "GG.00.0320",
+            "GG.00.0330",
+            "GG.00.0340",
+            "GG.00.0350",
+            "GG.00.0360",
+            "GG.00.0370",
+            "GG.00.0380",
+            "GG.00.0390",
+            "GG.00.0400",
+            "GG.00.0410",
+            "GG.00.0420",
+            "GG.00.0430",
+            "GG.00.0440",
+            "GG.00.0450",
+            "GG.00.0460",
+            "GG.00.0470",
+            "GG.00.0480",
+            "GG.00.0490",
+            "GG.00.0500",
+            "GG.00.0510",
+            "GG.00.0520",
+            "GG.10.0010",
+            "GG.10.0020",
+            "GG.10.0030",
+            "GG.10.0050",
+            "GG.10.0060",
+            "GG.10.0070",
+            "GG.10.0080",
+            "GG.10.0100",
+            "GG.15.0010",
+            "GG.15.0100",
+            "GG.15.0110",
+            "GG.15.0120",
+            "GG.15.0130",
+            "GG.15.0140",
+            "GG.15.0260",
+            "GG.15.0320",
+            "GG.15.0380",
+            "GG.15.0390",
+            "GG.15.0400",
+            "GG.15.0420",
+            "GG.20.0040",
+            "GG.25.0010",
+            "GG.30.0020",
+            "GG.30.0030",
+            "GG.30.0070",
+            "GG.30.0080",
+            "GG.30.0090",
+            "GG.30.0100",
+            "GK.00.0010",
+            "GK.00.0080",
+            "GK.00.0090",
+            "GK.05.0010",
+            "GK.05.0020",
+            "GK.05.0030",
+            "GK.05.0040",
+            "GK.05.0050",
+            "GK.05.0060",
+            "GK.05.0090",
+            "GK.10.0180",
+            "GK.15.0010",
+            "GK.15.0020",
+            "GK.15.0030",
+            "GK.20.0110",
+            "GK.20.0120",
+            "GK.20.0130",
+            "GK.25.0050",
+            "GK.25.0070",
+            "GK.25.0080",
+            "GK.30.0010",
+            "GK.30.0020",
+            "GK.30.0030",
+            "GK.30.0040",
+            "GK.30.0050",
+            "GK.30.0060",
+            "GK.35.0010",
+            "GK.35.0020",
+            "GK.35.0040",
+            "GK.35.0120",
+            "GK.35.0130",
+            "GK.45.0010",
+            "GK.45.0020",
+            "GK.45.0030",
+            "GK.45.0040",
+            "GK.45.0050",
+            "GK.50.0010",
+            "JE.00.0010",
+            "JE.00.0020",
+            "JE.00.0030",
+            "JE.00.0040",
+            "JE.00.0050",
+            "JE.00.0060",
+            "JE.00.0070",
+            "JE.00.0080",
+            "JE.00.0090",
+            "JG.00.0020",
+            "JG.00.0030",
+            "JV.00.0010",
+            "JV.00.0020",
+            "JV.00.0030",
+            "JV.05.0010",
+            "JV.10.0010",
+            "JV.10.0020",
+            "JV.10.0030",
+            "JV.10.0040",
+            "JV.10.0050",
+            "JZ.00.0020",
+            "KD.05.0060",
+            "KF.00.0030",
+            "KF.05.0040",
+            "KF.05.0050",
+            "KH.00.0010",
+            "KH.00.0020",
+            "KH.00.0030",
+            "KH.00.0040",
+            "KH.00.0050",
+            "KH.00.0060",
+            "KH.00.0070",
+            "KH.00.0080",
+            "KH.00.0090",
+            "KH.00.0100",
+            "KK.05.0010",
+            "KK.05.0020",
+            "KK.05.0030",
+            "KK.05.0040",
+            "KK.05.0050",
+            "KK.05.0060",
+            "KK.05.0090",
+            "MA.00.0020",
+            "MA.00.0030",
+            "MA.00.0040",
+            "MG.05.0010",
+            "MG.05.0030",
+            "MG.05.0040",
+            "MK.00.0030",
+            "MK.00.0040",
+            "MK.00.0050",
+            "MK.00.0060",
+            "MK.00.0080",
+            "MK.00.0090",
+            "MK.00.0100",
+            "MK.05.0040",
+            "MK.05.0050",
+            "MK.05.0070",
+            "MK.05.0100",
+            "MK.10.0040",
+            "MK.10.0050",
+            "MK.10.0060",
+            "MK.10.0080",
+            "MK.10.0100",
+            "MK.10.0110",
+            "MK.10.0120",
+            "MK.10.0130",
+            "MK.10.0140",
+            "MK.10.0150",
+            "MK.10.0160",
+            "MK.10.0220",
+            "MK.10.0230",
+            "MK.10.0240",
+            "MK.15.0010",
+            "MK.15.0030",
+            "MK.15.0040",
+            "MK.15.0050",
+            "MK.15.0060",
+            "MK.15.0070",
+            "MK.15.0080",
+            "MK.15.0100",
+            "MK.20.0010",
+            "MK.20.0030",
+            "MK.20.0040",
+            "MK.20.0050",
+            "MK.20.0060",
+            "MK.20.0070",
+            "MK.20.0080",
+            "MK.20.0090",
+            "MK.20.0100",
+            "MK.20.0110",
+            "MK.20.0120",
+            "MK.20.0130",
+            "MK.20.0140",
+            "MK.20.0160",
+            "MK.20.0170",
+            "MK.20.0180",
+            "MK.20.0190",
+            "MK.20.0200",
+            "MK.20.0210",
+            "MK.25.0010",
+            "MK.25.0020",
+            "MK.25.0030",
+            "MK.25.0040",
+            "MK.25.0050",
+            "MK.25.0060",
+            "MK.25.0070",
+            "MK.25.0080",
+            "MK.25.0090",
+            "MK.25.0100",
+            "MK.25.0110",
+            "MK.25.0120",
+            "MP.00.0010",
+            "MP.00.0020",
+            "MP.00.0030",
+            "MP.00.0040",
+            "MP.00.0050",
+            "MP.00.0060",
+            "MP.00.0070",
+            "MP.00.0080",
+            "MP.00.0090",
+            "MP.00.0100",
+            "MP.00.0110",
+            "MP.00.0120",
+            "MP.00.0130",
+            "MP.00.0140",
+            "MP.00.0150",
+            "MP.00.0160",
+            "MP.00.0170",
+            "MP.00.0180",
+            "MP.00.0190",
+            "MP.00.0230",
+            "MP.00.0240",
+            "MP.00.0250",
+            "MP.05.0050",
+            "MP.10.0090",
+            "MP.10.0100",
+            "MP.10.0110",
+            "MP.10.0140",
+            "MP.10.0150",
+            "MP.15.0010",
+            "MP.15.0020",
+            "MP.15.0100",
+            "MP.15.0110",
+            "MP.20.0020",
+            "MP.25.0010",
+            "MR.00.0010",
+            "MR.00.0020",
+            "MR.05.0010",
+            "RC.00.0030",
+            "RC.00.0040",
+            "RC.00.0060",
+            "RC.00.0070",
+            "RC.00.0080",
+            "RC.10.0010",
+            "RC.10.0020",
+            "RC.10.0030",
+            "RC.10.0040",
+            "RC.10.0050",
+            "RC.10.0060",
+            "RC.15.0010",
+            "RC.15.0050",
+            "RC.15.0070",
+            "RC.15.0080",
+            "RC.15.0100",
+            "RC.20.0010",
+            "RC.25.0010",
+            "RC.35.0030",
+            "RC.35.0040",
+            "RC.35.0080",
+            "RC.35.0090",
+            "RC.35.0100",
+            "RC.35.0150",
+            "RC.35.0160",
+            "RC.35.0170",
+            "RC.40.0070",
+            "RC.40.0080",
+            "RC.40.0090",
+            "RC.40.0120",
+            "RE.00.0050",
+            "RE.00.0110",
+            "RG.05.0140",
+            "RG.05.0150",
+            "RG.05.0230",
+            "RG.05.0260",
+            "RG.05.0270",
+            "RG.05.0280",
+            "RG.05.0290",
+            "RG.05.0300",
+            "RG.05.0310",
+            "RG.05.0320",
+            "RG.05.0330",
+            "RG.05.0340",
+            "RG.05.0350",
+            "RG.05.0360",
+            "RG.05.0370",
+            "RG.10.0010",
+            "RG.10.0020",
+            "RG.10.0090",
+            "RG.10.0110",
+            "RG.10.0130",
+            "RG.10.0140",
+            "RG.10.0150",
+            "RG.10.0160",
+            "RG.10.0180",
+            "RG.10.0200",
+            "RG.10.0230",
+            "RG.10.0240",
+            "RG.10.0250",
+            "RG.10.0260",
+            "RG.10.0270",
+            "RG.10.0280",
+            "RG.15.0020",
+            "RG.20.0100",
+            "RG.35.0080",
+            "RG.55.0010",
+            "RG.55.0030",
+            "RG.55.0040",
+            "TA.00.0010",
+            "TG.00.0010",
+            "TG.00.0020",
+            "TG.00.0030",
+            "TG.00.0040",
+            "TG.00.0050",
+            "TG.00.0060",
+            "TG.00.0070",
+            "TG.00.0080",
+            "TG.00.0090",
+            "TG.05.0010",
+            "TG.05.0020",
+            "TG.05.0030",
+            "TG.05.0040",
+            "TG.05.0050",
+            "TG.05.0060",
+            "TG.05.0070",
+            "TG.05.0080",
+            "TG.05.0090",
+            "TG.05.0100",
+            "TG.05.0110",
+            "TG.05.0120",
+            "TG.05.0130",
+            "TG.05.0140",
+            "TG.05.0150",
+            "TG.05.0160",
+            "TG.05.0170",
+            "TG.05.0180",
+            "TG.05.0190",
+            "TG.05.0200",
+            "TG.05.0210",
+            "TG.05.0220",
+            "TG.05.0230",
+            "TG.05.0240",
+            "TG.05.0250",
+            "TG.05.0260",
+            "TG.05.0270",
+            "TG.05.0280",
+            "TG.05.0290",
+            "TG.05.0300",
+            "TG.05.0310",
+            "TG.10.0010",
+            "TG.15.0060",
+            "TG.15.0070",
+            "TG.15.0080",
+            "TK.00.0010",
+            "TK.00.0020",
+            "TK.00.0030",
+            "TK.00.0040",
+            "TK.00.0050",
+            "TK.00.0060",
+            "TK.00.0070",
+            "TK.00.0080",
+            "TK.00.0090",
+            "TK.00.0100",
+            "TK.00.0110",
+            "TK.00.0120",
+            "TK.00.0130",
+            "TK.00.0140",
+            "TK.00.0150",
+            "TK.00.0160",
+            "TK.00.0170",
+            "TK.00.0180",
+            "TK.00.0190",
+            "TK.00.0200",
+            "TK.00.0210",
+            "TK.00.0220",
+            "TK.00.0230",
+            "TK.00.0240",
+            "TK.05.0010",
+            "TK.05.0020",
+            "TK.05.0030",
+            "TK.05.0040",
+            "TK.05.0050",
+            "TK.05.0060",
+            "TK.05.0070",
+            "TK.05.0080",
+            "TK.05.0090",
+            "TK.05.0100",
+            "TK.30.0180",
+            "TK.30.0190",
+            "TK.30.0200",
+            "TK.30.0210",
+            "TK.30.0220",
+            "TK.40.0010",
+            "TK.40.0020",
+            "TK.40.0030",
+            "TM.00.0020",
+            "VA.00.0010",
+            "VA.00.0020",
+            "VA.00.0030",
+            "VA.00.0040",
+            "VA.00.0050",
+            "VA.00.0060",
+            "VA.00.0070",
+            "VA.10.0010",
+            "VA.10.0020",
+            "VA.10.0030",
+            "VA.10.0040",
+            "VA.10.0050",
+            "VA.10.0060",
+            "VA.10.0070",
+            "VA.10.0080",
+            "VA.10.0090",
+            "VA.10.0100",
+            "VA.10.0110",
+            "VA.10.0120",
+            "VA.10.0130",
+            "VA.10.0140",
+            "VA.10.0150",
+            "VA.10.0160",
+            "VA.10.0170",
+            "VA.10.0180",
+            "VA.10.0190",
+            "VA.15.0010",
+            "VA.15.0020",
+            "VA.15.0030",
+            "VA.15.0040",
+            "VA.15.0050",
+            "VA.15.0060",
+            "VA.15.0070",
+            "VA.15.0080",
+            "VA.20.0010",
+            "VA.20.0020",
+            "VA.20.0030",
+            "VA.20.0040",
+            "VA.20.0050",
+            "VA.25.0010",
+            "VA.25.0020",
+            "VA.25.0030",
+            "VA.25.0040",
+            "VA.30.0030",
+            "VA.30.0040",
+            "VA.30.0050",
+            "VA.30.0060",
+            "VA.30.0070",
+            "VA.30.0080",
+            "VA.30.0090",
+            "VA.30.0100",
+            "VC.25.0010",
+            "VC.35.0120",
+            "VC.35.0130",
+            "VC.40.0010",
+            "VC.40.0020",
+            "VC.50.0020",
+            "VE.05.0010",
+            "VE.05.0020",
+            "VE.15.0010",
+            "VG.00.0030",
+            "VG.00.0040",
+            "VG.00.0050",
+            "VG.00.0060",
+            "VG.00.0070",
+            "VG.00.0080",
+            "VG.00.0090",
+            "VG.00.0100",
+            "VG.00.0110",
+            "VG.00.0120",
+            "VG.05.0010",
+            "VG.05.0030",
+            "VG.05.0040",
+            "VG.05.0050",
+            "VG.05.0060",
+            "VG.15.0020",
+            "VG.15.0050",
+            "VG.15.0060",
+            "VG.15.0070",
+            "VK.00.0010",
+            "VK.00.0020",
+            "VK.00.0030",
+            "VK.00.0040",
+            "WA.25.0020",
+            "WF.00.0010"
           ]
         },
         {
@@ -34568,9 +35301,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
             "CA.05.0010",
             "CA.05.0020",
             "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -35103,689 +35844,56 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AA.00.0060",
-            "AA.00.0070",
-            "AA.00.0090",
-            "AA.05.0010",
-            "AA.05.0020",
-            "AA.05.0030",
-            "AA.05.0040",
-            "AA.05.0050",
-            "AA.05.0060",
-            "AA.05.0070",
-            "AA.05.0080",
-            "AA.05.0090",
-            "AA.05.0100",
-            "AA.05.0110",
-            "AA.05.0120",
-            "AA.05.0130",
-            "AA.05.0140",
-            "AA.15.0010",
-            "AA.15.0020",
-            "AA.15.0030",
-            "AA.15.0040",
-            "AA.15.0050",
-            "AA.15.0060",
-            "AA.15.0070",
-            "AA.15.0090",
-            "AA.20.0010",
-            "AA.20.0020",
-            "AA.20.0030",
-            "AA.20.0040",
-            "AA.20.0050",
-            "AA.20.0060",
-            "AA.20.0070",
-            "AA.25.0010",
-            "AA.25.0020",
-            "AA.25.0030",
-            "AA.25.0040",
-            "AA.25.0050",
-            "AA.30.0010",
-            "AA.30.0020",
-            "AA.30.0030",
-            "AA.30.0040",
-            "AA.30.0050",
-            "AA.30.0060",
-            "AA.30.0070",
-            "AA.30.0080",
-            "AA.30.0090",
-            "AA.30.0100",
-            "AA.30.0110",
-            "AG.00.0010",
-            "AG.00.0020",
-            "AG.00.0030",
-            "AG.00.0040",
-            "AG.00.0050",
-            "AG.00.0060",
-            "AG.00.0070",
-            "AG.00.0080",
-            "AG.00.0090",
-            "AG.00.0100",
-            "AK.00.0010",
-            "AK.00.0020",
-            "AK.00.0030",
-            "AK.00.0040",
-            "AK.00.0050",
-            "AK.00.0060",
-            "AK.00.0070",
-            "AK.00.0080",
-            "AK.00.0090",
-            "AK.00.0100",
-            "AK.00.0110",
-            "AK.00.0120",
-            "AK.00.0130",
-            "AK.05.0010",
-            "AK.05.0020",
-            "AK.05.0030",
-            "AK.05.0040",
-            "AM.00.0010",
-            "AM.05.0010",
-            "AM.05.0020",
-            "AM.05.0030",
-            "AM.05.0040",
-            "AM.05.0050",
-            "AM.05.0060",
-            "AM.05.0070",
-            "AM.05.0080",
-            "AM.05.0090",
-            "AM.05.0100",
-            "AM.10.0010",
-            "AM.10.0020",
-            "AM.10.0030",
-            "AM.10.0040",
-            "AM.10.0050",
-            "AM.10.0060",
-            "AM.10.0070",
-            "AM.10.0080",
-            "AM.15.0010",
-            "AP.00.0010",
-            "AP.05.0010",
-            "AP.05.0020",
-            "AP.05.0030",
-            "AP.05.0040",
-            "AP.05.0050",
-            "AP.05.0060",
-            "AP.05.0070",
-            "AP.05.0080",
-            "AP.05.0090",
-            "AP.05.0100",
-            "AP.05.0110",
-            "AP.10.0010",
-            "AP.10.0020",
-            "AP.10.0030",
-            "AR.00.0010",
-            "AR.00.0020",
-            "AR.00.0030",
-            "AR.00.0040",
-            "AR.00.0050",
-            "AR.00.0060",
-            "AR.00.0070",
-            "AR.00.0090",
-            "AR.00.0100",
-            "AR.00.0130",
-            "AR.00.0140",
-            "AR.00.0160",
-            "AR.00.0170",
-            "AR.00.0180",
-            "AR.00.0190",
-            "AR.00.0200",
-            "AR.00.0210",
-            "AR.00.0220",
-            "AR.00.0230",
-            "AR.00.0240",
-            "AR.00.0250",
-            "AR.00.0260",
-            "AR.00.0270",
-            "AR.00.0280",
-            "AR.00.0290",
-            "AR.00.0300",
-            "AR.00.0310",
-            "AR.00.0320",
-            "AR.00.0330",
-            "AR.00.0370",
-            "AR.00.0380",
-            "AR.00.0390",
-            "AR.00.0400",
-            "AR.05.0010",
-            "AR.05.0020",
-            "AR.05.0030",
-            "AR.05.0040",
-            "AR.05.0050",
-            "AR.05.0060",
-            "AR.05.0070",
-            "AR.05.0080",
-            "AR.05.0090",
-            "AR.05.0100",
-            "CG.00.0010",
-            "CG.00.0130",
-            "CG.00.0140",
-            "CG.00.0150",
-            "CG.00.0160",
-            "CG.00.0170",
-            "CG.05.0010",
-            "CG.05.0040",
-            "CG.05.0050",
-            "CG.05.0060",
-            "CG.05.0070",
-            "CG.05.0080",
-            "CG.10.0010",
-            "CG.10.0020",
-            "CG.10.0030",
-            "CG.10.0040",
-            "CG.10.0050",
-            "CG.15.0010",
-            "GA.00.0010",
-            "GA.05.0010",
-            "GA.05.0020",
-            "GG.00.0010",
-            "GG.00.0020",
-            "GG.00.0030",
-            "GG.00.0040",
-            "GG.00.0060",
-            "GG.00.0070",
-            "GG.00.0080",
-            "GG.00.0090",
-            "GG.00.0100",
-            "GG.00.0110",
-            "GG.00.0120",
-            "GG.00.0130",
-            "GG.00.0140",
-            "GG.00.0150",
-            "GG.00.0160",
-            "GG.00.0170",
-            "GG.00.0180",
-            "GG.00.0190",
-            "GG.00.0200",
-            "GG.00.0210",
-            "GG.00.0220",
-            "GG.00.0230",
-            "GG.00.0240",
-            "GG.00.0250",
-            "GG.00.0260",
-            "GG.00.0270",
-            "GG.00.0280",
-            "GG.00.0290",
-            "GG.00.0300",
-            "GG.00.0310",
-            "GG.00.0320",
-            "GG.00.0330",
-            "GG.00.0340",
-            "GG.00.0350",
-            "GG.00.0360",
-            "GG.00.0370",
-            "GG.00.0380",
-            "GG.00.0390",
-            "GG.00.0400",
-            "GG.00.0410",
-            "GG.00.0420",
-            "GG.00.0430",
-            "GG.00.0440",
-            "GG.00.0450",
-            "GG.00.0460",
-            "GG.00.0470",
-            "GG.00.0480",
-            "GG.00.0490",
-            "GG.00.0500",
-            "GG.00.0510",
-            "GG.00.0520",
-            "GG.10.0010",
-            "GG.10.0020",
-            "GG.10.0030",
-            "GG.10.0050",
-            "GG.10.0060",
-            "GG.10.0070",
-            "GG.10.0080",
-            "GG.10.0100",
-            "GG.15.0010",
-            "GG.15.0100",
-            "GG.15.0110",
-            "GG.15.0120",
-            "GG.15.0130",
-            "GG.15.0140",
-            "GG.15.0260",
-            "GG.15.0320",
-            "GG.15.0380",
-            "GG.15.0390",
-            "GG.15.0400",
-            "GG.15.0420",
-            "GG.20.0040",
-            "GG.25.0010",
-            "GG.30.0020",
-            "GG.30.0030",
-            "GG.30.0070",
-            "GG.30.0080",
-            "GG.30.0090",
-            "GG.30.0100",
-            "GK.00.0010",
-            "GK.00.0080",
-            "GK.00.0090",
-            "GK.05.0010",
-            "GK.05.0020",
-            "GK.05.0030",
-            "GK.05.0040",
-            "GK.05.0050",
-            "GK.05.0060",
-            "GK.05.0090",
-            "GK.10.0180",
-            "GK.15.0010",
-            "GK.15.0020",
-            "GK.15.0030",
-            "GK.20.0110",
-            "GK.20.0120",
-            "GK.20.0130",
-            "GK.25.0050",
-            "GK.25.0070",
-            "GK.25.0080",
-            "GK.30.0010",
-            "GK.30.0020",
-            "GK.30.0030",
-            "GK.30.0040",
-            "GK.30.0050",
-            "GK.30.0060",
-            "GK.35.0010",
-            "GK.35.0020",
-            "GK.35.0040",
-            "GK.35.0120",
-            "GK.35.0130",
-            "GK.45.0010",
-            "GK.45.0020",
-            "GK.45.0030",
-            "GK.45.0040",
-            "GK.45.0050",
-            "GK.50.0010",
-            "JE.00.0010",
-            "JE.00.0020",
-            "JE.00.0030",
-            "JE.00.0040",
-            "JE.00.0050",
-            "JE.00.0060",
-            "JE.00.0070",
-            "JE.00.0080",
-            "JE.00.0090",
-            "JG.00.0020",
-            "JG.00.0030",
-            "JV.00.0010",
-            "JV.00.0020",
-            "JV.00.0030",
-            "JV.05.0010",
-            "JV.10.0010",
-            "JV.10.0020",
-            "JV.10.0030",
-            "JV.10.0040",
-            "JV.10.0050",
-            "JZ.00.0020",
-            "KD.05.0060",
-            "KF.00.0030",
-            "KF.05.0040",
-            "KF.05.0050",
-            "KH.00.0010",
-            "KH.00.0020",
-            "KH.00.0030",
-            "KH.00.0040",
-            "KH.00.0050",
-            "KH.00.0060",
-            "KH.00.0070",
-            "KH.00.0080",
-            "KH.00.0090",
-            "KH.00.0100",
-            "KK.05.0010",
-            "KK.05.0020",
-            "KK.05.0030",
-            "KK.05.0040",
-            "KK.05.0050",
-            "KK.05.0060",
-            "KK.05.0090",
-            "MA.00.0020",
-            "MA.00.0030",
-            "MA.00.0040",
-            "MG.05.0010",
-            "MG.05.0030",
-            "MG.05.0040",
-            "MK.00.0030",
-            "MK.00.0040",
-            "MK.00.0050",
-            "MK.00.0060",
-            "MK.00.0080",
-            "MK.00.0090",
-            "MK.00.0100",
-            "MK.05.0040",
-            "MK.05.0050",
-            "MK.05.0070",
-            "MK.05.0100",
-            "MK.10.0040",
-            "MK.10.0050",
-            "MK.10.0060",
-            "MK.10.0080",
-            "MK.10.0100",
-            "MK.10.0110",
-            "MK.10.0120",
-            "MK.10.0130",
-            "MK.10.0140",
-            "MK.10.0150",
-            "MK.10.0160",
-            "MK.10.0220",
-            "MK.10.0230",
-            "MK.10.0240",
-            "MK.15.0010",
-            "MK.15.0030",
-            "MK.15.0040",
-            "MK.15.0050",
-            "MK.15.0060",
-            "MK.15.0070",
-            "MK.15.0080",
-            "MK.15.0100",
-            "MK.20.0010",
-            "MK.20.0030",
-            "MK.20.0040",
-            "MK.20.0050",
-            "MK.20.0060",
-            "MK.20.0070",
-            "MK.20.0080",
-            "MK.20.0090",
-            "MK.20.0100",
-            "MK.20.0110",
-            "MK.20.0120",
-            "MK.20.0130",
-            "MK.20.0140",
-            "MK.20.0160",
-            "MK.20.0170",
-            "MK.20.0180",
-            "MK.20.0190",
-            "MK.20.0200",
-            "MK.20.0210",
-            "MK.25.0010",
-            "MK.25.0020",
-            "MK.25.0030",
-            "MK.25.0040",
-            "MK.25.0050",
-            "MK.25.0060",
-            "MK.25.0070",
-            "MK.25.0080",
-            "MK.25.0090",
-            "MK.25.0100",
-            "MK.25.0110",
-            "MK.25.0120",
-            "MP.00.0010",
-            "MP.00.0020",
-            "MP.00.0030",
-            "MP.00.0040",
-            "MP.00.0050",
-            "MP.00.0060",
-            "MP.00.0070",
-            "MP.00.0080",
-            "MP.00.0090",
-            "MP.00.0100",
-            "MP.00.0110",
-            "MP.00.0120",
-            "MP.00.0130",
-            "MP.00.0140",
-            "MP.00.0150",
-            "MP.00.0160",
-            "MP.00.0170",
-            "MP.00.0180",
-            "MP.00.0190",
-            "MP.00.0230",
-            "MP.00.0240",
-            "MP.00.0250",
-            "MP.05.0050",
-            "MP.10.0090",
-            "MP.10.0100",
-            "MP.10.0110",
-            "MP.10.0140",
-            "MP.10.0150",
-            "MP.15.0010",
-            "MP.15.0020",
-            "MP.15.0100",
-            "MP.15.0110",
-            "MP.20.0020",
-            "MP.25.0010",
-            "MR.00.0010",
-            "MR.00.0020",
-            "MR.05.0010",
-            "RC.00.0030",
-            "RC.00.0040",
-            "RC.00.0060",
-            "RC.00.0070",
-            "RC.00.0080",
-            "RC.10.0010",
-            "RC.10.0020",
-            "RC.10.0030",
-            "RC.10.0040",
-            "RC.10.0050",
-            "RC.10.0060",
-            "RC.15.0010",
-            "RC.15.0050",
-            "RC.15.0070",
-            "RC.15.0080",
-            "RC.15.0100",
-            "RC.20.0010",
-            "RC.25.0010",
-            "RC.35.0030",
-            "RC.35.0040",
-            "RC.35.0080",
-            "RC.35.0090",
-            "RC.35.0100",
-            "RC.35.0150",
-            "RC.35.0160",
-            "RC.35.0170",
-            "RC.40.0070",
-            "RC.40.0080",
-            "RC.40.0090",
-            "RC.40.0120",
-            "RE.00.0050",
-            "RE.00.0110",
-            "RG.05.0140",
-            "RG.05.0150",
-            "RG.05.0230",
-            "RG.05.0260",
-            "RG.05.0270",
-            "RG.05.0280",
-            "RG.05.0290",
-            "RG.05.0300",
-            "RG.05.0310",
-            "RG.05.0320",
-            "RG.05.0330",
-            "RG.05.0340",
-            "RG.05.0350",
-            "RG.05.0360",
-            "RG.05.0370",
-            "RG.10.0010",
-            "RG.10.0020",
-            "RG.10.0090",
-            "RG.10.0110",
-            "RG.10.0130",
-            "RG.10.0140",
-            "RG.10.0150",
-            "RG.10.0160",
-            "RG.10.0180",
-            "RG.10.0200",
-            "RG.10.0230",
-            "RG.10.0240",
-            "RG.10.0250",
-            "RG.10.0260",
-            "RG.10.0270",
-            "RG.10.0280",
-            "RG.15.0020",
-            "RG.20.0100",
-            "RG.35.0080",
-            "RG.55.0010",
-            "RG.55.0030",
-            "RG.55.0040",
-            "TA.00.0010",
-            "TG.00.0010",
-            "TG.00.0020",
-            "TG.00.0030",
-            "TG.00.0040",
-            "TG.00.0050",
-            "TG.00.0060",
-            "TG.00.0070",
-            "TG.00.0080",
-            "TG.00.0090",
-            "TG.05.0010",
-            "TG.05.0020",
-            "TG.05.0030",
-            "TG.05.0040",
-            "TG.05.0050",
-            "TG.05.0060",
-            "TG.05.0070",
-            "TG.05.0080",
-            "TG.05.0090",
-            "TG.05.0100",
-            "TG.05.0110",
-            "TG.05.0120",
-            "TG.05.0130",
-            "TG.05.0140",
-            "TG.05.0150",
-            "TG.05.0160",
-            "TG.05.0170",
-            "TG.05.0180",
-            "TG.05.0190",
-            "TG.05.0200",
-            "TG.05.0210",
-            "TG.05.0220",
-            "TG.05.0230",
-            "TG.05.0240",
-            "TG.05.0250",
-            "TG.05.0260",
-            "TG.05.0270",
-            "TG.05.0280",
-            "TG.05.0290",
-            "TG.05.0300",
-            "TG.05.0310",
-            "TG.10.0010",
-            "TG.15.0060",
-            "TG.15.0070",
-            "TG.15.0080",
-            "TK.00.0010",
-            "TK.00.0020",
-            "TK.00.0030",
-            "TK.00.0040",
-            "TK.00.0050",
-            "TK.00.0060",
-            "TK.00.0070",
-            "TK.00.0080",
-            "TK.00.0090",
-            "TK.00.0100",
-            "TK.00.0110",
-            "TK.00.0120",
-            "TK.00.0130",
-            "TK.00.0140",
-            "TK.00.0150",
-            "TK.00.0160",
-            "TK.00.0170",
-            "TK.00.0180",
-            "TK.00.0190",
-            "TK.00.0200",
-            "TK.00.0210",
-            "TK.00.0220",
-            "TK.00.0230",
-            "TK.00.0240",
-            "TK.05.0010",
-            "TK.05.0020",
-            "TK.05.0030",
-            "TK.05.0040",
-            "TK.05.0050",
-            "TK.05.0060",
-            "TK.05.0070",
-            "TK.05.0080",
-            "TK.05.0090",
-            "TK.05.0100",
-            "TK.30.0180",
-            "TK.30.0190",
-            "TK.30.0200",
-            "TK.30.0210",
-            "TK.30.0220",
-            "TK.40.0010",
-            "TK.40.0020",
-            "TK.40.0030",
-            "TM.00.0020",
-            "VA.00.0010",
-            "VA.00.0020",
-            "VA.00.0030",
-            "VA.00.0040",
-            "VA.00.0050",
-            "VA.00.0060",
-            "VA.00.0070",
-            "VA.10.0010",
-            "VA.10.0020",
-            "VA.10.0030",
-            "VA.10.0040",
-            "VA.10.0050",
-            "VA.10.0060",
-            "VA.10.0070",
-            "VA.10.0080",
-            "VA.10.0090",
-            "VA.10.0100",
-            "VA.10.0110",
-            "VA.10.0120",
-            "VA.10.0130",
-            "VA.10.0140",
-            "VA.10.0150",
-            "VA.10.0160",
-            "VA.10.0170",
-            "VA.10.0180",
-            "VA.10.0190",
-            "VA.15.0010",
-            "VA.15.0020",
-            "VA.15.0030",
-            "VA.15.0040",
-            "VA.15.0050",
-            "VA.15.0060",
-            "VA.15.0070",
-            "VA.15.0080",
-            "VA.20.0010",
-            "VA.20.0020",
-            "VA.20.0030",
-            "VA.20.0040",
-            "VA.20.0050",
-            "VA.25.0010",
-            "VA.25.0020",
-            "VA.25.0030",
-            "VA.25.0040",
-            "VA.30.0030",
-            "VA.30.0040",
-            "VA.30.0050",
-            "VA.30.0060",
-            "VA.30.0070",
-            "VA.30.0080",
-            "VA.30.0090",
-            "VA.30.0100",
-            "VC.25.0010",
-            "VC.35.0120",
-            "VC.35.0130",
-            "VC.40.0010",
-            "VC.40.0020",
-            "VC.50.0020",
-            "VE.05.0010",
-            "VE.05.0020",
-            "VE.15.0010",
-            "VG.00.0030",
-            "VG.00.0040",
-            "VG.00.0050",
-            "VG.00.0060",
-            "VG.00.0070",
-            "VG.00.0080",
-            "VG.00.0090",
-            "VG.00.0100",
-            "VG.00.0110",
-            "VG.00.0120",
-            "VG.05.0010",
-            "VG.05.0030",
-            "VG.05.0040",
-            "VG.05.0050",
-            "VG.05.0060",
-            "VG.15.0020",
-            "VG.15.0050",
-            "VG.15.0060",
-            "VG.15.0070",
-            "VK.00.0010",
-            "VK.00.0020",
-            "VK.00.0030",
-            "VK.00.0040",
-            "WA.25.0020",
-            "WF.00.0010"
+            "AA.00.0030",
+            "AA.00.0080",
+            "AA.10.0010",
+            "AA.10.0020",
+            "AA.10.0030",
+            "CA.00.0010",
+            "CA.00.0040",
+            "EA.00.0010",
+            "EA.00.0020",
+            "EA.00.0030",
+            "EA.00.0040",
+            "EA.00.0050",
+            "EA.00.0060",
+            "EA.00.0070",
+            "EA.00.0090",
+            "EA.00.0100",
+            "EA.00.0110",
+            "EA.00.0120",
+            "EA.00.0130",
+            "EA.00.0140",
+            "EA.00.0150",
+            "EA.00.0160",
+            "EA.00.0170",
+            "EA.00.0180",
+            "EA.00.0190",
+            "EA.00.0200",
+            "EA.00.0210",
+            "EA.00.0220",
+            "EA.00.0230",
+            "EA.00.0240",
+            "EA.00.0250",
+            "EA.05.0010",
+            "EA.05.0020",
+            "EA.05.0030",
+            "EA.05.0040",
+            "EA.05.0050",
+            "EA.05.0060",
+            "EA.05.0070",
+            "EA.05.0080",
+            "EA.05.0090",
+            "EA.05.0100",
+            "EA.05.0110",
+            "EA.05.0120",
+            "EA.05.0130",
+            "EA.05.0140",
+            "EA.05.0150",
+            "EA.10.0010",
+            "EA.10.0020"
           ]
         },
         {
@@ -36218,13 +36326,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "VG.00.0050"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0040",
@@ -36256,6 +36357,13 @@
           ]
         },
         {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "VG.00.0050"
+          ]
+        },
+        {
           "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Sitzung",
           "maxNumber": 1,
@@ -36280,6 +36388,37 @@
         "9999"
       ],
       "rules": [
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "KH.00.0060",
+            "TK.00.0010",
+            "TK.00.0020",
+            "TK.00.0030",
+            "TK.00.0040",
+            "TK.00.0050",
+            "TK.00.0060",
+            "TK.00.0070",
+            "TK.00.0080",
+            "TK.00.0090",
+            "TK.00.0100",
+            "TK.00.0110",
+            "TK.00.0120",
+            "TK.00.0130",
+            "TK.00.0140",
+            "TK.00.0150",
+            "TK.00.0160",
+            "TK.00.0170",
+            "TK.00.0180",
+            "TK.00.0190",
+            "TK.00.0200",
+            "TK.00.0210",
+            "TK.00.0220",
+            "TK.00.0230",
+            "TK.00.0240"
+          ]
+        },
         {
           "type": "CumulationRule",
           "cumulationType": "I",
@@ -36310,37 +36449,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "KH.00.0060",
-            "TK.00.0010",
-            "TK.00.0020",
-            "TK.00.0030",
-            "TK.00.0040",
-            "TK.00.0050",
-            "TK.00.0060",
-            "TK.00.0070",
-            "TK.00.0080",
-            "TK.00.0090",
-            "TK.00.0100",
-            "TK.00.0110",
-            "TK.00.0120",
-            "TK.00.0130",
-            "TK.00.0140",
-            "TK.00.0150",
-            "TK.00.0160",
-            "TK.00.0170",
-            "TK.00.0180",
-            "TK.00.0190",
-            "TK.00.0200",
-            "TK.00.0210",
-            "TK.00.0220",
-            "TK.00.0230",
-            "TK.00.0240"
           ]
         },
         {
@@ -36504,16 +36612,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0220"
+            "RC.70.0110"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "RC.70.0110"
+            "AR.00.0220"
           ]
         },
         {
@@ -36667,15 +36775,6 @@
         "3010"
       ],
       "rules": [
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.00.0030",
-            "AA.10.0010",
-            "JA.00.0010"
-          ]
-        },
         {
           "type": "CumulationRule",
           "cumulationType": "I",
@@ -36835,6 +36934,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -37363,6 +37476,15 @@
             "VK.00.0040",
             "WA.25.0020",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.00.0030",
+            "AA.10.0010",
+            "JA.00.0010"
           ]
         },
         {
@@ -38678,7 +38800,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -38840,6 +38962,10 @@
             "CA.00.0050",
             "CA.00.0060",
             "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -39372,7 +39498,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -39527,6 +39653,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -40079,13 +40216,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "TK.05.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0090",
@@ -40114,6 +40244,13 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "TK.05.0010"
           ]
         }
       ],
@@ -40173,15 +40310,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -40326,6 +40463,15 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MA.00.0040",
+            "TK.00.0150",
+            "TK.00.0160"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0070",
@@ -40354,15 +40500,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MA.00.0040",
-            "TK.00.0150",
-            "TK.00.0160"
           ]
         },
         {
@@ -40713,6 +40850,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MK.00.0030",
+            "VA.10.0070",
+            "VA.10.0090",
+            "VA.10.0110",
+            "VA.10.0130",
+            "VA.20.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0320",
@@ -40742,18 +40891,6 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MK.00.0030",
-            "VA.10.0070",
-            "VA.10.0090",
-            "VA.10.0110",
-            "VA.10.0130",
-            "VA.20.0010"
           ]
         },
         {
@@ -40852,15 +40989,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -41132,15 +41269,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -41176,15 +41313,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -41306,15 +41443,15 @@
         },
         {
           "type": "AgeRule",
-          "description": "&ge; 9 Jahre (-70 Tage)",
-          "condition": "age_years >= 9",
-          "tolerance": -70
-        },
-        {
-          "type": "AgeRule",
           "description": "< 10 Jahre (+70 Tage)",
           "condition": "age_years < 10",
           "tolerance": 70
+        },
+        {
+          "type": "AgeRule",
+          "description": "&ge; 9 Jahre (-70 Tage)",
+          "condition": "age_years >= 9",
+          "tolerance": -70
         },
         {
           "type": "UndecidableRule",
@@ -41565,6 +41702,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -42853,17 +43004,17 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "VG.00.0050",
-            "VG.00.0090"
+            "AR.00.0040"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0040"
+            "VG.00.0050",
+            "VG.00.0090"
           ]
         },
         {
@@ -43111,14 +43262,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.00.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0020",
@@ -43148,6 +43291,14 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.00.0140"
           ]
         },
         {
@@ -43923,15 +44074,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0010",
-            "AA.20.0020",
-            "VG.00.0050"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0040",
@@ -43960,6 +44102,15 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0010",
+            "AA.20.0020",
+            "VG.00.0050"
           ]
         },
         {
@@ -44067,14 +44218,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.15.0280"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0090",
@@ -44104,6 +44247,14 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.15.0280"
           ]
         },
         {
@@ -44529,15 +44680,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -44624,13 +44775,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -44640,6 +44784,13 @@
             "GM.00.0070",
             "GM.05.0010",
             "GM.05.0030"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
           ]
         },
         {
@@ -45834,13 +45985,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -45872,6 +46016,13 @@
             "GP.00.0250",
             "GP.00.0260",
             "GP.00.0270"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -46301,17 +46452,17 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0180"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "RG.10.0050",
             "RG.10.0090"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0180"
           ]
         }
       ],
@@ -46512,20 +46663,20 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0370",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "GK.35.0080",
             "KF.10.0030",
             "KF.10.0060",
             "KF.10.0120"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0370",
+            "WF.00.0010"
           ]
         },
         {
@@ -46608,6 +46759,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "VA.15.0040"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0310",
@@ -46636,13 +46794,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "VA.15.0040"
           ]
         },
         {
@@ -47098,13 +47249,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -47112,6 +47256,13 @@
             "GG.15.0360",
             "GP.00.0150",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -47137,19 +47288,19 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0260"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.05.0130",
             "JA.00.0050",
             "MP.05.0100",
             "MP.05.0120"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0260"
           ]
         },
         {
@@ -47190,15 +47341,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 4 Mal pro Sitzung",
-          "maxNumber": 4,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Seite",
           "maxNumber": 2,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 4 Mal pro Sitzung",
+          "maxNumber": 4,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -47341,6 +47492,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "VE.35.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0310",
@@ -47369,13 +47527,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "VE.35.0050"
           ]
         },
         {
@@ -47705,13 +47856,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MK.20.0150"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0020",
@@ -47740,6 +47884,13 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MK.20.0150"
           ]
         }
       ],
@@ -47799,15 +47950,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -47995,6 +48146,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -49481,19 +49646,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -50059,15 +50224,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -50243,15 +50408,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -50948,6 +51113,14 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.10.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0030",
@@ -50977,14 +51150,6 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.10.0050"
           ]
         },
         {
@@ -51102,15 +51267,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -51358,18 +51523,18 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0030",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
             "GG.10.0030"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0030",
+            "WF.00.0010"
           ]
         },
         {
@@ -51589,6 +51754,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MK.00.0030",
+            "RG.10.0130",
+            "VA.00.0040",
+            "VA.00.0050",
+            "VA.00.0070",
+            "VA.20.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0320",
@@ -51618,18 +51795,6 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MK.00.0030",
-            "RG.10.0130",
-            "VA.00.0040",
-            "VA.00.0050",
-            "VA.00.0070",
-            "VA.20.0010"
           ]
         },
         {
@@ -51897,19 +52062,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0060",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
             "GG.05.0010",
             "GG.05.0090"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0060",
+            "WF.00.0010"
           ]
         },
         {
@@ -52197,17 +52362,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.05.0130",
-            "JA.00.0050",
-            "MP.00.0230",
-            "MP.00.0240",
-            "MP.05.0060"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0280",
@@ -52239,6 +52393,17 @@
           ]
         },
         {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.05.0130",
+            "JA.00.0050",
+            "MP.00.0230",
+            "MP.00.0240",
+            "MP.05.0060"
+          ]
+        },
+        {
           "type": "MaxNumberRule",
           "description": "&le; 60 Mal pro Sitzung",
           "maxNumber": 60,
@@ -52261,6 +52426,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -52268,13 +52440,6 @@
             "GG.15.0360",
             "GM.05.0010",
             "GM.05.0030"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
           ]
         },
         {
@@ -52349,15 +52514,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -52925,18 +53090,18 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0260"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.05.0130",
             "JA.00.0050",
             "MP.00.0250"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0260"
           ]
         },
         {
@@ -53289,6 +53454,31 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GK.25.0010",
+            "GK.25.0020",
+            "GK.25.0030",
+            "GK.25.0040",
+            "GK.25.0050",
+            "GK.25.0060",
+            "GK.25.0070",
+            "GK.25.0080",
+            "GK.25.0090",
+            "GK.25.0100",
+            "GK.25.0110",
+            "GK.25.0120",
+            "GK.25.0130",
+            "GK.25.0140",
+            "GK.25.0150",
+            "GK.25.0160",
+            "GK.25.0170",
+            "MP.20.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0050",
@@ -53317,31 +53507,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GK.25.0010",
-            "GK.25.0020",
-            "GK.25.0030",
-            "GK.25.0040",
-            "GK.25.0050",
-            "GK.25.0060",
-            "GK.25.0070",
-            "GK.25.0080",
-            "GK.25.0090",
-            "GK.25.0100",
-            "GK.25.0110",
-            "GK.25.0120",
-            "GK.25.0130",
-            "GK.25.0140",
-            "GK.25.0150",
-            "GK.25.0160",
-            "GK.25.0170",
-            "MP.20.0020"
           ]
         },
         {
@@ -53492,19 +53657,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -53531,14 +53696,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0030",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
@@ -53550,6 +53707,14 @@
             "VE.05.0020",
             "VE.15.0010",
             "VE.40.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0030",
+            "WF.00.0010"
           ]
         },
         {
@@ -53606,17 +53771,17 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "CG.10.0010",
-            "RG.05.0010"
+            "AR.00.0060"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0060"
+            "CG.10.0010",
+            "RG.05.0010"
           ]
         },
         {
@@ -53641,18 +53806,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
             "GK.20.0070",
             "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
           ]
         },
         {
@@ -53804,15 +53969,15 @@
       "rules": [
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -53945,15 +54110,15 @@
       "rules": [
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -54098,15 +54263,15 @@
         },
         {
           "type": "AgeRule",
-          "description": "&ge; 5 Monate (-30 Tage)",
-          "condition": "age_months >= 5",
-          "tolerance": -30
-        },
-        {
-          "type": "AgeRule",
           "description": "< 6 Monate (+90 Tage)",
           "condition": "age_months < 6",
           "tolerance": 90
+        },
+        {
+          "type": "AgeRule",
+          "description": "&ge; 5 Monate (-30 Tage)",
+          "condition": "age_months >= 5",
+          "tolerance": -30
         },
         {
           "type": "UndecidableRule",
@@ -54304,18 +54469,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0280"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.05.0130",
             "JA.00.0050",
             "MP.05.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0280"
           ]
         },
         {
@@ -54379,7 +54544,7 @@
       "taxpointsIPL": 20.67,
       "percentageAL": null,
       "percentageIPL": null,
-      "hasSide": true,
+      "hasSide": false,
       "masters": []
     },
     {
@@ -54831,15 +54996,15 @@
         },
         {
           "type": "AgeRule",
-          "description": "< 5 Jahre (+81 Tage)",
-          "condition": "age_years < 5",
-          "tolerance": 81
-        },
-        {
-          "type": "AgeRule",
           "description": "&ge; 4 Jahre (-72 Tage)",
           "condition": "age_years >= 4",
           "tolerance": -72
+        },
+        {
+          "type": "AgeRule",
+          "description": "< 5 Jahre (+81 Tage)",
+          "condition": "age_years < 5",
+          "tolerance": 81
         },
         {
           "type": "UndecidableRule",
@@ -55140,16 +55305,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0060"
+            "RG.20.0090"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "RG.20.0090"
+            "AR.00.0060"
           ]
         },
         {
@@ -55258,7 +55423,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -55420,6 +55585,10 @@
             "CA.00.0050",
             "CA.00.0060",
             "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -55952,7 +56121,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -56107,6 +56276,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -56756,19 +56936,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -58213,15 +58393,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -58525,15 +58705,15 @@
         },
         {
           "type": "AgeRule",
-          "description": "&ge; 23 Monate (-90 Tage)",
-          "condition": "age_months >= 23",
-          "tolerance": -90
-        },
-        {
-          "type": "AgeRule",
           "description": "< 24 Monate (+180 Tage)",
           "condition": "age_months < 24",
           "tolerance": 180
+        },
+        {
+          "type": "AgeRule",
+          "description": "&ge; 23 Monate (-90 Tage)",
+          "condition": "age_months >= 23",
+          "tolerance": -90
         },
         {
           "type": "UndecidableRule",
@@ -58853,23 +59033,23 @@
         },
         {
           "type": "AgeRule",
-          "description": "< 18 Jahre (+0 Tage)",
-          "condition": "age_years < 18",
-          "tolerance": 0
-        },
-        {
-          "type": "AgeRule",
           "description": "&ge; 7 Jahre (-0 Tage)",
           "condition": "age_years >= 7",
           "tolerance": 0
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 4 Sitzung pro 360 Tage"
+          "type": "AgeRule",
+          "description": "< 18 Jahre (+0 Tage)",
+          "condition": "age_years < 18",
+          "tolerance": 0
         },
         {
           "type": "UndecidableRule",
           "description": "&le; 570 Mal pro 360 Tage"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 4 Sitzung pro 360 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -59043,18 +59223,18 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "GK.35.0080",
-            "KF.10.0120"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0370",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "GK.35.0080",
+            "KF.10.0120"
           ]
         },
         {
@@ -59084,6 +59264,14 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0370",
+            "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "GK.35.0080",
@@ -59091,14 +59279,6 @@
             "KF.10.0030",
             "KF.10.0050",
             "KF.10.0120"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0370",
-            "WF.00.0010"
           ]
         },
         {
@@ -59171,13 +59351,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -59188,16 +59361,23 @@
           ]
         },
         {
-          "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
+          ]
         },
         {
           "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -60155,18 +60335,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0260"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.05.0130",
             "JA.00.0050",
             "MP.05.0110"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0260"
           ]
         },
         {
@@ -60391,6 +60571,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -61644,19 +61838,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
             "GK.30.0030",
             "MG.05.0050",
             "MP.20.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
           ]
         }
       ],
@@ -61731,6 +61925,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -61738,13 +61939,6 @@
             "GG.15.0360",
             "GM.00.0010",
             "GM.00.0040"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
           ]
         },
         {
@@ -61786,15 +61980,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -61864,6 +62058,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "CG.10.0030"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0060",
@@ -61892,13 +62093,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "CG.10.0030"
           ]
         },
         {
@@ -61973,18 +62167,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
             "MA.00.0080",
             "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
           ]
         },
         {
@@ -62093,15 +62287,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -62423,14 +62617,14 @@
           ]
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 150 Mal pro 180 Tage"
-        },
-        {
           "type": "MaxNumberRule",
           "description": "&le; 60 Mal pro Sitzung",
           "maxNumber": 60,
           "context": "session"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 150 Mal pro 180 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -62919,14 +63113,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0370",
-            "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "GK.35.0080",
@@ -62936,16 +63122,24 @@
           ]
         },
         {
-          "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0370",
+            "WF.00.0010"
+          ]
         },
         {
           "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -62964,19 +63158,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -63128,15 +63322,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 3 Mal pro Seite",
-          "maxNumber": 3,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 6 Mal pro Sitzung",
           "maxNumber": 6,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 3 Mal pro Seite",
+          "maxNumber": 3,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -63336,15 +63530,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -63405,15 +63599,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 4 Mal pro Sitzung",
-          "maxNumber": 4,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Seite",
           "maxNumber": 2,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 4 Mal pro Sitzung",
+          "maxNumber": 4,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -63540,14 +63734,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.00.0520"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0020",
@@ -63580,16 +63766,24 @@
           ]
         },
         {
-          "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.00.0520"
+          ]
         },
         {
           "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -64082,6 +64276,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "RG.10.0240"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0060",
@@ -64110,13 +64311,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "RG.10.0240"
           ]
         },
         {
@@ -64418,15 +64612,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -64495,14 +64689,14 @@
           ]
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 90 Mal pro 180 Tage"
-        },
-        {
           "type": "MaxNumberRule",
           "description": "&le; 45 Mal pro Sitzung",
           "maxNumber": 45,
           "context": "session"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 90 Mal pro 180 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -64563,15 +64757,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -65154,14 +65348,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "TK.00.0090",
-            "TK.00.0110"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0090",
@@ -65190,6 +65376,14 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "TK.00.0090",
+            "TK.00.0110"
           ]
         }
       ],
@@ -65251,13 +65445,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -65267,6 +65454,13 @@
             "GM.00.0040",
             "GM.05.0010",
             "GM.05.0030"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
           ]
         },
         {
@@ -65467,15 +65661,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -65668,15 +65862,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -65953,13 +66147,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "TK.30.0200"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0070",
@@ -65988,6 +66175,13 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "TK.30.0200"
           ]
         }
       ],
@@ -66599,14 +66793,14 @@
           ]
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 2 Sitzung pro 360 Tage"
-        },
-        {
           "type": "MaxNumberRule",
           "description": "&le; 5 Mal pro Sitzung",
           "maxNumber": 5,
           "context": "session"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 2 Sitzung pro 360 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -66804,6 +66998,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -68705,7 +68913,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -68867,6 +69075,10 @@
             "CA.00.0050",
             "CA.00.0060",
             "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -69399,7 +69611,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -69554,6 +69766,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -71454,15 +71677,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -71697,16 +71920,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "RG.10.0180"
+            "AR.00.0060"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0060"
+            "RG.10.0180"
           ]
         },
         {
@@ -71736,19 +71959,19 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.00.0280"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.05.0130",
             "JA.00.0050",
             "MP.00.0190",
             "MP.05.0130"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.00.0280"
           ]
         },
         {
@@ -71774,16 +71997,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0210"
+            "RC.45.0010"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "RC.45.0010"
+            "AR.00.0210"
           ]
         },
         {
@@ -71850,14 +72073,14 @@
           ]
         },
         {
-          "type": "UndecidableRule",
-          "description": "&le; 360 Mal pro 360 Tage"
-        },
-        {
           "type": "MaxNumberRule",
           "description": "&le; 180 Mal pro Sitzung",
           "maxNumber": 180,
           "context": "session"
+        },
+        {
+          "type": "UndecidableRule",
+          "description": "&le; 360 Mal pro 360 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -71991,15 +72214,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -72158,11 +72381,11 @@
         },
         {
           "type": "UndecidableRule",
-          "description": "&le; 4 Sitzung pro 360 Tage"
+          "description": "&le; 390 Mal pro 360 Tage"
         },
         {
           "type": "UndecidableRule",
-          "description": "&le; 390 Mal pro 360 Tage"
+          "description": "&le; 4 Sitzung pro 360 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -73013,19 +73236,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -73169,15 +73392,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -73196,19 +73419,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GP.05.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0080"
           ]
         },
         {
@@ -73481,15 +73704,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -73756,15 +73979,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 6 Mal pro Sitzung",
-          "maxNumber": 6,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 3 Mal pro Seite",
           "maxNumber": 3,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 6 Mal pro Sitzung",
+          "maxNumber": 6,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -73976,15 +74199,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -74076,13 +74299,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -74091,6 +74307,13 @@
             "GM.00.0120",
             "GM.05.0010",
             "GM.05.0030"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
           ]
         },
         {
@@ -74355,19 +74578,19 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
             "AA.20.0030",
             "GG.15.0360",
             "GG.15.0370"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
           ]
         },
         {
@@ -74880,16 +75103,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GK.10.0160",
-            "GK.30.0060",
-            "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0050",
@@ -74918,6 +75131,16 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GK.10.0160",
+            "GK.30.0060",
+            "MP.20.0020"
           ]
         },
         {
@@ -75013,6 +75236,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0030",
@@ -75037,13 +75267,6 @@
             "GK.10.0170",
             "GK.10.0180",
             "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
           ]
         },
         {
@@ -76104,17 +76327,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GK.05.0010",
-            "GK.25.0160",
-            "GK.30.0020",
-            "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0050",
@@ -76143,6 +76355,17 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GK.05.0010",
+            "GK.25.0160",
+            "GK.30.0020",
+            "MP.20.0020"
           ]
         },
         {
@@ -76817,15 +77040,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -76963,7 +77186,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -77118,9 +77341,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
             "CA.05.0010",
             "CA.05.0020",
             "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -77653,7 +77884,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -77808,6 +78039,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -78532,15 +78774,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -78607,15 +78849,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -78916,13 +79158,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -78930,6 +79165,13 @@
             "GG.15.0360",
             "GM.05.0010",
             "GM.05.0030"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
           ]
         },
         {
@@ -79496,15 +79738,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -80523,15 +80765,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -80658,6 +80900,31 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "WA.00.0010",
+            "WA.05.0010",
+            "WA.05.0020",
+            "WA.05.0030",
+            "WA.05.0040",
+            "WA.05.0050",
+            "WA.10.0010",
+            "WA.10.0020",
+            "WA.10.0030",
+            "WA.10.0040",
+            "WA.10.0050",
+            "WA.15.0010",
+            "WA.15.0020",
+            "WA.15.0030",
+            "WA.15.0040",
+            "WA.15.0050",
+            "WA.20.0010",
+            "WA.20.0040",
+            "WA.25.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0060",
@@ -80686,31 +80953,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "WA.00.0010",
-            "WA.05.0010",
-            "WA.05.0020",
-            "WA.05.0030",
-            "WA.05.0040",
-            "WA.05.0050",
-            "WA.10.0010",
-            "WA.10.0020",
-            "WA.10.0030",
-            "WA.10.0040",
-            "WA.10.0050",
-            "WA.15.0010",
-            "WA.15.0020",
-            "WA.15.0030",
-            "WA.15.0040",
-            "WA.15.0050",
-            "WA.20.0010",
-            "WA.20.0040",
-            "WA.25.0020"
           ]
         }
       ],
@@ -80793,7 +81035,7 @@
       "taxpointsIPL": 28.3,
       "percentageAL": null,
       "percentageIPL": null,
-      "hasSide": true,
+      "hasSide": false,
       "masters": []
     },
     {
@@ -80879,15 +81121,15 @@
       "rules": [
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -80944,7 +81186,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -81099,6 +81341,16 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
             "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
@@ -81632,7 +81884,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -81787,6 +82039,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -82656,6 +82919,17 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GK.05.0010",
+            "GK.25.0160",
+            "GK.30.0010",
+            "MP.20.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0050",
@@ -82684,17 +82958,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GK.05.0010",
-            "GK.25.0160",
-            "GK.30.0010",
-            "MP.20.0020"
           ]
         },
         {
@@ -82966,6 +83229,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -85139,15 +85416,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -85319,18 +85596,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MK.00.0030",
-            "VA.10.0010",
-            "VA.10.0070",
-            "VA.10.0090",
-            "VA.10.0110",
-            "VA.20.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0320",
@@ -85360,6 +85625,18 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MK.00.0030",
+            "VA.10.0010",
+            "VA.10.0070",
+            "VA.10.0090",
+            "VA.10.0110",
+            "VA.20.0010"
           ]
         },
         {
@@ -85474,6 +85751,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0070"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "AA.20.0010",
@@ -85481,13 +85765,6 @@
             "GG.15.0360",
             "GM.00.0040",
             "GM.00.0080"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0070"
           ]
         },
         {
@@ -85757,6 +86034,17 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GK.05.0010",
+            "GK.25.0160",
+            "GK.30.0050",
+            "MP.20.0020"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0050",
@@ -85788,17 +86076,6 @@
           ]
         },
         {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GK.05.0010",
-            "GK.25.0160",
-            "GK.30.0050",
-            "MP.20.0020"
-          ]
-        },
-        {
           "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Sitzung",
           "maxNumber": 1,
@@ -85823,6 +86100,14 @@
         "9976"
       ],
       "rules": [
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MP.10.0110",
+            "MP.10.0140"
+          ]
+        },
         {
           "type": "CumulationRule",
           "cumulationType": "I",
@@ -85853,14 +86138,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MP.10.0110",
-            "MP.10.0140"
           ]
         },
         {
@@ -86226,11 +86503,11 @@
         },
         {
           "type": "UndecidableRule",
-          "description": "&le; 1 Mal pro 60 Tage"
+          "description": "&le; 4 Sitzung pro 180 Tage"
         },
         {
           "type": "UndecidableRule",
-          "description": "&le; 4 Sitzung pro 180 Tage"
+          "description": "&le; 1 Mal pro 60 Tage"
         }
       ],
       "codeType": "tardoc",
@@ -86628,6 +86905,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -88249,15 +88540,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -88581,6 +88872,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -89986,6 +90291,15 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.10.0020",
+            "GG.10.0040"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0030",
@@ -90015,15 +90329,6 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.10.0020",
-            "GG.10.0040"
           ]
         },
         {
@@ -90693,13 +90998,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AR.00.0500"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "CA.15.0010",
@@ -90717,6 +91015,13 @@
             "CA.15.0130",
             "CA.15.0140",
             "WK.00.0040"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AR.00.0500"
           ]
         },
         {
@@ -90744,18 +91049,18 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "I",
+          "codes": [
+            "AR.05.0050"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "E",
           "codes": [
             "GK.25.0170",
             "GK.35.0020",
             "MG.05.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "I",
-          "codes": [
-            "AR.05.0050"
           ]
         },
         {
@@ -91020,13 +91325,6 @@
             "AA.25.0010",
             "AA.25.0020",
             "AA.25.0030"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "X",
-          "codes": [
-            "MK.25.0020"
           ]
         },
         {
@@ -91378,16 +91676,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GK.10.0010",
-            "GK.10.0020",
-            "MP.20.0020"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0050",
@@ -91416,6 +91704,16 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GK.10.0010",
+            "GK.10.0020",
+            "MP.20.0020"
           ]
         },
         {
@@ -91556,6 +91854,14 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "MK.00.0090",
+            "RG.10.0270"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0020",
@@ -91584,14 +91890,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "MK.00.0090",
-            "RG.10.0270"
           ]
         },
         {
@@ -92548,16 +92846,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0010"
+            "GK.40.0030"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "GK.40.0030"
+            "AR.00.0010"
           ]
         }
       ],
@@ -93128,15 +93426,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 1 Mal pro Seite",
-          "maxNumber": 1,
-          "context": "side"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 2 Mal pro Sitzung",
           "maxNumber": 2,
           "context": "session"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 1 Mal pro Seite",
+          "maxNumber": 1,
+          "context": "side"
         }
       ],
       "codeType": "tardoc",
@@ -93414,15 +93712,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -93458,15 +93756,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -93523,14 +93821,6 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AA.20.0030",
-            "GG.10.0090"
-          ]
-        },
-        {
-          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.05.0020",
@@ -93560,6 +93850,14 @@
             "CA.15.0130",
             "CA.15.0140",
             "WF.00.0010"
+          ]
+        },
+        {
+          "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AA.20.0030",
+            "GG.10.0090"
           ]
         },
         {
@@ -93737,7 +94035,7 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -93899,6 +94197,10 @@
             "CA.00.0050",
             "CA.00.0060",
             "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -94431,7 +94733,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -94586,6 +94888,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -95210,6 +95523,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "AR.00.0430"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "CA.15.0010",
@@ -95227,13 +95547,6 @@
             "CA.15.0130",
             "CA.15.0140",
             "WG.00.0040"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "AR.00.0430"
           ]
         },
         {
@@ -95567,7 +95880,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -95729,6 +96042,10 @@
             "CA.00.0050",
             "CA.00.0060",
             "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -96261,7 +96578,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -96416,6 +96733,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -97175,16 +97503,16 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "E",
+          "cumulationType": "I",
           "codes": [
-            "RG.10.0200"
+            "AR.00.0060"
           ]
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "E",
           "codes": [
-            "AR.00.0060"
+            "RG.10.0200"
           ]
         },
         {
@@ -97573,11 +97901,11 @@
         },
         {
           "type": "UndecidableRule",
-          "description": "&le; 1 Mal pro Tag"
+          "description": "&le; 5 Mal pro 360 Tage"
         },
         {
           "type": "UndecidableRule",
-          "description": "&le; 5 Mal pro 360 Tage"
+          "description": "&le; 1 Mal pro Tag"
         }
       ],
       "codeType": "tardoc",
@@ -97879,6 +98207,13 @@
       "rules": [
         {
           "type": "CumulationRule",
+          "cumulationType": "E",
+          "codes": [
+            "RG.10.0210"
+          ]
+        },
+        {
+          "type": "CumulationRule",
           "cumulationType": "I",
           "codes": [
             "AR.00.0060",
@@ -97907,13 +98242,6 @@
             "CA.15.0120",
             "CA.15.0130",
             "CA.15.0140"
-          ]
-        },
-        {
-          "type": "CumulationRule",
-          "cumulationType": "E",
-          "codes": [
-            "RG.10.0210"
           ]
         },
         {
@@ -98227,7 +98555,7 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -98389,6 +98717,10 @@
             "CA.00.0050",
             "CA.00.0060",
             "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -98921,7 +99253,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -99076,6 +99408,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -99903,6 +100246,20 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.15.0010",
+            "CA.15.0020",
+            "CA.15.0030",
+            "CA.15.0040",
+            "CA.15.0050",
+            "CA.15.0060",
+            "CA.15.0070",
+            "CA.15.0080",
+            "CA.15.0090",
+            "CA.15.0100",
+            "CA.15.0110",
+            "CA.15.0120",
+            "CA.15.0130",
+            "CA.15.0140",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -101210,7 +101567,7 @@
       "rules": [
         {
           "type": "CumulationRule",
-          "cumulationType": "X",
+          "cumulationType": "I",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -101372,6 +101729,10 @@
             "CA.00.0050",
             "CA.00.0060",
             "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -101904,7 +102265,7 @@
         },
         {
           "type": "CumulationRule",
-          "cumulationType": "I",
+          "cumulationType": "X",
           "codes": [
             "AA.00.0060",
             "AA.00.0070",
@@ -102059,6 +102420,17 @@
             "AR.05.0080",
             "AR.05.0090",
             "AR.05.0100",
+            "CA.00.0010",
+            "CA.00.0020",
+            "CA.00.0030",
+            "CA.00.0040",
+            "CA.00.0050",
+            "CA.00.0060",
+            "CA.00.0070",
+            "CA.05.0010",
+            "CA.05.0020",
+            "CA.05.0030",
+            "CA.10.0010",
             "CG.00.0010",
             "CG.00.0130",
             "CG.00.0140",
@@ -102661,15 +103033,15 @@
         },
         {
           "type": "MaxNumberRule",
-          "description": "&le; 2 Mal pro Sitzung",
-          "maxNumber": 2,
-          "context": "session"
-        },
-        {
-          "type": "MaxNumberRule",
           "description": "&le; 1 Mal pro Seite",
           "maxNumber": 1,
           "context": "side"
+        },
+        {
+          "type": "MaxNumberRule",
+          "description": "&le; 2 Mal pro Sitzung",
+          "maxNumber": 2,
+          "context": "session"
         }
       ],
       "codeType": "tardoc",
@@ -103432,6 +103804,20 @@
         "AR.05.0080",
         "AR.05.0090",
         "AR.05.0100",
+        "CA.15.0010",
+        "CA.15.0020",
+        "CA.15.0030",
+        "CA.15.0040",
+        "CA.15.0050",
+        "CA.15.0060",
+        "CA.15.0070",
+        "CA.15.0080",
+        "CA.15.0090",
+        "CA.15.0100",
+        "CA.15.0110",
+        "CA.15.0120",
+        "CA.15.0130",
+        "CA.15.0140",
         "CG.00.0010",
         "CG.00.0130",
         "CG.00.0140",
@@ -104226,14 +104612,14 @@
       "digni": [],
       "rules": [
         {
+          "type": "UndecidableRule",
+          "description": "&le; 20 Mal pro 90 Tage"
+        },
+        {
           "type": "MaxNumberRule",
           "description": "&le; 4 Mal pro Sitzung",
           "maxNumber": 4,
           "context": "session"
-        },
-        {
-          "type": "UndecidableRule",
-          "description": "&le; 20 Mal pro 90 Tage"
         }
       ],
       "codeType": "group",
@@ -104500,6 +104886,17 @@
         "AR.05.0080",
         "AR.05.0090",
         "AR.05.0100",
+        "CA.00.0010",
+        "CA.00.0020",
+        "CA.00.0030",
+        "CA.00.0040",
+        "CA.00.0050",
+        "CA.00.0060",
+        "CA.00.0070",
+        "CA.05.0010",
+        "CA.05.0020",
+        "CA.05.0030",
+        "CA.10.0010",
         "CG.00.0010",
         "CG.00.0130",
         "CG.00.0140",

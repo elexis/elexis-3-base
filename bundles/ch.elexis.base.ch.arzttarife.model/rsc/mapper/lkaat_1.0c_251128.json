@@ -4377,6 +4377,10 @@
       "type": "P"
     },
     {
+      "code": "C08.AJ.0010",
+      "type": "P"
+    },
+    {
       "code": "C08.AJ.Z001",
       "type": "PZ"
     },
@@ -4410,10 +4414,6 @@
     },
     {
       "code": "C08.AJ.Z009",
-      "type": "PZ"
-    },
-    {
-      "code": "C08.AJ.Z010",
       "type": "PZ"
     },
     {
@@ -7330,14 +7330,6 @@
     },
     {
       "code": "C09.KF.Z002",
-      "type": "PZ"
-    },
-    {
-      "code": "C09.KF.Z004",
-      "type": "PZ"
-    },
-    {
-      "code": "C09.KF.Z005",
       "type": "PZ"
     },
     {

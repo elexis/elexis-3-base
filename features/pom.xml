@@ -73,6 +73,7 @@
     <module>ch.elexis.pdfBills.feature</module>
     <module>ch.elexis.pdfBills.privat.feature</module>
     <module>ch.elexis.privatrechnung.feature</module>
+    <module>ch.elexis.regiomed.order.feature</module>
     <module>ch.elexis.stickynotes.feature</module>
     <module>ch.elexis.support.dbshaker.feature</module>
     <module>ch.gpb.elexis.cst.feature</module>

@@ -137,6 +137,7 @@
     <module>ch.elexis.pdfBills</module>
     <module>ch.elexis.pdfBills.privat</module>
     <module>ch.elexis.privatrechnung</module>
+    <module>ch.elexis.regiomed.order</module>
     <module>ch.elexis.stickynotes</module>
     <module>ch.elexis.support.dbshaker</module>
     <module>ch.gpb.elexis.cst</module>

@@ -11,10 +11,10 @@ package ch.docbox.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -27,6 +27,9 @@ import org.slf4j.LoggerFactory;
 import ch.docbox.cdach.CdaChXPath;
 import ch.docbox.elexis.UserDocboxPreferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
@@ -211,26 +214,26 @@ public class CdaMessage extends PersistentObject {
 		String files[] = this.getFiles();
 		if (files != null && files.length > 0) {
 			for (String file : files) {
-				int pos = file.lastIndexOf(".");
-				String ext = StringUtils.EMPTY;
-				if (pos > 0) {
-					ext = file.substring(pos);
-				}
-				if (ext != null) {
-					ext = ext.trim();
-				}
-				String path = getPath(file);
-				if (path != null) {
-					path = path.trim();
-				}
+				String uriString = getPath(file);
+				if (uriString == null)
+					continue;
+
 				try {
+					IVirtualFilesystemService vfs = VirtualFilesystemServiceHolder.get();
+					IVirtualFilesystemHandle handle = vfs.of(uriString);
+					Optional<File> localFile = handle.toFile();
+					String pathToShow;
+					if (localFile.isPresent()) {
+						pathToShow = localFile.get().getAbsolutePath();
+					} else {
+						pathToShow = uriString;
+					}
+					String ext = handle.getExtension();
 					Program program = Program.findProgram(ext);
 					if (program != null) {
-						program.execute(path);
+						program.execute(pathToShow);
 					} else {
-						if (Program.launch(path) == false) {
-							Runtime.getRuntime().exec(path);
-						}
+						Program.launch(pathToShow);
 					}
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
@@ -317,18 +320,26 @@ public class CdaMessage extends PersistentObject {
 	 * returns the path where we will store the attachmetns
 	 */
 	public String getPath(String fileName) {
-		String path = UserDocboxPreferences.getPathFiles();
-		String pathSeparator = System.getProperty("file.separator");
-		if (!path.endsWith(pathSeparator)) {
-			path = path + pathSeparator;
-		}
-		path = path + getId();
-		if (fileName != null) {
-			path += pathSeparator + fileName;
-		}
-		return path;
-	}
+	    String baseValue = UserDocboxPreferences.getPathFiles();
+	    if (StringUtils.isBlank(baseValue)) {
+	        return null;
+	    }
 
+	    try {
+			IVirtualFilesystemService vfs = VirtualFilesystemServiceHolder.get();
+			IVirtualFilesystemHandle handle = vfs.of(baseValue, true);
+			IVirtualFilesystemHandle messageFolder = handle.subDir(getId());
+	        
+	        if (fileName != null) {
+				return messageFolder.subFile(fileName).getURI().toString();
+	        }
+			return messageFolder.getURI().toString();
+	    } catch (Exception e) {
+	        logger.error("Error building path URI", e);
+	        return null;
+	    }
+	}
+	
 	private String getPath() {
 		return getPath(null);
 	}
@@ -341,54 +352,48 @@ public class CdaMessage extends PersistentObject {
 	 * @return true if successful false otherwise
 	 */
 	public boolean unzipAttachment(byte[] attachment) {
-		ArrayList<String> fileList = new ArrayList<String>();
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(attachment);
-		ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-		ZipEntry zipEntry = null;
-		String path = this.getPath();
-		try {
-			File directory = new File(path);
-			if (!directory.exists()) {
-				directory.mkdir();
+		ArrayList<String> fileList = new ArrayList<>();
+		IVirtualFilesystemService vfs = VirtualFilesystemServiceHolder.get();
+		String pathUri = this.getPath();
+
+		if (pathUri == null) {
+			logger.error("Path URI is null, cannot unzip attachment");
+			return false;
+		}
+
+		try (ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(attachment))) {
+			IVirtualFilesystemHandle directoryHandle = vfs.of(pathUri, true);
+			if (!directoryHandle.exists()) {
+				directoryHandle.mkdirs();
 			}
+
+			ZipEntry zipEntry;
 			while ((zipEntry = zipInputStream.getNextEntry()) != null) {
 				if (!zipEntry.isDirectory()) {
 					String fileName = zipEntry.getName();
+					fileName = fileName.replace("/", "").replace("\\", "");
 					fileList.add(fileName);
-					if (fileName.contains("/")) {
-						fileName = fileName.replaceAll("/", StringUtils.EMPTY);
+
+					logger.debug("Exporting file to VFS: {}, {}", pathUri, fileName);
+					IVirtualFilesystemHandle fileHandle = directoryHandle.subFile(fileName);
+					try (java.io.OutputStream fileOutputStream = fileHandle.openOutputStream()) {
+						byte[] buffer = new byte[1024];
+						int len;
+						while ((len = zipInputStream.read(buffer)) > 0) {
+							fileOutputStream.write(buffer, 0, len);
+						}
 					}
-					if (fileName.contains("\\")) {
-						fileName = fileName.replaceAll("\\\\", StringUtils.EMPTY);
-					}
-					logger.debug("exporting file out of attachment to " + path + "," + fileName);
-					File file = new File(directory, fileName);
-					if (!file.exists()) {
-						file.createNewFile();
-					}
-					FileOutputStream fileOutputStream = new FileOutputStream(file);
-					byte[] bytesEntry = new byte[1024];
-					int read = 0;
-					while ((read = zipInputStream.read(bytesEntry)) != -1) {
-						fileOutputStream.write(bytesEntry, 0, read);
-					}
-					fileOutputStream.close();
 				}
 				zipInputStream.closeEntry();
 			}
-			zipInputStream.close();
-			String fileListConcatenated = StringUtils.EMPTY;
-			for (int i = 0; i < fileList.size(); ++i) {
-				fileListConcatenated += fileList.get(i);
-				if (i < fileList.size() - 1) {
-					fileListConcatenated += " \n";
-				}
-			}
+
+			String fileListConcatenated = String.join(" \n", fileList);
 			return set("FilesListing", fileListConcatenated);
+
 		} catch (Exception e) {
-			logger.error("Exception " + e.toString());
+			logger.error("Exception during unzip to VFS: " + e.toString(), e);
+			return false;
 		}
-		return false;
 	}
 
 	@Override

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.regiomed.order.preferences.RegiomedPreferencePage"
+            id="ch.elexis.regiomed.order.preferences"
+            name="Regiomed">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.Transporter">
+      <Transporter
+            ExporterClass="ch.elexis.regiomed.order.handler.RegiomedSender"
+            id="ch.elexis.regiomed.order.sender"
+            name="Regiomed"
+            type="ch.elexis.data.Bestellung">
+      </Transporter>
+   </extension>
+
+</plugin>

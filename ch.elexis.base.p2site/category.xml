@@ -280,6 +280,9 @@
    <feature id="at.medevit.elexis.loinc.feature">
       <category name="libraries"/>
    </feature>
+   <feature id="ch.elexis.regiomed.order.feature">
+      <category name="dataexchange"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

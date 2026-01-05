@@ -58,7 +58,8 @@ public class TarmedLeistungCodeElementService implements ICodeElementServiceCont
 		if (encounter != null) {
 			return encounter.getDate();
 		}
-		return LocalDate.now();
+		// last day for valid tarmed
+		return LocalDate.of(2025, 12, 31);
 	}
 
 	private String getLaw(Map<Object, Object> context) {

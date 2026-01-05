@@ -126,6 +126,8 @@ import ch.rgw.tools.VersionInfo;
 
 public class Tarmed50Exporter {
 
+	private static String UNKNOWN_SSN = "7569999999991";
+
 	public static enum EsrType {
 		esr9, esrQR
 	}
@@ -1238,7 +1240,7 @@ public class Tarmed50Exporter {
 			ahv = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(), TarmedRequirements.SSN)
 					.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		}
-		return StringUtils.isNotBlank(ahv) ? ahv : null;
+		return StringUtils.isNotBlank(ahv) ? ahv : UNKNOWN_SSN;
 	}
 
 	protected EsrQRType getEsrQR(IInvoice invoice) throws DatatypeConfigurationException {

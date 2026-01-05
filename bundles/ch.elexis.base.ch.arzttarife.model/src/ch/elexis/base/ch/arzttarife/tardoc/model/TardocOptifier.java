@@ -456,7 +456,59 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		} else {
 			ret.setFactor(1.0);
 		}
+		if (isFactorBased(code)) {
+			applyCalculateFactorBasedPrice(ret, code, kons);
+		}
 		return ret;
+	}
+
+	private void applyCalculateFactorBasedPrice(IBilled billed, TardocLeistung code, IEncounter kons) {
+		Double alFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_AL);
+		double alSum = 0.0;
+		double tlSum = 0.0;
+		if (alFactor > 0.0) {
+			for (IBilled v : kons.getBilled()) {
+				if (v.getBillable() instanceof TardocLeistung) {
+					TardocLeistung tl = (TardocLeistung) v.getBillable();
+					alSum += (tl.getAL(kons.getMandator()) * v.getAmount());
+				}
+			}
+			billed.setPoints((int) Math.round(alSum));
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL, Double.toString(alSum));
+			billed.setPrimaryScale((int) (alFactor * 100));
+		}
+		Double tlFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_TL);
+		if (tlFactor > 0.0 && (alFactor == 0.0 || Double.compare(tlFactor, alFactor) == 0)) {
+			for (IBilled v : kons.getBilled()) {
+				if (v.getBillable() instanceof TardocLeistung) {
+					TardocLeistung tl = (TardocLeistung) v.getBillable();
+					tlSum += (tl.getIPL() * v.getAmount());
+				}
+			}
+			billed.setPoints((int) Math.round(tlSum + alSum));
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL, Double.toString(tlSum));
+			billed.setPrimaryScale((int) (tlFactor * 100));
+		}
+	}
+
+	private boolean isFactorBased(TardocLeistung code) {
+		if (code.getExtension() != null) {
+			Double alFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_AL);
+			Double tlFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_TL);
+			return alFactor > 0.0 || tlFactor > 0.0;
+		}
+		return false;
+	}
+
+	private Double getFactorValue(TardocLeistung code, String key) {
+		if (code.getExtension() != null && code.getExtension().getExtInfo(key) != null) {
+			try {
+				return Double.parseDouble((String) code.getExtension().getExtInfo(key));
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+		return Double.valueOf(0.0);
 	}
 
 	/**

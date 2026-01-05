@@ -11,6 +11,7 @@ import org.junit.Test;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class TarmedLimitationTest extends AbstractTarmedTest {
 
@@ -18,7 +19,10 @@ public class TarmedLimitationTest extends AbstractTarmedTest {
 	public void findVerrechnetByPatientCodeDuringPeriod() {
 		before();
 
-		TarmedLeistung tlGroupLimit1 = TarmedLeistung.getFromCode("02.0310", LocalDate.now(), null);
+		encounter.setDate(LocalDate.of(2025, 12, 31));
+		CoreModelServiceHolder.get().save(encounter);
+
+		TarmedLeistung tlGroupLimit1 = TarmedLeistung.getFromCode("02.0310", LocalDate.of(2025, 12, 31), null);
 		result = billSingle(encounter, tlGroupLimit1);
 		assertTrue(result.getMessages().toString(), result.isOK());
 		result = billSingle(encounter, tlGroupLimit1);

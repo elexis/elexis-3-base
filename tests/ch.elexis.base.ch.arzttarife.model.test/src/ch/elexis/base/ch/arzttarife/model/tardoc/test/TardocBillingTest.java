@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.tardoc.model.TardocConstants;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.verrechnet.Constants;
@@ -30,6 +31,10 @@ public class TardocBillingTest extends AbstractTardocTest {
 	private TardocLeistung code_MK250090;
 	private TardocLeistung code_MK200300;
 
+	private TardocLeistung code_AA300040;
+	private TardocLeistung code_AA300050;
+	private TardocLeistung code_MK250120;
+
 	@Override
 	@Before
 	public void before() {
@@ -48,6 +53,11 @@ public class TardocBillingTest extends AbstractTardocTest {
 		code_MK250090 = TardocLeistung.getFromCode("MK.25.0090", LocalDate.of(2026, 1, 1), null);
 		// MK20.0300 - Zuschlag-Zuschlagsleistung
 		code_MK200300 = TardocLeistung.getFromCode("MK.20.0300", LocalDate.of(2026, 1, 1), null);
+
+		// Prozent Zuschläge
+		code_AA300040 = TardocLeistung.getFromCode("AA.30.0040", LocalDate.of(2026, 1, 1), null);
+		code_AA300050 = TardocLeistung.getFromCode("AA.30.0050", LocalDate.of(2026, 1, 1), null);
+		code_MK250120 = TardocLeistung.getFromCode("MK.25.0120", LocalDate.of(2026, 1, 1), null);
 	}
 
 	@Override
@@ -163,4 +173,52 @@ public class TardocBillingTest extends AbstractTardocTest {
 
 		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 	}
+
+	@Test
+	public void zuschlagProzentALTardocPosition() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService.bill(code_AA300040, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		int noZuschalgCents = billed.getTotal().getCents();
+
+		// zuschlag
+		status = billingService.bill(code_AA300050, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		assertEquals("0.25", code_AA300050.getExtension().getExtInfo(TardocConstants.TardocLeistung.EXT_FLD_F_AL));
+
+		// zuschlag prozent
+		assertEquals(1.0, billed.getAmount(), 0.001);
+		assertFalse(billed.getPrice().isZero());
+		assertEquals(Math.round(noZuschalgCents * 0.25), billed.getTotal().getCents(), 0.01);
+	}
+
+	@Test
+	public void zuschlagProzentALTLSameTardocPosition() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService.bill(code_MK250020, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		int noZuschalgCents = billed.getTotal().getCents();
+
+		// zuschlag
+		status = billingService.bill(code_MK250120, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		assertEquals("0.3", code_MK250120.getExtension().getExtInfo(TardocConstants.TardocLeistung.EXT_FLD_F_AL));
+		assertEquals("0.3", code_MK250120.getExtension().getExtInfo(TardocConstants.TardocLeistung.EXT_FLD_F_TL));
+
+		// zuschlag prozent
+		assertEquals(1.0, billed.getAmount(), 0.001);
+		assertFalse(billed.getPrice().isZero());
+		assertEquals(Math.round(noZuschalgCents * 0.30), billed.getTotal().getCents(), 0.01);
+	}
+
 }

@@ -16,12 +16,9 @@ import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.IOrderEntry;
-import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.OrderEntryState;
-import ch.elexis.core.services.IOrderService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.services.holder.OrderServiceHolder;
 import ch.elexis.core.status.ElexisStatus;
 import ch.elexis.core.ui.exchange.ArticleUtil;
 import ch.elexis.core.ui.exchange.IDataSender;
@@ -30,7 +27,6 @@ import ch.elexis.core.ui.exchange.elements.XChangeElement;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.BestellView;
 import ch.elexis.core.utils.CoreUtil;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.regiomed.order.client.RegiomedOrderClient;
 import ch.elexis.regiomed.order.config.RegiomedConfig;
@@ -177,9 +173,6 @@ public class RegiomedSender implements IDataSender {
 				try {
 					IOrder order = entry.getOrder();
 					if (order != null) {
-						IOrderService orderService = OsgiServiceUtil.getService(IOrderService.class)
-								.orElseThrow(() -> new IllegalStateException("no order service found")); //$NON-NLS-1$
-						orderService.getHistoryService().logRemove(order, entry);
 						order.getEntries().remove(entry);
 						CoreModelServiceHolder.get().delete(entry);
 					}
@@ -288,27 +281,6 @@ public class RegiomedSender implements IDataSender {
 		}
 
 		return null;
-	}
-
-	@Override
-	public boolean canHandle(Identifiable identifiable) {
-		if (!(identifiable instanceof IOrder order)) {
-			return false;
-		}
-
-		String cfg = ConfigServiceHolder.getGlobal(RegiomedConstants.CFG_REGIOMED_SUPPLIER, StringUtils.EMPTY);
-		if (StringUtils.isBlank(cfg)) {
-			return false;
-		}
-
-		String[] supplierIds = StringUtils.split(cfg, ',');
-		for (String supplierId : supplierIds) {
-			IContact supplier = CoreModelServiceHolder.get().load(supplierId, IContact.class).orElse(null);
-			if (supplier != null && OrderServiceHolder.get().containsSupplier(order, supplier)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 //	@Override

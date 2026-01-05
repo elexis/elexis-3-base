@@ -7,4 +7,4 @@ Require-Bundle: ch.elexis.core.ui,
  ch.elexis.core.data,
  com.google.gson
 Automatic-Module-Name: ch.elexis.regiomed.order
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17

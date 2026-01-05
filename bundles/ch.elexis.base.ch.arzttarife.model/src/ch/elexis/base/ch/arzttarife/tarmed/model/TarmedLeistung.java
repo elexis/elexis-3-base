@@ -498,7 +498,7 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 	}
 
 	public static TarmedLeistung getFromCode(final String code, String law) {
-		return getFromCode(code, LocalDate.now(), law);
+		return getFromCode(code, LocalDate.of(2025, 12, 31), law);
 	}
 
 	@Override

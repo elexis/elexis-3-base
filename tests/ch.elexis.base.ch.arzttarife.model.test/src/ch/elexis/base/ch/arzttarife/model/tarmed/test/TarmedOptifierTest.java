@@ -89,19 +89,19 @@ public class TarmedOptifierTest {
 		importTarmedReferenceData();
 
 		// init some basic services
-		tlBaseFirst5Min = TarmedLeistung.getFromCode("00.0010", LocalDate.now(), LAW);
-		tlBaseXRay = TarmedLeistung.getFromCode("39.0020", LocalDate.now(), LAW);
-		tlBaseRadiologyHospital = TarmedLeistung.getFromCode("39.0015", LocalDate.now(), LAW);
-		tlUltrasound = TarmedLeistung.getFromCode("39.3005", LocalDate.now(), LAW);
+		tlBaseFirst5Min = TarmedLeistung.getFromCode("00.0010", LocalDate.of(2025, 12, 31), LAW);
+		tlBaseXRay = TarmedLeistung.getFromCode("39.0020", LocalDate.of(2025, 12, 31), LAW);
+		tlBaseRadiologyHospital = TarmedLeistung.getFromCode("39.0015", LocalDate.of(2025, 12, 31), LAW);
+		tlUltrasound = TarmedLeistung.getFromCode("39.3005", LocalDate.of(2025, 12, 31), LAW);
 
-		tlAgeTo1Month = TarmedLeistung.getFromCode("00.0870", LocalDate.now(), LAW);
-		tlAgeTo7Years = TarmedLeistung.getFromCode("00.0900", LocalDate.now(), LAW);
-		tlAgeFrom7Years = TarmedLeistung.getFromCode("00.0890", LocalDate.now(), LAW);
+		tlAgeTo1Month = TarmedLeistung.getFromCode("00.0870", LocalDate.of(2025, 12, 31), LAW);
+		tlAgeTo7Years = TarmedLeistung.getFromCode("00.0900", LocalDate.of(2025, 12, 31), LAW);
+		tlAgeFrom7Years = TarmedLeistung.getFromCode("00.0890", LocalDate.of(2025, 12, 31), LAW);
 
-		tlGroupLimit1 = TarmedLeistung.getFromCode("02.0310", LocalDate.now(), LAW);
-		tlGroupLimit2 = TarmedLeistung.getFromCode("02.0340", LocalDate.now(), LAW);
+		tlGroupLimit1 = TarmedLeistung.getFromCode("02.0310", LocalDate.of(2025, 12, 31), LAW);
+		tlGroupLimit2 = TarmedLeistung.getFromCode("02.0340", LocalDate.of(2025, 12, 31), LAW);
 
-		tlAlZero = TarmedLeistung.getFromCode("00.0716", LocalDate.now(), LAW);
+		tlAlZero = TarmedLeistung.getFromCode("00.0716", LocalDate.of(2025, 12, 31), LAW);
 
 		// Patient Grissemann with case and consultation
 		patGrissemann = new IContactBuilder.PatientBuilder(coreModelService, "Grissemann", "Christoph",
@@ -110,6 +110,8 @@ public class TarmedOptifierTest {
 				LAW).buildAndSave();
 		// fallGriss.setInfoElement("Kostenträger", patGrissemann.getId());
 		konsGriss = new IEncounterBuilder(coreModelService, fallGriss, mandator).buildAndSave();
+		konsGriss.setDate(LocalDate.of(2025, 12, 31));
+		coreModelService.save(konsGriss);
 		resetKons(konsGriss);
 
 		// Patient Stermann with case and consultation
@@ -119,6 +121,8 @@ public class TarmedOptifierTest {
 				.buildAndSave();
 		// fallSter.setInfoElement("Kostenträger", patStermann.getId());
 		konsSter = new IEncounterBuilder(coreModelService, fallSter, mandator).buildAndSave();
+		konsSter.setDate(LocalDate.of(2025, 12, 31));
+		coreModelService.save(konsSter);
 		resetKons(konsSter);
 
 		// Patient OneYear with case and consultation
@@ -129,6 +133,8 @@ public class TarmedOptifierTest {
 				.buildAndSave();
 		// fallOneYear.setInfoElement("Kostenträger", patOneYear.getId());
 		konsOneYear = new IEncounterBuilder(coreModelService, fallOneYear, mandator).buildAndSave();
+		konsOneYear.setDate(LocalDate.of(2025, 12, 31));
+		coreModelService.save(konsOneYear);
 		resetKons(konsOneYear);
 
 		// Patient below75 with case and consultation
@@ -139,6 +145,8 @@ public class TarmedOptifierTest {
 				LAW).buildAndSave();
 		// fallBelow75.setCostBearer(patBelow75);
 		konsBelow75 = new IEncounterBuilder(coreModelService, fallBelow75, mandator).buildAndSave();
+		konsBelow75.setDate(LocalDate.of(2025, 12, 31));
+		coreModelService.save(konsBelow75);
 		resetKons(konsBelow75);
 
 		konsPeriodStart = new IEncounterBuilder(coreModelService, fallBelow75, mandator)
@@ -196,14 +204,18 @@ public class TarmedOptifierTest {
 	@Test
 	public void testAddCompatibleAndIncompatible() {
 		clearKons(konsGriss);
-		Result<IBilled> resultGriss = optifier.add(TarmedLeistung.getFromCode("39.3005", LocalDate.now(), LAW),
+		Result<IBilled> resultGriss = optifier.add(
+				TarmedLeistung.getFromCode("39.3005", LocalDate.of(2025, 12, 31), LAW),
 				konsGriss, 1.0);
 		assertTrue(resultGriss.isOK());
-		resultGriss = optifier.add(TarmedLeistung.getFromCode("39.0020", LocalDate.now(), LAW), konsGriss, 1.0);
+		resultGriss = optifier.add(TarmedLeistung.getFromCode("39.0020", LocalDate.of(2025, 12, 31), LAW), konsGriss,
+				1.0);
 		assertFalse(resultGriss.isOK());
-		resultGriss = optifier.add(TarmedLeistung.getFromCode("01.0110", LocalDate.now(), LAW), konsGriss, 1.0);
+		resultGriss = optifier.add(TarmedLeistung.getFromCode("01.0110", LocalDate.of(2025, 12, 31), LAW), konsGriss,
+				1.0);
 		assertTrue(resultGriss.isOK());
-		resultGriss = optifier.add(TarmedLeistung.getFromCode("39.3830", LocalDate.now(), LAW), konsGriss, 1.0);
+		resultGriss = optifier.add(TarmedLeistung.getFromCode("39.3830", LocalDate.of(2025, 12, 31), LAW), konsGriss,
+				1.0);
 		assertTrue(resultGriss.isOK());
 		resetKons(konsGriss);
 	}
@@ -248,7 +260,7 @@ public class TarmedOptifierTest {
 
 		clearKons(konsSter);
 		resCompatible = optifier.isCompatible(tlBaseFirst5Min,
-				TarmedLeistung.getFromCode("00.1345", LocalDate.now(), LAW), konsSter);
+				TarmedLeistung.getFromCode("00.1345", LocalDate.of(2025, 12, 31), LAW), konsSter);
 		assertFalse(resCompatible.isOK());
 		resText = "";
 		if (!resCompatible.getMessages().isEmpty()) {
@@ -256,12 +268,12 @@ public class TarmedOptifierTest {
 		}
 		assertEquals("00.1345 nicht kombinierbar mit 00.0010, wegen Block Kumulation", resText);
 
-		resCompatible = optifier.isCompatible(TarmedLeistung.getFromCode("01.0265", LocalDate.now(), LAW),
-				TarmedLeistung.getFromCode("00.1345", LocalDate.now(), LAW), konsSter);
+		resCompatible = optifier.isCompatible(TarmedLeistung.getFromCode("01.0265", LocalDate.of(2025, 12, 31), LAW),
+				TarmedLeistung.getFromCode("00.1345", LocalDate.of(2025, 12, 31), LAW), konsSter);
 		assertTrue(resCompatible.isOK());
 
-		resCompatible = optifier.isCompatible(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW),
-				TarmedLeistung.getFromCode("03.0020", LocalDate.now(), LAW), konsSter);
+		resCompatible = optifier.isCompatible(TarmedLeistung.getFromCode("00.0510", LocalDate.of(2025, 12, 31), LAW),
+				TarmedLeistung.getFromCode("03.0020", LocalDate.of(2025, 12, 31), LAW), konsSter);
 		assertFalse(resCompatible.isOK());
 		resText = "";
 		if (!resCompatible.getMessages().isEmpty()) {
@@ -269,8 +281,8 @@ public class TarmedOptifierTest {
 		}
 		assertEquals("03.0020 nicht kombinierbar mit 00.0510, wegen Block Kumulation", resText);
 
-		resCompatible = optifier.isCompatible(TarmedLeistung.getFromCode("00.2510", LocalDate.now(), LAW),
-				TarmedLeistung.getFromCode("03.0020", LocalDate.now(), LAW), konsSter);
+		resCompatible = optifier.isCompatible(TarmedLeistung.getFromCode("00.2510", LocalDate.of(2025, 12, 31), LAW),
+				TarmedLeistung.getFromCode("03.0020", LocalDate.of(2025, 12, 31), LAW), konsSter);
 		assertTrue(resCompatible.isOK());
 
 		resetKons(konsSter);
@@ -280,8 +292,8 @@ public class TarmedOptifierTest {
 	public void testSetBezug() {
 		clearKons(konsSter);
 
-		additionalService = TarmedLeistung.getFromCode("39.5010", LocalDate.now(), LAW);
-		mainService = TarmedLeistung.getFromCode("39.5060", LocalDate.now(), LAW);
+		additionalService = TarmedLeistung.getFromCode("39.5010", LocalDate.of(2025, 12, 31), LAW);
+		mainService = TarmedLeistung.getFromCode("39.5060", LocalDate.of(2025, 12, 31), LAW);
 		// additional without main, not allowed
 		Result<IBilled> resultSter = optifier.add(additionalService, konsSter, 1.0);
 		assertFalse(resultSter.isOK());
@@ -339,7 +351,7 @@ public class TarmedOptifierTest {
 
 	@Test
 	public void testBelow75() {
-		TarmedLeistung tl = TarmedLeistung.getFromCode("00.0020", LocalDate.now(), LAW);
+		TarmedLeistung tl = TarmedLeistung.getFromCode("00.0020", LocalDate.of(2025, 12, 31), LAW);
 		// add age restriction to 75 years with 0 tolerance, for the test, like in
 		// tarmed 1.09
 		Map<String, String> ext = tl.getExtension().getLimits();
@@ -418,7 +430,8 @@ public class TarmedOptifierTest {
 	public void testDignitaet() {
 		IEncounter kons = konsGriss;
 		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor(
-				konsGriss.getCoverage().getBillingSystem().getName(), 0.83, LocalDate.now().minus(1, ChronoUnit.DAYS));
+				konsGriss.getCoverage().getBillingSystem().getName(), 0.83,
+				LocalDate.of(2025, 12, 31).minus(1, ChronoUnit.DAYS));
 
 		MandantType mandantType = ArzttarifeUtil.getMandantType(mandator);
 		assertEquals(MandantType.SPECIALIST, mandantType);
@@ -484,14 +497,14 @@ public class TarmedOptifierTest {
 	public void test9533() {
 		clearKons(konsGriss);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("02.0010", LocalDate.now(), LAW), konsGriss,
-				1.0);
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("02.0010", LocalDate.of(2025, 12, 31), LAW),
+				konsGriss, 1.0);
 		assertTrue(result.isOK());
 
-		result = optifier.add(TarmedLeistung.getFromCode("02.0010", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("02.0010", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 
-		result = optifier.add(TarmedLeistung.getFromCode("02.0010", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("02.0010", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 
 		resetKons(konsGriss);
@@ -542,22 +555,22 @@ public class TarmedOptifierTest {
 	public void testSideExclusion() {
 		clearKons(konsGriss);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("09.0930", LocalDate.now(), LAW), konsGriss,
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("09.0930", LocalDate.of(2025,12,31), LAW), konsGriss,
 				1.0);
 		assertTrue(result.isOK());
 
-		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025,12,31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
 
 		optifier.putContext(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
-		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025,12,31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
 		optifier.clearContext();
 
 		optifier.putContext(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
-		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025,12,31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 		optifier.clearContext();
 
@@ -571,12 +584,13 @@ public class TarmedOptifierTest {
 	public void testSideLimit() {
 		clearKons(konsGriss);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("39.3408", LocalDate.now(), LAW), konsGriss,
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("39.3408", LocalDate.of(2025, 12, 31), LAW),
+				konsGriss,
 				1.0);
 		assertTrue(result.isOK());
 		assertEquals(1, getLeistungAmount("39.3408", konsGriss));
 
-		result = optifier.add(TarmedLeistung.getFromCode("39.3408", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("39.3408", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 		assertEquals(2, getLeistungAmount("39.3408", konsGriss));
 
@@ -589,7 +603,7 @@ public class TarmedOptifierTest {
 		assertTrue(sides.contains(Constants.LEFT));
 		assertTrue(sides.contains(Constants.RIGHT));
 
-		result = optifier.add(TarmedLeistung.getFromCode("39.3408", LocalDate.now(), LAW), konsGriss);
+		result = optifier.add(TarmedLeistung.getFromCode("39.3408", LocalDate.of(2025, 12, 31), LAW), konsGriss);
 		assertFalse(result.isOK());
 		assertEquals(2, getLeistungAmount("39.3408", konsGriss));
 
@@ -603,12 +617,13 @@ public class TarmedOptifierTest {
 	public void testPatientLimit() {
 		clearKons(konsOneYear);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.now(), LAW), konsOneYear,
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.of(2025, 12, 31), LAW),
+				konsOneYear,
 				1.0);
 		assertTrue(result.isOK());
 		assertEquals(1, getLeistungAmount("03.0060", konsOneYear));
 
-		result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.now(), LAW), konsOneYear, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.of(2025, 12, 31), LAW), konsOneYear, 1.0);
 		assertFalse(result.isOK());
 		assertEquals(1, getLeistungAmount("03.0060", konsOneYear));
 
@@ -624,26 +639,27 @@ public class TarmedOptifierTest {
 
 		Result<IBilled> result;
 		for (int i = 0; i < 6; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0050", LocalDate.now(), LAW), konsGriss, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0050", LocalDate.of(2025, 12, 31), LAW), konsGriss,
+					1.0);
 			assertTrue(result.isOK());
 		}
-		result = optifier.add(TarmedLeistung.getFromCode("00.0050", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0050", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 		assertEquals(6, konsGriss.getBilled().get(0).getAmount(), 0.01);
 
 		clearKons(konsGriss);
 		result = optifier.add(tlBaseFirst5Min, konsGriss, 1.0);
 		assertTrue(result.isOK());
-		result = optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
-		result = optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
-		result = optifier.add(TarmedLeistung.getFromCode("00.0030", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0030", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 		result = optifier.add(tlBaseFirst5Min, konsGriss);
 		assertFalse(result.isOK());
 		assertEquals(1, getLeistungAmount("00.0010", konsGriss));
-		result = optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 		assertEquals(2, getLeistungAmount("00.0020", konsGriss));
 
@@ -654,11 +670,12 @@ public class TarmedOptifierTest {
 	public void testKumulationSide() {
 		clearKons(konsGriss);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.now(), LAW), konsGriss,
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.of(2025, 12, 31), LAW),
+				konsGriss,
 				1.0);
 		assertEquals("l", result.get().getExtInfo("Seite"));
 		assertTrue(result.isOK());
-		result = optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 
 		clearKons(konsGriss);
@@ -678,18 +695,22 @@ public class TarmedOptifierTest {
 		Result<IBilled> result = null;
 		// start and middle are 1 period
 		for (int i = 0; i < 15; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodStart, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.of(2025, 12, 31), LAW),
+					konsPeriodStart, 1.0);
 			assertTrue(result.isOK());
 		}
 		for (int i = 0; i < 15; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.of(2025, 12, 31), LAW),
+					konsPeriodMiddle, 1.0);
 			assertTrue(result.isOK());
 		}
-		result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.of(2025, 12, 31), LAW), konsPeriodMiddle,
+				1.0);
 		assertFalse(result.isOK());
 		// end is after period so middle is not included for limit
 		for (int i = 0; i < 15; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodEnd, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.of(2025, 12, 31), LAW), konsPeriodEnd,
+					1.0);
 			assertTrue(result.isOK());
 		}
 
@@ -699,12 +720,15 @@ public class TarmedOptifierTest {
 
 		// middle and end is 1 month limit is 6 times 3 month
 		for (int i = 0; i < 6; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.of(2025, 12, 31), LAW),
+					konsPeriodMiddle, 1.0);
 			assertTrue(result.isOK());
 		}
-		result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.of(2025, 12, 31), LAW), konsPeriodMiddle,
+				1.0);
 		assertFalse(result.isOK());
-		result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW), konsPeriodEnd, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.of(2025, 12, 31), LAW), konsPeriodEnd,
+				1.0);
 		assertFalse(result.isOK());
 
 		clearKons(konsPeriodStart);
@@ -726,21 +750,24 @@ public class TarmedOptifierTest {
 		konsPeriodStart.setDate(LocalDate.of(2023, 1, 1));
 		CoreModelServiceHolder.get().save(konsPeriodStart);
 		for (int i = 0; i < 30; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodStart, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.of(2025, 12, 31), LAW),
+					konsPeriodStart, 1.0);
 			assertTrue(result.isOK());
 		}
 		// not in conflic outside of limitation durations
 		konsPeriodMiddle.setDate(LocalDate.of(2023, 5, 1));
 		CoreModelServiceHolder.get().save(konsPeriodMiddle);
 		for (int i = 0; i < 30; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.of(2025, 12, 31), LAW),
+					konsPeriodMiddle, 1.0);
 			assertTrue(result.isOK());
 		}
 		// not in conflic outside of limitation durations
 		konsPeriodEnd.setDate(LocalDate.of(2023, 8, 2));
 		CoreModelServiceHolder.get().save(konsPeriodEnd);
 		for (int i = 0; i < 30; i++) {
-			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodEnd, 1.0);
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.of(2025, 12, 31), LAW), konsPeriodEnd,
+					1.0);
 			assertTrue(result.isOK());
 		}
 		// re check without billing
@@ -772,13 +799,14 @@ public class TarmedOptifierTest {
 	public void testAdditionalBlockExclusion() {
 		clearKons(konsGriss);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("17.0710", LocalDate.now(), LAW), konsGriss,
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("17.0710", LocalDate.of(2025, 12, 31), LAW),
+				konsGriss,
 				1.0);
 		assertTrue(result.isOK());
-		result = optifier.add(TarmedLeistung.getFromCode("17.0740", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("17.0740", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 		// additional service, not in block LB-05, billing is allowed anyway
-		result = optifier.add(TarmedLeistung.getFromCode("17.0750", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("17.0750", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 
 		clearKons(konsGriss);
@@ -788,18 +816,19 @@ public class TarmedOptifierTest {
 	public void testCustomExclusion() {
 		clearKons(konsGriss);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("00.0010", LocalDate.now(), LAW), konsGriss,
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("00.0010", LocalDate.of(2025, 12, 31), LAW),
+				konsGriss,
 				1.0);
 		assertTrue(result.isOK());
-		result = optifier.add(TarmedLeistung.getFromCode("00.0015", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.0015", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 		// not allowed due to custom exclusion
-		result = optifier.add(TarmedLeistung.getFromCode("17.0090", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("17.0090", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 		assertEquals("17.0090 nicht kombinierbar mit Leistung 00.0015", result.getMessages().get(0).getText());
 
 		// not allowed due to custom exclusion
-		result = optifier.add(TarmedLeistung.getFromCode("00.1345", LocalDate.now(), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("00.1345", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 
 		clearKons(konsGriss);
@@ -837,7 +866,7 @@ public class TarmedOptifierTest {
 	public void testBillNonIntAmount() {
 		clearKons(konsGriss);
 		// AL 11.20 TP TL 6.05 TP
-		TarmedLeistung service = TarmedLeistung.getFromCode("02.0050", LocalDate.now(), LAW);
+		TarmedLeistung service = TarmedLeistung.getFromCode("02.0050", LocalDate.of(2025, 12, 31), LAW);
 		Result<IBilled> resultGriss = optifier.add(service, konsGriss, 0.25, true);
 		assertTrue(resultGriss.isOK());
 		// 0.25 * 11.20 = 2,8

@@ -111,7 +111,7 @@ public class TarmedLeistungTest {
 
 	@Test
 	public void getFromCode() {
-		IBillable fromCode = TarmedLeistung.getFromCode("00.0010", LocalDate.now(), "KVG");
+		IBillable fromCode = TarmedLeistung.getFromCode("00.0010", LocalDate.of(2025, 12, 31), "KVG");
 		assertTrue(fromCode instanceof ITarmedLeistung);
 		assertEquals("00.0010-20180101-KVG", fromCode.getId());
 
@@ -124,7 +124,7 @@ public class TarmedLeistungTest {
 		assertEquals("9999", tl.getDigniQuali());
 		assertEquals("0001", tl.getSparte());
 		assertEquals(LocalDate.of(2001, 1, 1), tl.getValidFrom());
-		assertEquals(LocalDate.of(2199, 12, 31), tl.getValidTo());
+		assertEquals(LocalDate.of(2025, 12, 31), tl.getValidTo());
 		assertEquals("00.0010", fromCode.getCode());
 
 		ITarmedExtension extension = tl.getExtension();

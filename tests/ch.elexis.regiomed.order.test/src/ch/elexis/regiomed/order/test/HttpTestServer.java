@@ -2,16 +2,19 @@ package ch.elexis.regiomed.order.test;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.Callback;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 public class HttpTestServer {
 	public static final int HTTP_PORT = 50036;
@@ -43,12 +46,14 @@ public class HttpTestServer {
 	}
 
 	private Handler getMockHandler() {
-		return new Handler.Abstract() {
+		Handler handler = new AbstractHandler() {
+
 			@Override
-			public boolean handle(Request request, Response response, Callback callback) throws Exception {
-				String body = IOUtils.toString(Request.asInputStream(request), StandardCharsets.UTF_8);
+			public void handle(String target, Request request, HttpServletRequest servletRequest,
+					HttpServletResponse response) throws IOException, ServletException {
+				String body = IOUtils.toString(request.getInputStream(), Charset.defaultCharset());
 				setRequestBody(body);
-				authHeader = request.getHeaders().get(HttpHeader.AUTHORIZATION);
+				authHeader = request.getHeader(HttpHeader.AUTHORIZATION.asString());
 				String bodyToSend;
 				if (body.contains("B64Password")) {
 					bodyToSend = tokenResponseBody;
@@ -56,11 +61,15 @@ public class HttpTestServer {
 					bodyToSend = orderResponseBody;
 				}
 				response.setStatus(SC_OK);
-				response.getHeaders().put(HttpHeader.CONTENT_TYPE, mockResponseType);
-				Content.Sink.write(response, true, bodyToSend, callback);
-				return true;
+				response.addHeader(HttpHeader.CONTENT_TYPE.asString(), mockResponseType);
+
+				response.setStatus(SC_OK);
+				response.setContentType(mockResponseType != null ? mockResponseType : "text/xml;charset=utf-8");
+				IOUtils.write(bodyToSend, response.getOutputStream(), Charset.defaultCharset());
+				request.setHandled(true);
 			}
 		};
+		return handler;
 	}
 
 	public void setResponseBody(String responseBody) {

@@ -21,6 +21,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.elexis.data.Bestellung;
 import ch.elexis.regiomed.order.handler.RegiomedSender;
 import ch.elexis.regiomed.order.preferences.RegiomedConstants;
 
@@ -124,7 +125,7 @@ public class RegiomedSenderTest extends AbstractRegiomedTest {
 		server.setResponseBody(jsonResponse);
 
 		RegiomedSender sender = new RegiomedSender();
-		assertTrue("Sender sollte die Bestellung verarbeiten können", sender.canHandle(order));
+		assertTrue("Sender sollte die Bestellung verarbeiten können", sender.canHandle(Bestellung.class));
 
 		sender.store(order);
 		sender.finalizeExport();

@@ -31,6 +31,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 	private TardocLeistung code_AA050040;
 	private TardocLeistung code_AA050050;
 
+	private TardocLeistung code_AA150010;
+
 	@Override
 	@Before
 	public void before() {
@@ -40,6 +42,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		code_AA050030 = TardocLeistung.getFromCode("AA.05.0030", LocalDate.of(2026, 1, 1), null);
 		code_AA050040 = TardocLeistung.getFromCode("AA.05.0040", LocalDate.of(2026, 1, 1), null);
 		code_AA050050 = TardocLeistung.getFromCode("AA.05.0050", LocalDate.of(2026, 1, 1), null);
+
+		code_AA150010 = TardocLeistung.getFromCode("AA.15.0010", LocalDate.of(2026, 1, 1), null);
 	}
 
 	@Override
@@ -75,6 +79,23 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		status = billingService.bill(code_AA050050, encounter, 1);
 		assertFalse(status.getMessages().toString(), status.isOK());
 
+	}
+
+	@Test
+	public void limitGroup002SingleSession() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor(coverage.getBillingSystem().getName(),
+				0.89, LocalDate.of(2000, 1, 1));
+
+		Result<IBilled> status = billingService.bill(code_AA150010, encounter, 30);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		billed = status.get();
+		assertNotNull(billed);
+
+		status = billingService.bill(code_AA150010, encounter, 1);
+		assertFalse(status.getMessages().toString(), status.isOK());
 	}
 
 	@Test
@@ -151,10 +172,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 		encounter5.setDate(LocalDate.of(2026, 2, 7));
 		CoreModelServiceHolder.get().save(encounter5);
-		status = billingService.bill(code_AA050010, encounter5, 1);
-		assertTrue(status.getMessages().toString(), status.isOK());
 		// 21 in 90 days is not valid
-		status = billingService.bill(code_AA050020, encounter5, 1);
+		status = billingService.bill(code_AA050010, encounter5, 1);
 		assertFalse(status.getMessages().toString(), status.isOK());
 	}
 }

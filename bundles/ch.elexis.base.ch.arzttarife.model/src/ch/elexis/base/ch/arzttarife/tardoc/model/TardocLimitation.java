@@ -323,6 +323,9 @@ public class TardocLimitation {
 				for (String code : serviceCodes) {
 					allVerrechnetOfGroup.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
 				}
+				// replace loaded with current verrechnet to validate updated amount
+				allVerrechnetOfGroup.remove(verrechnet);
+				allVerrechnetOfGroup.add(verrechnet);
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
 					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
 							verrechnet,

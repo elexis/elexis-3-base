@@ -276,7 +276,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				composite, SWT.NONE);
 		globalXmlDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		globalXmlDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		globalXmlDir.setFixedScheme("file");
 
 		lbl = new Label(composite, SWT.NONE);
 		lbl.setText("PDF Verzeichnis");
@@ -284,7 +283,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				composite, SWT.NONE);
 		globalPdfDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		globalPdfDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		globalPdfDir.setFixedScheme("file");
 
 		useGlobalConfig.addSelectionListener(new SelectionAdapter() {
 			@Override

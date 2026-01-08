@@ -72,7 +72,7 @@ public class PreferenceConstants {
 	// Answer: Of course not.
 	// Would it be portable? - Of course not. Definitely no discussion here.
 	// Wasn't "" clear enough? - Nope.
-	// Does it have a storage advantage? - Needs 8.5 x more, or + 15 bytes per occurence. Plus one import to begin with.
+	// Does it have a storage advantage? - Needs 8.5 x more, or + 15 bytes per occurrence. Plus one import to begin with.
 	// Does it save compile time? Or run time? - Through an import, and a field of an object? NOT EVEN if the compiler was optimized to replace it by "" ... 
 	//
 	// Why is it there? Any guesses?

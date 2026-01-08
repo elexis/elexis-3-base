@@ -80,7 +80,6 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		soundPathEditor = new URIFieldEditor(Preferences.USR_MESSAGES_SOUND_PATH, Messages.Prefs_SoundSettings,
 				editorComposite);
 		soundPathEditor.setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
-		soundPathEditor.setMigrateLegacyPaths(true);
 		soundPathEditor.setEmptyStringAllowed(true);
 		soundPathEditor.setUseFileMode(true);
 

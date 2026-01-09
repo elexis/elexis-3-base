@@ -157,7 +157,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		
 	//20260108js: REMINDER: Whenever you add a colLabels entry here, you MUST add a colWidth and probably a sortSettings entry below.
 	//20260108js: REMINDER: Or else, your omnivore view will fail to display all columns. As definitely shown in Elexis 3.13 (and possibly in other versions >= 3.8). 
-	//20260108js: NOTE: That has now been mitigate; at least some degree of omissions here or in old config entries may be auto-fixed by code further below.  
+	//20260108js: NOTE: That has now been mitigated; at least some degree of omissions here or in old config entries may be auto-fixed by code further below.  
 	private final String[] colLabels = { StringUtils.EMPTY,
 										 Messages.OmnivoreView_categoryColumn,
 										 Messages.OmnivoreView_dateColumn,

@@ -155,7 +155,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	//TODO: 20260108js I.e. the opening and closing curly brackets could be placed into the same column as the first character of each line at the same level within a given block.
 	//TODO: 20260108js I have experienced examples where bracketing was messed up, producing erroneous code, right in this project when "freeing up space = removing comments".
 		
-	//20260108js: REMINDER: Whenever you add an colLabes entry here, you MUST add a colWidth and probably a sortSettings entry below.
+	//20260108js: REMINDER: Whenever you add a colLabels entry here, you MUST add a colWidth and probably a sortSettings entry below.
 	//20260108js: REMINDER: Or else, your omnivore view will fail to display all columns. As definitely shown in Elexis 3.13 (and possibly in other versions >= 3.8). 
 	private final String[] colLabels = { StringUtils.EMPTY,
 										 Messages.OmnivoreView_categoryColumn,

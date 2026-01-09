@@ -87,7 +87,7 @@ public class TardocCodeSelectorContentProvider implements ICommonViewerContentPr
 		// prepare query
 		IQuery<ITardocLeistung> leafsQuery = ArzttarifeModelServiceHolder.get().getQuery(ITardocLeistung.class);
 		if (queryZiffer != null && queryZiffer.length() > 2) {
-			leafsQuery.and("code_", COMPARATOR.LIKE, queryZiffer + "%");
+			leafsQuery.and("code_", COMPARATOR.LIKE, queryZiffer.toUpperCase() + "%");
 		}
 		if (queryText != null && queryText.length() > 2) {
 			leafsQuery.and("tx255", COMPARATOR.LIKE, "%" + queryText + "%");
@@ -155,7 +155,7 @@ public class TardocCodeSelectorContentProvider implements ICommonViewerContentPr
 		ArrayList<ITardocLeistung> ret = new ArrayList<>();
 		for (ITardocLeistung root : roots) {
 			if (currentZiffer != null && currentZiffer.length() > 2) {
-				if (root.getCode().equals(currentZiffer.substring(0, 2))) {
+				if (root.getCode().equalsIgnoreCase(currentZiffer.substring(0, 2))) {
 					ret.add(root);
 				}
 			} else {

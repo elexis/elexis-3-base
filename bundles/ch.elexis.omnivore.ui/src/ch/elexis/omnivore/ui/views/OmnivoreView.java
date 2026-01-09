@@ -157,6 +157,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		
 	//20260108js: REMINDER: Whenever you add a colLabels entry here, you MUST add a colWidth and probably a sortSettings entry below.
 	//20260108js: REMINDER: Or else, your omnivore view will fail to display all columns. As definitely shown in Elexis 3.13 (and possibly in other versions >= 3.8). 
+	//20260108js: NOTE: That has now been mitigate; at least some degree of omissions here or in old config entries may be auto-fixed by code further below.  
 	private final String[] colLabels = { StringUtils.EMPTY,
 										 Messages.OmnivoreView_categoryColumn,
 										 Messages.OmnivoreView_dateColumn,
@@ -164,7 +165,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 										 Messages.OmnivoreView_titleColumn,
 										 Messages.OmnivoreView_keywordsColumn };
 	
-	//20260108js: CAVE: THIS is a highly error prone way to prepare an array of constants:
+	//20260108js: CAVE: What follows is a highly error prone way to prepare an array of constants:
 	//20260108js: CAVE: You MUST NOT add ANY SPACES or non-numeric chars except for the comma inside this String!
 	//20260108js: OR you'll catch hundreds of lines on the console signaling a few "Number format exception"s after conversion to an array of (supposed) integers below.
 	//20260108js: Which, of course, completely kills the construction of this view.
@@ -175,8 +176,6 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	
 	//20260108js: Original error inserted between 3.8 and 3.13; breaking omnivore: Inserting an additional width was forgotten when inserting OmnivoreView_dateOriginColumn above.
 	//20260108js: I've inserted (!) the missing value here; AND also added code further below to harden this program against future similar errors.
-	//20260108js: BUT even though that does append missing colWidth entries up to the required number - and they're applied to the columns - the table isn't properly created.
-	//20260108js: So quite probably there are other places in this project referencing the following String directly, and suffering if it doesn't supply sufficient values.
 	private final String colWidth = 	"20,80,80,80,150,500"; //$NON-NLS-1$
 	//TODO: 20260108js: This MIGHT still fail - I observed that when a two element constant here and a three element constant from PreferencePage were used together,
 	//TODO: 20260108js: even when all added hardenings did apparently work as expected. But that's a scenario so improbable in reality that I won't spend any more time on it right now.

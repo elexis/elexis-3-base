@@ -92,6 +92,9 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 				} else if (existing.getCode().equals("00.0010") //$NON-NLS-1$
 						|| existing.getCode().equals("00.0060")) { // Kons erste 5 Minuten //$NON-NLS-1$
 					haveKons = true;
+				} else if (existing.getCode().equals("AA.00.0010") //$NON-NLS-1$
+						|| existing.getCode().equals("CA.00.0010")) { //$NON-NLS-1$
+					haveKons = true;
 				}
 			}
 			// reduce amendments to max. 24 TP
@@ -176,6 +179,9 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 				}
 			} else if (existing.getCode().equals("00.0010") //$NON-NLS-1$
 					|| existing.getCode().equals("00.0060")) { // Kons erste 5 Minuten //$NON-NLS-1$
+				haveKons = true;
+			} else if (existing.getCode().equals("AA.00.0010") //$NON-NLS-1$
+					|| existing.getCode().equals("CA.00.0010")) { //$NON-NLS-1$
 				haveKons = true;
 			}
 		}

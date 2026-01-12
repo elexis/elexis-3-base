@@ -43,4 +43,9 @@ public class Messages {
 	public static String PreferencesServer_deleteCategory = ch.elexis.core.l10n.Messages.PreferencesServer_deleteCategory;
 	public static String PreferencesServer_enterNewNameForDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_enterNewNameForDirectory;
 	public static String PreferencesServer_renameDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_renameDirectory;
+	public static String PreferencesServer_patientSourceLabel = ch.elexis.core.l10n.Messages.PreferencesServer_patientSourceLabel;
+	public static String PreferencesServer_patientSource_filePrefix = ch.elexis.core.l10n.Messages.PreferencesServer_patientSource_filePrefix;
+	public static String PreferencesServer_patientSource_folder = ch.elexis.core.l10n.Messages.PreferencesServer_patientSource_folder;
+	public static String PreferencesServer_patientSource_hierarchy = ch.elexis.core.l10n.Messages.PreferencesServer_patientSource_hierarchy;
+	public static String PreferencesServer_patientSource_hybrid = ch.elexis.core.l10n.Messages.PreferencesServer_patientSource_hybrid;
 }

@@ -2,6 +2,7 @@ package org.iatrix.bestellung.rose;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -125,4 +126,18 @@ public class Sender implements IDataSender {
 		return false;
 	}
 
+	@Override
+	public List<IContact> getSupplier() {
+		String contactId = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, StringUtils.EMPTY);
+
+		if (StringUtils.isBlank(contactId)) {
+			return Collections.emptyList();
+		}
+		IContact supplier = CoreModelServiceHolder.get().load(contactId, IContact.class).orElse(null);
+
+		if (supplier != null) {
+			return Collections.singletonList(supplier);
+		}
+		return Collections.emptyList();
+	}
 }

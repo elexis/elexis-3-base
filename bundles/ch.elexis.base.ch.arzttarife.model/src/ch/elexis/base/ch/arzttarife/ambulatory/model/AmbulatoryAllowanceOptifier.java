@@ -10,6 +10,7 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.rgw.tools.Result;
 
 public class AmbulatoryAllowanceOptifier extends AbstractOptifier<AmbulatoryAllowance> {
@@ -24,13 +25,19 @@ public class AmbulatoryAllowanceOptifier extends AbstractOptifier<AmbulatoryAllo
 
 	@Override
 	protected void setPrice(AmbulatoryAllowance billable, IBilled billed) {
-		billed.setFactor(1.0);
+		Optional<IBillingSystemFactor> factor = getFactor(billed.getEncounter());
+		if (factor.isPresent()) {
+			billed.setFactor(factor.get().getFactor());
+		} else {
+			billed.setFactor(1.0);
+		}
 		billed.setPoints(billable.getPrice(billed.getEncounter()).getCents());
 	}
 
 	@Override
 	public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
-		return Optional.empty();
+		return BillingServiceHolder.get().getBillingSystemFactor(encounter.getCoverage().getBillingSystem().getName(),
+				encounter.getDate());
 	}
 
 	@Override

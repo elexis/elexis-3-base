@@ -28,6 +28,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -384,7 +385,8 @@ public class XMLExporter implements IRnOutputter {
 
 		logger.info("Creating new bill for " + invoice.getNumber());
 		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
-		if (containsTardocOrAllowance(invoice)) {
+		// use xml 5.0 if invoice start date after end of tarmed
+		if (invoice.getDateFrom().isAfter(LocalDate.of(2025, 12, 31))) {
 			if (exporter50.doExport(invoice, xmlOutput, type)) {
 				Document xmlRn = getAsJdomDocument(xmlOutput).orElse(null);
 				ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
@@ -444,12 +446,6 @@ public class XMLExporter implements IRnOutputter {
 			}
 		}
 		return null;
-	}
-
-	private boolean containsTardocOrAllowance(IInvoice invoice) {
-		return invoice.getBilled().stream().filter(b -> "007".equals(b.getBillable().getCodeSystemCode())
-				|| "005".equals(b.getBillable().getCodeSystemCode())).findAny()
-				.isPresent();
 	}
 
 	/**

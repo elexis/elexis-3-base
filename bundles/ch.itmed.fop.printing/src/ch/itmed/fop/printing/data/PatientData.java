@@ -17,10 +17,12 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
+import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IXid;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Gender;
@@ -103,7 +105,7 @@ public class PatientData {
 		if (date != null) {
 			return date.toLocalDate().format(dateFormat);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public String getSex() {
@@ -226,6 +228,31 @@ public class PatientData {
 		String pid = StringTool.addModulo10(patCode) + "-" //$NON-NLS-1$
 				+ new TimeTool().toString(TimeTool.TIME_COMPACT);
 		return pid;
+	}
+
+	public String getAHV() {
+		IXid ahv = (legalGuardian != null) ? legalGuardian.getXid(XidConstants.DOMAIN_AHV)
+				: patient.getXid(XidConstants.DOMAIN_AHV);
+
+		if (ahv == null) {
+			return null;
+		}
+
+		String raw = ahv.getDomainId();
+		if (raw == null || raw.trim().isEmpty()) {
+			return null;
+		}
+
+		return formatAhvWithDots(raw);
+	}
+
+	private static String formatAhvWithDots(String value) {
+		String digits = value.replaceAll("\\D", StringUtils.EMPTY); //$NON-NLS-1$
+		if (digits.length() != 13) {
+			return value;
+		}
+		return digits.substring(0, 3) + "." + digits.substring(3, 7) + "." + digits.substring(7, 11) + "." //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ digits.substring(11, 13);
 	}
 
 	public IPatient getPatient() {

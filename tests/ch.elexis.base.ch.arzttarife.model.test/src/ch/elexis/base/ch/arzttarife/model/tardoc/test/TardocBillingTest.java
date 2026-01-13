@@ -202,7 +202,12 @@ public class TardocBillingTest extends AbstractTardocTest {
 		encounter.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter);
 
-		Result<IBilled> status = billingService.bill(code_MK250020, encounter, 1);
+		// AA.00.0010 should be ignored for value of MK.25.0120
+		Result<IBilled> status = billingService.bill(code_000010, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(code_MK250020, encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
 		int noZuschalgCents = billed.getTotal().getCents();

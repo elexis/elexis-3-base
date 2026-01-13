@@ -462,15 +462,25 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		return ret;
 	}
 
-	private void applyCalculateFactorBasedPrice(IBilled billed, TardocLeistung code, IEncounter kons) {
+	private void applyCalculateFactorBasedPrice(IBilled billed, TardocLeistung code, IEncounter encounter) {
+		// lookup bezug
+		Optional<String> bezug = Optional.empty();
+		// lookup available masters
+		List<IBilled> masters = getPossibleMasters(billed, encounter.getBilled());
+		if (!masters.isEmpty()) {
+			bezug = Optional.of(masters.get(0).getCode());
+		}
+
 		Double alFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_AL);
 		double alSum = 0.0;
 		double tlSum = 0.0;
 		if (alFactor > 0.0) {
-			for (IBilled v : kons.getBilled()) {
+			for (IBilled v : encounter.getBilled()) {
 				if (v.getBillable() instanceof TardocLeistung) {
 					TardocLeistung tl = (TardocLeistung) v.getBillable();
-					alSum += (tl.getAL(kons.getMandator()) * v.getAmount());
+					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+						alSum += (tl.getAL(encounter.getMandator()) * v.getAmount());
+					}
 				}
 			}
 			billed.setPoints((int) Math.round(alSum));
@@ -479,10 +489,12 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 		Double tlFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_TL);
 		if (tlFactor > 0.0 && (alFactor == 0.0 || Double.compare(tlFactor, alFactor) == 0)) {
-			for (IBilled v : kons.getBilled()) {
+			for (IBilled v : encounter.getBilled()) {
 				if (v.getBillable() instanceof TardocLeistung) {
 					TardocLeistung tl = (TardocLeistung) v.getBillable();
-					tlSum += (tl.getIPL() * v.getAmount());
+					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+						tlSum += (tl.getIPL() * v.getAmount());
+					}
 				}
 			}
 			billed.setPoints((int) Math.round(tlSum + alSum));

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -560,6 +561,8 @@ public class TestData {
 
 		private Konsultation createKons(Fall fall, Mandant mandant) {
 			Konsultation kons = new Konsultation(fall);
+			// test expect xml 4.5, so set encounter date before 01.01.2026
+			kons.setDateTime(LocalDateTime.of(2025, 12, 31, 8, 00), false);
 			return kons;
 		}
 

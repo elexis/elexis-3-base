@@ -367,7 +367,7 @@ public class XMLExporter implements IRnOutputter {
 	 */
 	public Document doExport(IInvoice invoice, final String dest, final IRnOutputter.TYPE type, boolean doVerify) {
 		exporter.setEsrType(getEsrTypeOrFallback(invoice));
-
+		this.invoice = invoice;
 		if (xmlBillExists(invoice)) {
 			logger.info("Updating existing bill for " + invoice.getNumber());
 			Document updated = updateExistingXmlBill(invoice, dest, type, doVerify);

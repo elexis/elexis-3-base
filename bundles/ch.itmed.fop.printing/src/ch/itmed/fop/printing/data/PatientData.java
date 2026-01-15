@@ -23,6 +23,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.format.FormatValidator;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Gender;
@@ -243,16 +244,7 @@ public class PatientData {
 			return null;
 		}
 
-		return formatAhvWithDots(raw);
-	}
-
-	private static String formatAhvWithDots(String value) {
-		String digits = value.replaceAll("\\D", StringUtils.EMPTY); //$NON-NLS-1$
-		if (digits.length() != 13) {
-			return value;
-		}
-		return digits.substring(0, 3) + "." + digits.substring(3, 7) + "." + digits.substring(7, 11) + "." //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				+ digits.substring(11, 13);
+		return FormatValidator.getFormattedAHVNum(raw);
 	}
 
 	public IPatient getPatient() {

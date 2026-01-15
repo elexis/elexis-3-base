@@ -13,6 +13,10 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationArt;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation.LimitationUnit;
 import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedUtil;
@@ -107,6 +111,11 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				return resultAddBezug;
 			}
 		}
+		
+		// Referenzleistung
+		if (code.getServiceTyp() != null && code.getServiceTyp().equals("R")) {
+			addKumulationBezug(newBilled, encounter);
+		}
 
 		if (bOptify) {
 			Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, code, newBilled);
@@ -117,8 +126,13 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 					}
 					return limitationsResult;
 				} else {
-					// reset possible modifications
-					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					if (save) {
+						// reset possible modifications
+						CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					} else {
+						// only remove added
+						encounter.getBilled().remove(newBilled);
+					}
 					return limitationsResult;
 				}
 			}
@@ -131,8 +145,13 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 					}
 					return digniResult;
 				} else {
-					// reset possible modifications
-					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					if (save) {
+						// reset possible modifications
+						CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					} else {
+						// only remove added
+						encounter.getBilled().remove(newBilled);
+					}
 					return digniResult;
 				}
 			}
@@ -151,6 +170,34 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				CoreModelServiceHolder.get().refresh(encounter, true);
 			}
 		} else {
+			if (bOptify) {
+				List<ITardocKumulation> kumulations = code.getKumulations(TardocKumulationArt.SERVICE);
+				List<ITardocKumulation> masterInclusionKumulations = kumulations.stream()
+						.filter(k -> k.getMasterCode().equals(code.getCode())
+								&& k.getSlaveArt().equals(TardocKumulationArt.SERVICE)
+								&& k.getTyp() == TardocKumulationTyp.INCLUSION)
+						.toList();
+				if (!masterInclusionKumulations.isEmpty()) {
+					for (ITardocKumulation iTardocKumulation : masterInclusionKumulations) {
+						TardocLeistung slaveCode = TardocLeistung.getFromCode(iTardocKumulation.getSlaveCode(),
+								encounter.getDate(), null);
+						if (slaveCode != null) {
+							// add the slave code
+							Result<IBilled> kumulationResult = add(slaveCode, encounter, false);
+							if (kumulationResult.isOK()) {
+								// Referenzleistung
+								if (slaveCode.getServiceTyp() != null && slaveCode.getServiceTyp().equals("R")) {
+									kumulationResult.get().setExtInfo("Bezug", code.getCode());
+								}
+								if (save) {
+									CoreModelServiceHolder.get().save(kumulationResult.get());
+								}
+							}
+						}
+					}
+				}
+			}
+
 			if (save) {
 				CoreModelServiceHolder.get().save(encounter);
 				CoreModelServiceHolder.get().save(matcherResult.get());
@@ -158,6 +205,28 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 
 		return matcherResult;
+	}
+
+	private void addKumulationBezug(IBilled newBilled, IEncounter encounter) {
+		ITardocLeistung code = (ITardocLeistung) newBilled.getBillable();
+		List<ITardocKumulation> kumulations = code.getKumulations(TardocKumulationArt.SERVICE);
+		List<ITardocKumulation> slaveInclusionKumulations = kumulations.stream()
+				.filter(k -> k.getSlaveCode().equals(code.getCode())
+						&& k.getSlaveArt().equals(TardocKumulationArt.SERVICE)
+						&& k.getTyp() == TardocKumulationTyp.INCLUSION)
+				.toList();
+		if (!slaveInclusionKumulations.isEmpty()) {
+			for (ITardocKumulation iTardocKumulation : slaveInclusionKumulations) {
+				Optional<IBilled> masterBilled = encounter.getBilled().stream()
+						.filter(b -> b.getBillable() instanceof TardocLeistung
+								&& b.getCode().equals(iTardocKumulation.getMasterCode()))
+						.findAny();
+				if (masterBilled.isPresent()) {
+					newBilled.setExtInfo("Bezug", masterBilled.get().getCode());
+					break;
+				}
+			}
+		}
 	}
 
 	private Result<IBilled> setNewBilledSideOrIncrement(IBilled newBilled, IEncounter encounter) {

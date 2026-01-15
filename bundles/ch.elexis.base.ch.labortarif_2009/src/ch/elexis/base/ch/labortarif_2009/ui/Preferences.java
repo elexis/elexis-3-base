@@ -27,19 +27,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.base.ch.labortarif.Fachspec;
 import ch.elexis.base.ch.labortarif.LaborTarifConstants;
 import ch.elexis.base.ch.labortarif_2009.Messages;
-import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.rgw.tools.StringTool;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
 	private static final String SPECNUM = "specnum"; //$NON-NLS-1$
-	public static final String FACHDEF = "abrechnung/labor2009/fachdef"; //$NON-NLS-1$
 	public static final String OPTIMIZE = "abrechnung/labor2009/optify"; //$NON-NLS-1$
 	public static final String OPTIMIZE_ADDITION_DEADLINE = "abrechnung/labor2009/optify/addition/deadline"; //$NON-NLS-1$
 
@@ -66,24 +62,6 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		new Label(ret, SWT.NONE).setText(Messages.Preferences_pleaseEnterMultiplier);
 		MultiplikatorEditor me = new MultiplikatorEditor(ret, LaborTarifConstants.MULTIPLICATOR_NAME);
 		me.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Fachspec[] specs = Fachspec.loadFachspecs(langdef);
-		Group group = new Group(ret, SWT.BORDER);
-		group.setText(Messages.Preferences_specialities);
-		group.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		group.setLayout(new GridLayout());
-		String[] olddef = ConfigServiceHolder.getMandatorAsList(FACHDEF).toArray(new String[0]);
-		if (specs != null) {
-			for (Fachspec spec : specs) {
-				Button b = new Button(group, SWT.CHECK);
-				b.setText(spec.name);
-				b.setData(SPECNUM, spec.code);
-				b.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-				if (olddef != null && StringTool.getIndex(olddef, Integer.toString(spec.code)) != -1) {
-					b.setSelection(true);
-				}
-				buttons.add(b);
-			}
-		}
 
 		Group groupOptify = new Group(ret, SWT.NONE);
 		groupOptify.setText(Messages.Preferences_automaticAdditionsGroup);
@@ -103,6 +81,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		return ret;
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 
@@ -116,7 +95,6 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 				bb.add(((Integer) b.getData(SPECNUM)).toString());
 			}
 		}
-		ConfigServiceHolder.setMandator(FACHDEF, StringTool.join(bb, StringConstants.COMMA));
 		return super.performOk();
 	}
 }

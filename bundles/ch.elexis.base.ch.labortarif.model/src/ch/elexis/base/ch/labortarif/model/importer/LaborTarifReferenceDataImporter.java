@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.osgi.service.component.annotations.Component;
 
-import ch.elexis.base.ch.labortarif.Fachspec;
 import ch.elexis.base.ch.labortarif.ILaborLeistung;
 import ch.elexis.base.ch.labortarif.model.ModelServiceHolder;
 import ch.elexis.base.ch.labortarif.model.VersionUtil;
@@ -51,7 +50,6 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 	int langdef = 0;
 	LocalDate validFrom;
 
-	Fachspec[] specs;
 	int row;
 	// use local HashMap instead of creating new one for every tarif position
 	private HashMap<String, String> importedValues = new HashMap<String, String>();
@@ -71,59 +69,56 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		} else if (lang.startsWith("I")) { //$NON-NLS-1$
 			langdef = 2;
 		}
-		specs = Fachspec.loadFachspecs(langdef);
-		if (specs != null) {
-			ExcelWrapper exw = new ExcelWrapper();
-			exw.setFieldTypes(new Class[] { String.class /* chapter */, String.class /* rev */, String.class /* code */,
-					String.class /* tp */, String.class /* name */, String.class /* lim */,
-					String.class /* fach (2011) comment (2012) */, String.class
-					/* fach (2012) */
-			});
-			if (exw.load(input, langdef)) {
-				int first = exw.getFirstRow();
-				int last = exw.getLastRow();
-				int count = last - first;
-				if (monitor != null)
-					monitor.beginTask("Import EAL", count); //$NON-NLS-1$
+		ExcelWrapper exw = new ExcelWrapper();
+		exw.setFieldTypes(new Class[] { String.class /* chapter */, String.class /* rev */, String.class /* code */,
+				String.class /* tp */, String.class /* name */, String.class /* lim */,
+				String.class /* fach (2011) comment (2012) */, String.class
+				/* fach (2012) */
+		});
+		if (exw.load(input, langdef)) {
+			int first = exw.getFirstRow();
+			int last = exw.getLastRow();
+			int count = last - first;
+			if (monitor != null)
+				monitor.beginTask("Import EAL", count); //$NON-NLS-1$
 
-				String[] line = exw.getRow(1).toArray(new String[0]);
-				// determine format of file according to year of tarif
-				int formatYear = getFormatYear(line);
-				if (formatYear != 2011 && formatYear != 2012 && formatYear != 2018)
-					return new Status(Status.ERROR, "ch.elexis.base.ch.labortarif", //$NON-NLS-1$
-							"unknown file format"); //$NON-NLS-1$
+			String[] line = exw.getRow(1).toArray(new String[0]);
+			// determine format of file according to year of tarif
+			int formatYear = getFormatYear(line);
+			if (formatYear != 2011 && formatYear != 2012 && formatYear != 2018)
+				return new Status(Status.ERROR, "ch.elexis.base.ch.labortarif", //$NON-NLS-1$
+						"unknown file format"); //$NON-NLS-1$
 
-				for (int i = first + 1; i <= last; i++) {
-					row = i;
-					line = exw.getRow(i).toArray(new String[0]);
+			for (int i = first + 1; i <= last; i++) {
+				row = i;
+				line = exw.getRow(i).toArray(new String[0]);
 
-					if (formatYear == 2011)
-						fillImportedValues2011(line);
-					else if (formatYear == 2012)
-						fillImportedValues2012(line);
-					else if (formatYear == 2018)
-						fillImportedValues2018(line);
+				if (formatYear == 2011)
+					fillImportedValues2011(line);
+				else if (formatYear == 2012)
+					fillImportedValues2012(line);
+				else if (formatYear == 2018)
+					fillImportedValues2018(line);
 
-					if (importedValues.size() > 0) {
-						updateOrCreateFromImportedValues();
-					}
-					if (monitor != null) {
-						monitor.worked(1);
-						if (monitor.isCanceled()) {
-							return Status.CANCEL_STATUS;
-						}
+				if (importedValues.size() > 0) {
+					updateOrCreateFromImportedValues();
+				}
+				if (monitor != null) {
+					monitor.worked(1);
+					if (monitor.isCanceled()) {
+						return Status.CANCEL_STATUS;
 					}
 				}
-
-				closeAllOlder();
-				if (monitor != null)
-					monitor.done();
-				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, ILaborLeistung.class);
-				if (newVersion != null) {
-					VersionUtil.setCurrentVersion(newVersion);
-				}
-				return Status.OK_STATUS;
 			}
+
+			closeAllOlder();
+			if (monitor != null)
+				monitor.done();
+			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, ILaborLeistung.class);
+			if (newVersion != null) {
+				VersionUtil.setCurrentVersion(newVersion);
+			}
+			return Status.OK_STATUS;
 		}
 		return new Status(Status.ERROR, "ch.elexis.labotarif.ch2009", //$NON-NLS-1$
 				"could not load file"); //$NON-NLS-1$
@@ -189,7 +184,7 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		modelService.setEntityProperty(FLD_TP, Double.valueOf(values.get(FLD_TP)), existing);
 		modelService.setEntityProperty(FLD_NAME, values.get(FLD_NAME), existing);
 		modelService.setEntityProperty(FLD_LIMITATIO, values.get(FLD_LIMITATIO), existing);
-		modelService.setEntityProperty(FLD_FACHBEREICH, Fachspec.getFachspec(specs, row), existing);
+		modelService.setEntityProperty(FLD_FACHBEREICH, values.get(FLD_FACHBEREICH), existing);
 
 		modelService.save(existing);
 	}
@@ -203,7 +198,7 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		modelService.setEntityProperty(FLD_TP, Double.valueOf(values.get(FLD_TP)), created);
 		modelService.setEntityProperty(FLD_NAME, values.get(FLD_NAME), created);
 		modelService.setEntityProperty(FLD_LIMITATIO, values.get(FLD_LIMITATIO), created);
-		modelService.setEntityProperty(FLD_FACHBEREICH, Fachspec.getFachspec(specs, row), created);
+		modelService.setEntityProperty(FLD_FACHBEREICH, values.get(FLD_FACHBEREICH), created);
 		modelService.setEntityProperty(FLD_GUELTIGVON, validFrom, created);
 
 		modelService.save(created);
@@ -279,6 +274,9 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		importedValues.put(FLD_NAME, StringTool.limitLength(StringTool.getSafe(line, 3), 254));
 		importedValues.put(FLD_LIMITATIO, StringTool.getSafe(line, 4));
 		importedValues.put(FLD_FACHBEREICH, StringTool.getSafe(line, 5));
+		if ("unknown cell type".equalsIgnoreCase(importedValues.get(FLD_FACHBEREICH))) {
+			importedValues.put(FLD_FACHBEREICH, StringUtils.EMPTY);
+		}
 	}
 
 	private void closeAllOlder() {

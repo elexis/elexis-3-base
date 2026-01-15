@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,6 +36,9 @@ public class TardocBillingTest extends AbstractTardocTest {
 	private TardocLeistung code_AA300050;
 	private TardocLeistung code_MK250120;
 
+	private TardocLeistung code_TK000010;
+	private TardocLeistung code_AR300130;
+
 	@Override
 	@Before
 	public void before() {
@@ -58,6 +62,11 @@ public class TardocBillingTest extends AbstractTardocTest {
 		code_AA300040 = TardocLeistung.getFromCode("AA.30.0040", LocalDate.of(2026, 1, 1), null);
 		code_AA300050 = TardocLeistung.getFromCode("AA.30.0050", LocalDate.of(2026, 1, 1), null);
 		code_MK250120 = TardocLeistung.getFromCode("MK.25.0120", LocalDate.of(2026, 1, 1), null);
+
+		// auto Kummulation Referenz
+		code_TK000010 = TardocLeistung.getFromCode("TK.00.0010", LocalDate.of(2026, 1, 1), null);
+		code_AR300130 = TardocLeistung.getFromCode("AR.00.0130", LocalDate.of(2026, 1, 1), null);
+
 	}
 
 	@Override
@@ -115,6 +124,9 @@ public class TardocBillingTest extends AbstractTardocTest {
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
 
+		// automatic kumulation AR.00.0060
+		assertEquals(2, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+
 		String side = (String) status.get().getExtInfo(Constants.FLD_EXT_SIDE);
 		assertNotNull(side);
 
@@ -141,7 +153,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		billed = status.get();
 		assertFalse(status.getMessages().toString(), status.isOK());
 
-		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+		assertEquals(4, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 	}
 
 	@Test
@@ -152,6 +164,9 @@ public class TardocBillingTest extends AbstractTardocTest {
 		Result<IBilled> status = billingService.bill(code_MK250020, encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// automatic kumulation AR.00.0020
+		assertEquals(2, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 
 		// zuschlag
 		status = billingService.bill(code_MK250090, encounter, 1);
@@ -171,7 +186,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertNotNull(bezug);
 		assertEquals("MK.25.0090", bezug);
 
-		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+		assertEquals(4, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 	}
 
 	@Test
@@ -226,4 +241,37 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertEquals(Math.round(noZuschalgCents * 0.30), billed.getTotal().getCents(), 0.01);
 	}
 
+	@Test
+	public void kumulationTardocPosition() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		// AA.00.0010 should be ignored setting bezug of code_AR300130
+		Result<IBilled> status = billingService.bill(code_000010, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(code_TK000010, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		assertEquals(3, encounter.getBilled().size());
+		Optional<IBilled> autoKumulation = encounter.getBilled().stream().filter(b -> "AR.00.0130".equals(b.getCode()))
+				.findAny();
+		assertTrue(autoKumulation.isPresent());
+		String bezug = (String) autoKumulation.get().getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("TK.00.0010", bezug);
+
+		// test adding kumulation
+		Result<?> removeStatus = billingService.removeBilled(autoKumulation.get(), encounter);
+		assertTrue(status.getMessages().toString(), removeStatus.isOK());
+
+		status = billingService.bill(code_AR300130, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("TK.00.0010", bezug);
+	}
 }

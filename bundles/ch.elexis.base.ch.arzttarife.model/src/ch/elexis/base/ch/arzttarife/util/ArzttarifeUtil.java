@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.core.findings.ICoding;
@@ -186,15 +187,15 @@ public class ArzttarifeUtil {
 
 	/**
 	 * Get the tarmed side information of the {@link IBilled}. If there is no
-	 * {@link ITarmedLeistung} referenced from the {@link IBilled} the returned
-	 * value is always "none".
+	 * {@link ITarmedLeistung} or {@link ITardocLeistung} referenced from the
+	 * {@link IBilled} the returned value is always "none".
 	 *
 	 * @param billed
 	 * @return
 	 */
 	public static String getSide(IBilled billed) {
 		IBillable billable = billed.getBillable();
-		if (billable instanceof ITarmedLeistung) {
+		if (billable instanceof ITarmedLeistung || billable instanceof ITardocLeistung) {
 			String side = (String) billed.getExtInfo(Constants.FLD_EXT_SIDE);
 			if (Constants.SIDE_L.equalsIgnoreCase(side)) {
 				return Constants.LEFT;

@@ -1116,6 +1116,9 @@ public class Tarmed50Exporter {
 			if (name.equalsIgnoreCase("ICD-10")) { //$NON-NLS-1$
 				return "ICD"; //$NON-NLS-1$
 			}
+			if (name.equalsIgnoreCase("TI-Code")) { //$NON-NLS-1$
+				return "cantonal"; //$NON-NLS-1$
+			}
 			if (name.equalsIgnoreCase("by contract")) { //$NON-NLS-1$
 				return "by_contract"; //$NON-NLS-1$
 			}

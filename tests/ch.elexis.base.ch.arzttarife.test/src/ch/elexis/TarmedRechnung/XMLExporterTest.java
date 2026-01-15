@@ -38,6 +38,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Rechnung;
 import ch.fd.invoice450.request.BalanceTGType;
+import ch.fd.invoice500.request.DiagnosisType;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
@@ -812,6 +813,14 @@ public class XMLExporterTest {
 		assertFalse(((ch.fd.invoice500.request.RequestType) invoiceRequest.get()).getPayload().getRequestSubtype()
 				.equals("storno"));
 		assertEquals(1.00, balance.getAmountPrepaid(), 0.0001);
+
+		List<DiagnosisType> diagnosis = ((ch.fd.invoice500.request.RequestType) invoiceRequest.get()).getPayload()
+				.getBody().getTreatment().getDiagnosis();
+		assertNotNull(diagnosis);
+		assertFalse(diagnosis.isEmpty());
+		Optional<DiagnosisType> cantonalDiag = diagnosis.stream().filter(d -> "cantonal".equalsIgnoreCase(d.getType()))
+				.findAny();
+		assertTrue(cantonalDiag.isPresent());
 
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {

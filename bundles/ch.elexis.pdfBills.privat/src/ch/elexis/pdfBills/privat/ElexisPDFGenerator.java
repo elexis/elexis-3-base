@@ -537,7 +537,7 @@ public class ElexisPDFGenerator {
 						.of(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator + billNr
 								+ "_rf.pdf") //$NON-NLS-1$
 						.toFile().orElse(null);
-				generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
+				generatePdf(getQrXsltForBill(rsc, XsltType.RECLAIM), pdf);
 				printPdf(pdf, false);
 				printed.add(pdf);
 			}
@@ -804,6 +804,8 @@ public class ElexisPDFGenerator {
 				return "4.4";//$NON-NLS-1$
 			} else if (location.contains("InvoiceRequest_450")) {//$NON-NLS-1$
 				return "4.5";//$NON-NLS-1$
+			} else if (location.contains("InvoiceRequest_500")) {//$NON-NLS-1$
+				return "5.0";//$NON-NLS-1$
 			}
 		}
 		return StringUtils.EMPTY;
@@ -854,6 +856,18 @@ public class ElexisPDFGenerator {
 				return new File(rsc, "45_qr_patbill_m3.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.RECLAIM) {
 				return new File(rsc, "45_services.xsl"); //$NON-NLS-1$
+			}
+		} else if ("5.0".equals(billVersion)) { //$NON-NLS-1$
+			if (type == XsltType.PATBILL) {
+				return new File(rsc, "50_qr_patbill.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M1) {
+				return new File(rsc, "50_qr_patbill_m1.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M2) {
+				return new File(rsc, "50_qr_patbill_m2.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.PATBILL_M3) {
+				return new File(rsc, "50_qr_patbill_m3.xsl"); //$NON-NLS-1$
+			} else if (type == XsltType.RECLAIM) {
+				return new File(rsc, "50_services.xsl"); //$NON-NLS-1$
 			}
 		}
 		return null;

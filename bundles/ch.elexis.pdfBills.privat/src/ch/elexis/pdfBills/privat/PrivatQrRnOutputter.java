@@ -177,6 +177,8 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 							EsrType outputEsrType = ex.getEsrTypeOrFallback(invoice);
 							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
 								epdf.printQrBill(rsc);
+							} else if ("5.0".equals(epdf.getBillVersion())) { //$NON-NLS-1$
+								epdf.printQrBill(rsc);
 							} else {
 								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version [" //$NON-NLS-1$
 										+ epdf.getBillVersion() + "] and esrType [" + outputEsrType + "]"); //$NON-NLS-1$ //$NON-NLS-2$

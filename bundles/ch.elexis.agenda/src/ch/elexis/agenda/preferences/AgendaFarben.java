@@ -125,8 +125,37 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 
 			});
 		}
-
+		Group terminListeColors = new Group(par, SWT.BORDER);
+		terminListeColors.setText(Messages.AgendaFarben_Terminliste);
+		terminListeColors.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		terminListeColors.setLayout(new GridLayout(2, false));
+		createColorRow(terminListeColors, Messages.AgendaFarben_PastAppointments, PreferenceConstants.TL_PAST_BG_COLOR,
+				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
+		createColorRow(terminListeColors, Messages.AgendaFarben_FutureAppointments,
+				PreferenceConstants.TL_FUTURE_BG_COLOR, PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
 		return par;
 	}
 
+	private void createColorRow(Composite parent, String labelText, String prefKey, String defaultColor) {
+		Label text = new Label(parent, SWT.NONE);
+		text.setText(labelText);
+		Label colorPreview = new Label(parent, SWT.BORDER);
+		colorPreview.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		String coldesc = ConfigServiceHolder.getUser(prefKey, defaultColor);
+		colorPreview.setBackground(UiDesk.getColorFromRGB(coldesc));
+		colorPreview.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				ColorDialog cd = new ColorDialog(getShell());
+				RGB selected = cd.open();
+				if (selected == null) {
+					return;
+				}
+				String symbolic = UiDesk.createColor(selected);
+				colorPreview.setBackground(UiDesk.getColorFromRGB(symbolic));
+				ConfigServiceHolder.setUser(prefKey, symbolic);
+			}
+		});
+		colorPreview.setToolTipText(Messages.AgendaFarben_DoubleClickToChange);
+	}
 }

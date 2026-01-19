@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -124,9 +123,6 @@ public class TardocBillingTest extends AbstractTardocTest {
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
 
-		// automatic kumulation AR.00.0060
-		assertEquals(2, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
-
 		String side = (String) status.get().getExtInfo(Constants.FLD_EXT_SIDE);
 		assertNotNull(side);
 
@@ -153,7 +149,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		billed = status.get();
 		assertFalse(status.getMessages().toString(), status.isOK());
 
-		assertEquals(4, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 	}
 
 	@Test
@@ -164,9 +160,6 @@ public class TardocBillingTest extends AbstractTardocTest {
 		Result<IBilled> status = billingService.bill(code_MK250020, encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
-
-		// automatic kumulation AR.00.0020
-		assertEquals(2, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 
 		// zuschlag
 		status = billingService.bill(code_MK250090, encounter, 1);
@@ -186,7 +179,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertNotNull(bezug);
 		assertEquals("MK.25.0090", bezug);
 
-		assertEquals(4, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 	}
 
 	@Test
@@ -254,23 +247,13 @@ public class TardocBillingTest extends AbstractTardocTest {
 		status = billingService.bill(code_TK000010, encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
-
-		assertEquals(3, encounter.getBilled().size());
-		Optional<IBilled> autoKumulation = encounter.getBilled().stream().filter(b -> "AR.00.0130".equals(b.getCode()))
-				.findAny();
-		assertTrue(autoKumulation.isPresent());
-		String bezug = (String) autoKumulation.get().getExtInfo("Bezug");
-		assertNotNull(bezug);
-		assertEquals("TK.00.0010", bezug);
+		assertEquals(2, encounter.getBilled().size());
 
 		// test adding kumulation
-		Result<?> removeStatus = billingService.removeBilled(autoKumulation.get(), encounter);
-		assertTrue(status.getMessages().toString(), removeStatus.isOK());
-
 		status = billingService.bill(code_AR300130, encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
-		bezug = (String) billed.getExtInfo("Bezug");
+		String bezug = (String) billed.getExtInfo("Bezug");
 		assertNotNull(bezug);
 		assertEquals("TK.00.0010", bezug);
 	}

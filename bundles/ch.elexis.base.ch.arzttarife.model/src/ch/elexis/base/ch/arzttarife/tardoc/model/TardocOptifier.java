@@ -126,13 +126,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 					}
 					return limitationsResult;
 				} else {
-					if (save) {
-						// reset possible modifications
-						CoreModelServiceHolder.get().refresh(newBilled, true, true);
-					} else {
-						// only remove added
-						encounter.getBilled().remove(newBilled);
-					}
+					// reset possible modifications
+					CoreModelServiceHolder.get().refresh(newBilled, true, true);
 					return limitationsResult;
 				}
 			}
@@ -145,13 +140,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 					}
 					return digniResult;
 				} else {
-					if (save) {
-						// reset possible modifications
-						CoreModelServiceHolder.get().refresh(newBilled, true, true);
-					} else {
-						// only remove added
-						encounter.getBilled().remove(newBilled);
-					}
+					// reset possible modifications
+					CoreModelServiceHolder.get().refresh(newBilled, true, true);
 					return digniResult;
 				}
 			}
@@ -170,34 +160,6 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				CoreModelServiceHolder.get().refresh(encounter, true);
 			}
 		} else {
-			if (bOptify) {
-				List<ITardocKumulation> kumulations = code.getKumulations(TardocKumulationArt.SERVICE);
-				List<ITardocKumulation> masterInclusionKumulations = kumulations.stream()
-						.filter(k -> k.getMasterCode().equals(code.getCode())
-								&& k.getSlaveArt().equals(TardocKumulationArt.SERVICE)
-								&& k.getTyp() == TardocKumulationTyp.INCLUSION)
-						.toList();
-				if (!masterInclusionKumulations.isEmpty()) {
-					for (ITardocKumulation iTardocKumulation : masterInclusionKumulations) {
-						TardocLeistung slaveCode = TardocLeistung.getFromCode(iTardocKumulation.getSlaveCode(),
-								encounter.getDate(), null);
-						if (slaveCode != null) {
-							// add the slave code
-							Result<IBilled> kumulationResult = add(slaveCode, encounter, false);
-							if (kumulationResult.isOK()) {
-								// Referenzleistung
-								if (slaveCode.getServiceTyp() != null && slaveCode.getServiceTyp().equals("R")) {
-									kumulationResult.get().setExtInfo("Bezug", code.getCode());
-								}
-								if (save) {
-									CoreModelServiceHolder.get().save(kumulationResult.get());
-								}
-							}
-						}
-					}
-				}
-			}
-
 			if (save) {
 				CoreModelServiceHolder.get().save(encounter);
 				CoreModelServiceHolder.get().save(matcherResult.get());

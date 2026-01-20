@@ -1,18 +1,9 @@
 package ch.elexis.regiomed.order.model;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.gson.annotations.SerializedName;
-
-import ch.elexis.core.model.IArticle;
-import ch.elexis.core.model.IOrderEntry;
-import ch.elexis.core.ui.exchange.ArticleUtil;
-import ch.elexis.regiomed.order.config.RegiomedConfig;
 
 public class RegiomedOrderRequest {
 
@@ -46,80 +37,84 @@ public class RegiomedOrderRequest {
     @SerializedName("articles")
     private List<Article> articles = new ArrayList<>();
 
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	public String getB64Password() {
+		return b64Password;
+	}
+
+	public void setB64Password(String b64Password) {
+		this.b64Password = b64Password;
+	}
+
+	public boolean isCheckOrder() {
+		return checkOrder;
+	}
+
 	public void setCheckOrder(boolean checkOrder) {
 		this.checkOrder = checkOrder;
 	}
 
-	public boolean isCheckOrder() {
-		return this.checkOrder;
+	public String getDeliveryType() {
+		return deliveryType;
 	}
 
-    public static RegiomedOrderRequest fromEntries(RegiomedConfig cfg, List<IOrderEntry> entries) {
-        RegiomedOrderRequest req = new RegiomedOrderRequest();
+	public void setDeliveryType(String deliveryType) {
+		this.deliveryType = deliveryType;
+	}
 
-        req.userEmail = cfg.getEmail();
+	public String getErrorEmail() {
+		return errorEmail;
+	}
 
-		if (StringUtils.isNotBlank(cfg.getPassword())) {
-            req.b64Password = Base64.getEncoder()
-                    .encodeToString(cfg.getPassword().getBytes(StandardCharsets.UTF_8));
-        } else {
-            req.b64Password = null;
-        }
+	public void setErrorEmail(String errorEmail) {
+		this.errorEmail = errorEmail;
+	}
 
-        req.checkOrder = cfg.isCheckOrder();
-        req.deliveryType = "DEFAULT"; //$NON-NLS-1$
+	public String getDeliveryDate() {
+		return deliveryDate;
+	}
 
-		if (cfg.isErrorEmailEnabled() && StringUtils.isNotBlank(cfg.getErrorEmailAddress())
-				&& isValidEmail(cfg.getErrorEmailAddress())) {
-			req.errorEmail = cfg.getErrorEmailAddress().trim();
-		} else {
-			req.errorEmail = null;
-		}
+	public void setDeliveryDate(String deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
 
-		req.deliveryDate = null;
-        req.patInfo = null;
-		req.sendersUniqueID = null;
-		req.reference = null;
+	public String getPatInfo() {
+		return patInfo;
+	}
 
-        for (IOrderEntry entry : entries) {
-            IArticle art = entry.getArticle();
-            String pharmaCodeStr = ArticleUtil.getPharmaCode(art);
-            String eanStr = ArticleUtil.getEan(art);
-			int pharmaCode = 0;
-			long eanId = 0L;
+	public void setPatInfo(String patInfo) {
+		this.patInfo = patInfo;
+	}
 
-			try {
-				if (StringUtils.isNotBlank(pharmaCodeStr)) {
-					pharmaCode = Integer.parseInt(pharmaCodeStr.trim());
-                }
-			} catch (NumberFormatException e) {
-				// Parsing error -> 0 remains unchanged
-            }
+	public String getSendersUniqueID() {
+		return sendersUniqueID;
+	}
 
-			try {
-				if (StringUtils.isNotBlank(eanStr)) {
-					eanId = Long.parseLong(eanStr.trim());
-                }
-			} catch (NumberFormatException e) {
-				// Parsing error -> 0 remains unchanged
-            }
+	public void setSendersUniqueID(String sendersUniqueID) {
+		this.sendersUniqueID = sendersUniqueID;
+	}
 
-            Article a = new Article();
-			a.pharmaCode = pharmaCode;
-			a.eanID = eanId;
-            a.description = art.getName();
-            a.quantity = entry.getAmount();
-            req.articles.add(a);
-        }
+	public String getReference() {
+		return reference;
+	}
 
-        return req;
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public List<Article> getArticles() {
+		return articles;
     }
 
-	private static boolean isValidEmail(String value) {
-		String v = StringUtils.trimToEmpty(value);
-		int at = v.indexOf('@');
-		int dot = v.lastIndexOf('.');
-		return at > 0 && dot > at + 1 && dot < v.length() - 1;
+	public void setArticles(List<Article> articles) {
+		this.articles = articles;
 	}
 
 	public void clearPasswordForTokenAuth() {
@@ -128,39 +123,105 @@ public class RegiomedOrderRequest {
 
     public static class Article {
         @SerializedName("pharmaCode")
-        public int pharmaCode;
+		private int pharmaCode;
 
         @SerializedName("eanID")
-        public long eanID;
+		private long eanID;
 
         @SerializedName("description")
-        public String description;
+		private String description;
 
         @SerializedName("quantity")
-        public int quantity;
+		private int quantity;
+
+		public int getPharmaCode() {
+			return pharmaCode;
+		}
+
+		public void setPharmaCode(int pharmaCode) {
+			this.pharmaCode = pharmaCode;
+		}
+
+		public long getEanID() {
+			return eanID;
+		}
+
+		public void setEanID(long eanID) {
+			this.eanID = eanID;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public int getQuantity() {
+			return quantity;
+		}
+
+		public void setQuantity(int quantity) {
+			this.quantity = quantity;
+		}
     }
 
 	public static class TokenRequestBody {
 		@SerializedName("Email")
-		public String email;
+		private String email;
+
 		@SerializedName("B64Password")
-		public String b64Password;
+		private String b64Password;
 
 		public TokenRequestBody(String email, String b64Password) {
 			this.email = email;
 			this.b64Password = b64Password;
 		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public String getB64Password() {
+			return b64Password;
+		}
 	}
 
 	public static class TokenResponse {
 		@SerializedName("data")
-		public TokenData data;
+		private TokenData data;
+
+		public TokenData getData() {
+			return data;
+		}
+
+		public void setData(TokenData data) {
+			this.data = data;
+		}
 	}
 
 	public static class TokenData {
 		@SerializedName("Token")
-		public String token;
+		private String token;
+
 		@SerializedName(value = "TokenRaw", alternate = { "Token Raw", "tokenRaw" })
-		public String tokenRaw;
+		private String tokenRaw;
+
+		public String getToken() {
+			return token;
+		}
+
+		public void setToken(String token) {
+			this.token = token;
+		}
+
+		public String getTokenRaw() {
+			return tokenRaw;
+		}
+
+		public void setTokenRaw(String tokenRaw) {
+			this.tokenRaw = tokenRaw;
+		}
 	}
 }

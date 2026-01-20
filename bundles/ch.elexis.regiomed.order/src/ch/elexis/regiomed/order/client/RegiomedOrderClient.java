@@ -7,8 +7,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,10 +21,10 @@ import com.google.gson.GsonBuilder;
 
 import ch.elexis.regiomed.order.config.RegiomedConfig;
 import ch.elexis.regiomed.order.config.RegiomedHttpConstants;
+import ch.elexis.regiomed.order.model.RegiomedAlternativesResponse;
 import ch.elexis.regiomed.order.model.RegiomedOrderRequest;
-import ch.elexis.regiomed.order.model.RegiomedOrderRequest.TokenRequestBody;
-import ch.elexis.regiomed.order.model.RegiomedOrderRequest.TokenResponse;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse;
+import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
 
 public class RegiomedOrderClient {
 
@@ -32,112 +34,128 @@ public class RegiomedOrderClient {
 
 	public RegiomedOrderResponse sendOrderWithToken(RegiomedConfig config, RegiomedOrderRequest request)
 			throws Exception {
-		String endpoint = config.getOrderEndpoint();
 		String token = fetchToken(config);
 		request.clearPasswordForTokenAuth();
 
-		URI uri = URI.create(endpoint);
-		URL serverURL = uri.toURL();
-		HttpURLConnection conn = (HttpURLConnection) serverURL.openConnection();
-		conn.setRequestMethod(RegiomedHttpConstants.METHOD_POST);
-		conn.setDoInput(true);
-		conn.setDoOutput(true);
-		conn.setUseCaches(false);
-		conn.setRequestProperty(RegiomedHttpConstants.HEADER_CONTENT_TYPE,
-				RegiomedHttpConstants.CONTENT_TYPE_JSON_UTF8);
-		conn.setRequestProperty(RegiomedHttpConstants.HEADER_ACCEPT, RegiomedHttpConstants.ACCEPT_JSON);
+		String url = config.getOrderEndpoint();
+		String responseBody = executeRequest(url, RegiomedHttpConstants.METHOD_POST, token, request);
 
-		String authHeaderValue = null;
-		if (StringUtils.isNotBlank(token)) {
-			String cleanToken = token.trim();
-			authHeaderValue = cleanToken;
-			conn.setRequestProperty(RegiomedHttpConstants.HEADER_AUTHORIZATION, authHeaderValue);
-		}
-
-		try (OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8)) {
-			out.write(gson.toJson(request));
-		}
-
-		int status = conn.getResponseCode();
-		InputStream in = (status >= 200 && status < 300) ? conn.getInputStream()
-						: conn.getErrorStream();
-
-		String responseBody = readStreamToString(in);
-
-		if (status < 200 || status >= 300) {
-			throw new RuntimeException("HTTP " + status + " Error. See log for details. Body: " + responseBody); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		RegiomedOrderResponse response = null;
-		if (StringUtils.isNotBlank(responseBody)) {
-			try {
-				String jsonToParse = responseBody.trim();
-				if (jsonToParse.startsWith("\"")) { //$NON-NLS-1$
-					jsonToParse = gson.fromJson(jsonToParse, String.class);
-				}
-				response = gson.fromJson(jsonToParse, RegiomedOrderResponse.class);
-			} catch (Exception parseEx) {
-				log.warn("Parsing error", parseEx); //$NON-NLS-1$
-				throw parseEx;
-			}
-		}
-		return response;
+		return parseResponse(responseBody, RegiomedOrderResponse.class);
 	}
 
+	public RegiomedProductLookupResponse searchProducts(RegiomedConfig config, String criteria) throws Exception {
+		if (StringUtils.isBlank(criteria)) {
+			return new RegiomedProductLookupResponse();
+		}
+		String encodedCriteria = URLEncoder.encode(criteria, StandardCharsets.UTF_8).replace("+", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+		String url = config.getFuzzySearchEndpoint() + encodedCriteria;
+		String token = fetchToken(config);
+		String responseBody = executeRequest(url, RegiomedHttpConstants.METHOD_GET, token, null);
+		RegiomedProductLookupResponse result = parseResponse(responseBody, RegiomedProductLookupResponse.class);
+		return result != null ? result : new RegiomedProductLookupResponse();
+	}
+
+	public RegiomedAlternativesResponse getAlternatives(RegiomedConfig config, String type, String id)
+			throws Exception {
+		if (StringUtils.isBlank(type) || StringUtils.isBlank(id)) {
+			return new RegiomedAlternativesResponse();
+		}
+		String baseUrl = config.getAlternativesFlexEndpoint();
+		String url = baseUrl + type + "/" + id; //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			String token = fetchToken(config);
+			String responseBody = executeRequest(url, RegiomedHttpConstants.METHOD_GET, token, null);
+			RegiomedAlternativesResponse result = parseResponse(responseBody, RegiomedAlternativesResponse.class);
+			return result != null ? result : new RegiomedAlternativesResponse();
+		} catch (Exception e) {
+			log.warn("Alternatives Error for URL " + url, e); //$NON-NLS-1$
+			return new RegiomedAlternativesResponse();
+		}
+	}
+
+	public boolean checkSearchAvailability(RegiomedConfig config) {
+		try {
+			searchProducts(config, "check_availability_ping"); //$NON-NLS-1$
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 	private String fetchToken(RegiomedConfig config) throws Exception {
-		String tokenUrl = config.getTokenEndpoint();
+		String url = config.getTokenEndpoint();
 		String b64Password = Base64.getEncoder().encodeToString(config.getPassword().getBytes(StandardCharsets.UTF_8));
-		TokenRequestBody body = new TokenRequestBody(config.getEmail(), b64Password);
+		RegiomedOrderRequest.TokenRequestBody body = new RegiomedOrderRequest.TokenRequestBody(config.getEmail(),
+				b64Password);
 
-		Gson gson = new Gson();
-		URI uri = URI.create(tokenUrl);
-		URL url = uri.toURL();
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod(RegiomedHttpConstants.METHOD_POST);
-		conn.setDoOutput(true);
-		conn.setDoInput(true);
-		conn.setUseCaches(false);
-		conn.setRequestProperty(RegiomedHttpConstants.HEADER_CONTENT_TYPE,
-				RegiomedHttpConstants.CONTENT_TYPE_JSON_UTF8);
-		conn.setRequestProperty(RegiomedHttpConstants.HEADER_ACCEPT, RegiomedHttpConstants.ACCEPT_JSON);
+		String responseBody = executeRequest(url, RegiomedHttpConstants.METHOD_POST, null, body);
 
-		String json = gson.toJson(body);
-		try (OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8)) {
-			out.write(json);
-		}
-
-		int status = conn.getResponseCode();
-		InputStream in = (status >= 200 && status < 300) ? conn.getInputStream() : conn.getErrorStream();
-
-		StringBuilder sb = new StringBuilder();
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
-		}
-		String responseBody = sb.toString();
-		if (status < 200 || status >= 300) {
-			throw new RuntimeException("Error retrieving token (HTTP " + status + "): " + responseBody); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		TokenResponse tokenResponse = gson.fromJson(responseBody, TokenResponse.class);
-		if (tokenResponse == null || tokenResponse.data == null) {
+		RegiomedOrderRequest.TokenResponse tokenResponse = gson.fromJson(responseBody,
+				RegiomedOrderRequest.TokenResponse.class);
+		if (tokenResponse == null || tokenResponse.getData() == null) {
 			throw new RuntimeException("No data in token response."); //$NON-NLS-1$
 		}
 
 		String tokenToUse = null;
-		if (StringUtils.isNotBlank(tokenResponse.data.tokenRaw)) {
-			tokenToUse = tokenResponse.data.tokenRaw;
-		} else if (StringUtils.isNotBlank(tokenResponse.data.token)) {
-			tokenToUse = tokenResponse.data.token;
+		if (StringUtils.isNotBlank(tokenResponse.getData().getToken())) {
+			tokenToUse = tokenResponse.getData().getToken();
+		} else if (StringUtils.isNotBlank(tokenResponse.getData().getTokenRaw())) {
+			tokenToUse = tokenResponse.getData().getTokenRaw();
 		}
 
-		if (StringUtils.isBlank(tokenToUse)) {
+		if (tokenToUse == null || StringUtils.isBlank(tokenToUse)) {
 			throw new RuntimeException("No token included in response."); //$NON-NLS-1$
 		}
 
+		if (!tokenToUse.toLowerCase(Locale.ENGLISH).startsWith("bearer ")) { //$NON-NLS-1$
+			tokenToUse = RegiomedHttpConstants.AUTH_BEARER_PREFIX + tokenToUse;
+		}
 		return tokenToUse;
+	}
+
+	private String executeRequest(String urlStr, String method, String token, Object requestBody) throws Exception {
+		URI uri = URI.create(urlStr);
+		URL url = uri.toURL();
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod(method);
+		conn.setUseCaches(false);
+		conn.setRequestProperty(RegiomedHttpConstants.HEADER_ACCEPT, RegiomedHttpConstants.ACCEPT_JSON);
+		if (StringUtils.isNotBlank(token)) {
+			conn.setRequestProperty(RegiomedHttpConstants.HEADER_AUTHORIZATION, token.trim());
+		}
+		if (RegiomedHttpConstants.METHOD_POST.equals(method)) {
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setRequestProperty(RegiomedHttpConstants.HEADER_CONTENT_TYPE,
+					RegiomedHttpConstants.CONTENT_TYPE_JSON_UTF8);
+			if (requestBody != null) {
+				try (OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8)) {
+					out.write(gson.toJson(requestBody));
+				}
+			}
+		}
+		int status = conn.getResponseCode();
+		InputStream in = (status >= 200 && status < 300) ? conn.getInputStream() : conn.getErrorStream();
+		String responseBody = readStreamToString(in);
+		if (status < 200 || status >= 300) {
+			throw new RuntimeException("HTTP " + status + " Error. URL: " + urlStr + " Body: " + responseBody); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return responseBody;
+	}
+
+	private <T> T parseResponse(String json, Class<T> classOfT) {
+		if (StringUtils.isBlank(json)) {
+			return null;
+		}
+		try {
+			String jsonToParse = json.trim();
+			if (jsonToParse.startsWith("\"")) { //$NON-NLS-1$
+				jsonToParse = gson.fromJson(jsonToParse, String.class);
+			}
+			return gson.fromJson(jsonToParse, classOfT);
+		} catch (Exception e) {
+			log.warn("Parsing error for class " + classOfT.getSimpleName(), e); //$NON-NLS-1$
+			throw e;
+		}
 	}
 
 	private String readStreamToString(InputStream in) throws Exception {

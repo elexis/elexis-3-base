@@ -78,6 +78,14 @@ public class RegiomedConfig {
 		return appendPath("/ExternalOrders/DMO"); //$NON-NLS-1$
 	}
 
+	public String getFuzzySearchEndpoint() {
+		return appendPath("/Article/FuzzySearch/"); //$NON-NLS-1$
+	}
+
+	public String getAlternativesFlexEndpoint() {
+		return appendPath("/Article/AlternativesFlex/"); //$NON-NLS-1$
+	}
+
 	private String appendPath(String path) {
 		if (baseUrl.endsWith("/")) { //$NON-NLS-1$
 			return baseUrl.substring(0, baseUrl.length() - 1) + path;

@@ -178,7 +178,7 @@ public class Tarmed50Validator {
 			res.add(Result.SEVERITY.ERROR, 4, Messages.Validator_NoCase, invoice, true);
 		}
 
-		String ean = TarmedRequirements.getEAN(m);
+		String ean = TarmedRequirements.getEAN(m, Tarmed50Exporter.EAN_PSEUDO);
 		if (StringTool.isNothing(ean)) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);
 			CoreModelServiceHolder.get().save(invoice);
@@ -202,7 +202,7 @@ public class Tarmed50Validator {
 				res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, invoice, true);
 				return res;
 			}
-			ean = TarmedRequirements.getEAN(costBearer);
+			ean = TarmedRequirements.getEAN(costBearer, Tarmed50Exporter.EAN_PSEUDO);
 
 			if (StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))) {
 				invoice.reject(InvoiceState.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);

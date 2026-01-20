@@ -63,6 +63,10 @@ public class TarmedRequirements {
 	}
 
 	public static String getEAN(final IContact contact) {
+		return getEAN(contact, EAN_PSEUDO);
+	}
+
+	public static String getEAN(final IContact contact, String pseudoEan) {
 		if (contact == null) {
 			return null;
 		}
@@ -83,7 +87,7 @@ public class TarmedRequirements {
 		if (xid != null && xid.getDomainId() != null && !xid.getDomainId().isEmpty()) {
 			return xid.getDomainId().trim();
 		} else if (xid == null) {
-			return EAN_PSEUDO;
+			return pseudoEan;
 		}
 		return StringUtils.EMPTY;
 	}

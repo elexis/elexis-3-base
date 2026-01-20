@@ -128,6 +128,8 @@ public class Tarmed50Exporter {
 
 	private static String UNKNOWN_SSN = "7569999999991";
 
+	public static final String EAN_PSEUDO = "2000000000008"; //$NON-NLS-1$
+
 	public static enum EsrType {
 		esr9, esrQR
 	}
@@ -324,7 +326,7 @@ public class Tarmed50Exporter {
 		if (referrer != null) {
 			PartnerAddressType referrerPartner = new PartnerAddressType();
 			referrerPartner.setType("referrer");
-			String ean = TarmedRequirements.getEAN(referrer);
+			String ean = TarmedRequirements.getEAN(referrer, EAN_PSEUDO);
 			if (StringUtils.isNotBlank(ean)) {
 				referrerPartner.setGln(ean);
 			}
@@ -355,7 +357,7 @@ public class Tarmed50Exporter {
 		} else {
 			debitor = invoice.getCoverage().getCostBearer();
 		}
-		debitorAddressType.setGln(TarmedRequirements.getEAN(debitor));
+		debitorAddressType.setGln(TarmedRequirements.getEAN(debitor, EAN_PSEUDO));
 
 		Object companyOrPerson = getCompanyOrPerson(debitor, false);
 		if (companyOrPerson instanceof CompanyType) {
@@ -439,7 +441,7 @@ public class Tarmed50Exporter {
 		if (costBearer == null) {
 			costBearer = invoice.getCoverage().getPatient();
 		}
-		String kEAN = TarmedRequirements.getEAN(costBearer);
+		String kEAN = TarmedRequirements.getEAN(costBearer, EAN_PSEUDO);
 		InsuranceAddressType insuranceAddressType = new InsuranceAddressType();
 
 		if (tiersType == Tiers.GARANT) {
@@ -492,7 +494,7 @@ public class Tarmed50Exporter {
 					ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null), IContact.class);
 			if (fixProvider.isPresent()) {
 				logger.info("Fixed provider [" + fixProvider.get().getLabel() + "] ean ["
-						+ TarmedRequirements.getEAN(fixProvider.get()) + "]");
+						+ TarmedRequirements.getEAN(fixProvider.get(), EAN_PSEUDO) + "]");
 				provider = fixProvider.get();
 			}
 		}
@@ -500,12 +502,12 @@ public class Tarmed50Exporter {
 		ProviderGLNAddressType glnAddressType = new ProviderGLNAddressType();
 		ZsrAddressType zsrAddressType = new ZsrAddressType();
 
-		glnAddressType.setGln(TarmedRequirements.getEAN(provider));
+		glnAddressType.setGln(TarmedRequirements.getEAN(provider, EAN_PSEUDO));
 		if(provider instanceof IMandator) {
 			IContact biller = ((IMandator) provider).getBiller();
-			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(biller));
+			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(biller, EAN_PSEUDO));
 		} else {
-			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(provider));
+			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(provider, EAN_PSEUDO));
 		}
 		providerAddressType.setProviderGln(glnAddressType);
 		String zsr = TarmedRequirements.getKSK(provider);
@@ -530,7 +532,7 @@ public class Tarmed50Exporter {
 		BillersAddressType billerAddressType = new BillersAddressType();
 		BillerGLNAddressType glnAddressType = new BillerGLNAddressType();
 		ZsrAddressType zsrAddressType = new ZsrAddressType();
-		glnAddressType.setGln(TarmedRequirements.getEAN(biller));
+		glnAddressType.setGln(TarmedRequirements.getEAN(biller, EAN_PSEUDO));
 		billerAddressType.setBillerGln(glnAddressType);
 
 		String zsr = TarmedRequirements.getKSK(biller);
@@ -772,7 +774,7 @@ public class Tarmed50Exporter {
 						serviceExType.setSession(session);
 						serviceExType.setName(billed.getText());
 						serviceExType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-						serviceExType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceExType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO));
 						serviceExType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
 
 						servicesType.getServiceExOrService().add(serviceExType);
@@ -808,7 +810,7 @@ public class Tarmed50Exporter {
 							serviceType.setXtraDrug(drugType);
 						}
 						serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-						serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO));
 						serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
 
 						// all 406 will have code 2000
@@ -1345,7 +1347,7 @@ public class Tarmed50Exporter {
 		processingType.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 
 		TransportType transportType = new TransportType();
-		transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator()));
+		transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator(), EAN_PSEUDO));
 		transportType.setTo(XMLExporterUtil.getRecipientEAN(invoice));
 
 		logger.info("Using intermediate EAN [" + XMLExporterUtil.getIntermediateEAN(invoice) + "]");

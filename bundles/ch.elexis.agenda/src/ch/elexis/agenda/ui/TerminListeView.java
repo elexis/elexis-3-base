@@ -15,6 +15,7 @@
 
 package ch.elexis.agenda.ui;
 
+import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
@@ -22,17 +23,20 @@ import java.util.Locale;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
@@ -43,6 +47,7 @@ import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -166,62 +171,11 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			}
 		};
 
-		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof IAppointment) {
-					IAppointment termin = (IAppointment) element;
-					StringBuilder sbLabel = new StringBuilder();
-					// day
-					if (termin.getStartTime() != null) {
-						TimeTool tt = new TimeTool(termin.getStartTime());
-						sbLabel.append(tt.toString(TimeTool.DATE_GER));
-						String dayShort = termin.getStartTime().getDayOfWeek().getDisplayName(TextStyle.SHORT,
-								Locale.getDefault());
-						if (dayShort != null) {
-							sbLabel.append(" (" + dayShort + ")");
-						}
-						sbLabel.append(", ");
-
-						// start time
-						sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
-					} else {
-						sbLabel.append("?");
-					}
-					sbLabel.append(" - ");
-
-					if (termin.getEndTime() != null) {
-						TimeTool te = new TimeTool(termin.getEndTime());
-						// end time
-						sbLabel.append(te.toString(TimeTool.TIME_SMALL));
-					} else {
-						sbLabel.append("?");
-					}
-
-					// type
-					sbLabel.append(" (");
-					sbLabel.append(termin.getType());
-					sbLabel.append(", ");
-					// status
-					sbLabel.append(termin.getState());
-					sbLabel.append("), ");
-
-					// bereich
-					sbLabel.append(termin.getSchedule());
-
-					// grund if set
-					if (termin.getReason() != null && !termin.getReason().isEmpty()) {
-						sbLabel.append(" (");
-						sbLabel.append(termin.getReason());
-						sbLabel.append(")");
-					}
-					return sbLabel.toString();
-				}
-				return super.getText(element);
-			}
-		}, new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.V_SCROLL | SWT.FULL_SELECTION, cv));
+		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new AppointmentLabelProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.V_SCROLL | SWT.FULL_SELECTION, cv));
 		vc.setContentType(ContentType.GENERICOBJECT);
 		cv.create(vc, body, SWT.NONE, this);
+		sort(SWT.DOWN);
 		cv.getViewerWidget().addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
@@ -277,6 +231,103 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	public void refresh() {
 		if (CoreUiUtil.isActiveControl(form)) {
 			updateSelection(ContextServiceHolder.get().getActivePatient().orElse(null));
+		}
+	}
+
+	private static final class AppointmentLabelProvider extends LabelProvider implements IColorProvider {
+
+		@Override
+		public String getText(Object element) {
+			if (element instanceof IAppointment) {
+				IAppointment termin = (IAppointment) element;
+				StringBuilder sbLabel = new StringBuilder();
+
+				// day
+				if (termin.getStartTime() != null) {
+					TimeTool tt = new TimeTool(termin.getStartTime());
+					sbLabel.append(tt.toString(TimeTool.DATE_GER));
+					String dayShort = termin.getStartTime().getDayOfWeek().getDisplayName(TextStyle.SHORT,
+							Locale.getDefault());
+					if (dayShort != null) {
+						sbLabel.append(" (" + dayShort + ")");
+					}
+					sbLabel.append(", ");
+					sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
+				} else {
+					sbLabel.append("?");
+				}
+				sbLabel.append(" - ");
+
+				if (termin.getEndTime() != null) {
+					TimeTool te = new TimeTool(termin.getEndTime());
+					sbLabel.append(te.toString(TimeTool.TIME_SMALL));
+				} else {
+					sbLabel.append("?");
+				}
+
+				sbLabel.append(" (");
+				sbLabel.append(termin.getType());
+				sbLabel.append(", ");
+				sbLabel.append(termin.getState());
+				sbLabel.append("), ");
+
+				sbLabel.append(termin.getSchedule());
+
+				if (termin.getReason() != null && !termin.getReason().isEmpty()) {
+					sbLabel.append(" (");
+					sbLabel.append(termin.getReason());
+					sbLabel.append(")");
+				}
+
+				return sbLabel.toString();
+			}
+			return super.getText(element);
+		}
+
+		@Override
+		public Color getBackground(Object element) {
+			if (isPastAppointment(element)) {
+				String hex = ConfigServiceHolder.getUser(PreferenceConstants.TL_PAST_BG_COLOR,
+						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
+				return UiDesk.getColorFromRGB(hex);
+			} else {
+				String hex = ConfigServiceHolder.getUser(PreferenceConstants.TL_FUTURE_BG_COLOR,
+						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+				return UiDesk.getColorFromRGB(hex);
+			}
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+			Color bg = getBackground(element);
+			if (bg == null) {
+				return null;
+			}
+			return isDark(bg) ? Display.getDefault().getSystemColor(SWT.COLOR_WHITE)
+					: Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+		}
+
+		private boolean isDark(Color color) {
+			int r = color.getRed();
+			int g = color.getGreen();
+			int b = color.getBlue();
+			double luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255.0;
+			return luminance < 0.55;
+		}
+
+		private boolean isPastAppointment(Object element) {
+			if (!(element instanceof IAppointment)) {
+				return false;
+			}
+			IAppointment a = (IAppointment) element;
+			LocalDateTime now = LocalDateTime.now();
+			if (a.getEndTime() != null) {
+				return a.getEndTime().isBefore(now);
+			}
+			if (a.getStartTime() != null) {
+				return a.getStartTime().isBefore(now);
+			}
+			return false;
 		}
 	}
 }

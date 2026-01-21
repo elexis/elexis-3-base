@@ -202,5 +202,9 @@ public final class Messages {
 	public static String AgendaUI_Delete_ask_really_delete = ch.elexis.core.l10n.Messages.AgendaUI_Delete_ask_really_delete;
 	public static String AgendaUI_Delete_delete = ch.elexis.core.l10n.Messages.AgendaUI_Delete_delete;
 	public static String DeleteHandlerLinkedAppointmentWarning = ch.elexis.core.l10n.Messages.DeleteHandlerLinkedAppointmentWarning;
+	public static String AgendaFarben_Terminliste = ch.elexis.core.l10n.Messages.AgendaFarben_Terminliste;
+	public static String AgendaFarben_PastAppointments = ch.elexis.core.l10n.Messages.AgendaFarben_PastAppointments;
+	public static String AgendaFarben_FutureAppointments = ch.elexis.core.l10n.Messages.AgendaFarben_FutureAppointments;
+	public static String AgendaFarben_DoubleClickToChange = ch.elexis.core.l10n.Messages.AgendaFarben_DoubleClickToChange;
 
 }

@@ -37,9 +37,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IEncounter;
@@ -50,14 +52,14 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 
-public class TarmedRefcodesDialog extends Dialog {
+public class ArzttarifRefcodesDialog extends Dialog {
 
 	private IBilled billed;
 	private Composite contentComposite;
 
 	private List<RefCodeEditComposite> refcodesComposites;
 
-	public TarmedRefcodesDialog(Shell shell, IBilled tl) {
+	public ArzttarifRefcodesDialog(Shell shell, IBilled tl) {
 		super(shell);
 		refcodesComposites = new ArrayList<>();
 		billed = tl;
@@ -97,7 +99,7 @@ public class TarmedRefcodesDialog extends Dialog {
 		RefCodeEditComposite add = new RefCodeEditComposite(contentComposite, SWT.NONE);
 		add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		refcodesComposites.add(add);
-		TarmedRefcodesDialog.this.getShell().pack(true);
+		ArzttarifRefcodesDialog.this.getShell().pack(true);
 	}
 
 	private void removeRefcodeEdit(RefCodeEditComposite refCodeEditComposite) {
@@ -105,13 +107,13 @@ public class TarmedRefcodesDialog extends Dialog {
 		refCodeEditComposite.setVisible(false);
 		refCodeEditComposite.dispose();
 		refcodesComposites.remove(refCodeEditComposite);
-		TarmedRefcodesDialog.this.getShell().pack(true);
+		ArzttarifRefcodesDialog.this.getShell().pack(true);
 	}
 
 	@Override
 	public void create() {
 		super.create();
-		getShell().setText("Tarmedbezüge herstellen: " + billed.getCode());
+		getShell().setText(billed.getBillable().getCodeSystemName() + "-Bezüge herstellen: " + billed.getCode());
 	}
 
 	@Override
@@ -170,7 +172,7 @@ public class TarmedRefcodesDialog extends Dialog {
 			refcodeCombo.setInput(getPossibleRefCodes());
 
 			amountSpinner = new Spinner(this, SWT.BORDER);
-			amountSpinner.setValues(0, 0, (int) TarmedRefcodesDialog.this.billed.getAmount(), 0, 1, 1);
+			amountSpinner.setValues(0, 0, (int) ArzttarifRefcodesDialog.this.billed.getAmount(), 0, 1, 1);
 
 			ToolBarManager mgr = new ToolBarManager(SWT.RIGHT | SWT.FLAT);
 			mgr.add(new Action() {
@@ -197,8 +199,9 @@ public class TarmedRefcodesDialog extends Dialog {
 			if (!encounters.isEmpty()) {
 				List<String> ret = new ArrayList<String>();
 				HashSet<String> uniqueCodes = new HashSet<String>();
+				Class<? extends IBillable> billableClazz = billed.getBillable().getClass();
 				encounters.forEach(e -> {
-					List<String> codes = e.getBilled().stream().filter(b -> b.getBillable() instanceof ITarmedLeistung)
+					List<String> codes = e.getBilled().stream().filter(b -> billableClazz.isInstance(b.getBillable()))
 							.map(b -> b.getCode()).collect(Collectors.toList());
 					uniqueCodes.addAll(codes);
 				});
@@ -208,5 +211,9 @@ public class TarmedRefcodesDialog extends Dialog {
 			}
 			return Collections.emptyList();
 		}
+	}
+
+	public static boolean isArzttarif(IBillable billable) {
+		return billable instanceof ITardocLeistung || billable instanceof ITarmedLeistung;
 	}
 }

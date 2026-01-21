@@ -88,6 +88,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	private BooleanFieldEditor bStoreFS;
 	private BooleanFieldEditor bAutomaticBilling;
 	private BooleanFieldEditor bShowCreatedInInbox;
+	private BooleanFieldEditor bDateModifiable;
 	private URIFieldEditor dfStorePath;
 
 	private Button btnSaveColumnWidths;
@@ -160,8 +161,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		gGeneralOptionsGridLayoutData.horizontalAlignment = GridData.FILL;
 		gGeneralOptions.setLayoutData(gGeneralOptionsGridLayoutData);
 
-		addField(new BooleanFieldEditor(DATE_MODIFIABLE, ch.elexis.omnivore.data.Messages.Preferences_dateModifiable,
-				gGeneralOptions));
+		bDateModifiable = new BooleanFieldEditor(DATE_MODIFIABLE,
+				ch.elexis.omnivore.data.Messages.Preferences_dateModifiable, gGeneralOptions);
+		addField(bDateModifiable);
 
 		bShowCreatedInInbox = new BooleanFieldEditor(GLOBAL_SHOW_CREATED_IN_INBOX,
 				ch.elexis.omnivore.data.Messages.Preferences_omnivoreShowCreatedInInbox, gGeneralOptions);
@@ -448,9 +450,12 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Control c = super.createContents(parent);
 		// save global setting to global cfg
 		ConfigServicePreferenceStore globalStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
+		globalStore.setDefault(DATE_MODIFIABLE, true);
 		globalStore.setDefault(GLOBAL_SHOW_CREATED_IN_INBOX, true);
 		bStoreFSGlobal.setPreferenceStore(globalStore);
 		bStoreFSGlobal.load();
+		bDateModifiable.setPreferenceStore(globalStore);
+		bDateModifiable.load();
 		bShowCreatedInInbox.setPreferenceStore(globalStore);
 		bShowCreatedInInbox.load();
 		// must be called after createFieldEditors / super.createContents

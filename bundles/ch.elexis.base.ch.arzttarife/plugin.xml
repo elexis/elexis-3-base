@@ -156,23 +156,13 @@
             allPopups="false"
             locationURI="popup:ch.elexis.Konsdetail.VerrechnungsDisplay">
          <command
-               commandId="ch.elexis.base.ch.arzttarife.tarmed.detail"
-               label="Tarmed Detail"
+               commandId="ch.elexis.base.ch.arzttarife.arzttarif.detail"
+               label="Leistungs-Detail"
                style="push">
          </command>
          <command
-               commandId="ch.elexis.base.ch.arzttarife.tarmed.refcodes"
-               label="Tarmedbezüge"
-               style="push">
-         </command>
-         <command
-               commandId="ch.elexis.base.ch.arzttarife.tardoc.detail"
-               label="Tardoc Detail"
-               style="push">
-         </command>
-         <command
-               commandId="ch.elexis.base.ch.arzttarife.tardoc.refcodes"
-               label="Tardocbezüge"
+               commandId="ch.elexis.base.ch.arzttarife.arzttarif.refcodes"
+               label="Leistungs-Bezüge"
                style="push">
          </command>         
       </menuContribution>
@@ -180,24 +170,14 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.TarmedDetailHandler"
-            id="ch.elexis.base.ch.arzttarife.tarmed.detail"
-            name="Tarmed Detail">
+            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.ArzttarifDetailHandler"
+            id="ch.elexis.base.ch.arzttarife.arzttarif.detail"
+            name="Arzttarif Detail">
       </command>
       <command
-            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.TarmedRefcodesHandler"
-            id="ch.elexis.base.ch.arzttarife.tarmed.refcodes"
-            name="Tarmed Reference Codes">
-      </command>
-      <command
-            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.TardocDetailHandler"
-            id="ch.elexis.base.ch.arzttarife.tardoc.detail"
-            name="Tardoc Detail">
-      </command>
-      <command
-            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.TardocRefcodesHandler"
-            id="ch.elexis.base.ch.arzttarife.tardoc.refcodes"
-            name="Tardoc Reference Codes">
+            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.ArzttarifRefcodesHandler"
+            id="ch.elexis.base.ch.arzttarife.arzttarif.refcodes"
+            name="Arzttarif Reference Codes">
       </command>      
    </extension>
 

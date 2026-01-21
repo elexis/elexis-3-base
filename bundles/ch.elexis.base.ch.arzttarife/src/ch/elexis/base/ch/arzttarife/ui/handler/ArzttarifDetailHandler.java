@@ -8,14 +8,13 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.views.TarmedDetailDialog;
+import ch.elexis.views.ArzttarifDetailDialog;
 
-public class TarmedDetailHandler extends AbstractHandler {
+public class ArzttarifDetailHandler extends AbstractHandler {
 
-	public static String CMDID = "ch.elexis.base.ch.arzttarife.tarmed.detail";
+	public static String CMDID = "ch.elexis.base.ch.arzttarife.arzttarif.detail";
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -23,8 +22,9 @@ public class TarmedDetailHandler extends AbstractHandler {
 		if (shell != null) {
 			Optional<IBilled> billed = ContextServiceHolder.get().getTyped(IBilled.class);
 			if (billed.isPresent()) {
-				if (billed.get().getBillable() instanceof ITarmedLeistung) {
-					new TarmedDetailDialog(shell, billed.get()).open();
+				if (ArzttarifDetailDialog.isArzttarif(billed.get().getBillable())
+						|| ArzttarifDetailDialog.isPauschale(billed.get().getBillable())) {
+					new ArzttarifDetailDialog(shell, billed.get()).open();
 				}
 			}
 		}
@@ -35,7 +35,8 @@ public class TarmedDetailHandler extends AbstractHandler {
 	public boolean isEnabled() {
 		Optional<IBilled> billed = ContextServiceHolder.get().getTyped(IBilled.class);
 		if (billed.isPresent()) {
-			return billed.get().getBillable() instanceof ITarmedLeistung;
+			return ArzttarifDetailDialog.isArzttarif(billed.get().getBillable())
+					|| ArzttarifDetailDialog.isPauschale(billed.get().getBillable());
 		}
 		return false;
 	}

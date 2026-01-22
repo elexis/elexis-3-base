@@ -206,5 +206,5 @@ public final class Messages {
 	public static String AgendaFarben_PastAppointments = ch.elexis.core.l10n.Messages.AgendaFarben_PastAppointments;
 	public static String AgendaFarben_FutureAppointments = ch.elexis.core.l10n.Messages.AgendaFarben_FutureAppointments;
 	public static String AgendaFarben_DoubleClickToChange = ch.elexis.core.l10n.Messages.AgendaFarben_DoubleClickToChange;
-
+	public static String AgendaFarben_Preferences_GlobalSettings = ch.elexis.core.l10n.Messages.Preferences_GlobalSettings;
 }

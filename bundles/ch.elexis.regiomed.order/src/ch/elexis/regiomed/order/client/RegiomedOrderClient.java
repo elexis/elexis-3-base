@@ -39,7 +39,7 @@ public class RegiomedOrderClient {
 
 		String url = config.getOrderEndpoint();
 		String responseBody = executeRequest(url, RegiomedHttpConstants.METHOD_POST, token, request);
-
+		System.out.println("test " + responseBody);
 		return parseResponse(responseBody, RegiomedOrderResponse.class);
 	}
 
@@ -55,8 +55,7 @@ public class RegiomedOrderClient {
 		return result != null ? result : new RegiomedProductLookupResponse();
 	}
 
-	public RegiomedAlternativesResponse getAlternatives(RegiomedConfig config, String type, String id)
-			throws Exception {
+	public RegiomedAlternativesResponse getAlternatives(RegiomedConfig config, String type, String id) {
 		if (StringUtils.isBlank(type) || StringUtils.isBlank(id)) {
 			return new RegiomedAlternativesResponse();
 		}
@@ -68,7 +67,11 @@ public class RegiomedOrderClient {
 			RegiomedAlternativesResponse result = parseResponse(responseBody, RegiomedAlternativesResponse.class);
 			return result != null ? result : new RegiomedAlternativesResponse();
 		} catch (Exception e) {
-			log.warn("Alternatives Error for URL " + url, e); //$NON-NLS-1$
+			if (e.getMessage() != null && e.getMessage().contains("HTTP 404")) { //$NON-NLS-1$
+				log.info("Alternatives service not available (404) for article: " + id); //$NON-NLS-1$
+			} else {
+				log.warn("Alternatives Error for URL " + url, e); //$NON-NLS-1$
+			}
 			return new RegiomedAlternativesResponse();
 		}
 	}
@@ -81,6 +84,7 @@ public class RegiomedOrderClient {
 			return false;
 		}
 	}
+
 	private String fetchToken(RegiomedConfig config) throws Exception {
 		String url = config.getTokenEndpoint();
 		String b64Password = Base64.getEncoder().encodeToString(config.getPassword().getBytes(StandardCharsets.UTF_8));

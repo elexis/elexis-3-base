@@ -146,6 +146,9 @@ public class RegiomedCheckDialog extends Dialog {
 		case "force":
 			handleForce(parts);
 			break;
+		case "reset":
+			handleReset(parts);
+			break;
 		case "updateQty":
 			handleUpdateQty(parts);
 			break;
@@ -163,6 +166,33 @@ public class RegiomedCheckDialog extends Dialog {
 			break;
 		default:
 			log.warn("Unknown Regiomed action: {}", action);
+		}
+	}
+
+	private void handleReset(String[] parts) {
+		if (parts.length < 4)
+			return;
+		String key = makeKey(parts[2], parts[3]);
+
+		boolean changed = false;
+
+		if (removedIdentifiers.contains(key)) {
+			removedIdentifiers.remove(key);
+			changed = true;
+		}
+
+		if (replacements.containsKey(key)) {
+			replacements.remove(key);
+			changed = true;
+		}
+
+		if (forcedItems.contains(key)) {
+			forcedItems.remove(key);
+			changed = true;
+		}
+
+		if (changed) {
+			updateStateAndUI();
 		}
 	}
 
@@ -252,7 +282,6 @@ public class RegiomedCheckDialog extends Dialog {
 
 		try {
 			int index = Integer.parseInt(parts[2]);
-			String rowId = parts[3];
 			String orgPharma = parts[4];
 			String orgEan = parts[5];
 
@@ -268,12 +297,7 @@ public class RegiomedCheckDialog extends Dialog {
 				replacements.put(orgKey, newKey);
 				forcedItems.remove(orgKey);
 
-				recalcErrors();
-				updateOkButtonState();
-
-				String badgeText = Messages.RegiomedCheckDialog_BadgeReplaced + " (" + escapeJs(selected.prodName)
-						+ ")";
-				browser.execute("updateRowSuccess('" + rowId + "', '" + badgeText + "');");
+				updateStateAndUI();
 			}
 
 		} catch (NumberFormatException e) {

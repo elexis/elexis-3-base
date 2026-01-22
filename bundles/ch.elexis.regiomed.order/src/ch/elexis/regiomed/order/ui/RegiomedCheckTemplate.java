@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import ch.elexis.core.ui.icons.ImageSize;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.regiomed.order.messages.Messages;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse.AlternativeResult;
@@ -154,43 +156,50 @@ public class RegiomedCheckTemplate {
 		String rowStyle = StringUtils.EMPTY;
 		if (isReplaced)
 			rowStyle = "style='background-color:#e6f7ff;'"; //$NON-NLS-1$
-		else if (isRemoved)
-			rowStyle = "style='opacity:0.3; text-decoration:line-through;'"; //$NON-NLS-1$
 		else if (isForced)
 			rowStyle = "style='background-color:#fff3cd;'"; //$NON-NLS-1$
 
+		String contentStyle = StringUtils.EMPTY;
+		if (isRemoved) {
+			contentStyle = "style='opacity:0.5; text-decoration:line-through; color:#888;'"; //$NON-NLS-1$
+		}
+
 		sb.append("<tr id='").append(rowId).append("' ").append(rowStyle).append(">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		sb.append("<td>").append(escapeHtml(item.getDescription())).append("<br><small style='color:#888'>") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(Messages.RegiomedCheckTemplate_PharmaLabel).append(StringUtils.SPACE)
-				.append(item.getPharmaCode()).append("<br>").append(Messages.RegiomedCheckTemplate_StockLabel) //$NON-NLS-1$
-				.append(StringUtils.SPACE)
-				.append(item.getAvailableInventory()).append("<br>") //$NON-NLS-1$
+		sb.append("<td ").append(contentStyle).append(">").append(escapeHtml(item.getDescription())) //$NON-NLS-1$ //$NON-NLS-2$
+				.append("<br><small style='color:#888'>").append(Messages.RegiomedCheckTemplate_PharmaLabel)
+				.append(StringUtils.SPACE).append(item.getPharmaCode()).append("<br>")
+				.append(Messages.RegiomedCheckTemplate_StockLabel) //$NON-NLS-1$
+				.append(StringUtils.SPACE).append(item.getAvailableInventory()).append("<br>") //$NON-NLS-1$
 				.append(Messages.Core_EAN).append(": ").append(item.getEanID()).append("</small></td>"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		sb.append("<td class='qty-editable' title='" + Messages.RegiomedCheckTemplate_ClickToEdit //$NON-NLS-1$
-				+ "' onclick=\"changeQuantity('") //$NON-NLS-1$
+		sb.append("<td class='qty-editable' ").append(contentStyle) //$NON-NLS-1$
+				.append(" title='" + Messages.RegiomedCheckTemplate_ClickToEdit //$NON-NLS-1$
+						+ "' onclick=\"changeQuantity('") //$NON-NLS-1$
 				.append(item.getPharmaCode()).append("', '").append(item.getEanID()).append("', '") //$NON-NLS-1$ //$NON-NLS-2$
 				.append(item.getQuantity()).append("')\">").append(item.getQuantity()); //$NON-NLS-1$
 
-		if (ctx.imgEdit() != null) {
+		if (ctx.imgEdit() != null && !isRemoved) {
 			sb.append(" <img src='").append(ctx.imgEdit()) //$NON-NLS-1$
 					.append("' style='height:16px; width:16px; vertical-align:text-bottom; opacity:0.6;' alt='Edit'>"); //$NON-NLS-1$
-		} else {
+		} else if (!isRemoved) {
 			sb.append(" <span style='font-size:10px; color:#999;'>✎</span>"); //$NON-NLS-1$
 		}
 		sb.append("</td>"); //$NON-NLS-1$
 
 		String colorStyle = isErrorTable && !isReplaced && !isRemoved && !isForced ? "style='color:#dc3545'" //$NON-NLS-1$
 				: StringUtils.EMPTY;
-		sb.append("<td ").append(colorStyle).append(">"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		String infoStyle = isRemoved ? contentStyle : colorStyle;
+
+		sb.append("<td ").append(infoStyle).append(">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		renderInfoColumnContent(sb, item, isStockError, rowId, alts, hasAlternatives, isErrorTable,
-				isReplaced || isRemoved);
+				isReplaced || isRemoved || isForced);
 
 		sb.append("</td>"); //$NON-NLS-1$
 
-		sb.append("<td>"); //$NON-NLS-1$
+		sb.append("<td ").append(contentStyle).append(">"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isErrorTable) {
 			if (isReplaced)
 				sb.append(
@@ -198,6 +207,8 @@ public class RegiomedCheckTemplate {
 			else if (isForced)
 				sb.append(createBadge(null, null, Messages.RegiomedCheckTemplate_BadgeOrder,
 						"background:#ffc107; color:#856404")); //$NON-NLS-1$
+			else if (isRemoved)
+				sb.append(createBadge("badge-error", "status_" + rowId, Messages.RegiomedCheckTemplate_BadgeError)); //$NON-NLS-1$ //$NON-NLS-2$
 			else
 				sb.append(createBadge("badge-error", "status_" + rowId, Messages.RegiomedCheckTemplate_BadgeError)); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
@@ -224,8 +235,7 @@ public class RegiomedCheckTemplate {
 
 			if (StringUtils.isNotBlank(originalMsg) && !originalMsg.contains("übersteigt Bestand")) { //$NON-NLS-1$
 				sb.append("<br><small style='color:#666'>").append(Messages.RegiomedCheckTemplate_NoteLabel) //$NON-NLS-1$
-						.append(StringUtils.SPACE)
-						.append(escapeHtml(originalMsg)).append("</small>"); //$NON-NLS-1$
+						.append(StringUtils.SPACE).append(escapeHtml(originalMsg)).append("</small>"); //$NON-NLS-1$
 			}
 		} else {
 			sb.append(escapeHtml(originalMsg));
@@ -234,9 +244,7 @@ public class RegiomedCheckTemplate {
 		if (StringUtils.isNotBlank(item.getAvailMsgOrg()) && !item.getAvailMsgOrg().equals(item.getAvailMsg())
 				&& !item.getAvailMsgOrg().equals(originalMsg)) {
 			sb.append("<br><small style='color:#666'>").append(Messages.RegiomedCheckTemplate_InfoLabel) //$NON-NLS-1$
-					.append(StringUtils.SPACE)
-					.append(escapeHtml(item.getAvailMsgOrg()))
-					.append("</small>"); //$NON-NLS-1$
+					.append(StringUtils.SPACE).append(escapeHtml(item.getAvailMsgOrg())).append("</small>"); //$NON-NLS-1$
 		}
 
 		if (hasAlternatives) {
@@ -263,6 +271,16 @@ public class RegiomedCheckTemplate {
 			boolean isStockError, boolean isError, boolean isForced, boolean isReplaced, boolean isRemoved,
 			boolean hasAlternatives) {
 
+		if (isReplaced || isRemoved || isForced) {
+			sb.append("<div class='action-btn-container layout-row'>");
+			sb.append("<button class='btn-base btn-reset' onclick=\"resetArticle('") //$NON-NLS-1$
+					.append(item.getPharmaCode()).append("', '").append(item.getEanID()) //$NON-NLS-1$
+					.append("')\">").append(Messages.Core_Reset).append("</button>"); // $NON-NLS-3$
+
+			sb.append("</div>");
+			return;
+		}
+
 		boolean showForceBtn = isError && isStockError && !isForced && !isReplaced && !isRemoved;
 		String btnDisabled = (isReplaced || isRemoved) ? "disabled" : StringUtils.EMPTY; //$NON-NLS-1$
 
@@ -286,8 +304,9 @@ public class RegiomedCheckTemplate {
 		if (ctx.isSearchAvailable) {
 			String safeDesc = escapeHtml(item.getDescription()).replace("'", "\\'"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append("<button class='btn-base btn-search' onclick=\"openSearchModal('").append(rowId).append("', '") //$NON-NLS-1$ //$NON-NLS-2$
-					.append(item.getPharmaCode()).append("', '").append(item.getEanID()).append("', '").append(safeDesc) //$NON-NLS-1$ //$NON-NLS-2$
-					.append("')\" ").append(btnDisabled).append(">").append(Messages.RegiomedCheckTemplate_SearchAltBtn) //$NON-NLS-1$ //$NON-NLS-2$
+					.append(item.getPharmaCode()).append("', '").append(item.getEanID()).append("', '").append(safeDesc)
+					.append("')\" ").append(btnDisabled).append(">")
+					.append(Messages.RegiomedCheckTemplate_SearchAltBtn) //$NON-NLS-1$ //$NON-NLS-2$
 					.append("</button>"); //$NON-NLS-1$
 		}
 
@@ -314,9 +333,21 @@ public class RegiomedCheckTemplate {
 					.collect(Collectors.groupingBy(a -> getKey(a.getPharmaCodeOrg(), a.getEanIDOrg())));
 		}
 
+		String imgEdit = null;
+		try (InputStream in = Images.IMG_EDIT.getImageAsInputStream(ImageSize._16x16_DefaultIconSize)) {
+			imgEdit = "data:image/png;base64," + Base64.getEncoder().encodeToString(in.readAllBytes()); //$NON-NLS-1$
+		} catch (Exception e) {
+		}
+
+		String imgWarning = null;
+		try (InputStream in = Images.IMG_AUSRUFEZ.getImageAsInputStream(ImageSize._16x16_DefaultIconSize)) {
+			imgWarning = "data:image/png;base64," + Base64.getEncoder().encodeToString(in.readAllBytes()); //$NON-NLS-1$
+		} catch (Exception e) {
+		}
+
 		return new RenderingContext(isSearchAvailable, removed, replacements, forcedItems, altsMap,
-				loadLogoBase64("rsc/regiomed_logo.png"), loadLogoBase64("rsc/warning.png"), //$NON-NLS-1$ //$NON-NLS-2$
-				loadLogoBase64("rsc/edit.png")); //$NON-NLS-1$
+				loadLogoBase64("rsc/regiomed_logo.png"), //$NON-NLS-1$
+				imgWarning, imgEdit);
 	}
 
 	private static String createBadge(String cssClass, String id, String text) {
@@ -395,22 +426,22 @@ public class RegiomedCheckTemplate {
 	private static String getJsScript(String warningSrc) {
 		return """
 				<div id="qtyModal" class="modal-overlay">
-					<div class="modal-content">
-						<div class="modal-header">%s</div>
-						<div>%s</div>
-						<div style="margin-top:10px;">
-							<input type="number" id="qtyInput" class="modal-input" min="1" onkeypress="handleEnterQty(event)">
-						</div>
-						<div class="modal-footer">
-							<button class="btn-modal btn-cancel" onclick="closeQtyModal()">%s</button>
-							<button class="btn-modal btn-confirm" onclick="submitQty()">%s</button>
-						</div>
-					</div>
+				    <div class="modal-content">
+				        <div class="modal-header">%s</div>
+				        <div>%s</div>
+				        <div style="margin-top:10px;">
+				            <input type="number" id="qtyInput" class="modal-input" min="1" onkeypress="handleEnterQty(event)">
+				        </div>
+				        <div class="modal-footer">
+				            <button class="btn-modal btn-cancel" onclick="closeQtyModal()">%s</button>
+				            <button class="btn-modal btn-confirm" onclick="submitQty()">%s</button>
+				        </div>
+				    </div>
 				</div>
 
 				<div id="errorModal" class="modal-overlay" style="z-index: 3000;">
 				    <div class="modal-content">
-						<div class="modal-header" style="color:#dc3545;">
+				        <div class="modal-header" style="color:#dc3545;">
 				             <img src='%s' style='height:24px;vertical-align:text-bottom;margin-right:8px;'> <span id="modalTitle">%s</span>
 				        </div>
 				        <div id="modalBody" class="modal-body"></div>
@@ -421,32 +452,32 @@ public class RegiomedCheckTemplate {
 				</div>
 
 				<div id="searchModal" class="modal-overlay" style="z-index: 2000;">
-					<div class="modal-content modal-large">
-						<div class="modal-header">%s</div>
-						<div class="search-bar">
-							<input type="text" id="searchInput" class="modal-input" spellcheck="false" placeholder="%s" onkeyup="handleSearchInput(event)">
-							<button class="btn-modal btn-confirm" onclick="triggerSearch()">%s</button>
-						</div>
-						<div class="results-container">
-							<div id="loading" class="loading">%s</div>
-							<table class="results-table">
-								<thead>
-									<tr>
-										<th>%s</th>
-										<th style="width:100px;">EAN</th>
-										<th style="width:150px;">%s</th>
-										<th style="width:70px; text-align:right;">%s</th>
-									</tr>
-								</thead>
-								<tbody id="searchResultsBody">
-								</tbody>
-							</table>
-						</div>
-						<div class="modal-footer">
-							<button id="btnApply" class="btn-modal btn-confirm" onclick="applySelected()" disabled>%s</button>
-							<button class="btn-modal btn-cancel" onclick="closeSearchModal()">%s</button>
-						</div>
-					</div>
+				    <div class="modal-content modal-large">
+				        <div class="modal-header">%s</div>
+				        <div class="search-bar">
+				            <input type="text" id="searchInput" class="modal-input" spellcheck="false" placeholder="%s" onkeyup="handleSearchInput(event)">
+				            <button class="btn-modal btn-confirm" onclick="triggerSearch()">%s</button>
+				        </div>
+				        <div class="results-container">
+				            <div id="loading" class="loading">%s</div>
+				            <table class="results-table">
+				                <thead>
+				                    <tr>
+				                        <th>%s</th>
+				                        <th style="width:100px;">EAN</th>
+				                        <th style="width:150px;">%s</th>
+				                        <th style="width:70px; text-align:right;">%s</th>
+				                    </tr>
+				                </thead>
+				                <tbody id="searchResultsBody">
+				                </tbody>
+				            </table>
+				        </div>
+				        <div class="modal-footer">
+				            <button id="btnApply" class="btn-modal btn-confirm" onclick="applySelected()" disabled>%s</button>
+				            <button class="btn-modal btn-cancel" onclick="closeSearchModal()">%s</button>
+				        </div>
+				    </div>
 				</div>
 
 				<script>
@@ -458,139 +489,139 @@ public class RegiomedCheckTemplate {
 				var selectedSearchIndex = -1;
 
 				document.addEventListener('keydown', function(e) {
-					if (e.key === 'Escape') {
-						var err = document.getElementById('errorModal');
-						if (err && err.style.display === 'flex') {
-							closeErrorModal();
-							return;
-						}
+				    if (e.key === 'Escape') {
+				        var err = document.getElementById('errorModal');
+				        if (err && err.style.display === 'flex') {
+				            closeErrorModal();
+				            return;
+				        }
 
-						var s = document.getElementById('searchModal');
-						if (s && s.style.display === 'flex') {
-							closeSearchModal();
-							return;
-						}
+				        var s = document.getElementById('searchModal');
+				        if (s && s.style.display === 'flex') {
+				            closeSearchModal();
+				            return;
+				        }
 
-						var q = document.getElementById('qtyModal');
-						if (q && q.style.display === 'flex') {
-							closeQtyModal();
-							return;
-						}
+				        var q = document.getElementById('qtyModal');
+				        if (q && q.style.display === 'flex') {
+				            closeQtyModal();
+				            return;
+				        }
 
-						try {
-							window.closeMainDialog();
-						} catch(e) {
-						}
-					}
+				        try {
+				            window.closeMainDialog();
+				        } catch(e) {
+				        }
+				    }
 				});
 
 				function openSearchModal(rowId, pharma, ean, currentName) {
-					currentSearchRowId = rowId;
-					currentPharma = pharma;
-					currentEan = ean;
-					selectedSearchIndex = -1;
+				    currentSearchRowId = rowId;
+				    currentPharma = pharma;
+				    currentEan = ean;
+				    selectedSearchIndex = -1;
 
-					var input = document.getElementById('searchInput');
-					input.value = currentName;
-					document.getElementById('searchResultsBody').innerHTML = '';
-					document.getElementById('loading').style.display = 'none';
-					document.getElementById('btnApply').disabled = true;
+				    var input = document.getElementById('searchInput');
+				    input.value = currentName;
+				    document.getElementById('searchResultsBody').innerHTML = '';
+				    document.getElementById('loading').style.display = 'none';
+				    document.getElementById('btnApply').disabled = true;
 
-					document.getElementById('searchModal').style.display = 'flex';
+				    document.getElementById('searchModal').style.display = 'flex';
 
-					input.focus();
-					var len = input.value.length;
-					input.setSelectionRange(len, len);
+				    input.focus();
+				    var len = input.value.length;
+				    input.setSelectionRange(len, len);
 
-					if(len >= 3) {
-						triggerSearch();
-					}
+				    if(len >= 3) {
+				        triggerSearch();
+				    }
 				}
 
 				function closeSearchModal() {
-					document.getElementById('searchModal').style.display = 'none';
+				    document.getElementById('searchModal').style.display = 'none';
 				}
 
 				function handleSearchInput(e) {
-					if(e.key === 'Escape') return;
+				    if(e.key === 'Escape') return;
 
-					clearTimeout(searchTypingTimer);
-					if (e.key === 'Enter') {
-						triggerSearch();
-					} else {
-						var val = document.getElementById('searchInput').value;
-						if(val.length >= 3) {
-							searchTypingTimer = setTimeout(triggerSearch, 500);
-						}
-					}
+				    clearTimeout(searchTypingTimer);
+				    if (e.key === 'Enter') {
+				        triggerSearch();
+				    } else {
+				        var val = document.getElementById('searchInput').value;
+				        if(val.length >= 3) {
+				            searchTypingTimer = setTimeout(triggerSearch, 500);
+				        }
+				    }
 				}
 
 				function triggerSearch() {
-					var val = document.getElementById('searchInput').value;
-					if(val.length < 3) return;
+				    var val = document.getElementById('searchInput').value;
+				    if(val.length < 3) return;
 
-					document.getElementById('loading').style.display = 'block';
-					document.getElementById('searchResultsBody').innerHTML = '';
-					selectedSearchIndex = -1;
-					document.getElementById('btnApply').disabled = true;
+				    document.getElementById('loading').style.display = 'block';
+				    document.getElementById('searchResultsBody').innerHTML = '';
+				    selectedSearchIndex = -1;
+				    document.getElementById('btnApply').disabled = true;
 
-					window.location = 'regiomed:searchQuery:' + encodeURIComponent(val);
+				    window.location = 'regiomed:searchQuery:' + encodeURIComponent(val);
 				}
 
 				function fillSearchResults(htmlRows) {
-					document.getElementById('loading').style.display = 'none';
-					document.getElementById('searchResultsBody').innerHTML = htmlRows;
+				    document.getElementById('loading').style.display = 'none';
+				    document.getElementById('searchResultsBody').innerHTML = htmlRows;
 				}
 
 				function selectSearchResult(index) {
-					selectedSearchIndex = index;
+				    selectedSearchIndex = index;
 
-					var rows = document.querySelectorAll('#searchResultsBody tr');
-					rows.forEach(function(r) { r.classList.remove('selected-row'); });
+				    var rows = document.querySelectorAll('#searchResultsBody tr');
+				    rows.forEach(function(r) { r.classList.remove('selected-row'); });
 
-					var row = document.getElementById('res_row_' + index);
-					if(row) row.classList.add('selected-row');
+				    var row = document.getElementById('res_row_' + index);
+				    if(row) row.classList.add('selected-row');
 
-					document.getElementById('btnApply').disabled = false;
+				    document.getElementById('btnApply').disabled = false;
 				}
 
 				function applySearchResult(index) {
-					selectSearchResult(index);
-					applySelected();
+				    selectSearchResult(index);
+				    applySelected();
 				}
 
 				function applySelected() {
-					if(selectedSearchIndex > -1) {
-						window.location = 'regiomed:selectResult:' + selectedSearchIndex + ':' + currentSearchRowId + ':' + currentPharma + ':' + currentEan;
-					}
+				    if(selectedSearchIndex > -1) {
+				        window.location = 'regiomed:selectResult:' + selectedSearchIndex + ':' + currentSearchRowId + ':' + currentPharma + ':' + currentEan;
+				    }
 				}
 
 				function changeQuantity(pharma, ean, currentQty) {
-					currentPharma = pharma;
-					currentEan = ean;
-					var input = document.getElementById('qtyInput');
-					input.value = currentQty;
-					document.getElementById('qtyModal').style.display = 'flex';
-					input.focus();
-					input.select();
+				    currentPharma = pharma;
+				    currentEan = ean;
+				    var input = document.getElementById('qtyInput');
+				    input.value = currentQty;
+				    document.getElementById('qtyModal').style.display = 'flex';
+				    input.focus();
+				    input.select();
 				}
 
 				function closeQtyModal() {
-					document.getElementById('qtyModal').style.display = 'none';
+				    document.getElementById('qtyModal').style.display = 'none';
 				}
 
 				function handleEnterQty(e) {
-					if(e.key === 'Enter') submitQty();
+				    if(e.key === 'Enter') submitQty();
 				}
 
 				function submitQty() {
-					var val = document.getElementById('qtyInput').value;
-					if (val != null && val != "" && !isNaN(val) && val > 0) {
-						closeQtyModal();
-						window.location = 'regiomed:updateQty:' + currentPharma + ':' + currentEan + ':' + val;
-					} else {
-						alert("%s");
-					}
+				    var val = document.getElementById('qtyInput').value;
+				    if (val != null && val != "" && !isNaN(val) && val > 0) {
+				        closeQtyModal();
+				        window.location = 'regiomed:updateQty:' + currentPharma + ':' + currentEan + ':' + val;
+				    } else {
+				        alert("%s");
+				    }
 				}
 
 				function removeArticle(rowId, pharma, ean) {
@@ -622,8 +653,12 @@ public class RegiomedCheckTemplate {
 				}
 
 				function forceOrder(pharma, ean) {
-					window.location = 'regiomed:force:' + pharma + ':' + ean;
+				    window.location = 'regiomed:force:' + pharma + ':' + ean;
 				}
+
+				function resetArticle(pharma, ean) {
+				                 window.location = 'regiomed:reset:' + pharma + ':' + ean;
+				            }
 
 				function disableButtons(row) {
 				    var btns = row.querySelectorAll('button');
@@ -633,8 +668,8 @@ public class RegiomedCheckTemplate {
 				}
 
 				function updateRowSuccess(rowId, badgeText) {
-					closeSearchModal();
-					showToast('%s ' + badgeText);
+				    closeSearchModal();
+				    showToast('%s ' + badgeText);
 
 				    var row = document.getElementById(rowId);
 				    if(row) {
@@ -666,10 +701,10 @@ public class RegiomedCheckTemplate {
 				}
 
 				function showToast(msg) {
-					var t = document.getElementById('toast');
-					t.innerText = msg;
-					t.className = 'toast show';
-					setTimeout(function(){ t.className = t.className.replace('show', ''); }, 3000);
+				    var t = document.getElementById('toast');
+				    t.innerText = msg;
+				    t.className = 'toast show';
+				    setTimeout(function(){ t.className = t.className.replace('show', ''); }, 3000);
 				}
 				</script>
 				""" //$NON-NLS-1$
@@ -682,8 +717,7 @@ public class RegiomedCheckTemplate {
 						Messages.RegiomedCheckTemplate_ColStatus, Messages.RegiomedCheckTemplate_ColPrice,
 						Messages.RegiomedCheckTemplate_Apply, Messages.RegiomedCheckTemplate_Close,
 						Messages.RegiomedCheckTemplate_InvalidQtyAlert, Messages.RegiomedCheckTemplate_BadgeReplaced,
-						Messages.RegiomedCheckTemplate_SuccessAppliedPrefix
-				);
+						Messages.RegiomedCheckTemplate_SuccessAppliedPrefix);
 	}
 
 	private static final String CSS_STYLES = """
@@ -719,6 +753,8 @@ public class RegiomedCheckTemplate {
 			.btn-delete:hover { background-color: #dc3545; color: white; }
 			.btn-replace { background-color: #fff; border: 1px solid #007bff; color: #007bff; }
 			.btn-replace:hover { background-color: #007bff; color: white; }
+			.btn-reset { background-color: #fff; border: 1px solid #6c757d; color: #6c757d; }
+			          .btn-reset:hover { background-color: #6c757d; color: white; }
 			.btn-search { background-color: #fff; border: 1px solid #17a2b8; color: #17a2b8; }
 			.btn-search:hover { background-color: #17a2b8; color: white; }
 			.alt-select { max-width: 250px; width: 100%; padding: 2px; font-size: 12px; margin-top: 2px; border: 1px solid #ccc; border-radius: 3px; }

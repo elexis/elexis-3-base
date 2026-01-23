@@ -53,6 +53,7 @@ public class RegiomedCheckDialog extends Dialog {
 	private final RegiomedOrderResponse response;
 	private final Set<String> removedIdentifiers = new HashSet<>();
 	private final Map<String, String> replacements = new HashMap<>();
+	private final Map<String, String> replacementNames = new HashMap<>();
 	private final Set<String> forcedItems = new HashSet<>();
 	private final Set<String> articlesWithAlternatives = new HashSet<>();
 
@@ -183,6 +184,7 @@ public class RegiomedCheckDialog extends Dialog {
 
 		if (replacements.containsKey(key)) {
 			replacements.remove(key);
+			replacementNames.remove(key);
 			changed = true;
 		}
 
@@ -223,10 +225,31 @@ public class RegiomedCheckDialog extends Dialog {
 		String newKey = makeKey(parts[4], parts[5]);
 
 		if (!replacements.containsKey(orgKey)) {
-			replacements.put(orgKey, newKey);
-			forcedItems.remove(orgKey);
-			updateStateAndUI();
+			AlternativeResult selectedAlt = findAlternativeByKey(newKey);
+
+			if (selectedAlt != null) {
+				boolean allowed = validateReplacementWithServer(selectedAlt);
+				if (!allowed) {
+					return;
+				}
+				replacements.put(orgKey, newKey);
+				replacementNames.put(orgKey, selectedAlt.getDescription());
+				forcedItems.remove(orgKey);
+				updateStateAndUI();
+			}
 		}
+	}
+
+	private AlternativeResult findAlternativeByKey(String key) {
+		if (response.getAlternatives() != null) {
+			for (AlternativeResult alt : response.getAlternatives()) {
+				String altKey = makeKey(alt.getPharmaCode(), alt.getEanID());
+				if (altKey.equals(key)) {
+					return alt;
+				}
+			}
+		}
+		return null;
 	}
 
 	private void handleUpdateQty(String[] parts) {
@@ -295,6 +318,7 @@ public class RegiomedCheckDialog extends Dialog {
 				String orgKey = makeKey(orgPharma, orgEan);
 				String newKey = makeKey(selected.pharmaCode, selected.ean);
 				replacements.put(orgKey, newKey);
+				replacementNames.put(orgKey, selected.prodName);
 				forcedItems.remove(orgKey);
 
 				updateStateAndUI();
@@ -314,7 +338,7 @@ public class RegiomedCheckDialog extends Dialog {
 	private void refreshBrowser() {
 		if (browser != null && !browser.isDisposed()) {
 			String html = RegiomedCheckTemplate.generateHtml(response, searchAvailable, removedIdentifiers,
-					replacements, forcedItems);
+					replacements, replacementNames, forcedItems);
 			browser.setText(html);
 		}
 	}
@@ -482,11 +506,19 @@ public class RegiomedCheckDialog extends Dialog {
 		}
 	}
 
+	private boolean validateReplacementWithServer(AlternativeResult alt) {
+		ProductResult temp = new ProductResult();
+		temp.pharmaCode = alt.getPharmaCode();
+		temp.ean = String.valueOf(alt.getEanID());
+		temp.prodName = alt.getDescription();
+		return validateReplacementWithServer(temp);
+	}
+
 	private void showJsError(String prodName, String reason) {
 		String msg = Messages.RegiomedCheckDialog_ItemRejected + "\n" + prodName + "\n\n"
 				+ Messages.RegiomedCheckDialog_Reason + " " + reason;
 		String jsCall = "showErrorModal('" + escapeJs(Messages.RegiomedCheckDialog_NotOrderable) + "', '"
-				+ escapeJs(msg).replace("\n", "\\n") + "');";
+				+ escapeJs(msg).replace("\n", "\\n") + "'); unlockLastRow();";
 		if (browser != null && !browser.isDisposed()) {
 			browser.execute(jsCall);
 		}

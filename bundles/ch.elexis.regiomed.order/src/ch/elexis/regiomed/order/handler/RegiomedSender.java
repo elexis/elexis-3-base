@@ -145,6 +145,7 @@ public class RegiomedSender implements IDataSender {
 	}
 
 	private void handleDialogChanges(RegiomedCheckDialog dialog, RegiomedOrderResponse response) {
+		updateQuantities(response);
 		Set<String> deletedIds = dialog.getRemovedIdentifiers();
 		if (!deletedIds.isEmpty()) {
 			removeDeletedEntries(deletedIds);
@@ -153,7 +154,6 @@ public class RegiomedSender implements IDataSender {
 		if (!replacements.isEmpty()) {
 			applyReplacements(replacements);
 		}
-		updateQuantities(response);
 	}
 
 	private void handleExportException(Exception ex) throws XChangeException {

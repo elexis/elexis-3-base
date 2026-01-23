@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.icons.ImageSize;
 import ch.elexis.core.ui.icons.Images;
@@ -36,7 +38,7 @@ import freemarker.template.TemplateExceptionHandler;
 public class RegiomedCheckTemplate {
 
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-
+	private static final Logger log = LoggerFactory.getLogger(RegiomedCheckTemplate.class);
 	private static Configuration cfg;
 
 	static {
@@ -96,7 +98,7 @@ public class RegiomedCheckTemplate {
 			return out.toString();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error generating HTML for Regiomed check result", e);
 			return "<html><body><h1>Error generating template</h1><pre>" + e.getMessage() + "</pre></body></html>";
 		}
 	}
@@ -130,7 +132,7 @@ public class RegiomedCheckTemplate {
 			return out.toString().replace("\r", "").replace("\n", "");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error generating search result rows template", e);
 			return "<tr><td colspan='5' style='color:red'>Error: " + e.getMessage().replace("'", "") + "</td></tr>";
 		}
 	}
@@ -141,6 +143,7 @@ public class RegiomedCheckTemplate {
 				return "/* File not found: " + path + " */";
 			return new String(in.readAllBytes(), StandardCharsets.UTF_8);
 		} catch (IOException e) {
+			log.warn("Could not load resource file: {}", path, e);
 			return "/* Error loading " + path + ": " + e.getMessage() + " */";
 		}
 	}
@@ -159,12 +162,14 @@ public class RegiomedCheckTemplate {
 		try (InputStream in = Images.IMG_EDIT.getImageAsInputStream(ImageSize._16x16_DefaultIconSize)) {
 			imgEdit = "data:image/png;base64," + Base64.getEncoder().encodeToString(in.readAllBytes());
 		} catch (Exception e) {
+			log.debug("Could not load edit icon", e);
 		}
 
 		String imgWarning = null;
 		try (InputStream in = Images.IMG_AUSRUFEZ.getImageAsInputStream(ImageSize._16x16_DefaultIconSize)) {
 			imgWarning = "data:image/png;base64," + Base64.getEncoder().encodeToString(in.readAllBytes());
 		} catch (Exception e) {
+			log.debug("Could not load warning icon", e);
 		}
 
 		return new RenderingContext(isSearchAvailable, removed, replacements, replacementNames, forcedItems, altsMap,
@@ -200,6 +205,7 @@ public class RegiomedCheckTemplate {
 				return "data:image/png;base64," + Base64.getEncoder().encodeToString(imageBytes);
 			}
 		} catch (Exception e) {
+			log.debug("Could not load logo: {}", imageUrl, e);
 			return null;
 		}
 	}

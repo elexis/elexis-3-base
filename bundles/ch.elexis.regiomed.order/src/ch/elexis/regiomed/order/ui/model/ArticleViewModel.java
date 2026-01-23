@@ -123,6 +123,12 @@ public class ArticleViewModel {
 		} else {
 			sb.append(escapeHtml(originalMsg));
 		}
+		String availMsg = item.getAvailMsg();
+		String orgMsg = item.getAvailMsgOrg();
+		if (StringUtils.isNotBlank(orgMsg) && !availMsg.equalsIgnoreCase(orgMsg.trim())) {
+			sb.append("<br><small style='color:#666'>").append(escapeHtml(orgMsg)).append("</small>");
+		}
+
 		return sb.toString();
 	}
 
@@ -203,7 +209,7 @@ public class ArticleViewModel {
 	}
 
 	public int getBtnCount() {
-		int c = 1;
+		int c = 1; // delete
 		if (getShowForceBtn())
 			c++;
 		if (ctx.isSearchAvailable())

@@ -1218,35 +1218,8 @@
 									</fo:table-cell>
 									<fo:table-cell>
 										<fo:block white-space-treatment="preserve">
-											<xsl:choose>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:kvg) > 0">
-													<xsl:value-of select="'KVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:mvg) > 0">
-													<xsl:value-of select="'MVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:ivg) > 0">
-													<xsl:value-of select="'IVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:vvg) > 0">
-													<xsl:value-of select="'VVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:org) > 0">
-													<xsl:value-of select="'ORG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:uvg) > 0">
-													<xsl:value-of select="'UVG'" />
-												</xsl:when>
-												<xsl:otherwise>
-													<xsl:value-of select="'privat'" />
-												</xsl:otherwise>
-											</xsl:choose>
+											<xsl:value-of
+													select="/invoice:request/invoice:payload/invoice:body/invoice:law/@type" />
 											<xsl:value-of select="' '" />
 										</fo:block>
 									</fo:table-cell>

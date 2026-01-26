@@ -88,6 +88,8 @@ import ch.fd.invoice500.request.EsrAddressType;
 import ch.fd.invoice500.request.EsrQRType;
 import ch.fd.invoice500.request.GarantType;
 import ch.fd.invoice500.request.GuarantorAddressType;
+import ch.fd.invoice500.request.InstructionType;
+import ch.fd.invoice500.request.InstructionsType;
 import ch.fd.invoice500.request.InsuranceAddressType;
 import ch.fd.invoice500.request.InsuredAddressType;
 import ch.fd.invoice500.request.InvoiceType;
@@ -1342,8 +1344,6 @@ public class Tarmed50Exporter {
 
 	protected ProcessingType getProcessing(IInvoice invoice) throws DatatypeConfigurationException {
 		ProcessingType processingType = new ProcessingType();
-		LoggerFactory.getLogger(getClass()).warn("TODO PRINT AT INTERMEDIATE");
-		// processingType.setPrintAtIntermediate(printAtIntermediate);
 
 		processingType.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 
@@ -1362,6 +1362,22 @@ public class Tarmed50Exporter {
 			String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
 			if (StringUtils.isNotBlank(trustCenter)) {
 				processingType.setSendCopyToTrustcenter(TrustCenters.getTCEAN(trustCenter));
+				Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
+				if(tiersType == Tiers.GARANT) {
+					InstructionsType instructions = new InstructionsType();
+					InstructionType instruction = new InstructionType();
+					instruction.setToken("tx_print_to_guarantor");
+					instruction.setValue("true");
+					instructions.getInstruction().add(instruction);
+					processingType.setInstructions(instructions);
+				} else {
+					InstructionsType instructions = new InstructionsType();
+					InstructionType instruction = new InstructionType();
+					instruction.setToken("tx_send_to_insurance");
+					instruction.setValue("true");
+					instructions.getInstruction().add(instruction);
+					processingType.setInstructions(instructions);
+				}
 			}
 		}
 		processingType.setTransport(transportType);
@@ -1374,10 +1390,6 @@ public class Tarmed50Exporter {
 			besr = null;
 			// update processing, print_at_intermediate and transport via EAN
 			if (request.getProcessing() != null) {
-				LoggerFactory.getLogger(getClass()).warn("TODO PRINT AT INTERMEDIATE");
-//				if (request.getProcessing().isPrintCopyToGuarantor() != isPrintAtIntermediate()) {
-//					request.getProcessing().setPrintAtIntermediate(isPrintAtIntermediate());
-//				}
 				if (request.getProcessing().getTransport() != null) {
 					String iEAN = XMLExporterProcessing.getIntermediateEAN(invoice, xmlExporter);
 					List<Via> via = request.getProcessing().getTransport().getVia();
@@ -1390,6 +1402,23 @@ public class Tarmed50Exporter {
 					String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
 					if (StringUtils.isNotBlank(trustCenter)) {
 						request.getProcessing().setSendCopyToTrustcenter(TrustCenters.getTCEAN(trustCenter));
+						// reset tx instructions
+						Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
+						if (tiersType == Tiers.GARANT) {
+							InstructionsType instructions = new InstructionsType();
+							InstructionType instruction = new InstructionType();
+							instruction.setToken("tx_print_to_guarantor");
+							instruction.setValue("true");
+							instructions.getInstruction().add(instruction);
+							request.getProcessing().setInstructions(instructions);
+						} else {
+							InstructionsType instructions = new InstructionsType();
+							InstructionType instruction = new InstructionType();
+							instruction.setToken("tx_send_to_insurance");
+							instruction.setValue("true");
+							instructions.getInstruction().add(instruction);
+							request.getProcessing().setInstructions(instructions);
+						}
 					}
 				}
 				// no copy for patient for reminders

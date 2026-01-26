@@ -389,10 +389,10 @@ public class XMLExporter implements IRnOutputter {
 		if (invoice.getDateFrom().isAfter(LocalDate.of(2025, 12, 31))) {
 			if (exporter50.doExport(invoice, xmlOutput, type)) {
 				Document xmlRn = getAsJdomDocument(xmlOutput).orElse(null);
-				ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
-						.unmarshalInvoiceRequest450(new ByteArrayInputStream(xmlOutput.toByteArray()));
+				ch.fd.invoice500.request.RequestType invoiceRequest = TarmedJaxbUtil
+						.unmarshalInvoiceRequest500(new ByteArrayInputStream(xmlOutput.toByteArray()));
 				if (doVerify) {
-					Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
+					Result<IInvoice> res = validator50.checkInvoice(invoice, invoiceRequest);
 					// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
 				}
 

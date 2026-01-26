@@ -234,17 +234,10 @@ public class PatientData {
 	public String getAHV() {
 		IXid ahv = (legalGuardian != null) ? legalGuardian.getXid(XidConstants.DOMAIN_AHV)
 				: patient.getXid(XidConstants.DOMAIN_AHV);
-
-		if (ahv == null) {
-			return null;
+		if (ahv != null && StringUtils.isNotBlank(ahv.getDomainId())) {
+			return FormatValidator.getFormattedAHVNum(ahv.getDomainId().trim());
 		}
-
-		String raw = ahv.getDomainId();
-		if (raw == null || raw.trim().isEmpty()) {
-			return null;
-		}
-
-		return FormatValidator.getFormattedAHVNum(raw);
+		return null;
 	}
 
 	public IPatient getPatient() {

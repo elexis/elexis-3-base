@@ -39,7 +39,6 @@ public class RegiomedOrderClient {
 
 		String url = config.getOrderEndpoint();
 		String responseBody = executeRequest(url, RegiomedHttpConstants.METHOD_POST, token, request);
-		System.out.println("test " + responseBody);
 		return parseResponse(responseBody, RegiomedOrderResponse.class);
 	}
 

@@ -104,8 +104,8 @@
             </thead>
             <tbody>
                <#list nokItems as item>
-               <tr id='${item.rowId}' style='${item.rowStyle}'>
-                  <td style='${item.contentStyle}'>
+               <tr id='${item.rowId}' class='${item.rowClass}'>
+                  <td class='${item.contentClass}'>
                      ${item.description?no_esc}<br>
                      <small style='color:#888'>
                      ${messages.pharmaLabel} ${item.pharmaCode}<br>
@@ -113,7 +113,7 @@
                      EAN: ${item.ean}
                      </small>
                   </td>
-                  <td class='qty-editable' style='${item.contentStyle}' 
+                  <td class='qty-editable ${item.contentClass}' 
                      title='${messages.clickToEdit}'
                      onclick="changeQuantity('${item.pharmaCode}', '${item.ean}', '${item.quantity}')">
                      ${item.quantity}
@@ -125,7 +125,7 @@
                      </#if>
                      </#if>
                   </td>
-                  <td style='${item.infoStyle}'>
+                  <td class='${item.infoClass}'>
                      ${item.infoText?no_esc}
                      <#if item.hasAlternatives>
                      <div class='alt-container'>
@@ -142,9 +142,9 @@
                      </div>
                      </#if>
                   </td>
-                  <td style='${item.contentStyle}'>
+                  <td class='${item.contentClass}'>
                      <div class="status-column">
-                        <span class='badge ${item.badgeClass}' id='status_${item.rowId}' style='${item.badgeStyle}'>
+                        <span class='badge ${item.badgeClass}' id='status_${item.rowId}'>
                         ${item.badgeText?no_esc}
                         </span>
                         <#if item.replacementName?has_content>
@@ -208,8 +208,8 @@
             </thead>
             <tbody>
                <#list okItems as item>
-               <tr id='${item.rowId}' style='${item.rowStyle}'>
-                  <td style='${item.contentStyle}'>
+               <tr id='${item.rowId}' class='${item.rowClass}'>
+                  <td class='${item.contentClass}'>
                      ${item.description?no_esc}<br>
                      <small style='color:#888'>
                      ${messages.pharmaLabel} ${item.pharmaCode}<br>
@@ -217,15 +217,15 @@
                      EAN: ${item.ean}
                      </small>
                   </td>
-                  <td class='qty-editable' style='${item.contentStyle}' title='${messages.clickToEdit}'
+                  <td class='qty-editable ${item.contentClass}' title='${messages.clickToEdit}'
                      onclick="changeQuantity('${item.pharmaCode}', '${item.ean}', '${item.quantity}')">
                      ${item.quantity} 
                      <span style='font-size:10px; color:#999;'>✎</span>
                   </td>
-                  <td style='${item.contentStyle}'>${item.infoText?no_esc}</td>
-                  <td style='${item.contentStyle}'>
+                  <td class='${item.contentClass}'>${item.infoText?no_esc}</td>
+                  <td class='${item.contentClass}'>
                      <div class="status-column">
-                        <span class='badge ${item.badgeClass}' id='status_${item.rowId}' style='${item.badgeStyle}'>
+                        <span class='badge ${item.badgeClass}' id='status_${item.rowId}'>
                         ${item.badgeText?no_esc}
                         </span>
                         <#if item.replacementName?has_content>

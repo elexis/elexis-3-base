@@ -381,33 +381,61 @@ body, table, th, td, input, select, button, textarea {
      border-left-color: #28a745;
      color: #155724;
 }
+ .manufacturer-text {
+	font-size: 0.85em;
+	color: #888;
+	display: block;
+	margin-top: 2px;
+}
+ .manufacturer-inline {
+	color: #888;
+	font-size: 0.9em;
+}
+ .row-replaced {
+	background-color: #e6f7ff;
+}
+ .row-forced {
+	background-color: #fff3cd;
+}
+ .state-removed {
+	opacity: 0.5;
+	text-decoration: line-through;
+	color: #888;
+}
+ .text-danger {
+	color: #dc3545;
+}
+ .badge-forced {
+	background: #ffc107;
+	color: #856404;
+}
  @keyframes fadein {
-     from {
-         top: 0;
-         opacity: 0;
-    }
-     to {
-         top: 30px;
-         opacity: 1;
-    }
+	from {
+		top: 0;
+		opacity: 0;
+	}
+	to {
+		top: 30px;
+		opacity: 1;
+	}
 }
  @keyframes fadeout {
-     from {
-         top: 30px;
-         opacity: 1;
-    }
-     to {
-         top: 0;
-         opacity: 0;
-    }
+	from {
+		top: 30px;
+		opacity: 1;
+	}
+	to {
+		top: 0;
+		opacity: 0;
+	}
 }
  @keyframes fadeIn {
-     from {
-         opacity: 0;
-         transform: translateY(-20px);
-    }
-     to {
-         opacity: 1;
-         transform: translateY(0);
-    }
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }

@@ -82,29 +82,29 @@ public class ArticleViewModel {
 		return isRemoved || isReplaced || isForced;
 	}
 
-	public String getRowStyle() {
-		if (isReplaced)
-			return "background-color:#e6f7ff;";
-		if (isForced)
-			return "background-color:#fff3cd;";
-		return "";
-	}
-
-	public String getContentStyle() {
-		if (isRemoved)
-			return "opacity:0.5; text-decoration:line-through; color:#888;";
-		return "";
-	}
-
 	public boolean getShowEditIcon() {
 		return !isRemoved;
 	}
 
-	public String getInfoStyle() {
+	public String getRowClass() {
+		if (isReplaced)
+			return "row-replaced";
+		if (isForced)
+			return "row-forced";
+		return "";
+	}
+
+	public String getContentClass() {
 		if (isRemoved)
-			return getContentStyle();
+			return "state-removed";
+		return "";
+	}
+
+	public String getInfoClass() {
+		if (isRemoved)
+			return "state-removed";
 		if (isErrorTable && !isReplaced && !isRemoved && !isForced)
-			return "color:#dc3545";
+			return "text-danger";
 		return "";
 	}
 
@@ -177,7 +177,9 @@ public class ArticleViewModel {
 	public String getBadgeClass() {
 		if (isReplaced)
 			return "badge-replaced";
-		if (isErrorTable && !isForced && !isRemoved)
+		if (isForced)
+			return "badge-forced";
+		if (isErrorTable && !isRemoved)
 			return "badge-error";
 		if (isErrorTable && isRemoved)
 			return "badge-error";

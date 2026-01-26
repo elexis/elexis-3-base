@@ -22,6 +22,10 @@ public class SearchProductViewModel {
 		return escapeHtml(product.prodName);
 	}
 
+	public String getManufacturer() {
+		return escapeHtml(product.manufacturer);
+	}
+
 	public String getEan() {
 		return escapeHtml(product.ean);
 	}

@@ -40,7 +40,7 @@ public class RegiomedProductLookupResponse {
 		@SerializedName("Score")
 		public double score;
 
-		@SerializedName("availableInventory")
+		@SerializedName("AvailableInventory")
 		public String availableInventory;
 	}
 }

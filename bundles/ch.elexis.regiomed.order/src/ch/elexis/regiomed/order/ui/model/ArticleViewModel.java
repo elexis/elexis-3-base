@@ -108,6 +108,18 @@ public class ArticleViewModel {
 		return "";
 	}
 
+	public String getBadgeClass() {
+		if (isReplaced)
+			return "badge-replaced";
+		if (isForced)
+			return "badge-forced";
+		if (isErrorTable && !isRemoved)
+			return "badge-error";
+		if (isErrorTable && isRemoved)
+			return "badge-error";
+		return "badge-ok";
+	}
+
 	public String getInfoText() {
 		StringBuilder sb = new StringBuilder();
 		String originalMsg = StringUtils
@@ -174,24 +186,6 @@ public class ArticleViewModel {
 		}).collect(Collectors.toList());
 	}
 
-	public String getBadgeClass() {
-		if (isReplaced)
-			return "badge-replaced";
-		if (isForced)
-			return "badge-forced";
-		if (isErrorTable && !isRemoved)
-			return "badge-error";
-		if (isErrorTable && isRemoved)
-			return "badge-error";
-		return "badge-ok";
-	}
-
-	public String getBadgeStyle() {
-		if (isForced)
-			return "background:#ffc107; color:#856404";
-		return "";
-	}
-
 	public String getBadgeText() {
 		if (isReplaced)
 			return Messages.RegiomedCheckTemplate_BadgeReplaced;
@@ -211,7 +205,7 @@ public class ArticleViewModel {
 	}
 
 	public int getBtnCount() {
-		int c = 1; // delete
+		int c = 1;
 		if (getShowForceBtn())
 			c++;
 		if (ctx.isSearchAvailable())

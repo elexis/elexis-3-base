@@ -51,6 +51,7 @@ public class RegiomedOrderClient {
 		String token = fetchToken(config);
 		String responseBody = executeRequest(url, RegiomedHttpConstants.METHOD_GET, token, null);
 		RegiomedProductLookupResponse result = parseResponse(responseBody, RegiomedProductLookupResponse.class);
+
 		return result != null ? result : new RegiomedProductLookupResponse();
 	}
 

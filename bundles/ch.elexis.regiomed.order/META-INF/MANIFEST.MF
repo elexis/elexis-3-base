@@ -7,4 +7,6 @@ Require-Bundle: ch.elexis.core.ui,
  ch.elexis.core.data,
  com.google.gson
 Automatic-Module-Name: ch.elexis.regiomed.order
+Bundle-ClassPath: .,
+ lib/freemarker-2.3.34.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17

@@ -32,6 +32,7 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterProcessing;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
+import ch.elexis.base.ch.arzttarife.coding.SectionCodeCodingContribution;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
@@ -44,6 +45,8 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
+import ch.elexis.core.findings.ICoding;
+import ch.elexis.core.findings.codes.ICodingContribution;
 import ch.elexis.core.model.FallConstants;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
@@ -71,6 +74,7 @@ import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.types.Country;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.fd.invoice500.request.BalanceTGType;
@@ -146,6 +150,8 @@ public class Tarmed50Exporter {
 	private EsrType esrType = EsrType.esrQR;
 
 	private boolean updateElectronicDelivery = false;
+
+	private SectionCodeCodingContribution sectionCodeContribution;
 
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall
@@ -684,6 +690,12 @@ public class Tarmed50Exporter {
 		LocalDate lastEncounterDate = null;
 		int session = 1;
 		for (IEncounter encounter : encounters) {
+			Optional<String> sectionCode = Optional.empty();
+			IContact biller = encounter.getMandator().getBiller();
+			if (biller.isOrganization()) {
+				sectionCode = getSectionCode(encounter.getMandator());
+			}
+
 			List<IBilled> encounterBilled = encounter.getBilled();
 			// encounters list is ordered by date, so we can just compare with previous
 			LocalDate encounterDate = encounter.getDate();
@@ -705,11 +717,8 @@ public class Tarmed50Exporter {
 										+ encounter.getLabel());
 						continue;
 					}
-
-					if ("001".equals(billable.getCodeSystemCode()) || "007".equals(billable.getCodeSystemCode())) { // tarmed
-																													// or
-																													// tardoc
-																													// service
+					// tarmed or tardoc service
+					if ("001".equals(billable.getCodeSystemCode()) || "007".equals(billable.getCodeSystemCode())) {
 						ServiceExType serviceExType = new ServiceExType();
 
 						String bezug = getBezug(billable);
@@ -779,6 +788,8 @@ public class Tarmed50Exporter {
 						serviceExType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
 						serviceExType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO));
 						serviceExType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
+
+						sectionCode.ifPresent(c -> serviceExType.setSectionCode(c));
 
 						servicesType.getServiceExOrService().add(serviceExType);
 					} else { // any service
@@ -877,6 +888,33 @@ public class Tarmed50Exporter {
 		}
 
 		return servicesType;
+	}
+
+	private Optional<String> getSectionCode(IMandator mandator) {
+		Optional<ICoding> configSectionCode = ArzttarifeUtil.getMandantSectionCode(mandator);
+		if (configSectionCode.isPresent()) {
+			return Optional.of(configSectionCode.get().getCode());
+		}
+		// perform lookup if not configured
+		List<ICoding> specialistCodes = ArzttarifeUtil.getMandantTardocSepcialist(mandator);
+		Optional<ICoding> specialistSectionCode = getSectionCodeForSpecialist(specialistCodes);
+		if (specialistSectionCode.isPresent()) {
+			return Optional.of(specialistSectionCode.get().getCode());
+		}
+		return Optional.empty();
+	}
+
+	private Optional<ICoding> getSectionCodeForSpecialist(List<ICoding> specialistCodes) {
+		if (sectionCodeContribution == null) {
+			sectionCodeContribution = (SectionCodeCodingContribution) OsgiServiceUtil
+					.getService(ICodingContribution.class, "(system=forumdatenaustausch_sectioncode)").orElse(null);
+		}
+		if (sectionCodeContribution != null) {
+			return sectionCodeContribution.getMappedBySpecialistCode(specialistCodes);
+		} else {
+			logger.warn("No section code coding contribution available");
+		}
+		return Optional.empty();
 	}
 
 	private String getBezug(IBillable billable) {

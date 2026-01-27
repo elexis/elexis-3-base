@@ -23,6 +23,9 @@ Export-Package: ch.elexis.TarmedRechnung,
 Bundle-ClassPath: .
 Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.codes,
+ ch.elexis.core.findings.util.model,
+ com.opencsv;version="[5.9.0,6.0.0)",
+ com.opencsv.exceptions;version="[5.9.0,6.0.0)",
  org.apache.commons.beanutils;version="1.9.4",
  org.apache.commons.io;version="2.6.0",
  org.apache.commons.lang3;version="3.12.0",
@@ -36,6 +39,7 @@ Import-Package: ch.elexis.core.findings,
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.adjuster.TarmedVerrechnebarAdjuster.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.coding.SectionCodeCodingContribution.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.ui.handler.StartupHandler.xml,
  OSGI-INF/ch.elexis.tarmedprefs.XidInitialization.xml

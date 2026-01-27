@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.base.ch.arzttarife.coding.SectionCodeCodingContribution">
+   <property name="system" value="forumdatenaustausch_sectioncode"/>
+   <service>
+      <provide interface="ch.elexis.core.findings.codes.ICodingContribution"/>
+   </service>
+   <implementation class="ch.elexis.base.ch.arzttarife.coding.SectionCodeCodingContribution"/>
+</scr:component>

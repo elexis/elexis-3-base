@@ -217,10 +217,17 @@
                      EAN: ${item.ean}
                      </small>
                   </td>
-                  <td class='qty-editable ${item.contentClass}' title='${messages.clickToEdit}'
+                <td class='qty-editable ${item.contentClass}' 
+                     title='${messages.clickToEdit}'
                      onclick="changeQuantity('${item.pharmaCode}', '${item.ean}', '${item.quantity}')">
-                     ${item.quantity} 
+                     ${item.quantity}
+                     <#if item.showEditIcon>
+                     <#if imgEdit??>
+                     <img src='${imgEdit}' style='height:16px; width:16px; vertical-align:text-bottom; opacity:0.6;' alt='Edit'>
+                     <#else>
                      <span style='font-size:10px; color:#999;'>✎</span>
+                     </#if>
+                     </#if>
                   </td>
                   <td class='${item.contentClass}'>${item.infoText?no_esc}</td>
                   <td class='${item.contentClass}'>

@@ -38,7 +38,7 @@ public class SectionCodeCodingContribution implements ICodingContribution {
 
 		try (CSVReader reader = new CSVReaderBuilder(
 				new InputStreamReader(
-						getClass().getResourceAsStream("/rsc/section_code_tardoc_dignität_mapping_weighted.csv")))
+						getClass().getResourceAsStream("/rsc/section_code_tardoc_dignitaet_mapping_weighted.csv")))
 				.withCSVParser(new CSVParserBuilder().withSeparator(',').withQuoteChar('"').build())
 				.withKeepCarriageReturn(false).withSkipLines(1).build()) {
 			for (String[] line : reader.readAll()) {

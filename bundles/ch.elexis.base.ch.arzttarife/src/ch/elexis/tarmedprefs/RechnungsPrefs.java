@@ -103,6 +103,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	private Label lblFixProvider;
 
 	private TardocSpecialistComposite tardocSpecialist;
+	private SectionCodeComposite sectionCode;
 
 	static TarmedACL ta = TarmedACL.getInstance();
 
@@ -229,6 +230,23 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 		tardocSpecialist = new TardocSpecialistComposite(adrs, SWT.NONE);
 		tardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+
+		// forum datenaustausch fachbereich
+		Hyperlink hSectionCode = new Hyperlink(adrs, SWT.NONE);
+		hSectionCode.setText("Fachbereich");
+		hSectionCode.setForeground(blau);
+		hSectionCode.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		hSectionCode.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				if (sectionCode != null && !sectionCode.isDisposed()) {
+					sectionCode.openSelectionDialog();
+				}
+			}
+		});
+
+		sectionCode = new SectionCodeComposite(adrs, SWT.NONE);
+		sectionCode.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		// bills electronically
 		bBillsElec = new Button(adrs, SWT.CHECK);
@@ -697,6 +715,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType.setSelection(new StructuredSelection(ArzttarifeUtil.getMandantType(actMandant)));
 
 		tardocSpecialist.setMandator(m);
+		sectionCode.setMandator(m);
 
 		actBank = CoreModelServiceHolder.get().load((String) actMandant.getExtInfo(ta.RNBANK), IContact.class)
 				.orElse(null);

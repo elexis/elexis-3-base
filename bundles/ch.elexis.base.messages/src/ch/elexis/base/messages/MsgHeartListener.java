@@ -46,7 +46,7 @@ public class MsgHeartListener implements HeartListener {
 		if (!bSkip) {
 			ContextServiceHolder.get().getActiveUserContact().ifPresent(uc -> {
 				List<IMessage> res = CoreModelServiceHolder.get().getQuery(IMessage.class)
-						.and("destination", COMPARATOR.EQUALS, uc.getId()).execute();
+						.and("destination", COMPARATOR.EQUALS, uc.getId()).execute(); //$NON-NLS-1$
 				if (!res.isEmpty()) {
 					UiDesk.getDisplay().asyncExec(() -> {
 						if (!isModalShellOpen()) {
@@ -70,33 +70,42 @@ public class MsgHeartListener implements HeartListener {
 	}
 
 	/**
-	 * Plays a sound. The sound file can be defined via the message preferences.<br>
-	 * <br>
-	 * Set {@link DataLine.Info} and use it to load {@link Clip} to avoid
-	 * IllegalArgumentException caused by missing/wrong system settings. See
-	 * <a href=
+	 * Plays a sound defined in the message preferences.
+	 * <p>
+	 * Supports default resources, local file paths, and URIs (e.g., file:/ or
+	 * network paths).
+	 * </p>
+	 * Uses {@link DataLine.Info} to load the {@link Clip} to avoid
+	 * IllegalArgumentExceptions caused by specific system audio configurations.
+	 * * @see <a href=
 	 * "http://stackoverflow.com/questions/26435282/issue-playing-audio-with-stackoverflows-javasound-tag-example">
-	 * Stackoverflow</a> for detailed explanation.
+	 * Stackoverflow Explanation</a>
 	 */
 	private void playSound() {
 		try {
 			AudioInputStream audioInStream;
-			String soundFilePath = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH,
+			String soundPathValue = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH,
 					MessagePreferences.DEF_SOUND_PATH);
 
-			// create an audioinputstream from sound url
-			if (MessagePreferences.DEF_SOUND_PATH.equals(soundFilePath)) {
-				URL sound = getClass().getResource(soundFilePath);
-
-				audioInStream = AudioSystem.getAudioInputStream(sound);
-			} else {
-				// create AudioInputStream from user defined file
-				File soundFile = new File(soundFilePath);
-				if (!soundFile.exists()) {
-					log.warn("Sound file [" + soundFilePath + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessagePreferences.DEF_SOUND_PATH.equals(soundPathValue)) {
+				URL sound = getClass().getResource(soundPathValue);
+				if (sound == null) {
+					log.warn("Default sound resource not found: " + soundPathValue); //$NON-NLS-1$
 					return;
 				}
-				audioInStream = AudioSystem.getAudioInputStream(soundFile);
+				audioInStream = AudioSystem.getAudioInputStream(sound);
+			} else {
+				if (soundPathValue.startsWith("file:") || soundPathValue.contains(":/")) { //$NON-NLS-1$ //$NON-NLS-2$
+					java.net.URI uri = new java.net.URI(soundPathValue);
+					audioInStream = AudioSystem.getAudioInputStream(uri.toURL());
+				} else {
+					File soundFile = new File(soundPathValue);
+					if (!soundFile.exists()) {
+						log.warn("Sound file [" + soundPathValue + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+					audioInStream = AudioSystem.getAudioInputStream(soundFile);
+				}
 			}
 
 			// load the sound into memory (a Clip)

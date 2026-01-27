@@ -237,7 +237,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 		// forum datenaustausch fachbereich
 		Hyperlink hSectionCode = new Hyperlink(adrs, SWT.NONE);
-		hSectionCode.setText("Fachbereich");
+		hSectionCode.setText(Messages.RechnungsPrefs_SectionCodeLink);
 		hSectionCode.setForeground(blau);
 		hSectionCode.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		hSectionCode.addHyperlinkListener(new HyperlinkAdapter() {

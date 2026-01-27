@@ -57,14 +57,14 @@ public class SectionCodeComposite extends Composite {
 		if (mandator == null || codingService == null) {
 			return;
 		}
-		List<ICoding> codes = codingService.getAvailableCodes("forumdatenaustausch_sectioncode");
+		List<ICoding> codes = codingService.getAvailableCodes("forumdatenaustausch_sectioncode"); //$NON-NLS-1$
 		GenericSelectionDialog gsd = new GenericSelectionDialog(getShell(), codes,
-				"Fachbereich auswählen", StringUtils.EMPTY);
+				Messages.SectionCodeComposite_selectSectionCodeTitle, StringUtils.EMPTY);
 		gsd.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ICoding) {
-					return ((ICoding) element).getCode() + " - " + ((ICoding) element).getDisplay();
+					return ((ICoding) element).getCode() + " - " + ((ICoding) element).getDisplay(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}
@@ -94,7 +94,7 @@ public class SectionCodeComposite extends Composite {
 	private void updateUi() {
 		Optional<ICoding> sectionCode = ArzttarifeUtil.getMandantSectionCode(mandator);
 		if (sectionCode.isPresent()) {
-			label.setText(sectionCode.get().getCode() + " - " + sectionCode.get().getDisplay());
+			label.setText(sectionCode.get().getCode() + " - " + sectionCode.get().getDisplay()); //$NON-NLS-1$
 		} else {
 			label.setText(StringUtils.EMPTY);
 		}

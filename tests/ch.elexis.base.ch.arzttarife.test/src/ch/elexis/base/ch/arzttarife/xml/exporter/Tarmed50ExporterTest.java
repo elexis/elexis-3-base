@@ -213,7 +213,7 @@ public class Tarmed50ExporterTest {
 		List<ServiceExType> withServiceCode = invoiceRequest.getPayload().getBody().getServices()
 				.getServiceExOrService().stream()
 				.filter(s -> s instanceof ServiceExType).map(s -> (ServiceExType) s)
-				.filter(s -> "M050.00".equals(s.getSectionCode())).toList();
+				.filter(s -> "M100.02".equals(s.getSectionCode())).toList();
 		assertFalse(withServiceCode.isEmpty());
 
 		// configure fachbereich

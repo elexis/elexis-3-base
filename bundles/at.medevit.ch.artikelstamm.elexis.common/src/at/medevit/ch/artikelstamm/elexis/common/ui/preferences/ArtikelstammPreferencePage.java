@@ -348,11 +348,19 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 					taskService.saveTaskDescriptor(td);
 					taskService.refresh(td);
 				} catch (TaskException ex) {
+<<<<<<< Upstream, based on master
 					logger.error("Error updating the task descriptor for RDUS", ex);
 				}
 			}
 		} catch (Exception ex) {
 			logger.error("General error in toggleRdusTask", ex);
+=======
+					ex.printStackTrace();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+>>>>>>> 036423d [27529] RDUS PreferencesPage
 		}
 	}
 

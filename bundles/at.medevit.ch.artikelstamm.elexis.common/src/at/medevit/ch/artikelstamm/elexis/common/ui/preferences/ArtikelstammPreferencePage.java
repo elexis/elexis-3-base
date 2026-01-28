@@ -25,7 +25,13 @@ import at.medevit.ch.artikelstamm.marge.Marge;
 import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
 import at.medevit.ch.artikelstamm.model.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
+import ch.elexis.core.l10n.Messages;
+import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.tasks.model.ITaskDescriptor;
+import ch.elexis.core.tasks.model.ITaskService;
+import ch.elexis.core.tasks.model.TaskTriggerType;
+import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class ArtikelstammPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public Marge margeA, margeB, margeC;
@@ -51,6 +57,14 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	private Button btnShowGenericWarningMediList;
 	private Button btnShowGenericWarningRecipe;
 
+	public static final String PREFERENCE_BASE = "rdus/"; //$NON-NLS-1$
+	public static final String PREFERENCE_UPDATE_INTERVAL = PREFERENCE_BASE + "updateCheckInterval"; //$NON-NLS-1$
+	public static final String PREFERENCE_AUTO_UPDATE_ENABLED = "rdus.autoUpdate.enabled"; //$NON-NLS-1$
+	public static final String PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS = "rdus.autoAdjustOpenEncounters"; //$NON-NLS-1$
+	public static final String RUNNABLE_ID = "rdusReferenceDataUpdate"; //$NON-NLS-1$
+	final boolean autoEnabledInit = ConfigServiceHolder.getGlobal(PREFERENCE_AUTO_UPDATE_ENABLED, false);
+	final int intervalInit = ConfigServiceHolder.getGlobal(PREFERENCE_UPDATE_INTERVAL, 1);
+
 	/**
 	 * Create the preference page.
 	 */
@@ -75,23 +89,23 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		Group margeGroup = new Group(container, SWT.None);
 		margeGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		margeGroup.setLayout(new GridLayout(5, false));
-		margeGroup.setText("Margen-Konfiguration");
+		margeGroup.setText(Messages.ArtikelstammPref_MargeGroup_Title);
 
 		Label lblMargeA = new Label(margeGroup, SWT.NONE);
 		lblMargeA.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblMargeA.setText("Marge");
+		lblMargeA.setText(Messages.ArtikelstammPref_Marge_Label);
 
 		textMargeAstartIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeAstartIntervall.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-		textMargeAstartIntervall.setMessage("von CHF");
+		textMargeAstartIntervall.setMessage(Messages.ArtikelstammPref_Marge_FromCHF);
 
 		textMargeAendIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeAendIntervall.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textMargeAendIntervall.setMessage("bis CHF");
+		textMargeAendIntervall.setMessage(Messages.ArtikelstammPref_Marge_ToCHF);
 
 		Label lblZuschlag = new Label(margeGroup, SWT.NONE);
 		lblZuschlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblZuschlag.setText("Zuschlag in %");
+		lblZuschlag.setText(Messages.ArtikelstammPref_Marge_AdditionPercent);
 
 		textMargeAAddition = new Text(margeGroup, SWT.BORDER);
 		textMargeAAddition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -101,19 +115,19 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 
 		Label lblMargeB = new Label(margeGroup, SWT.NONE);
 		lblMargeB.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblMargeB.setText("Marge");
+		lblMargeB.setText(Messages.ArtikelstammPref_Marge_Label);
 
 		textMargeBstartIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeBstartIntervall.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-		textMargeBstartIntervall.setMessage("von CHF");
+		textMargeBstartIntervall.setMessage(Messages.ArtikelstammPref_Marge_FromCHF);
 
 		textMargeBendIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeBendIntervall.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textMargeBendIntervall.setMessage("bis CHF");
+		textMargeBendIntervall.setMessage(Messages.ArtikelstammPref_Marge_ToCHF);
 
 		Label lblBZuschlag = new Label(margeGroup, SWT.NONE);
 		lblBZuschlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblBZuschlag.setText("Zuschlag in %");
+		lblBZuschlag.setText(Messages.ArtikelstammPref_Marge_AdditionPercent);
 
 		textMargeBAddition = new Text(margeGroup, SWT.BORDER);
 		textMargeBAddition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -123,19 +137,19 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 
 		Label lblMargeC = new Label(margeGroup, SWT.NONE);
 		lblMargeC.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblMargeC.setText("Marge");
+		lblMargeC.setText(Messages.ArtikelstammPref_Marge_Label);
 
 		textMargeCstartIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeCstartIntervall.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-		textMargeCstartIntervall.setMessage("von CHF");
+		textMargeCstartIntervall.setMessage(Messages.ArtikelstammPref_Marge_FromCHF);
 
 		textMargeCendIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeCendIntervall.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textMargeCendIntervall.setMessage("bis CHF");
+		textMargeCendIntervall.setMessage(Messages.ArtikelstammPref_Marge_ToCHF);
 
 		Label lblCZuschlag = new Label(margeGroup, SWT.NONE);
 		lblCZuschlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblCZuschlag.setText("Zuschlag in %");
+		lblCZuschlag.setText(Messages.ArtikelstammPref_Marge_AdditionPercent);
 
 		textMargeCAddition = new Text(margeGroup, SWT.BORDER);
 		textMargeCAddition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -143,31 +157,31 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 
 		lblInfo = new Label(margeGroup, SWT.NONE);
 		lblInfo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 5, 1));
-		lblInfo.setText("Ein 0 Eintrag bewirkt das Ignorieren einer Zeile.");
+		lblInfo.setText(Messages.ArtikelstammPref_Marge_IgnoreInfo);
 
 		compAtcLang = new Composite(container, SWT.NONE);
 		compAtcLang.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		compAtcLang.setLayout(new GridLayout(3, false));
 
 		lblShowAtcCodesIn = new Label(compAtcLang, SWT.NONE);
-		lblShowAtcCodesIn.setText("ATC Codes darstellen in");
+		lblShowAtcCodesIn.setText(Messages.ArtikelstammPref_ATCLang_Label);
 
 		SelectionListener radioSl = new LanguageRadioSelectionButtonListener();
 
 		btnRadioGerman = new Button(compAtcLang, SWT.RADIO);
 		btnRadioGerman.setData(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
-		btnRadioGerman.setText("deutsch");
+		btnRadioGerman.setText(Messages.ArtikelstammPref_ATCLang_de);
 		btnRadioGerman.addSelectionListener(radioSl);
 
 		btnRadioEnglish = new Button(compAtcLang, SWT.RADIO);
 		btnRadioEnglish.setData(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_ENGLISH);
-		btnRadioEnglish.setText("english");
+		btnRadioEnglish.setText(Messages.ArtikelstammPref_ATCLang_en);
 		btnRadioEnglish.addSelectionListener(radioSl);
 
 		btnShowArticlePrice = new Button(container, SWT.CHECK);
 		btnShowArticlePrice
 				.setSelection(ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true));
-		btnShowArticlePrice.setText("Artikelpreis in Übersicht anzeigen");
+		btnShowArticlePrice.setText(Messages.ArtikelstammPref_ShowPriceInOverview);
 		btnShowArticlePrice.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -177,7 +191,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		});
 
 		btnShowEmptyATCCodeGroups = new Button(container, SWT.CHECK);
-		btnShowEmptyATCCodeGroups.setText("ATC Gruppen ohne verfügbare Artikel anzeigen");
+		btnShowEmptyATCCodeGroups.setText(Messages.ArtikelstammPref_ShowEmptyATCGroups);
 		btnShowEmptyATCCodeGroups.setSelection(
 				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, true));
 		btnShowEmptyATCCodeGroups.addSelectionListener(new SelectionAdapter() {
@@ -189,7 +203,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		});
 
 		btnShowGenericWarning = new Button(container, SWT.CHECK);
-		btnShowGenericWarning.setText("Warnung bei Abgabe von Originalpräparaten anzeigen");
+		btnShowGenericWarning.setText(Messages.ArtikelstammPref_ShowGenericWarning);
 		btnShowGenericWarning.setSelection(
 				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES, false));
 		btnShowGenericWarning.addSelectionListener(new SelectionAdapter() {
@@ -201,8 +215,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		});
 
 		btnShowGenericWarningMediList = new Button(container, SWT.CHECK);
-		btnShowGenericWarningMediList
-				.setText("Warnung beim Hinzufügen von Originalpräparaten auf Medikationsliste / Fixmedikation");
+		btnShowGenericWarningMediList.setText(Messages.ArtikelstammPref_ShowGenericWarning_MediList);
 		btnShowGenericWarningMediList.setSelection(
 				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES_MEDILIST, false));
 		btnShowGenericWarningMediList.addSelectionListener(new SelectionAdapter() {
@@ -214,8 +227,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		});
 
 		btnShowGenericWarningRecipe = new Button(container, SWT.CHECK);
-		btnShowGenericWarningRecipe
-				.setText("Warnung bei der Verwendung von Originalpräparaten vor der Rezepterstellung");
+		btnShowGenericWarningRecipe.setText(Messages.ArtikelstammPref_ShowGenericWarning_Recipe);
 		btnShowGenericWarningRecipe.setSelection(
 				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES_RECIPE, false));
 		btnShowGenericWarningRecipe.addSelectionListener(new SelectionAdapter() {
@@ -234,9 +246,114 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 			btnRadioEnglish.setSelection(true);
 		}
 
+		Group rdus = new Group(container, SWT.None);
+		rdus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		rdus.setLayout(new GridLayout(5, false));
+		rdus.setText(Messages.ArtikelstammPref_RDUS_Group);
+
+		Button chkAutoUpdate = new Button(rdus, SWT.CHECK);
+		chkAutoUpdate.setText(Messages.ArtikelstammPref_RDUS_EnableAutoImport);
+		chkAutoUpdate.setSelection(autoEnabledInit);
+		GridData gdChk = new GridData(SWT.LEFT, SWT.CENTER, false, false, 5, 1);
+		chkAutoUpdate.setLayoutData(gdChk);
+
+		Label lblInterval = new Label(rdus, SWT.NONE);
+		lblInterval.setText(Messages.ArtikelstammPref_RDUS_CheckInterval_Label);
+		lblInterval.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+
+		org.eclipse.swt.widgets.Spinner spnInterval = new org.eclipse.swt.widgets.Spinner(rdus, SWT.BORDER);
+		spnInterval.setMinimum(1);
+		spnInterval.setMaximum(168);
+		spnInterval.setIncrement(1);
+		spnInterval.setPageIncrement(1);
+		spnInterval.setSelection(Math.max(1, Math.min(168, intervalInit)));
+		GridData gdSpin = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		gdSpin.widthHint = 80;
+		spnInterval.setLayoutData(gdSpin);
+		new Label(rdus, SWT.NONE);
+		new Label(rdus, SWT.NONE);
+
+		lblInterval.setEnabled(chkAutoUpdate.getSelection());
+		spnInterval.setEnabled(chkAutoUpdate.getSelection());
+
+		chkAutoUpdate.addListener(SWT.Selection, e -> {
+			boolean enabled = chkAutoUpdate.getSelection();
+			lblInterval.setEnabled(enabled);
+			spnInterval.setEnabled(enabled);
+			ConfigServiceHolder.get().set(PREFERENCE_AUTO_UPDATE_ENABLED, enabled);
+			int val = spnInterval.getSelection();
+			if (val < 1)
+				val = 1;
+			if (val > 168)
+				val = 168;
+			toggleRdusTask(enabled, val);
+		});
+
+		spnInterval.addListener(SWT.Modify, e -> {
+			int val = spnInterval.getSelection();
+			if (val < 1)
+				val = 1;
+			if (val > 168)
+				val = 168;
+
+			ConfigServiceHolder.get().set(PREFERENCE_UPDATE_INTERVAL, val);
+			boolean enabled = chkAutoUpdate.getSelection();
+			toggleRdusTask(enabled, val);
+		});
+
+		Button chkAutoAdjust = new Button(rdus, SWT.CHECK);
+		chkAutoAdjust.setText(Messages.ArtikelstammPref_RDUS_AutoAdjust);
+		chkAutoAdjust.setSelection(ConfigServiceHolder.getGlobal(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true));
+		GridData gdAdj = new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1);
+		chkAutoAdjust.setLayoutData(gdAdj);
+
+		chkAutoAdjust.addListener(SWT.Selection, e -> {
+			boolean enabled = chkAutoAdjust.getSelection();
+			ConfigServiceHolder.get().set(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, enabled);
+		});
+
 		initDataBindings();
 
 		return container;
+	}
+
+	private void toggleRdusTask(boolean enabled, int intervalHours) {
+		try {
+			ITaskService taskService = OsgiServiceUtil.getService(ITaskService.class).orElse(null);
+			if (taskService == null) {
+				return;
+			}
+
+			java.util.List<ITaskDescriptor> descriptors = taskService
+					.findTaskDescriptorByIIdentifiedRunnableId(RUNNABLE_ID);
+			if (descriptors == null || descriptors.isEmpty()) {
+				return;
+			}
+			String cronExpr = "0 0 */" + intervalHours + " * * ?"; //$NON-NLS-1$ //$NON-NLS-2$
+			for (ITaskDescriptor td : descriptors) {
+				try {
+					taskService.setActive(td, enabled);
+
+					if (td.getTriggerType() == TaskTriggerType.CRON) {
+						java.util.Map<String, String> tp = td.getTriggerParameters();
+						if (tp == null) {
+							tp = new java.util.HashMap<>();
+						} else {
+							tp = new java.util.HashMap<>(tp);
+						}
+						tp.put("cron", cronExpr); //$NON-NLS-1$
+						td.setTriggerParameters(tp);
+					}
+
+					taskService.saveTaskDescriptor(td);
+					taskService.refresh(td);
+				} catch (TaskException ex) {
+					ex.printStackTrace();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private class LanguageRadioSelectionButtonListener extends SelectionAdapter {

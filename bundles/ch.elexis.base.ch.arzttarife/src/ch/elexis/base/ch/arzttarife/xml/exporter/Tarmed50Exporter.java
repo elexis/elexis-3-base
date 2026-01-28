@@ -132,7 +132,7 @@ import ch.rgw.tools.VersionInfo;
 
 public class Tarmed50Exporter {
 
-	private static String UNKNOWN_SSN = "7569999999991";
+	public static String UNKNOWN_SSN = "7569999999991";
 
 	public static final String EAN_PSEUDO = "2000000000008"; //$NON-NLS-1$
 

@@ -264,19 +264,33 @@ public class RegiomedSender implements IDataSender {
 			if (replacements.containsKey(key)) {
 				String newIds = replacements.get(key);
 				String[] parts = newIds.split(":"); //$NON-NLS-1$
-				if (parts.length >= 2) {
+				if (parts.length >= 1) {
 					String newPharma = parts[0];
-					Optional<IArticle> optArticle = findArticle(newPharma);
+					String newEan = (parts.length > 1) ? parts[1] : null;
+					Optional<IArticle> optArticle = Optional.empty();
+					if (StringUtils.isNotBlank(newEan) && !"0".equals(newEan)) { //$NON-NLS-1$
+						optArticle = findArticle(newEan);
+					}
+					if (optArticle.isEmpty() && StringUtils.isNotBlank(newPharma) && !"0".equals(newPharma)) { //$NON-NLS-1$
+						String searchPharma = newPharma;
+						if (newPharma.length() == 6 && StringUtils.isNumeric(newPharma)) {
+							searchPharma = "0" + newPharma; //$NON-NLS-1$
+						}
+						optArticle = findArticle(searchPharma);
+						if (optArticle.isEmpty() && !searchPharma.equals(newPharma)) {
+							optArticle = findArticle(newPharma);
+						}
+					}
 					if (optArticle.isPresent()) {
 						IArticle newArticle = optArticle.get();
-						log.info("Regiomed: Replacing article {} with alternative {}", art.getLabel(),
+						log.info("Regiomed: Replacing article {} with alternative {}", art.getLabel(), //$NON-NLS-1$
 								newArticle.getLabel());
 						entry.setArticle(newArticle);
 						CoreModelServiceHolder.get().save(entry);
 					} else {
-						log.warn("Regiomed: Alternative not found locally. Pharma: {}", newPharma);
+						log.warn("Regiomed: Alternative not found locally. EAN: {}, Pharma: {}", newEan, newPharma); //$NON-NLS-1$
 						String errorMsg = MessageFormat.format(Messages.RegiomedSender_AlternativeNotFoundLocally,
-								newPharma);
+								(StringUtils.isNotBlank(newEan) ? "EAN: " + newEan : "") + " / Pharma: " + newPharma); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						SWTHelper.showError(Messages.RegiomedSender_WarningTitle, errorMsg);
 					}
 				}

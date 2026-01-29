@@ -809,8 +809,13 @@ public class ElexisPDFGenerator {
 			XPathExpression expr = xPath.compile("/request/payload"); //$NON-NLS-1$
 			Object result = expr.evaluate(domDocument, XPathConstants.NODE);
 			if (result instanceof Element) {
-				Element element = (Element) result;
-				return Boolean.valueOf(element.getAttribute("copy")); //$NON-NLS-1$
+				if ("5.0".equals(billVersion)) {
+					Element element = (Element) result;
+					return "copy".equals(element.getAttribute("request_subtype")); //$NON-NLS-1$
+				} else {
+					Element element = (Element) result;
+					return Boolean.valueOf(element.getAttribute("copy")); //$NON-NLS-1$
+				}
 			}
 		} catch (XPathExpressionException e) {
 			LoggerFactory.getLogger(getClass()).error("Error getting copy", e); //$NON-NLS-1$

@@ -1118,7 +1118,7 @@
 										<fo:block white-space-treatment="preserve">
 											<xsl:choose>
 												<xsl:when
-													test="/invoice:request/invoice:payload/@copy = 'true' or /invoice:request/invoice:payload/@copy = '1'">
+													test="/invoice:request/invoice:payload/@request_subtype = 'copy'">
 													<xsl:value-of select="'Ja'" />
 												</xsl:when>
 												<xsl:otherwise>

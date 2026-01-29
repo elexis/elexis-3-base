@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IOrder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
@@ -41,12 +42,22 @@ public class Sender implements IDataSender {
 	public XChangeElement store(Object output) throws XChangeException {
 		if (output instanceof IOrder) {
 			IOrder order = (IOrder) output;
+			if (order.getEntries() == null || order.getEntries().isEmpty()) {
+				throw new XChangeException("Order is empty.");
+			}
 			String xml = xmlGenerator.createOrderXml(order);
-			xmlValidator.validateXml(xml);
+			if (!xml.contains("orderLineItem")) {
+				throw new XChangeException(ExtensionPointConstantsUi.ABORT_BY_USER);
+			}
+			try {
+				xmlValidator.validateXml(xml);
+			} catch (IllegalStateException e) {
+				throw new XChangeException("Order XML validation failed.");
+			}
 			orderRequests.add(xml);
 			return null;
 		} else {
-			throw new XChangeException("Can't handle object of class " + output.getClass().getName()); //$NON-NLS-1$
+			throw new XChangeException("Can't handle object of class " + output.getClass().getName());
 		}
 	}
 

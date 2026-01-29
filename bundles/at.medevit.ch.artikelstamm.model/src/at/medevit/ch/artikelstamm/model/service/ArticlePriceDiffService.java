@@ -3,6 +3,7 @@ package at.medevit.ch.artikelstamm.model.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.model.history.PriceChangeEntry.EncounterInfo;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
@@ -25,7 +27,9 @@ import ch.rgw.tools.Money;
 /**
  * Compares old and new article master data to find price changes and
  * automatically adjusts prices in open encounters of the current month.
- * (Stripped version without History-Logging for PR #2)
+ * <p>
+ * Includes History-Logging to HEAP (IBlob).
+ * </p>
  */
 @Component
 public class ArticlePriceDiffService {
@@ -96,12 +100,15 @@ public class ArticlePriceDiffService {
 		UpdateStatistics stats = new UpdateStatistics();
 		boolean autoAdjust = ConfigServiceHolder.getGlobal(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true);
 
+		Map<String, List<EncounterInfo>> updatedEncountersByArticle = new HashMap<>();
+
 		if (priceChanges.isEmpty()) {
 			log.info("No price changes — nothing to update."); //$NON-NLS-1$
 			return stats;
 		}
 		if (!autoAdjust) {
 			log.info("Auto-adjustment is DISABLED via Preference."); //$NON-NLS-1$
+			new PriceChangeLogger().logPriceChanges(priceChanges, null, false);
 			return stats;
 		}
 
@@ -122,9 +129,9 @@ public class ArticlePriceDiffService {
 
 		stats.totalEncounters = openEncounters.size();
 		for (IEncounter encounter : openEncounters) {
-			updateEncounterPrices(encounter, changeMap, stats);
+			updateEncounterPrices(encounter, changeMap, stats, updatedEncountersByArticle);
 		}
-
+		new PriceChangeLogger().logPriceChanges(priceChanges, updatedEncountersByArticle, true);
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IEncounter.class);
 		return stats;
 	}
@@ -133,7 +140,7 @@ public class ArticlePriceDiffService {
 	 * Applies price changes for a single encounter.
 	 */
 	private void updateEncounterPrices(IEncounter encounter, Map<String, PriceChange> changeMap,
-			UpdateStatistics stats) {
+			UpdateStatistics stats, Map<String, List<EncounterInfo>> updatedEncountersByArticle) {
 		boolean changed = false;
 		for (IBilled billed : encounter.getBilled()) {
 			if (billed.getBillable() instanceof IArtikelstammItem article) {
@@ -144,6 +151,10 @@ public class ArticlePriceDiffService {
 						billed.setPrice(newPrice);
 						changed = true;
 						stats.itemsUpdated++;
+						EncounterInfo info = new EncounterInfo(encounter.getId(), encounter.getDate().toString(),
+								encounter.getPatient().getLabel(), encounter.getMandator().getLabel());
+
+						updatedEncountersByArticle.computeIfAbsent(article.getId(), k -> new ArrayList<>()).add(info);
 						log.debug("Encounter {} ({}): {} — price set from {} to {}.", encounter.getId(), //$NON-NLS-1$
 								encounter.getDate(), article.getName(), priceChange.oldPrice(), priceChange.newPrice());
 						CoreModelServiceHolder.get().save(billed);

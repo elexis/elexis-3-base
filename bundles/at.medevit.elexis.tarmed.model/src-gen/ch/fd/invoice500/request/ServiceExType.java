@@ -11,7 +11,10 @@ package ch.fd.invoice500.request;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import at.medevit.elexis.tarmed.model.jaxb.DoubleToStringAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -200,6 +203,7 @@ public class ServiceExType {
     @XmlAttribute(name = "external_factor_mt")
     protected Double externalFactorMt;
     @XmlAttribute(name = "amount_mt")
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
     protected Double amountMt;
     @XmlAttribute(name = "unit_tt", required = true)
     protected double unitTt;
@@ -210,9 +214,11 @@ public class ServiceExType {
     @XmlAttribute(name = "external_factor_tt")
     protected Double externalFactorTt;
     @XmlAttribute(name = "amount_tt")
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
     protected Double amountTt;
     @XmlAttribute(name = "amount", required = true)
-    protected double amount;
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double amount;
     @XmlAttribute(name = "vat_rate")
     protected Double vatRate;
     @XmlAttribute(name = "section_code")

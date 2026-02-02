@@ -35,6 +35,8 @@
     <module>at.medevit.ch.artikelstamm.ui</module>
     <module>at.medevit.elexis.agenda.ui</module>
     <module>at.medevit.elexis.agenda.ui.rcp</module>
+    <module>at.medevit.elexis.aerztekasse.core</module>
+    <module>at.medevit.elexis.aerztekasse.ui</module>
     <module>at.medevit.elexis.bluemedication.core</module>
     <module>at.medevit.elexis.bluemedication.ui</module>
     <module>at.medevit.elexis.ehc.core</module>

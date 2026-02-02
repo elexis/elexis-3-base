@@ -301,6 +301,12 @@
    <bundle id="ch.elexis.estudio.clustertec">
       <category name="libraries"/>
    </bundle>
+   <bundle id="at.medevit.elexis.aerztekasse.core">
+      <category name="libraries"/>
+   </bundle>
+   <bundle id="at.medevit.elexis.aerztekasse.ui">
+      <category name="libraries"/>
+   </bundle>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

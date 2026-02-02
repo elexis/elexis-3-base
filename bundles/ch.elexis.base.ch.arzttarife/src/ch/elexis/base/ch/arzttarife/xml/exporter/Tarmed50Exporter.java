@@ -799,7 +799,7 @@ public class Tarmed50Exporter {
 						serviceType.setVatRate(getVatRate(billed));
 
 						serviceType.setUnit(billed.getPrice().doubleValue());
-						if ("581".equals(billable.getCodeSystemCode())) {
+						if ("581".equals(billable.getCodeSystemCode()) || "005".equals(billable.getCodeSystemCode())) {
 							serviceType.setUnit((double) billed.getPoints() / 100);
 						}
 						serviceType.setUnitFactor(billed.getFactor());

@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.aerztekasse.core.IAerztekasseService;
-import at.medevit.elexis.aerztekasse.ui.dialog.MissingSettingsDialog;
 import at.medevit.elexis.aerztekasse.ui.preferences.AerztekassePreferences;
 import ch.elexis.TarmedRechnung.Messages;
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -43,7 +43,6 @@ import ch.elexis.core.services.ICoverageService.Tiers;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
@@ -75,12 +74,13 @@ public class AerztekasseOutputter extends XMLExporter {
 		final Result<Rechnung> result = new Result<Rechnung>();
 
 		if (!hasCredentialsSet()) {
-			new MissingSettingsDialog(UiDesk.getTopShell()).open();
-			if (!hasCredentialsSet()) {
-				result.add(Result.SEVERITY.ERROR, 1, ch.elexis.core.l10n.Messages.Outputter_NoCredentialsSet, null,
-						true);
-				return result;
-			}
+			MessageDialog.openError(Display.getDefault().getActiveShell(),
+					ch.elexis.core.l10n.Messages.MissingSettingsDlg_Title,
+					"Es sind nicht alle notwendgen Einstellungen gesetzt um Ärztekasse ausf\u00FChren zu k\u00F6nnen.\n"
+							+ "Bitte unter Datei > Einstellungen > Abrechnungssystem > Ärztekasse einstellen.");
+
+			result.add(Result.SEVERITY.ERROR, 1, ch.elexis.core.l10n.Messages.Outputter_NoCredentialsSet, null, true);
+			return result;
 		}
 
 		try {

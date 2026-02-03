@@ -1,8 +1,12 @@
 package at.medevit.elexis.aerztekasse.core.internal;
 
+import java.util.Optional;
+
 import at.medevit.elexis.aerztekasse.core.IAerztekasseService;
 import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
 
 public class AerztkasseSettings {
@@ -14,20 +18,30 @@ public class AerztkasseSettings {
 	private static String prodTokenUrl = "https://idp.cdm.ch/f5-oauth2/v1/token";
 	private static String prodXmlImportUrl = "https://api.cdm.ch/ext/isi/api/v1/xml_import/xml";
 
-	public void setUsername(String username) {
-		ConfigServiceHolder.get().set(IAerztekasseService.cfgUsername, username);
-	}
-
 	public String getUsername() {
-		return ConfigServiceHolder.get().get(IAerztekasseService.cfgUsername, null);
-	}
-
-	public void setPassword(String password) {
-		ConfigServiceHolder.get().set(IAerztekasseService.cfgPassword, password);
+		if (ConfigServiceHolder.get().get(IAerztekasseService.cfgCredentialsGlobal, true)) {
+			return ConfigServiceHolder.get().get(IAerztekasseService.cfgUsername, null);
+		} else {
+			Optional<IMandator> mandator = ContextServiceHolder.get().getActiveMandator();
+			if (mandator.isPresent()) {
+				return ConfigServiceHolder.get()
+						.get(IAerztekasseService.cfgUsername + "/" + mandator.get().getBiller().getId(), null);
+			}
+		}
+		return null;
 	}
 
 	public String getPassword() {
-		return ConfigServiceHolder.get().get(IAerztekasseService.cfgPassword, null);
+		if (ConfigServiceHolder.get().get(IAerztekasseService.cfgCredentialsGlobal, true)) {
+			return ConfigServiceHolder.get().get(IAerztekasseService.cfgPassword, null);
+		} else {
+			Optional<IMandator> mandator = ContextServiceHolder.get().getActiveMandator();
+			if (mandator.isPresent()) {
+				return ConfigServiceHolder.get()
+						.get(IAerztekasseService.cfgPassword + "/" + mandator.get().getBiller().getId(), null);
+			}
+		}
+		return null;
 	}
 
 	public String getTokenUrl() {

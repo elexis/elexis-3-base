@@ -171,6 +171,8 @@ public class AerztekasseService implements IAerztekasseService {
 							LoggerFactory.getLogger(getClass()).error("Upload failure\n" + responseString);
 							ret.add(SEVERITY.ERROR, 0, "Upload result failure\n\n" + responseString, null, true);
 							setInvoiceFailure(invoice.get(), node);
+						} else {
+							setInvoiceSuccess(invoice.get());
 						}
 					}
 				} else {
@@ -194,6 +196,11 @@ public class AerztekasseService implements IAerztekasseService {
 		return ret;
 	}
 
+	private void setInvoiceSuccess(IInvoice invoice) {
+		invoice.setState(InvoiceState.PAID);
+		CoreModelServiceHolder.get().save(invoice);
+	}
+
 	private void setInvoiceFailure(IInvoice invoice, Element node) {
 		StringBuilder sb = new StringBuilder();
 		NodeList invoiceElements = node.getElementsByTagName("invoice");
@@ -205,6 +212,13 @@ public class AerztekasseService implements IAerztekasseService {
 				Element errorelement = (Element) errorElements.item(0);
 				sb.append(errorelement.getAttribute("message")).append(" [").append(errorelement.getAttribute("code"))
 						.append("]");
+			}
+		} else {
+			NodeList generalerrorelements = node.getElementsByTagName("generalError");
+			if (generalerrorelements.getLength() == 1) {
+				Element generalerrorelement = (Element) generalerrorelements.item(0);
+				sb.append(generalerrorelement.getAttribute("message")).append(" [")
+						.append(generalerrorelement.getAttribute("code")).append("]");
 			}
 		}
 		invoice.reject(InvoiceState.REJECTCODE.REJECTED_BY_PEER, sb.toString());
@@ -358,22 +372,11 @@ public class AerztekasseService implements IAerztekasseService {
 	}
 
 	@Override
-	public void setUsername(String string) {
-		settings.setUsername(string);
-
-	}
-
-	@Override
 	public Optional<String> getUsername() {
 		if (StringUtils.isNotBlank(settings.getUsername())) {
 			return Optional.of(settings.getUsername());
 		}
 		return Optional.empty();
-	}
-
-	@Override
-	public void setPassword(String string) {
-		settings.setPassword(string);
 	}
 
 	@Override

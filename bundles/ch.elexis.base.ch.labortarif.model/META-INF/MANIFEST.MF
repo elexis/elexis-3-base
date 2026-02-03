@@ -20,7 +20,8 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
 Bundle-ActivationPolicy: lazy
 Import-Package: jakarta.persistence;version="[3.2.0,4.0.0)",
  jakarta.persistence.criteria;version="[3.2.0,4.0.0)",
- org.apache.commons.lang3;version="3.7.0"
+ org.apache.commons.lang3;version="3.7.0",
+ org.osgi.service.event;version="[1.4.0,2.0.0)"
 Service-Component: OSGI-INF/ch.elexis.base.ch.labortarif.model.service.LaborTarifModelService.xml,
  OSGI-INF/ch.elexis.base.ch.labortarif.model.service.LaborTarifCodeElementServiceContribution.xml,
  OSGI-INF/ch.elexis.base.ch.labortarif.model.CodeElementServiceHolder.xml,

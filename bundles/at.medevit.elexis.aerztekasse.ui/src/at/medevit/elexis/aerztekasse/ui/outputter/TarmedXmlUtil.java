@@ -44,9 +44,6 @@ public class TarmedXmlUtil {
 			ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil.unmarshalInvoiceRequest450(document);
 
 			invoiceRequest.getProcessing().getTransport().getVia().get(0).setVia(IAerztekasseService.AERZTEKASSE_GLN);
-			if (invoiceRequest.getPayload().getBody().getTiersPayant() != null) {
-				invoiceRequest.getProcessing().setPrintCopyToGuarantor(true);
-			}
 
 			if (isBillingLaw(invoice, BillingLaw.KVG) && isCopyToPatient(invoiceRequest)
 					&& isNoElectronicDelivery(invoice)) {
@@ -68,9 +65,6 @@ public class TarmedXmlUtil {
 			ch.fd.invoice500.request.RequestType invoiceRequest = TarmedJaxbUtil.unmarshalInvoiceRequest500(document);
 
 			invoiceRequest.getProcessing().getTransport().getVia().get(0).setVia(IAerztekasseService.AERZTEKASSE_GLN);
-			if (invoiceRequest.getPayload().getBody().getTiersPayant() != null) {
-				invoiceRequest.getProcessing().setPrintCopyToGuarantor(true);
-			}
 
 			if (isBillingLaw(invoice, BillingLaw.KVG) && isCopyToPatient(invoiceRequest)
 					&& isNoElectronicDelivery(invoice)) {

@@ -168,7 +168,7 @@ public class ArzttarifDetailDialog extends Dialog {
 				});
 			}
 		} else if (isPauschale(billable)) {
-			double tpAll = billed.getPoints() / 100;
+			double tpAll = ((double) billed.getPoints()) / 100;
 			double tpw = billed.getFactor();
 			Money mAll = billed.getTotal();
 

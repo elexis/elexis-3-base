@@ -17,6 +17,7 @@ public interface IAerztekasseService {
 	// Globale Einstellungen
 	public static final String cfgUsername = cfgBase + "/username"; //$NON-NLS-1$
 	public static final String cfgPassword = cfgBase + "/password"; //$NON-NLS-1$
+	public static final String cfgCredentialsGlobal = cfgBase + "/credentialsglobal"; //$NON-NLS-1$
 	public static final String cfgArchiveDir = cfgBase + "/archivedir"; //$NON-NLS-1$
 	public static final String cfgErrorDir = cfgBase + "/errordir"; //$NON-NLS-1$
 	public static final String cfgAccount = cfgBase + "/account"; //$NON-NLS-1$
@@ -56,28 +57,14 @@ public interface IAerztekasseService {
 	public boolean hasCredentials();
 
 	/**
-	 * Set the global username
-	 * 
-	 * @param string
-	 */
-	public void setUsername(String string);
-
-	/**
-	 * Get the global username
+	 * Get depending on config global or active biller specific username.
 	 * 
 	 * @return
 	 */
 	public Optional<String> getUsername();
 
 	/**
-	 * Get the global password
-	 * 
-	 * @param string
-	 */
-	public void setPassword(String string);
-
-	/**
-	 * Get the global password.
+	 * Get depending on config global or active biller specific password.
 	 * 
 	 * @return
 	 */

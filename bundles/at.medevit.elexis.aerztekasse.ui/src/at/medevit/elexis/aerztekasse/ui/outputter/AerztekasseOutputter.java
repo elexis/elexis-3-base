@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -111,8 +112,13 @@ public class AerztekasseOutputter extends XMLExporter {
 									rn, true);
 						} else {
 							try {
-								writeToOutputDirectory(invoice, doc);
-								updateInvoiceState(invoice);
+								Optional<Document> updatedDocument = TarmedXmlUtil.updateAerztekasseInfo(invoice, doc);
+								if (updatedDocument.isPresent()) {
+									doc = updatedDocument.get();
+									setExistingXml(invoice, doc);
+									writeToOutputDirectory(invoice, doc);
+									updateInvoiceState(invoice);
+								}
 							} catch (Exception e) {
 								logger.error("Error in invoice #" + invoice.getNumber(), e);
 								result.add(Result.SEVERITY.ERROR, 1,
@@ -149,10 +155,6 @@ public class AerztekasseOutputter extends XMLExporter {
 
 		return result;
 	}
-
-//	private LocalDate getFileDate(long lastModified) {
-//		return Instant.ofEpochMilli(lastModified).atZone(ZoneId.systemDefault()).toLocalDate();
-//	}
 
 	private void writeToOutputDirectory(IInvoice invoice, Document document) {
 		XMLFileUtil.getFileName(invoice, outputDir).ifPresent(filename -> {

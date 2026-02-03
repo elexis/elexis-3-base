@@ -8,6 +8,8 @@ import ch.rgw.tools.Result;
 
 public interface IAerztekasseService {
 
+	public static final String AERZTEKASSE_GLN = "7611910000009";
+
 	public static final String AERZTEKASSE_SNAPSHOT_MODE = "aerztekasseSnapshotMode";
 
 	public static final String cfgBase = "net/medshare/connector/finance/aerztekasse"; //$NON-NLS-1$

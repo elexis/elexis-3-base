@@ -9,8 +9,12 @@ Require-Bundle: ch.elexis.core.ui;bundle-version="3.12.0",
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.aerztekasse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: ch.elexis.core.data.interfaces,
+Import-Package: at.medevit.elexis.tarmed.model,
+ ch.elexis.core.data.interfaces,
  ch.elexis.core.data.util,
  ch.elexis.data,
+ ch.fd.invoice450.request,
+ ch.fd.invoice500.request,
  org.eclipse.wb.swt,
- org.jdom2
+ org.jdom2,
+ org.jdom2.input

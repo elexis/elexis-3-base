@@ -10,6 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -29,6 +33,10 @@ public class AerztekassePreferences extends FieldEditorPreferencePage implements
 	public static final String ID = "at.medevit.elexis.aerztekasse.ui.preferences";
 
 	private String[] deploymentLevels;
+
+	public AerztekassePreferences() {
+		super(GRID);
+	}
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -58,6 +66,10 @@ public class AerztekassePreferences extends FieldEditorPreferencePage implements
 		addField(new PasswordFieldEditor(IAerztekasseService.cfgPassword,
 				ch.elexis.core.l10n.Messages.Core_Password, getFieldEditorParent()));
 
+		Label separator = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+				((GridLayout) getFieldEditorParent().getLayout()).numColumns + 1, 1));
+
 		Set<IContact> billerSet = getBillerSet();
 		ArrayList<IContact> sortedBillerList = new ArrayList<IContact>(billerSet);
 		Collections.sort(sortedBillerList, new Comparator<IContact>() {
@@ -78,6 +90,10 @@ public class AerztekassePreferences extends FieldEditorPreferencePage implements
 
 		// add deployment level selection if running in snapshot mode
 		if (deploymentLevels != null) {
+			separator = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
+			separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+					((GridLayout) getFieldEditorParent().getLayout()).numColumns + 1, 1));
+
 			ComboFieldEditor cmbDeployLevel = new ComboFieldEditor(IAerztekasseService.cfgDeploymentLevel,
 					ch.elexis.core.l10n.Messages.Prefs_DeplymentLevel, deploymentLevels, getFieldEditorParent());
 			addField(cmbDeployLevel);

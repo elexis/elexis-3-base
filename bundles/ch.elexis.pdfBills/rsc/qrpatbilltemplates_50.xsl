@@ -1143,9 +1143,19 @@
 					<fo:table-cell border-top-style="solid" border-top-width="1pt">
 						<fo:block text-align="right" font-size="8px" font-weight="bold"
 							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:call-template name="FormatNumber">
-								<xsl:with-param name="Number" select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:balance/@amount" />
-							</xsl:call-template>
+							<xsl:choose>
+								<xsl:when
+									test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+									<xsl:call-template name="FormatNumber">
+										<xsl:with-param name="Number" select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:balance/@amount" />
+									</xsl:call-template>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name="FormatNumber">
+										<xsl:with-param name="Number" select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount" />
+									</xsl:call-template>
+								</xsl:otherwise>
+							</xsl:choose>
 						</fo:block>
 					</fo:table-cell>
 				</fo:table-row>

@@ -47,6 +47,7 @@ import ch.rgw.tools.Money;
 
 public class ArzttarifDetailDialog extends Dialog {
 	private IBilled billed;
+	private IBillable billable;
 	private Combo cSide;
 	private ComboViewer cBezug;
 
@@ -57,7 +58,7 @@ public class ArzttarifDetailDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		IBillable billable = billed.getBillable();
+		billable = billed.getBillable();
 		Composite ret = (Composite) super.createDialogArea(parent);
 		ret.setLayout(new GridLayout(8, false));
 
@@ -284,15 +285,17 @@ public class ArzttarifDetailDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		int idx = cSide.getSelectionIndex();
-		if (idx < 1) {
-			billed.setExtInfo(Constants.FLD_EXT_SIDE, null);
-		} else if (idx == 1) {
-			billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
-		} else {
-			billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
+		if (isArzttarif(billable)) {
+			int idx = cSide.getSelectionIndex();
+			if (idx < 1) {
+				billed.setExtInfo(Constants.FLD_EXT_SIDE, null);
+			} else if (idx == 1) {
+				billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
+			} else {
+				billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
+			}
+			CoreModelServiceHolder.get().save(billed);
 		}
-		CoreModelServiceHolder.get().save(billed);
 		super.okPressed();
 	}
 

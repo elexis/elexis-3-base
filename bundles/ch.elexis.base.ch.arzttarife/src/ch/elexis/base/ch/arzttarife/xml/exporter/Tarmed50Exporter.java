@@ -153,6 +153,8 @@ public class Tarmed50Exporter {
 
 	private SectionCodeCodingContribution sectionCodeContribution;
 
+	private boolean addTrustCenterInstructions = false;
+
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall
 	 * it into the provided {@link OutputStream}.
@@ -1400,21 +1402,8 @@ public class Tarmed50Exporter {
 			String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
 			if (StringUtils.isNotBlank(trustCenter)) {
 				processingType.setSendCopyToTrustcenter(TrustCenters.getTCEAN(trustCenter));
-				Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-				if(tiersType == Tiers.GARANT) {
-					InstructionsType instructions = new InstructionsType();
-					InstructionType instruction = new InstructionType();
-					instruction.setToken("tx_print_to_guarantor");
-					instruction.setValue("true");
-					instructions.getInstruction().add(instruction);
-					processingType.setInstructions(instructions);
-				} else {
-					InstructionsType instructions = new InstructionsType();
-					InstructionType instruction = new InstructionType();
-					instruction.setToken("tx_send_to_insurance");
-					instruction.setValue("true");
-					instructions.getInstruction().add(instruction);
-					processingType.setInstructions(instructions);
+				if (addTrustCenterInstructions) {
+					addTrustCenterInstructions(processingType, invoice);
 				}
 			}
 		}
@@ -1440,22 +1429,10 @@ public class Tarmed50Exporter {
 					String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
 					if (StringUtils.isNotBlank(trustCenter)) {
 						request.getProcessing().setSendCopyToTrustcenter(TrustCenters.getTCEAN(trustCenter));
-						// reset tx instructions
-						Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-						if (tiersType == Tiers.GARANT) {
-							InstructionsType instructions = new InstructionsType();
-							InstructionType instruction = new InstructionType();
-							instruction.setToken("tx_print_to_guarantor");
-							instruction.setValue("true");
-							instructions.getInstruction().add(instruction);
-							request.getProcessing().setInstructions(instructions);
+						if (addTrustCenterInstructions) {
+							addTrustCenterInstructions(request.getProcessing(), invoice);
 						} else {
-							InstructionsType instructions = new InstructionsType();
-							InstructionType instruction = new InstructionType();
-							instruction.setToken("tx_send_to_insurance");
-							instruction.setValue("true");
-							instructions.getInstruction().add(instruction);
-							request.getProcessing().setInstructions(instructions);
+							removeTrustCenterInstructions(request.getProcessing(), invoice);
 						}
 					}
 				}
@@ -1621,6 +1598,37 @@ public class Tarmed50Exporter {
 		}
 	}
 
+	private void addTrustCenterInstructions(ProcessingType processingType, IInvoice invoice) {
+		logger.info("Adding TrustCenter instructions");
+		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
+		if (tiersType == Tiers.GARANT) {
+			InstructionsType instructions = new InstructionsType();
+			InstructionType instruction = new InstructionType();
+			instruction.setToken("tx_print_to_guarantor");
+			instruction.setValue("true");
+			instructions.getInstruction().add(instruction);
+			processingType.setInstructions(instructions);
+		} else {
+			InstructionsType instructions = new InstructionsType();
+			InstructionType instruction = new InstructionType();
+			instruction.setToken("tx_send_to_insurance");
+			instruction.setValue("true");
+			instructions.getInstruction().add(instruction);
+			processingType.setInstructions(instructions);
+		}
+	}
+
+	private void removeTrustCenterInstructions(ProcessingType processingType, IInvoice invoice) {
+		if (processingType.getInstructions() != null) {
+			InstructionsType instructions = processingType.getInstructions();
+			for (InstructionType instructionType : new ArrayList<>(instructions.getInstruction())) {
+				if(instructionType.getToken().startsWith("tx_")) {
+					instructions.getInstruction().remove(instructionType);
+				}
+			}			
+		}
+	}
+
 	public void addReminderEntry(RequestType request, IInvoice invoice, String reminderLevel) {
 		if (request.getPayload() != null) {
 			try {
@@ -1692,6 +1700,10 @@ public class Tarmed50Exporter {
 				}
 			});
 		}
+	}
+
+	public void setAddTrustCenterInstructions(boolean value) {
+		this.addTrustCenterInstructions = value;
 	}
 
 	/**

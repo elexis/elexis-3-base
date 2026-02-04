@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -50,7 +52,6 @@ import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Rechnung;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
-import jakarta.inject.Inject;
 
 public class AerztekasseOutputter extends XMLExporter {
 	private static Logger logger = LoggerFactory.getLogger(AerztekasseOutputter.class);

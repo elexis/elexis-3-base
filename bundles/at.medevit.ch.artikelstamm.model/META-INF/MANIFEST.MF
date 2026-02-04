@@ -22,7 +22,8 @@ Import-Package: ch.elexis.data,
  jakarta.xml.bind;version="[4.0.0,5.0.0)",
  org.apache.commons.lang3;version="3.3.2"
 Export-Package: at.medevit.ch.artikelstamm.model,
- at.medevit.ch.artikelstamm.model.common.preference
+ at.medevit.ch.artikelstamm.model.common.preference,
+ at.medevit.ch.artikelstamm.model.history
 Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.model.service.ATCCodeCache.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArticlePriceDiffService.xml,

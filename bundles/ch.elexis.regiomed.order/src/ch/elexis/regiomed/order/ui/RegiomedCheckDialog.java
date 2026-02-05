@@ -2,18 +2,13 @@ package ch.elexis.regiomed.order.ui;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -34,33 +29,33 @@ import org.slf4j.LoggerFactory;
 import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IStock;
+import ch.elexis.core.model.IStockEntry;
+import ch.elexis.core.services.IStockService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.regiomed.order.client.RegiomedOrderClient;
 import ch.elexis.regiomed.order.config.RegiomedConfig;
 import ch.elexis.regiomed.order.messages.Messages;
-import ch.elexis.regiomed.order.model.RegiomedAlternativesResponse;
-import ch.elexis.regiomed.order.model.RegiomedOrderRequest;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse.AlternativeResult;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse.ArticleResult;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse.ProductResult;
+import ch.elexis.regiomed.order.service.RegiomedLocalArticleService;
+import ch.elexis.regiomed.order.service.RegiomedServerService;
 
 public class RegiomedCheckDialog extends Dialog {
 
 	private static final Logger log = LoggerFactory.getLogger(RegiomedCheckDialog.class);
 
-	private final RegiomedOrderResponse response;
-	private final Set<String> removedIdentifiers = new HashSet<>();
-	private final Map<String, String> replacements = new HashMap<>();
-	private final Map<String, String> replacementNames = new HashMap<>();
-	private final Set<String> forcedItems = new HashSet<>();
-	private final Set<String> articlesWithAlternatives = new HashSet<>();
+	private final RegiomedCheckController controller;
+	private final RegiomedServerService serverService = new RegiomedServerService();
+	private final RegiomedLocalArticleService localArticleService = new RegiomedLocalArticleService();
 
 	private boolean searchAvailable = false;
-	private int remainingErrors = 0;
-
 	private List<ProductResult> currentSearchResults = Collections.emptyList();
 
 	private Browser browser;
@@ -68,7 +63,7 @@ public class RegiomedCheckDialog extends Dialog {
 
 	public RegiomedCheckDialog(Shell parentShell, RegiomedOrderResponse response) {
 		super(parentShell);
-		this.response = response;
+		this.controller = new RegiomedCheckController(response, serverService);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		initializeState();
 	}
@@ -82,12 +77,9 @@ public class RegiomedCheckDialog extends Dialog {
 			this.searchAvailable = false;
 		}
 
-		if (response.getAlternatives() != null) {
-			response.getAlternatives()
-					.forEach(alt -> articlesWithAlternatives.add(makeKey(alt.getPharmaCodeOrg(), alt.getEanIDOrg())));
-		}
-		recalcErrors();
-		loadMissingAlternativesForErrors();
+		BusyIndicator.showWhile(Display.getDefault(), () -> {
+			controller.loadMissingAlternatives();
+		});
 	}
 
 	@Override
@@ -146,16 +138,25 @@ public class RegiomedCheckDialog extends Dialog {
 
 		switch (action) {
 		case "force":
-			handleForce(parts);
+			if (parts.length >= 4) {
+				controller.forceArticle(controller.makeKey(parts[2], parts[3]));
+				updateStateAndUI();
+			}
 			break;
 		case "reset":
-			handleReset(parts);
+			if (parts.length >= 4) {
+				controller.resetArticle(controller.makeKey(parts[2], parts[3]));
+				updateStateAndUI();
+			}
 			break;
 		case "updateQty":
 			handleUpdateQty(parts);
 			break;
 		case "remove":
-			handleRemove(parts);
+			if (parts.length >= 4) {
+				controller.removeArticle(controller.makeKey(parts[2], parts[3]));
+				updateStateAndUI();
+			}
 			break;
 		case "replace":
 			handleReplace(parts);
@@ -166,85 +167,45 @@ public class RegiomedCheckDialog extends Dialog {
 		case "selectResult":
 			handleSelectResult(parts);
 			break;
+		case "saveFilter":
+			if (parts.length > 2) {
+				ConfigServiceHolder.get().setActiveUserContact("ch.elexis.regiomed.stockFilter", parts[2]);
+			}
+			break;
 		default:
 			log.warn("Unknown Regiomed action: {}", action);
-		}
-	}
-
-	private void handleReset(String[] parts) {
-		if (parts.length < 4)
-			return;
-		String key = makeKey(parts[2], parts[3]);
-
-		boolean changed = false;
-
-		if (removedIdentifiers.contains(key)) {
-			removedIdentifiers.remove(key);
-			changed = true;
-		}
-
-		if (replacements.containsKey(key)) {
-			replacements.remove(key);
-			replacementNames.remove(key);
-			changed = true;
-		}
-
-		if (forcedItems.contains(key)) {
-			forcedItems.remove(key);
-			changed = true;
-		}
-
-		if (changed) {
-			updateStateAndUI();
-		}
-	}
-
-	private void handleForce(String[] parts) {
-		if (parts.length < 4)
-			return;
-		String key = makeKey(parts[2], parts[3]);
-		forcedItems.add(key);
-		updateStateAndUI();
-	}
-
-	private void handleRemove(String[] parts) {
-		if (parts.length < 4)
-			return;
-		String key = makeKey(parts[2], parts[3]);
-		if (!removedIdentifiers.contains(key)) {
-			removedIdentifiers.add(key);
-			replacements.remove(key);
-			forcedItems.remove(key);
-			updateStateAndUI();
 		}
 	}
 
 	private void handleReplace(String[] parts) {
 		if (parts.length < 6)
 			return;
-		String orgKey = makeKey(parts[2], parts[3]);
-		String newKey = makeKey(parts[4], parts[5]);
+		String orgKey = controller.makeKey(parts[2], parts[3]);
+		String newKey = controller.makeKey(parts[4], parts[5]);
 
-		if (!replacements.containsKey(orgKey)) {
+		if (!controller.getReplacements().containsKey(orgKey)) {
 			AlternativeResult selectedAlt = findAlternativeByKey(newKey);
 
 			if (selectedAlt != null) {
-				boolean allowed = validateReplacementWithServer(selectedAlt);
-				if (!allowed) {
-					return;
+				try {
+					ArticleResult validated = serverService.validateReplacement(selectedAlt);
+					if (validated != null) {
+						controller.replaceArticle(orgKey, newKey, selectedAlt.getDescription(),
+								validated.getAvailableInventory());
+						updateStateAndUI();
+					}
+				} catch (Exception e) {
+					showJsError(selectedAlt.getDescription(), e.getMessage());
 				}
-				replacements.put(orgKey, newKey);
-				replacementNames.put(orgKey, selectedAlt.getDescription());
-				forcedItems.remove(orgKey);
-				updateStateAndUI();
 			}
 		}
 	}
 
 	private AlternativeResult findAlternativeByKey(String key) {
-		if (response.getAlternatives() != null) {
-			for (AlternativeResult alt : response.getAlternatives()) {
-				String altKey = makeKey(alt.getPharmaCode(), alt.getEanID());
+		RegiomedOrderResponse resp = controller.getResponse();
+		if (resp.getAlternatives() != null) {
+			for (AlternativeResult alt : resp.getAlternatives()) {
+				String altKey = controller.makeKey(alt.getPharmaCode(), alt.getEanID());
 				if (altKey.equals(key)) {
 					return alt;
 				}
@@ -262,8 +223,9 @@ public class RegiomedCheckDialog extends Dialog {
 			int newQty = Integer.parseInt(parts[4]);
 
 			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
-				performQuantityUpdate(pharma, ean, newQty);
+				controller.updateQuantity(pharma, ean, newQty);
 			});
+			updateStateAndUI();
 		} catch (NumberFormatException e) {
 			log.error("Invalid quantity format: {}", parts[4], e);
 		}
@@ -272,22 +234,54 @@ public class RegiomedCheckDialog extends Dialog {
 	private void handleSearchQuery(String[] parts) {
 		if (parts.length < 3)
 			return;
-
 		String query = URLDecoder.decode(parts[2], StandardCharsets.UTF_8);
 
 		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 			try {
-				RegiomedConfig config = RegiomedConfig.load();
-				RegiomedOrderClient client = new RegiomedOrderClient();
-				RegiomedProductLookupResponse resp = client.searchProducts(config, query);
+				RegiomedProductLookupResponse resp = serverService.searchProducts(query);
+				Map<Integer, Map<String, Integer>> localStockMap = new HashMap<>();
+				List<IStock> allStocks = new ArrayList<>();
+
+				try {
+					IStockService stockService = OsgiServiceUtil.getService(IStockService.class).orElse(null);
+					if (stockService != null) {
+						allStocks = stockService.getAllStocks(true, false);
+
+						if (resp != null && resp.products != null) {
+							for (int i = 0; i < resp.products.size(); i++) {
+								ProductResult p = resp.products.get(i);
+								IArticle localArticle = localArticleService.findLocalArticle(p.ean, p.pharmaCode,
+										p.prodName);
+
+								if (localArticle != null) {
+									Map<String, Integer> stocksForProduct = new HashMap<>();
+									for (IStock stock : allStocks) {
+										IStockEntry entry = stockService.findStockEntryForArticleInStock(stock,
+												localArticle);
+										if (entry != null && entry.getCurrentStock() > 0) {
+											stocksForProduct.put(stock.getCode(), entry.getCurrentStock());
+										}
+									}
+									if (!stocksForProduct.isEmpty()) {
+										localStockMap.put(i, stocksForProduct);
+									}
+								}
+							}
+						}
+					}
+				} catch (Exception ex) {
+					log.error("Error retrieving local stock information", ex);
+				}
 
 				if (resp != null && resp.products != null) {
 					currentSearchResults = resp.products;
 				} else {
 					currentSearchResults = Collections.emptyList();
 				}
-
-				String rowsHtml = RegiomedCheckTemplate.generateSearchResultRows(currentSearchResults);
+				String lastFilter = ConfigServiceHolder.get().getActiveUserContact("ch.elexis.regiomed.stockFilter",
+						"ALL");
+				String rowsHtml = RegiomedCheckTemplate.generateSearchResultRows(currentSearchResults, localStockMap,
+						allStocks, lastFilter);
 				String safeHtml = rowsHtml.replace("'", "\\'").replace("\n", "");
 				browser.execute("fillSearchResults('" + safeHtml + "');");
 
@@ -312,207 +306,39 @@ public class RegiomedCheckDialog extends Dialog {
 			if (index >= 0 && index < currentSearchResults.size()) {
 				ProductResult selected = currentSearchResults.get(index);
 
-				boolean allowed = validateReplacementWithServer(selected);
-				if (!allowed)
-					return;
+				try {
+					ArticleResult validated = serverService.validateReplacement(selected);
+					if (validated != null) {
+						String orgKey = controller.makeKey(orgPharma, orgEan);
+						String newKey = controller.makeKey(selected.pharmaCode, selected.ean);
 
-				String orgKey = makeKey(orgPharma, orgEan);
-				String newKey = makeKey(selected.pharmaCode, selected.ean);
-				replacements.put(orgKey, newKey);
-				replacementNames.put(orgKey, selected.prodName);
-				forcedItems.remove(orgKey);
-
-				updateStateAndUI();
+						controller.replaceArticle(orgKey, newKey, selected.prodName, validated.getAvailableInventory());
+						updateStateAndUI();
+					}
+				} catch (Exception e) {
+					showJsError(selected.prodName, e.getMessage());
+				}
 			}
-
 		} catch (NumberFormatException e) {
 			log.error("Invalid selection index", e);
 		}
 	}
 
 	private void updateStateAndUI() {
-		recalcErrors();
-		updateOkButtonState();
+		boolean hasErrors = controller.getRemainingErrors() > 0;
+		if (okButton != null && !okButton.isDisposed()) {
+			okButton.setEnabled(!hasErrors);
+		}
 		refreshBrowser();
 	}
 
 	private void refreshBrowser() {
 		if (browser != null && !browser.isDisposed()) {
-			String html = RegiomedCheckTemplate.generateHtml(response, searchAvailable, removedIdentifiers,
-					replacements, replacementNames, forcedItems);
+			String html = RegiomedCheckTemplate.generateHtml(controller.getResponse(), searchAvailable,
+					controller.getRemovedIdentifiers(), controller.getReplacements(), controller.getReplacementNames(),
+					controller.getReplacementInventory(), controller.getForcedItems());
 			browser.setText(html);
 		}
-	}
-
-	private void performQuantityUpdate(String pharma, String ean, int newQty) {
-		if (response.getArticles() == null)
-			return;
-
-		boolean updated = false;
-
-		for (ArticleResult art : response.getArticles()) {
-			if (String.valueOf(art.getPharmaCode()).equals(pharma) && String.valueOf(art.getEanID()).equals(ean)) {
-				art.setQuantity(newQty);
-				updated = true;
-
-				boolean isStockOK = (art.getAvailableInventory() <= 0) || (newQty <= art.getAvailableInventory());
-
-				if (art.isSuccess() && isStockOK) {
-					art.setSuccessAvailability(true);
-					art.setAvailState(Messages.RegiomedCheckDialog_Yes);
-					art.setAvailMsg(Messages.RegiomedCheckDialog_AvailableQtyAdjusted);
-				} else if (art.isSuccess() && !isStockOK) {
-					art.setSuccessAvailability(false);
-					art.setAvailState(Messages.RegiomedCheckDialog_No);
-					art.setAvailMsg(MessageFormat.format(Messages.RegiomedCheckDialog_QtyExceedsStock, newQty,
-							art.getAvailableInventory()));
-
-					String key = makeKey(pharma, ean);
-					if (!articlesWithAlternatives.contains(key)) {
-						fetchMissingAlternatives(art);
-					}
-				}
-				break;
-			}
-		}
-
-		if (updated) {
-			updateStateAndUI();
-		}
-	}
-
-	private void recalcErrors() {
-		this.remainingErrors = 0;
-		if (response.getArticles() != null) {
-			for (ArticleResult a : response.getArticles()) {
-				if (isCalculatedError(a)) {
-					this.remainingErrors++;
-				}
-			}
-		}
-	}
-
-	private boolean isCalculatedError(ArticleResult a) {
-		String key = makeKey(a.getPharmaCode(), a.getEanID());
-
-		if (removedIdentifiers.contains(key))
-			return false;
-		if (replacements.containsKey(key))
-			return false;
-		if (forcedItems.contains(key))
-			return false;
-
-		if (!a.isSuccess())
-			return true;
-
-		if (a.getAvailableInventory() > 0 && a.getQuantity() > a.getAvailableInventory())
-			return true;
-
-		boolean hasAlternatives = articlesWithAlternatives.contains(key);
-		if (hasAlternatives) {
-			return !a.isSuccessAvailability();
-		}
-		return false;
-	}
-
-	private void fetchMissingAlternatives(ArticleResult art) {
-		try {
-			RegiomedOrderClient client = new RegiomedOrderClient();
-			RegiomedAlternativesResponse altResp = client.getAlternatives(RegiomedConfig.load(), "PCAVAIL",
-					String.valueOf(art.getPharmaCode()));
-
-			if (altResp != null && altResp.getAlternatives() != null && !altResp.getAlternatives().isEmpty()) {
-				if (response.getAlternatives() == null) {
-					response.setAlternatives(new ArrayList<>());
-				}
-
-				List<AlternativeResult> converted = altResp.getAlternatives().stream().map(item -> {
-					AlternativeResult res = new AlternativeResult();
-					res.setPharmaCodeOrg(art.getPharmaCode());
-					res.setEanIDOrg(art.getEanID());
-					res.setDescriptionOrg(art.getDescription());
-					res.setPharmaCode(item.getPharmaCode());
-					res.setEanID(item.getEan());
-					res.setDescription(item.getProdName());
-					res.setPrice(item.getPrice());
-					res.setAvailState(item.getAvailState());
-					res.setAvailMsg(item.getAvailMessage());
-					res.setAltType(item.getAltType());
-					return res;
-				}).collect(Collectors.toList());
-
-				response.getAlternatives().addAll(converted);
-				articlesWithAlternatives.add(makeKey(art.getPharmaCode(), art.getEanID()));
-			}
-		} catch (Exception e) {
-			log.error("Error fetching alternatives for article {}", art.getPharmaCode(), e);
-		}
-	}
-
-	private void loadMissingAlternativesForErrors() {
-		if (response.getArticles() == null)
-			return;
-
-		List<ArticleResult> toLoad = response.getArticles().stream().filter(this::isCalculatedError)
-				.filter(a -> !articlesWithAlternatives.contains(makeKey(a.getPharmaCode(), a.getEanID())))
-				.collect(Collectors.toList());
-
-		if (!toLoad.isEmpty()) {
-			BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : null, () -> {
-				for (ArticleResult a : toLoad) {
-					fetchMissingAlternatives(a);
-				}
-			});
-		}
-	}
-
-	private boolean validateReplacementWithServer(ProductResult selected) {
-		try {
-			RegiomedConfig config = RegiomedConfig.load();
-			RegiomedOrderClient client = new RegiomedOrderClient();
-
-			RegiomedOrderRequest request = new RegiomedOrderRequest();
-			request.setUserEmail(config.getEmail());
-			request.setCheckOrder(true);
-			request.setDeliveryType("DEFAULT");
-
-			RegiomedOrderRequest.Article art = new RegiomedOrderRequest.Article();
-			art.setPharmaCode(selected.pharmaCode);
-			try {
-				art.setEanID(StringUtils.isNotBlank(selected.ean) ? Long.parseLong(selected.ean) : 0);
-			} catch (Exception e) {
-				art.setEanID(0);
-			}
-			art.setDescription(selected.prodName);
-			art.setQuantity(1);
-
-			request.getArticles().add(art);
-			RegiomedOrderResponse resp = client.sendOrderWithToken(config, request);
-
-			if (resp != null && resp.getArticles() != null) {
-				for (ArticleResult res : resp.getArticles()) {
-					if (res.getPharmaCode() == selected.pharmaCode && !res.isSuccess()) {
-						showJsError(selected.prodName,
-								Objects.toString(res.getInfo(), Messages.RegiomedCheckDialog_UnknownError));
-						return false;
-					}
-				}
-			}
-			return true;
-		} catch (Exception e) {
-			log.error("Server validation failed", e);
-			SWTHelper.showError(Messages.RegiomedCheckDialog_ErrorLabel,
-					Messages.RegiomedCheckDialog_ServerValidationFailed + " " + e.getMessage());
-			return false;
-		}
-	}
-
-	private boolean validateReplacementWithServer(AlternativeResult alt) {
-		ProductResult temp = new ProductResult();
-		temp.pharmaCode = alt.getPharmaCode();
-		temp.ean = String.valueOf(alt.getEanID());
-		temp.prodName = alt.getDescription();
-		return validateReplacementWithServer(temp);
 	}
 
 	private void showJsError(String prodName, String reason) {
@@ -529,41 +355,28 @@ public class RegiomedCheckDialog extends Dialog {
 		return text == null ? "" : text.replace("'", "\\'").replace("\"", "\\\"");
 	}
 
-	private String makeKey(Object pharma, Object ean) {
-		return makeKey(String.valueOf(pharma), String.valueOf(ean));
-	}
-
-	private String makeKey(String pharma, String ean) {
-		return StringUtils.defaultIfBlank(pharma, "0") + ":" + StringUtils.defaultIfBlank(ean, "0");
-	}
-
 	public List<ArticleResult> getDeletedArticles() {
-		if (response.getArticles() == null)
+		if (controller.getResponse().getArticles() == null)
 			return new ArrayList<>();
-		return response.getArticles().stream()
-				.filter(item -> removedIdentifiers.contains(makeKey(item.getPharmaCode(), item.getEanID())))
-				.collect(Collectors.toList());
+		return controller.getResponse().getArticles().stream()
+				.filter(item -> controller.getRemovedIdentifiers()
+						.contains(controller.makeKey(item.getPharmaCode(), item.getEanID())))
+				.collect(java.util.stream.Collectors.toList());
 	}
 
 	public Map<String, String> getReplacements() {
-		return replacements;
+		return controller.getReplacements();
 	}
 
 	public Set<String> getRemovedIdentifiers() {
-		return removedIdentifiers;
-	}
-
-	private void updateOkButtonState() {
-		if (okButton != null && !okButton.isDisposed()) {
-			okButton.setEnabled(remainingErrors <= 0);
-		}
+		return controller.getRemovedIdentifiers();
 	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton = createButton(parent, IDialogConstants.OK_ID, Messages.RegiomedCheckDialog_OrderBinding, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, Messages.RegiomedCheckDialog_Cancel, false);
-		updateOkButtonState();
+		updateStateAndUI();
 	}
 
 	@Override

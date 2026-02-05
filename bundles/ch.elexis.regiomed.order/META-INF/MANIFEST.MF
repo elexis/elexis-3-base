@@ -10,4 +10,7 @@ Automatic-Module-Name: ch.elexis.regiomed.order
 Bundle-ClassPath: .,
  lib/freemarker-2.3.34.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: com.equo.chromium.swt
+Import-Package: at.medevit.ch.artikelstamm,
+ com.equo.chromium.swt
+Service-Component: OSGI-INF/ch.elexis.regiomed.order.holder.ArtikelstammModelServiceHolder.xml
+Bundle-ActivationPolicy: lazy

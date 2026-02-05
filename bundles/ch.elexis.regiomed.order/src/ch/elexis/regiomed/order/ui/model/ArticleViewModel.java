@@ -124,11 +124,11 @@ public class ArticleViewModel {
 		StringBuilder sb = new StringBuilder();
 		String originalMsg = StringUtils
 				.defaultString(StringUtils.isBlank(item.getInfo()) ? item.getAvailMsg() : item.getInfo());
-
-		if (isStockError) {
-			sb.append(MessageFormat.format(Messages.RegiomedCheckTemplate_QtyExceedsStock, item.getQuantity(),
-					item.getAvailableInventory()));
-			if (StringUtils.isNotBlank(originalMsg) && !originalMsg.contains("übersteigt Bestand")) {
+		if (isStockError && !isReplaced) {
+			String standardErrorMsg = MessageFormat.format(Messages.RegiomedCheckTemplate_QtyExceedsStock,
+					item.getQuantity(), item.getAvailableInventory());
+			sb.append(standardErrorMsg);
+			if (StringUtils.isNotBlank(originalMsg) && !originalMsg.contains(standardErrorMsg)) {
 				sb.append("<br><small style='color:#666'>").append(Messages.RegiomedCheckTemplate_NoteLabel).append(" ")
 						.append(escapeHtml(originalMsg)).append("</small>");
 			}
@@ -147,22 +147,37 @@ public class ArticleViewModel {
 	public String getReplacementName() {
 		if (!isReplaced)
 			return null;
-		if (ctx.replacementNames() != null && ctx.replacementNames().containsKey(key)) {
-			return escapeHtml(ctx.replacementNames().get(key));
-		}
+
 		String newKey = ctx.replacements().get(key);
 		if (newKey == null)
 			return null;
-		List<AlternativeResult> alts = ctx.alternativesMap().get(key);
-		if (alts != null) {
-			for (AlternativeResult alt : alts) {
-				String altKey = alt.getPharmaCode() + ":" + alt.getEanID();
-				if (altKey.equals(newKey)) {
-					return escapeHtml(alt.getDescription());
+
+		String name = null;
+		if (ctx.replacementNames() != null && ctx.replacementNames().containsKey(key)) {
+			name = escapeHtml(ctx.replacementNames().get(key));
+		} else {
+			List<AlternativeResult> alts = ctx.alternativesMap().get(key);
+			if (alts != null) {
+				for (AlternativeResult alt : alts) {
+					String altKey = alt.getPharmaCode() + ":" + alt.getEanID();
+					if (altKey.equals(newKey)) {
+						name = escapeHtml(alt.getDescription());
+						break;
+					}
 				}
 			}
 		}
-		return null;
+
+		if (name == null)
+			return null;
+		if (ctx.replacementInventory() != null && ctx.replacementInventory().containsKey(key)) {
+			int stock = ctx.replacementInventory().get(key);
+			if (stock != Integer.MAX_VALUE) {
+				return name + ") (" + Messages.RegiomedCheckTemplate_StockLabel + StringUtils.SPACE + stock;
+			}
+		}
+
+		return name;
 	}
 
 	public boolean getHasAlternatives() {

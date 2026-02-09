@@ -77,6 +77,13 @@ public class SectionCodeCodingContribution implements ICodingContribution {
 		return codes.stream().filter(c -> c.getCode().equals(code)).findAny();
 	}
 
+	/**
+	 * Get a section code matching the specialist code using a mapping. <b>This
+	 * method is called via reflection.</b>
+	 * 
+	 * @param specialistCodes
+	 * @return
+	 */
 	public Optional<ICoding> getMappedBySpecialistCode(List<ICoding> specialistCodes) {
 		List<ICoding> canidates = new ArrayList<ICoding>(
 				specialistCodes.stream().map(c -> dignitaetMap.get(c.getCode())).filter(c -> c != null).toList());

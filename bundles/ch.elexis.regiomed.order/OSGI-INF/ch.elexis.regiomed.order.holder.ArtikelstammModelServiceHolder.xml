@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.regiomed.order.holder.ArtikelstammModelServiceHolder">
-   <reference bind="setModelService" interface="ch.elexis.core.services.IModelService" name="ModelService" target="(service.model.name=at.medevit.ch.artikelstamm.model)"/>
-   <implementation class="ch.elexis.regiomed.order.holder.ArtikelstammModelServiceHolder"/>
-</scr:component>

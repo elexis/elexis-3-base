@@ -7,54 +7,48 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.ch.artikelstamm.IArtikelstammItem;
-import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IArticle;
-import ch.elexis.core.model.ModelPackage;
-import ch.elexis.core.services.ICodeElementService;
-import ch.elexis.core.services.IQuery;
-import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.regiomed.order.holder.ArtikelstammModelServiceHolder;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.services.holder.CodeElementServiceHolder;
 
 public class RegiomedLocalArticleService {
 
 	private static final Logger log = LoggerFactory.getLogger(RegiomedLocalArticleService.class);
 
 	public IArticle findLocalArticle(String ean, int pharmaCode, String prodName) {
-		try {
-			ICodeElementService codeService = OsgiServiceUtil.getService(ICodeElementService.class).orElse(null);
-			if (StringUtils.isNotBlank(ean)) {
-				if (codeService != null) {
-					Optional<IArticle> article = codeService.findArticleByGtin(ean);
-					if (article.isPresent()) {
-						return article.get();
-					}
-				}
-				IQuery<IArticle> q = CoreModelServiceHolder.get().getQuery(IArticle.class);
-				q.and(ModelPackage.Literals.IARTICLE__GTIN, IQuery.COMPARATOR.EQUALS, ean);
-				List<IArticle> results = q.execute();
-				if (!results.isEmpty()) {
-					return results.get(0);
-				}
+		if (StringUtils.isNotBlank(ean)) {
+			IArticle article = findArticleByCode(ean);
+			if (article != null) {
+				return article;
 			}
-			if (pharmaCode > 0) {
-				String pharmaStr = String.valueOf(pharmaCode);
-				try {
+		}
+		if (pharmaCode > 0) {
+			IArticle article = findArticleByCode(String.valueOf(pharmaCode));
 
-					IQuery<IArtikelstammItem> qStamm = ArtikelstammModelServiceHolder.get()
-							.getQuery(IArtikelstammItem.class);
-					qStamm.and("phar", IQuery.COMPARATOR.EQUALS, pharmaStr);
-					List<IArtikelstammItem> results = qStamm.execute();
-					if (!results.isEmpty()) {
-						return results.get(0);
+			if (article != null) {
+				return article;
+			}
+		}
+		return null;
+	}
+
+	private IArticle findArticleByCode(String code) {
+		try {
+			List<ICodeElementServiceContribution> articleContributions = CodeElementServiceHolder.get()
+					.getContributionsByTyp(CodeElementTyp.ARTICLE);
+			for (ICodeElementServiceContribution contribution : articleContributions) {
+				Optional<ICodeElement> loadFromCode = contribution.loadFromCode(code);
+				if (loadFromCode.isPresent()) {
+					ICodeElement element = loadFromCode.get();
+					if (element instanceof IArticle) {
+						return (IArticle) element;
 					}
-				} catch (Throwable t) {
-					log.debug("Item master item query not possible", t);
 				}
-
 			}
 		} catch (Exception e) {
-			log.debug("Could not find local article for {}", prodName);
+			log.error("Error resolving article by code {}", code, e);
 		}
 		return null;
 	}

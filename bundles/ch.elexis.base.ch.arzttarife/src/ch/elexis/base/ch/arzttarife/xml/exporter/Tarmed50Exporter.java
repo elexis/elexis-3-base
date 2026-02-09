@@ -3,6 +3,8 @@ package ch.elexis.base.ch.arzttarife.xml.exporter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,7 +34,6 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterProcessing;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
-import ch.elexis.base.ch.arzttarife.coding.SectionCodeCodingContribution;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
@@ -150,7 +151,7 @@ public class Tarmed50Exporter {
 
 	private boolean updateElectronicDelivery = false;
 
-	private SectionCodeCodingContribution sectionCodeContribution;
+	private ICodingContribution sectionCodeContribution;
 
 	private boolean addTrustCenterInstructions = false;
 
@@ -907,13 +908,30 @@ public class Tarmed50Exporter {
 
 	private Optional<ICoding> getSectionCodeForSpecialist(List<ICoding> specialistCodes) {
 		if (sectionCodeContribution == null) {
-			sectionCodeContribution = (SectionCodeCodingContribution) OsgiServiceUtil
+			sectionCodeContribution = OsgiServiceUtil
 					.getService(ICodingContribution.class, "(system=forumdatenaustausch_sectioncode)").orElse(null);
 		}
 		if (sectionCodeContribution != null) {
-			return sectionCodeContribution.getMappedBySpecialistCode(specialistCodes);
+			return getMappedBySpecialistCodeReflective(specialistCodes);
 		} else {
 			logger.warn("No section code coding contribution available");
+		}
+		return Optional.empty();
+	}
+
+	@SuppressWarnings("unchecked")
+	private Optional<ICoding> getMappedBySpecialistCodeReflective(List<ICoding> specialistCodes) {
+		try {
+			Method getterMethod = sectionCodeContribution.getClass().getMethod("getMappedBySpecialistCode",
+					new Class[] { List.class });
+			Object minutes = getterMethod.invoke(sectionCodeContribution, specialistCodes);
+			if (minutes instanceof Optional) {
+				return (Optional<ICoding>) minutes;
+			}
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			LoggerFactory.getLogger(getClass())
+					.warn("Could not get mapped section code of [" + sectionCodeContribution + "]", e.getMessage());
 		}
 		return Optional.empty();
 	}

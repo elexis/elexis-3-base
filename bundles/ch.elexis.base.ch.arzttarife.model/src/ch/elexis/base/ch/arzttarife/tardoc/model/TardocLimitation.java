@@ -688,6 +688,9 @@ public class TardocLimitation {
 
 	private int getVerrechnetAmount(IBilled verrechnet) {
 		List<IBilled> sameVerrechnet = getSameVerrechnetOfKons(verrechnet);
+		// replace value from database with current
+		sameVerrechnet.remove(verrechnet);
+		sameVerrechnet.add(verrechnet);
 		return getVerrechnetCount(sameVerrechnet);
 	}
 

@@ -33,6 +33,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 
 	private TardocLeistung code_AA150010;
 
+	private TardocLeistung code_CA050030;
+
 	@Override
 	@Before
 	public void before() {
@@ -44,12 +46,30 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		code_AA050050 = TardocLeistung.getFromCode("AA.05.0050", LocalDate.of(2026, 1, 1), null);
 
 		code_AA150010 = TardocLeistung.getFromCode("AA.15.0010", LocalDate.of(2026, 1, 1), null);
+
+		code_CA050030 = TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null);
 	}
 
 	@Override
 	@After
 	public void after() {
 		super.after();
+	}
+
+	@Test
+	public void limitCA050030LimitSingleSession() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor(coverage.getBillingSystem().getName(),
+				0.89, LocalDate.of(2000, 1, 1));
+
+		Result<IBilled> status = billingService.bill(code_CA050030, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		billed = status.get();
+		assertNotNull(billed);
+		status = billingService.bill(code_CA050030, encounter, 1);
+		assertFalse(status.getMessages().toString(), status.isOK());
 	}
 
 	@Test

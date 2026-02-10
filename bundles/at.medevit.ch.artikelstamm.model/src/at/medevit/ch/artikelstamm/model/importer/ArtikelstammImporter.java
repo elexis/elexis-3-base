@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -47,6 +45,7 @@ import at.medevit.ch.artikelstamm.BlackBoxReason;
 import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.SALECDType;
+import at.medevit.ch.artikelstamm.model.service.ArticlePriceDiffService;
 import at.medevit.ch.artikelstamm.model.service.ModelServiceHolder;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
@@ -61,6 +60,8 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.elexis.data.PersistentObject;
+import jakarta.xml.bind.JAXBException;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v5")
 public class ArtikelstammImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
@@ -122,6 +123,14 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		String bundleVersion = Platform.getBundle("at.medevit.ch.artikelstamm.model").getVersion().toString(); //$NON-NLS-1$
+
+		ArticlePriceDiffService diffService = new ArticlePriceDiffService();
+		try {
+			log.info("Starting Artikelstamm update. Capturing old prices...");
+			diffService.captureOldPrices();
+		} catch (Exception e) {
+			log.warn("Failed to capture old prices. Automatic price update might not work.", e);
+		}
 
 		subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
 		ARTIKELSTAMM importStamm = null;
@@ -192,6 +201,19 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		versionUtil.setImportSetCreationDate(importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime());
 
 		subMonitor.worked(5);
+		
+		try {
+			log.info("Import finished. Running automatic price adjustment...");
+			PersistentObject.clearCache();
+			diffService.captureNewPrices();
+			Map<IArtikelstammItem, ArticlePriceDiffService.PriceChange> diffs = diffService.compare();
+			ArticlePriceDiffService.UpdateStatistics stats = diffService.updateOpenEncounters(diffs);
+			
+			log.info("Automatic price adjustment finished: {}", stats.toString());
+		} catch (Exception e) {
+			log.error("Error during automatic price adjustment", e);
+		}
+
 		long endTime = System.currentTimeMillis();
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IArtikelstammItem.class);
 

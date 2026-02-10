@@ -22,6 +22,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.model.IStock;
 import ch.elexis.core.ui.icons.ImageSize;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.regiomed.order.messages.Messages;
@@ -52,11 +53,11 @@ public class RegiomedCheckTemplate {
 	}
 
 	public static String generateHtml(RegiomedOrderResponse response, boolean isSearchAvailable, Set<String> removed,
-			Map<String, String> replacements, Map<String, String> replacementNames, Set<String> forcedItems) {
-
+			Map<String, String> replacements, Map<String, String> replacementNames,
+			Map<String, Integer> replacementInventory, Set<String> forcedItems) {
 		try {
 			RenderingContext context = createContext(response, isSearchAvailable, removed, replacements,
-					replacementNames, forcedItems);
+					replacementNames, replacementInventory, forcedItems);
 
 			Map<String, Object> root = new HashMap<>();
 			root.put("cssContent", loadResourceFile("/rsc/styles.css")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -69,7 +70,9 @@ public class RegiomedCheckTemplate {
 
 			int i = 0;
 			for (ArticleResult item : allArticles) {
-				boolean isError = isCalculatedError(item, context.alternativesMap());
+				boolean isError = isCalculatedError(item, context.alternativesMap(), removed, replacements,
+						forcedItems);
+
 				String rowId = (isError ? "nok_row_" : "ok_row_") + i++; //$NON-NLS-1$ //$NON-NLS-2$
 				ArticleViewModel vm = new ArticleViewModel(item, rowId, isError, context);
 
@@ -105,9 +108,18 @@ public class RegiomedCheckTemplate {
 		}
 	}
 
-	public static String generateSearchResultRows(List<ProductResult> products) {
+	public static String generateSearchResultRows(List<ProductResult> products,
+			Map<Integer, Map<String, Integer>> localStockMap, List<IStock> allStocks, String lastFilter) {
 		try {
 			Map<String, Object> root = new HashMap<>();
+
+			root.put("lastFilter", lastFilter);
+
+			List<String> availableElexisStocks = new ArrayList<>();
+			if (allStocks != null) {
+				availableElexisStocks = allStocks.stream().map(IStock::getCode).collect(Collectors.toList());
+			}
+			root.put("availableElexisStocks", availableElexisStocks);
 
 			if (products == null || products.isEmpty()) {
 				root.put("products", Collections.emptyList()); //$NON-NLS-1$
@@ -118,8 +130,14 @@ public class RegiomedCheckTemplate {
 
 				for (int i = 0; i < products.size(); i++) {
 					SearchProductViewModel vm = new SearchProductViewModel(products.get(i), i);
+
+					if (localStockMap != null && localStockMap.containsKey(i)) {
+						Map<String, Integer> stocks = localStockMap.get(i);
+						stocks.forEach(vm::addLocalStock);
+					}
+
 					viewModels.add(vm);
-					if (vm.hasStock()) {
+					if (vm.hasStock() || vm.getTotalLocalStock() > 0) {
 						anyHasStock = true;
 					}
 				}
@@ -136,8 +154,12 @@ public class RegiomedCheckTemplate {
 		} catch (Exception e) {
 			log.error("Error generating search result rows template", e); //$NON-NLS-1$
 			return "<tr><td colspan='5' style='color:red'>Error: " + e.getMessage().replace("'", StringUtils.EMPTY) //$NON-NLS-1$ //$NON-NLS-2$
-					+ "</td></tr>"; //$NON-NLS-4$
+					+ "</td></tr>"; // $NON-NLS-4$
 		}
+	}
+
+	public static String generateSearchResultRows(List<ProductResult> products) {
+		return generateSearchResultRows(products, null, null, "ALL");
 	}
 
 	private static String loadResourceFile(String path) {
@@ -153,7 +175,7 @@ public class RegiomedCheckTemplate {
 
 	private static RenderingContext createContext(RegiomedOrderResponse response, boolean isSearchAvailable,
 			Set<String> removed, Map<String, String> replacements, Map<String, String> replacementNames,
-			Set<String> forcedItems) {
+			Map<String, Integer> replacementInventory, Set<String> forcedItems) {
 
 		Map<String, List<AlternativeResult>> altsMap = Collections.emptyMap();
 		if (response.getAlternatives() != null && !response.getAlternatives().isEmpty()) {
@@ -175,19 +197,27 @@ public class RegiomedCheckTemplate {
 			log.debug("Could not load warning icon", e); //$NON-NLS-1$
 		}
 
-		return new RenderingContext(isSearchAvailable, removed, replacements, replacementNames, forcedItems, altsMap,
-				loadLogoBase64("rsc/logo/regiomed_logo.png"), imgWarning, imgEdit); //$NON-NLS-1$
+		return new RenderingContext(isSearchAvailable, removed, replacements, replacementNames, replacementInventory,
+				forcedItems, altsMap, loadLogoBase64("rsc/logo/regiomed_logo.png"), imgWarning, imgEdit); //$NON-NLS-1$
 	}
 
-	private static boolean isCalculatedError(ArticleResult a, Map<String, List<AlternativeResult>> alternativesMap) {
+	private static boolean isCalculatedError(ArticleResult a, Map<String, List<AlternativeResult>> alternativesMap,
+			Set<String> removed, Map<String, String> replacements, Set<String> forcedItems) {
+		String key = getKey(a.getPharmaCode(), a.getEanID());
+		if (removed.contains(key) || forcedItems.contains(key)) {
+			return false;
+		}
+		if (replacements.containsKey(key)) {
+			return !a.isSuccess();
+		}
 		if (!a.isSuccess())
 			return true;
 		if (a.getAvailableInventory() > 0 && a.getQuantity() > a.getAvailableInventory())
 			return true;
-		String key = getKey(a.getPharmaCode(), a.getEanID());
 		boolean hasAlternatives = alternativesMap.containsKey(key) && !alternativesMap.get(key).isEmpty();
 		if (hasAlternatives)
 			return !a.isSuccessAvailability();
+
 		return false;
 	}
 
@@ -228,6 +258,7 @@ public class RegiomedCheckTemplate {
 		m.put("colAmount", Messages.RegiomedCheckTemplate_ColAmount); //$NON-NLS-1$
 		m.put("colInfo", Messages.RegiomedCheckTemplate_ColInfo); //$NON-NLS-1$
 		m.put("colStatus", Messages.RegiomedCheckTemplate_ColStatus); //$NON-NLS-1$
+		m.put("colLager", Messages.RegiomedCheckTemplate_ColLager); //$NON-NLS-1$
 		m.put("colAction", Messages.RegiomedCheckTemplate_ColAction); //$NON-NLS-1$
 		m.put("colName", Messages.RegiomedCheckTemplate_ColName); //$NON-NLS-1$
 		m.put("colPrice", Messages.RegiomedCheckTemplate_ColPrice); //$NON-NLS-1$

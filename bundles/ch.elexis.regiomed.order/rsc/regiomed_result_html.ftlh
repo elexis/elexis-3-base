@@ -45,6 +45,8 @@
                <input type="text" id="searchInput" class="modal-input" spellcheck="false" placeholder="${messages.searchPlaceholder}" onkeyup="handleSearchInput(event)">
                <button class="btn-modal btn-confirm" onclick="triggerSearch()">${messages.searchBtn?no_esc}</button>
             </div>
+            <div id="stockFilterContainer" class="stock-filter-bar" style="display:none;">
+            </div>
             <div class="results-container">
                <div id="loading" class="loading">${messages.searching?no_esc}</div>
                <table class="results-table">
@@ -52,7 +54,8 @@
                      <tr>
                         <th>${messages.colName?no_esc}</th>
                         <th style="width:100px;">EAN</th>
-                        <th style="width:150px;">${messages.colStatus?no_esc}</th>
+                        <th style="width:120px;">${messages.colStatus?no_esc}</th>
+                        <th style="width:50px;">${messages.colLager?no_esc}</th>
                         <th id="headerStock" style="width:80px; text-align:center; display:none;">${messages.stockLabel?no_esc}</th>
                         <th style="width:70px; text-align:right;">${messages.colPrice?no_esc}</th>
                      </tr>
@@ -217,7 +220,7 @@
                      EAN: ${item.ean}
                      </small>
                   </td>
-                <td class='qty-editable ${item.contentClass}' 
+                  <td class='qty-editable ${item.contentClass}' 
                      title='${messages.clickToEdit}'
                      onclick="changeQuantity('${item.pharmaCode}', '${item.ean}', '${item.quantity}')">
                      ${item.quantity}

@@ -11,3 +11,4 @@ Bundle-ClassPath: .,
  lib/freemarker-2.3.34.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: com.equo.chromium.swt
+Bundle-ActivationPolicy: lazy

@@ -5,6 +5,8 @@ var lastEditedRowId = null;
 
 var searchTypingTimer;
 var selectedSearchIndex = -1;
+var currentStockFilter = 'ALL';
+var currentStockFilter = localStorage.getItem('regiomed_stock_filter') || 'ALL';
 
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
@@ -84,11 +86,10 @@ function triggerSearch() {
 
 function fillSearchResults(htmlRows) {
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('searchResultsBody').innerHTML = htmlRows;
-    var headerStock = document.getElementById('headerStock');
     var body = document.getElementById('searchResultsBody');
-    var firstRow = body.querySelector('tr');
-    
+    body.innerHTML = htmlRows;
+    var headerStock = document.getElementById('headerStock');
+    var firstRow = body.querySelector('tr.search-row'); 
     if (headerStock) {
         if (firstRow && firstRow.getAttribute('data-has-stock') === 'true') {
             headerStock.style.display = 'table-cell';
@@ -96,6 +97,71 @@ function fillSearchResults(htmlRows) {
             headerStock.style.display = 'none';
         }
     }
+
+    var metaRow = document.getElementById('meta-stocks');
+    if (metaRow) {
+        var stocksStr = metaRow.getAttribute('data-stocks');
+        var lastFilter = metaRow.getAttribute('data-last-filter');
+        if (lastFilter) {
+            currentStockFilter = lastFilter;
+        }
+        if (stocksStr) {
+            renderStockFilters(stocksStr.split(','));
+            filterRows(currentStockFilter, false);
+        }
+    } else {
+        document.getElementById('stockFilterContainer').style.display = 'none';
+    }
+}
+
+function renderStockFilters(stocks) {
+    var container = document.getElementById('stockFilterContainer');
+    if (!stocks || stocks.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    var allChecked = (currentStockFilter === 'ALL') ? 'checked' : '';
+    var html = '<label class="stock-filter-label"><input type="radio" name="sFilter" value="ALL" ' + allChecked + ' onclick="filterRows(\'ALL\', true)"> Alle Lager</label>';
+    
+    for (var i = 0; i < stocks.length; i++) {
+        var s = stocks[i];
+        var checked = (currentStockFilter === s) ? 'checked' : '';
+        html += '<label class="stock-filter-label"><input type="radio" name="sFilter" value="' + s + '" ' + checked + ' onclick="filterRows(\'' + s + '\', true)"> ' + s + '</label>';
+    }
+    
+    container.innerHTML = html;
+    container.style.display = 'flex';
+}
+
+function filterRows(stockCode, save) {
+    currentStockFilter = stockCode;
+    if (save === true) {
+         window.location = 'regiomed:saveFilter:' + stockCode;
+    }
+
+    var rows = document.querySelectorAll('#searchResultsBody tr.search-row');
+    rows.forEach(function(row) {
+        if (stockCode === 'ALL') {
+            row.style.display = '';
+            return;
+        }
+        
+        var jsonAttr = row.getAttribute('data-local-stocks');
+        var show = false;
+        if (jsonAttr) {
+            try {
+                var data = JSON.parse(jsonAttr);
+                if (data[stockCode] && data[stockCode] > 0) {
+                    show = true;
+                }
+            } catch(e) {
+                console.error("JSON Error", e);
+            }
+        }
+        
+        row.style.display = show ? '' : 'none';
+    });
 }
 
 function selectSearchResult(index) {
@@ -146,7 +212,7 @@ function submitQty() {
         closeQtyModal();
         window.location = 'regiomed:updateQty:' + currentPharma + ':' + currentEan + ':' + val;
     } else {
-        alert("${messages.invalidQtyAlert?js_string}");
+        alert("Ungültige Menge"); 
     }
 }
 
@@ -207,7 +273,14 @@ function disableButtons(row) {
 
 function updateRowSuccess(rowId, badgeText) {
     closeSearchModal();
-    showToast('${messages.successAppliedPrefix?js_string} ' + badgeText);
+    var toast = document.getElementById('toast');
+    if(toast) {
+        toast.innerText = "Erfolgreich angewendet: " + badgeText;
+        toast.className = 'toast show';
+        setTimeout(function() {
+            toast.className = toast.className.replace('show', '');
+        }, 3000);
+    }
 }
 
 function showErrorModal(title, message) {

@@ -102,5 +102,6 @@ public class Messages {
 	public static String RegiomedCheckTemplate_QtyExceedsStock = ch.elexis.core.l10n.Messages.RegiomedCheckTemplate_QtyExceedsStock;
 	public static String Core_Reset = ch.elexis.core.l10n.Messages.Core_Reset;
 	public static String RegiomedCheckTemplate_CorrectedItems = ch.elexis.core.l10n.Messages.RegiomedCheckTemplate_CorrectedItems;
+	public static String RegiomedCheckTemplate_ColLager = ch.elexis.core.l10n.Messages.Core_Stock;
 
 }

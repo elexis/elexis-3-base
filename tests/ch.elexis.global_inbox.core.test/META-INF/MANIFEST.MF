@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Global_Inbox_Test
+Bundle-SymbolicName: ch.elexis.global_inbox.core.test
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: ch.elexis.global_inbox.core;bundle-version="3.13.0"
+Automatic-Module-Name: ch.elexis.global.inbox.core.test
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: org.junit;version="[4.13.0,5.0.0)",
+ org.junit.runner;version="[4.13.0,5.0.0)",
+ org.junit.runners;version="[4.13.0,5.0.0)"

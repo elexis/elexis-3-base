@@ -12,14 +12,12 @@ import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.IIdentifiedRunnableFactory;
 import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.global_inbox.core.handler.ImportOmnivoreIdentifiedRunnable;
-import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-@Startup
 @Component(immediate = true)
 public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFactory {
 

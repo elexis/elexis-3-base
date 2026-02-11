@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -92,7 +91,7 @@ public class AerztekassePreferences extends FieldEditorPreferencePage implements
 		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
 				((GridLayout) getFieldEditorParent().getLayout()).numColumns + 2, 1));
 
-		Set<IContact> billerSet = getBillerSet();
+		List<IContact> billerSet = getBillerSet();
 		ArrayList<IContact> sortedBillerList = new ArrayList<IContact>(billerSet);
 		Collections.sort(sortedBillerList, new Comparator<IContact>() {
 			@Override
@@ -178,10 +177,10 @@ public class AerztekassePreferences extends FieldEditorPreferencePage implements
 		return sb.toString();
 	}
 
-	private Set<IContact> getBillerSet() {
-		HashSet<IContact> ret = new HashSet<>();
+	private List<IContact> getBillerSet() {
+		HashSet<String> ret = new HashSet<>();
 		CoreModelServiceHolder.get().getQuery(IMandator.class).execute().stream().filter(m -> m.isActive())
-				.map(m -> m.getBiller()).forEach(c -> ret.add(c));
-		return ret;
+				.map(m -> m.getBiller()).forEach(c -> ret.add(c.getId()));
+		return ret.stream().map(i -> CoreModelServiceHolder.get().load(i, IContact.class).orElse(null)).toList();
 	}
 }

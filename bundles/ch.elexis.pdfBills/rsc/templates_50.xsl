@@ -35,7 +35,15 @@
 										<fo:block padding-bottom="1mm" padding-top="1mm"
 											border-bottom-style="solid" border-bottom-width="1pt"
 											text-align="right">
-											Release 5.0/QR/de
+											<xsl:if test="contains($Type, 'SR')">
+												Release 5.0/QR/de
+											</xsl:if>
+											<xsl:if test="contains($Type, 'GR')">
+												Release 5.0/General/de
+											</xsl:if>
+											<xsl:if test="contains($Type, 'AX')">
+												Release 5.0/Annex/de
+											</xsl:if>
 										</fo:block>
 									</fo:table-cell>
 									<fo:table-cell padding-left="2mm"
@@ -64,16 +72,29 @@
 											<xsl:if test="contains($Type, 'GR')">
 												Der Versicherung zustellen
 											</xsl:if>
+											<xsl:if test="contains($Type, 'AX')">
+												Der Versicherung zustellen
+											</xsl:if>
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
 							</fo:table-body>
 						</fo:table>
-
-
 					</fo:table-cell>
 				</fo:table-row>
 			</fo:table-body>
 		</fo:table>
+	</xsl:template>
+
+	<xsl:template name="FormatGender">
+		<xsl:param name="Gender" />
+		<xsl:choose>
+			<xsl:when test="$Gender = 'male'">
+				<xsl:value-of select="'Mann / M'" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="'Frau / F'" />
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

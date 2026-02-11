@@ -1,0 +1,66 @@
+Digni-Code,Dignität,Fachbereich,Gültig von ,Gültig bis,Gewichtung
+0022,Intensivmedizin,M050.00,01.01.26,31.12.99,
+0504,Kardiologie,M100.11,01.01.26,31.12.99,100
+3010,Allgemeine Innere Medizin,M100.02,01.01.26,31.12.99,100
+0021,Angiologie,M100.03,01.01.26,31.12.99,
+0700,Neurologie,M100.15,01.01.26,31.12.99,100
+0501,Endokrinologie-Diabetologie,M100.05,01.01.26,31.12.99,
+0502,Gastroenterologie,M100.06,01.01.26,31.12.99,
+0009,Allergologie und klinische Immunologie,M100.01,01.01.26,31.12.99,50
+0008,Nephrologie,M100.14,01.01.26,31.12.99,50
+0505,Pneumologie,M100.16,01.01.26,31.12.99,
+0506,Rheumatologie,M950.02,01.01.26,31.12.99,100
+0200,Chirurgie,M200.01,01.01.26,31.12.99,50
+9978,Gefässchirurgie,M200.03,01.01.26,31.12.99,
+0011,Handchirurgie,M200.04,01.01.26,31.12.99,50
+2900,Herz- und thorakale Gefässchirurgie,M200.05,01.01.26,31.12.99,
+2100,"Mund-, Kiefer- und Gesichtschirurgie",M200.06,01.01.26,31.12.99,
+0600,Neurochirurgie,M200.07,01.01.26,31.12.99,
+0900,Orthopädische Chirurgie und Traumotologie des Bewegungsapparates,M200.08 ,01.01.26,31.12.99,
+2000,"Plastische, Rekonstruktive und Ästhetische Chirurgie",M200.09,01.01.26,31.12.99,
+1802,SP Neuro-Urologie,M200.20,01.01.26,31.12.99,
+1800,Urologie,M200.22 ,01.01.26,31.12.99,100
+0401,SP Fetomaternale Medizin,M300.01,01.01.26,31.12.99,
+0400,Gynäkologie und Geburtshilfe,M300.03,01.01.26,31.12.99,
+1100,Kinder- und Jugendmedizin,M400.02,01.01.26,31.12.99,100
+1900,Kinderchirurgie,M400.03,01.01.26,31.12.99,
+1101,SP Neonatologie,M400.04,01.01.26,31.12.99,
+9985,SP Neuro-Urologie,M200.20,01.01.26,31.12.99,
+1400,Psychiatrie und Psychotherapie,M500.05,01.01.26,31.12.99,10
+0800,Ophthalmologie,M600.01,01.01.26,31.12.99,
+1005,SP Hals- und Gesichtschirurgie,M700.01,01.01.26,31.12.99,
+1000,Oto-Rhino-Laryngologie,M700.02,01.01.26,31.12.99,
+0300,Dermatologie und Venerologie,M800.01,01.01.26,31.12.99,100
+9991,SP Dermatopathologie,M800.02,01.01.26,31.12.99,
+0015,Nuklearmedizin,M850.03,01.01.26,31.12.99,
+1600,Radiologie,M850.04,01.01.26,31.12.99,
+0016,Radio-Onkologie / Strahlentherapie,M850.05,01.01.26,31.12.99,
+1300,Physikalische Medizin und Rehabilitation,M950.01,01.01.26,31.12.99,
+0100,Anästhesiologie,M990.01,01.01.26,31.12.99,100
+1200,Pathologie,M990.10,01.01.26,31.12.99,
+0810,SP Ophthalmochirurgie,,01.01.26,31.12.99,
+9912,SP Interventionelle Schmerztherapie (SSIPM),,,,
+9916,FA Schwangerschaftsultraschall (SGUM),,,,
+9924,FA Zerebrovaskuläre Sonographie (SGKN),,,,
+9931,FA Sonographie (SGUM) - Modul Bewegungsapparat,,,,
+9932,FA Sonographie (SGUM) - Modul Gefässe,,,,
+9933,FA Sonographie (SGUM) - Modul Gynäkologie,,,,
+9934,FA Sonographie (SGUM) - Modul Halsorgane,,,,
+9935,FA Sonographie (SGUM) - Modul Mammasonographie,,,,
+9936,FA Sonographie (SGUM) - Modul Pädiatrie,,,,
+9937,FA Sonographie (SGUM) - Modul Abdomen,,,,
+9943,SP Klinische Notfallmedizin (SGNOR),,,,
+9945,FA Elektroencephalographie (SGKN),,,,
+9946,FA Elektroneuromyographie (SGKN),,,,
+9955,FA Phlebologie (USGG),,,,
+9957,FA Dermatologische Radiotherapie (SGDV),,,,
+9960,FA Interventionelle Psychiatrie (SGIP),,,,
+9970,SP Neuropädiatrie,,,,
+9971,SP Pädiatrische Endokrinologie-Diabetologie,,,,
+9972,"SP Pädiatrische Gastroenterologie, Hepatologie und Ernährung",,,,
+9973,SP Pädiatrische Kardiologie,,,,
+9974,SP Pädiatrische Nephrologie,,,,
+9976,SP Pädiatrische Pneumologie,,,,
+9992,SP Altersmedizin (Geriatrie),,,,
+9996,FA Point of Care-Ultraschall POCUS (SGUM),,,,
+9997,SP Sport- und Bewegungsmedizin (SEMS),,,,

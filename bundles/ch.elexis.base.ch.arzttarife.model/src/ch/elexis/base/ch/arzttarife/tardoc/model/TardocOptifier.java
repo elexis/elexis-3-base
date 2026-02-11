@@ -13,10 +13,15 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationArt;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation.LimitationUnit;
 import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedUtil;
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
@@ -27,6 +32,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
@@ -105,33 +111,84 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				return resultAddBezug;
 			}
 		}
-
-		Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, code, newBilled);
-		if (!limitationsResult.isOK()) {
-			// reset possible modifications
-			CoreModelServiceHolder.get().refresh(newBilled, true, true);
-			return limitationsResult;
+		
+		// Referenzleistung
+		if (code.getServiceTyp() != null && code.getServiceTyp().equals("R")) {
+			addKumulationBezug(newBilled, encounter);
 		}
 
-		Result<IBilled> digniResult = verifier.checkDigni(encounter, code, newBilled);
-		if (!digniResult.isOK()) {
-			// reset possible modifications
-			CoreModelServiceHolder.get().refresh(newBilled, true, true);
-			return digniResult;
+		if (bOptify) {
+			Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, code, newBilled);
+			if (!limitationsResult.isOK()) {
+				if (bAllowOverrideStrict) {
+					if (save) {
+						CoreModelServiceHolder.get().save(newBilled);
+					}
+					return limitationsResult;
+				} else {
+					// reset possible modifications
+					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					return limitationsResult;
+				}
+			}
+
+			Result<IBilled> digniResult = verifier.checkDigni(encounter, code, newBilled);
+			if (!digniResult.isOK()) {
+				if (bAllowOverrideStrict) {
+					if (save) {
+						CoreModelServiceHolder.get().save(newBilled);
+					}
+					return digniResult;
+				} else {
+					// reset possible modifications
+					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					return digniResult;
+				}
+			}
 		}
 
 		Result<IBilled> matcherResult = tarifMatcher.evaluate(newBilled, encounter);
 
-		if (matcherResult.isOK()) {
+		if (!matcherResult.isOK()) {
+			if (bAllowOverrideStrict) {
+				if (save) {
+					CoreModelServiceHolder.get().save(newBilled);
+					CoreModelServiceHolder.get().save(encounter);
+					CoreModelServiceHolder.get().save(matcherResult.get());
+				}
+			} else {
+				CoreModelServiceHolder.get().refresh(encounter, true);
+			}
+		} else {
 			if (save) {
 				CoreModelServiceHolder.get().save(encounter);
 				CoreModelServiceHolder.get().save(matcherResult.get());
 			}
-		} else {
-			CoreModelServiceHolder.get().refresh(encounter, true);
 		}
 
 		return matcherResult;
+	}
+
+	private void addKumulationBezug(IBilled newBilled, IEncounter encounter) {
+		ITardocLeistung code = (ITardocLeistung) newBilled.getBillable();
+		List<ITardocKumulation> kumulations = code.getKumulations(TardocKumulationArt.SERVICE);
+		List<ITardocKumulation> slaveInclusionKumulations = kumulations.stream()
+				.filter(k -> k.getSlaveCode().equals(code.getCode())
+						&& k.getSlaveArt().equals(TardocKumulationArt.SERVICE)
+						&& k.getTyp() == TardocKumulationTyp.INCLUSION)
+				.toList();
+		if (!slaveInclusionKumulations.isEmpty()) {
+			for (ITardocKumulation iTardocKumulation : slaveInclusionKumulations) {
+				Optional<IBilled> masterBilled = encounter.getBilled().stream()
+						.filter(b -> b.getBillable() instanceof TardocLeistung
+								&& b.getCode().equals(iTardocKumulation.getMasterCode()))
+						.findAny();
+				if (masterBilled.isPresent()) {
+					newBilled.setExtInfo("Bezug", masterBilled.get().getCode());
+					break;
+				}
+			}
+		}
 	}
 
 	private Result<IBilled> setNewBilledSideOrIncrement(IBilled newBilled, IEncounter encounter) {
@@ -378,10 +435,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 	}
 
 	private void deleteBilled(IBilled billed) {
-		if (!TarmedUtil.getConfigValue(getClass(), IUser.class, Preferences.LEISTUNGSCODES_ALLOWOVERRIDE_STRICT,
-				false)) {
-			CoreModelServiceHolder.get().delete(billed);
-		}
+		CoreModelServiceHolder.get().delete(billed);
 	}
 
 	private List<IBilled> getVerrechnetWithBezugMatchingCode(List<IBilled> lst, String code) {
@@ -398,8 +452,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 	@Override
 	public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return BillingServiceHolder.get().getBillingSystemFactor(encounter.getCoverage().getBillingSystem().getName(),
+				encounter.getDate());
 	}
 
 	private IBilled getOrInitializeBilled(TardocLeistung code, IEncounter kons, boolean save) {
@@ -425,13 +479,79 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		IContact biller = ContextServiceHolder.get().getActiveUserContact().get();
 		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons, biller).build();
 		ret.setPoints(code.getAL(kons.getMandator()) + code.getIPL());
+		ret.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL, Integer.toString(code.getAL(kons.getMandator())));
+		ret.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL, Integer.toString(code.getIPL()));
 		Optional<IBillingSystemFactor> systemFactor = getFactor(kons);
 		if (systemFactor.isPresent()) {
 			ret.setFactor(systemFactor.get().getFactor());
 		} else {
 			ret.setFactor(1.0);
 		}
+		if (isFactorBased(code)) {
+			applyCalculateFactorBasedPrice(ret, code, kons);
+		}
 		return ret;
+	}
+
+	private void applyCalculateFactorBasedPrice(IBilled billed, TardocLeistung code, IEncounter encounter) {
+		// lookup bezug
+		Optional<String> bezug = Optional.empty();
+		// lookup available masters
+		List<IBilled> masters = getPossibleMasters(billed, encounter.getBilled());
+		if (!masters.isEmpty()) {
+			bezug = Optional.of(masters.get(0).getCode());
+		}
+
+		Double alFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_AL);
+		double alSum = 0.0;
+		double tlSum = 0.0;
+		if (alFactor > 0.0) {
+			for (IBilled v : encounter.getBilled()) {
+				if (v.getBillable() instanceof TardocLeistung) {
+					TardocLeistung tl = (TardocLeistung) v.getBillable();
+					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+						alSum += (tl.getAL(encounter.getMandator()) * v.getAmount());
+					}
+				}
+			}
+			billed.setPoints((int) Math.round(alSum));
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL, Double.toString(alSum));
+			billed.setPrimaryScale((int) (alFactor * 100));
+		}
+		Double tlFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_TL);
+		if (tlFactor > 0.0 && (alFactor == 0.0 || Double.compare(tlFactor, alFactor) == 0)) {
+			for (IBilled v : encounter.getBilled()) {
+				if (v.getBillable() instanceof TardocLeistung) {
+					TardocLeistung tl = (TardocLeistung) v.getBillable();
+					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+						tlSum += (tl.getIPL() * v.getAmount());
+					}
+				}
+			}
+			billed.setPoints((int) Math.round(tlSum + alSum));
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL, Double.toString(tlSum));
+			billed.setPrimaryScale((int) (tlFactor * 100));
+		}
+	}
+
+	private boolean isFactorBased(TardocLeistung code) {
+		if (code.getExtension() != null) {
+			Double alFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_AL);
+			Double tlFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_TL);
+			return alFactor > 0.0 || tlFactor > 0.0;
+		}
+		return false;
+	}
+
+	private Double getFactorValue(TardocLeistung code, String key) {
+		if (code.getExtension() != null && code.getExtension().getExtInfo(key) != null) {
+			try {
+				return Double.parseDouble((String) code.getExtension().getExtInfo(key));
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+		return Double.valueOf(0.0);
 	}
 
 	/**

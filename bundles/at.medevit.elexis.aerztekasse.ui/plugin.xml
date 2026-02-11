@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.data.RechnungsManager">
+      <Rechnung
+            name="Ärztekasse"
+            outputter="at.medevit.elexis.aerztekasse.ui.outputter.AerztekasseOutputter">
+      </Rechnung>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="at.medevit.elexis.aerztekasse.ui.preferences.AerztekassePreferences"
+            id="at.medevit.elexis.aerztekasse.ui.preferences"
+            name="Ärztekasse">
+      </page>
+   </extension>
+
+</plugin>

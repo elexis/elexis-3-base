@@ -17,14 +17,12 @@ import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.tasks.model.ITaskService;
-import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-@Startup
 @Component(immediate = true)
 public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnableFactory {
 

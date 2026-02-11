@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -56,7 +55,6 @@ import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.Messages;
-import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
@@ -65,6 +63,7 @@ import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.handler.AppointmentExtensionHandler;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -260,6 +259,7 @@ public class AppointmentDetailComposite extends Composite {
 			txtPatSearch.setText(prop.getLabel());
 			txtPatSearch.setData(prop.getIdentifiable());
 			appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
+			txtPatSearch.setSelection(txtPatSearch.getText().length());
 			refreshPatientModel();
 		});
 
@@ -293,17 +293,17 @@ public class AppointmentDetailComposite extends Composite {
 		reloadContactLabel();
 		String searchText = txtPatSearch.getText();
 		if (StringUtils.isBlank(searchText)) {
-			txtPatSearch.setData(null);
 			tBem.setText(StringUtils.EMPTY);
 			if (appointmentsViewer != null) {
 				appointmentsViewer.setInput(Collections.emptyList());
 			}
 		} else if (!txtDataIsMatchingContact()) {
-			txtPatSearch.setData(null);
 			tBem.setText(StringUtils.EMPTY);
 			if (appointmentsViewer != null) {
 				appointmentsViewer.setInput(Collections.emptyList());
 			}
+		} else {
+			refreshPatientModel();
 		}
 		emailComposite.updateEmailControlsStatus(getSelectedContact());
 	}
@@ -894,14 +894,25 @@ public class AppointmentDetailComposite extends Composite {
 		}
 		appointment.setLastEdit(createTimeStamp());
 		appointment.setReason(txtReason.getText());
-		if (txtDataIsMatchingContact()) {
-			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
+		IContact currentContact = resolveCurrentContactFromText();
+		if (currentContact != null) {
+			appointment.setSubjectOrPatient(currentContact.getId());
 		} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
 			appointment.setSubjectOrPatient(txtPatSearch.getText());
 		} else {
 			appointment.setSubjectOrPatient(null);
 		}
-		createKombiTermineIfApplicable();
+		List<IAppointment> kombiAppointments = appointmentService.getKombiTermineIfApplicable(appointment,
+				getSelectedContact(), comboType.getText(), txtPatSearch.getText());
+		if (!kombiAppointments.isEmpty()) {
+			for (IAppointment kombi : kombiAppointments) {
+				CoreModelServiceHolder.get().save(kombi);
+			}
+			appointment.setExtension(AppointmentExtensionHandler.addMultipleLinkedAppointmentsAndReturn(appointment,
+					kombiAppointments.stream().map(IAppointment::getId).toList()));
+
+		}
+
 		return appointment;
 	}
 
@@ -909,6 +920,7 @@ public class AppointmentDetailComposite extends Composite {
 		String selectedType = comboType.getText();
 		List<String> kombiTermineList = ConfigServiceHolder.get()
 				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType); //$NON-NLS-1$
+		dayBar.setAppointmentType(selectedType);
 		if (!StringUtils.isBlank(selectedType) && !kombiTermineList.isEmpty()) {
 			chkTerminLinks.setEnabled(true);
 		} else {
@@ -918,60 +930,24 @@ public class AppointmentDetailComposite extends Composite {
 		applyPreferredDuration();
 	}
 
-	private void createKombiTermineIfApplicable() {
-		if (chkTerminLinks.getSelection()) {
-			return;
-		}
-		String selectedType = comboType.getText();
-		List<String> kombiTermineList = ConfigServiceHolder.get()
-				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType); //$NON-NLS-1$
-		if (kombiTermineList.isEmpty()) {
-			return;
-		}
-
-		if (!AppointmentExtensionHandler.getLinkedAppointments(appointment).isEmpty()) {
-			return;
-		}
-
-		AppointmentExtensionHandler.setMainAppointmentId(appointment, appointment.getId());
-		List<String> kombiTerminIds = new ArrayList<>();
-		for (String kombiTermin : kombiTermineList) {
-			kombiTermin = kombiTermin.replaceAll("[{}]", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
-			String[] elements = kombiTermin.split(";"); //$NON-NLS-1$
-			IAppointment newAppointment = CoreModelServiceHolder.get().create(IAppointment.class);
-			newAppointment.setState(appointment.getState());
-			newAppointment.setType(elements[2]);
-			newAppointment.setSchedule(elements[1]);
-			newAppointment.setCreatedBy(appointment.getCreatedBy());
-			newAppointment.setCreated(createTimeStamp());
-			newAppointment.setLastEdit(createTimeStamp());
-			newAppointment.setReason(elements[0]);
-			if (txtDataIsMatchingContact()) {
-				newAppointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
-			} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
-				newAppointment.setSubjectOrPatient(txtPatSearch.getText());
-			}
-			LocalDateTime startTime = appointment.getStartTime();
-			int offset = Integer.parseInt(elements[4]);
-			if (((String) Messages.AddCombiTerminDialogBefore).equalsIgnoreCase(elements[3])) {
-				startTime = startTime.minusMinutes(offset);
-			} else {
-				startTime = startTime.plusMinutes(offset);
-			}
-			newAppointment.setStartTime(startTime);
-			newAppointment.setEndTime(startTime.plusMinutes(Integer.parseInt(elements[5])));
-			kombiTerminIds.add(newAppointment.getId());
-			AppointmentExtensionHandler.setMainAppointmentId(newAppointment, appointment.getId());
-			AppointmentExtensionHandler.addLinkedAppointmentId(newAppointment, newAppointment.getId());
-			CoreModelServiceHolder.get().save(newAppointment);
-		}
-		AppointmentExtensionHandler.addMultipleLinkedAppointments(appointment, kombiTerminIds);
-		CoreModelServiceHolder.get().save(appointment);
+	private boolean txtDataIsMatchingContact() {
+		return resolveCurrentContactFromText() != null;
 	}
 
-	private boolean txtDataIsMatchingContact() {
-		return txtPatSearch.getData() instanceof IContact
-				&& ((IContact) txtPatSearch.getData()).getLabel().equals(txtPatSearch.getText());
+	private IContact resolveCurrentContactFromText() {
+		Object data = txtPatSearch.getData();
+		if (data instanceof IContact) {
+			IContact contact = (IContact) data;
+			if (StringUtils.equals(contact.getLabel(), txtPatSearch.getText())) {
+				return contact;
+			}
+		}
+		Optional<IContact> appointmentContact = reloadAsPatient(getAppointmentContact());
+		if (appointmentContact.isPresent()
+				&& StringUtils.equals(appointmentContact.get().getLabel(), txtPatSearch.getText())) {
+			return appointmentContact.get();
+		}
+		return null;
 	}
 
 	private void cloneAndReloadAppointment() {
@@ -1022,11 +998,7 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	public IContact getSelectedContact() {
-		Object data = txtPatSearch.getData();
-		if (data instanceof IContact) {
-			return (IContact) data;
-		}
-		return null;
+		return resolveCurrentContactFromText();
 	}
 
 	public boolean getEmailCheckboxStatus() {

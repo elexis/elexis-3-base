@@ -8,6 +8,8 @@ public class TardocConstants {
 
 		public static final String EXT_FLD_TP_TL = "TP_TL";
 		public static final String EXT_FLD_TP_AL = "TP_AL";
+		public static final String EXT_FLD_F_AL = "F_AL";
+		public static final String EXT_FLD_F_TL = "F_TL";
 		public static final String EXT_FLD_F_AL_R = "F_AL_R";
 		public static final String EXT_FLD_HIERARCHY_SLAVES = "HierarchySlaves";
 		public static final String EXT_FLD_SERVICE_GROUPS = "ServiceGroups";

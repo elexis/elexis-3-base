@@ -289,7 +289,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 							}
 
 							if (!resCompatible.isOK()) {
-								deleteBilled(newVerrechnet);
+								deleteBilled(newVerrechnet, true);
 								return resCompatible;
 							}
 						}
@@ -305,7 +305,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 					}
 					for (IBilled v : lst) {
 						if (v.getCode().equals(excludeCode)) {
-							deleteBilled(newVerrechnet);
+							deleteBilled(newVerrechnet, true);
 							return new Result<IBilled>(Result.SEVERITY.WARNING, EXKLUSION,
 									"00.0750 ist nicht im Rahmen einer ärztlichen Beratung 00.0010 verrechnenbar.", //$NON-NLS-1$
 									null, false);
@@ -324,7 +324,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			// lookup available masters
 			List<IBilled> masters = getPossibleMasters(newVerrechnet, lst);
 			if (masters.isEmpty()) {
-				decrementOrDelete(newVerrechnet);
+				decrementOrDelete(newVerrechnet, true);
 				return new Result<IBilled>(Result.SEVERITY.WARNING, KOMBINATION, "Für die Zuschlagsleistung "
 						+ code.getCode() + " konnte keine passende Hauptleistung gefunden werden.", null, false);
 			}
@@ -356,7 +356,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		if (bOptify) {
 			Result<IBilled> limitResult = verifier.checkLimitations(kons, tc, newVerrechnet);
 			if (!limitResult.isOK()) {
-				decrementOrDelete(newVerrechnet);
+				decrementOrDelete(newVerrechnet, true);
 				return limitResult;
 			}
 		}
@@ -567,8 +567,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		}
 	}
 
-	private void deleteBilled(IBilled billed) {
-		if (!bAllowOverrideStrict) {
+	private void deleteBilled(IBilled billed, boolean testAllowOverride) {
+		if (!bAllowOverrideStrict || !testAllowOverride) {
 			if (save) {
 				CoreModelServiceHolder.get().delete(billed);
 			} else {
@@ -577,8 +577,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		}
 	}
 
-	private void decrementOrDelete(IBilled verrechnet) {
-		if (!bAllowOverrideStrict) {
+	private void decrementOrDelete(IBilled verrechnet, boolean testAllowOverride) {
+		if (!bAllowOverrideStrict || !testAllowOverride) {
 			double zahl = verrechnet.getAmount();
 			if (zahl > 1) {
 				verrechnet.setAmount(zahl - 1);
@@ -586,7 +586,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 					CoreModelServiceHolder.get().save(verrechnet);
 				}
 			} else {
-				deleteBilled(verrechnet);
+				deleteBilled(verrechnet, testAllowOverride);
 			}
 		}
 	}
@@ -1055,7 +1055,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	public Result<IBilled> remove(IBilled code, IEncounter kons) {
 		List<IBilled> l = kons.getBilled();
 		l.remove(code);
-		deleteBilled(code);
+		deleteBilled(code, false);
 		// if no more left, check for bezug and remove
 		List<IBilled> left = getVerrechnetMatchingCode(l, code.getCode());
 		if (left.isEmpty()) {

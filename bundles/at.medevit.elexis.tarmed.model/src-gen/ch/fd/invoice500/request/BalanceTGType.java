@@ -8,11 +8,13 @@
 
 package ch.fd.invoice500.request;
 
+import at.medevit.elexis.tarmed.model.jaxb.DoubleToStringAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
@@ -50,13 +52,17 @@ public class BalanceTGType {
     @XmlAttribute(name = "currency")
     protected String currency;
     @XmlAttribute(name = "amount", required = true)
-    protected double amount;
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double amount;
     @XmlAttribute(name = "amount_reminder")
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
     protected Double amountReminder;
     @XmlAttribute(name = "amount_prepaid")
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
     protected Double amountPrepaid;
     @XmlAttribute(name = "amount_due", required = true)
-    protected double amountDue;
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double amountDue;
 
     /**
      * Ruft den Wert der vat-Eigenschaft ab.

@@ -41,8 +41,7 @@ public class AllPluginTests {
 		OsgiServiceUtil.ungetService(tarmedImporter);
 
 		IBillingSystemService billingSystemService = OsgiServiceUtil.getService(IBillingSystemService.class).get();
-		billingSystemService.addOrModifyBillingSystem(UVG_NAME, CONST_TARMED_LEISTUNG, CONST_TARMED_DRUCKER,
-				UVG_REQUIREMENTS, BillingLaw.UVG);
+		billingSystemService.addOrModifyBillingSystem(UVG_NAME, CONST_TARMED_DRUCKER, UVG_REQUIREMENTS, BillingLaw.UVG);
 		OsgiServiceUtil.ungetService(billingSystemService);
 
 	}

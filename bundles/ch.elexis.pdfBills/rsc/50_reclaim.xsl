@@ -148,6 +148,8 @@
 					<fo:block>
 						<!-- sub header for the not-first pages -->
 						<fo:marker marker-class-name="subHeader">
+							<xsl:call-template name="reclaim_header">
+							</xsl:call-template>						
 							<xsl:call-template
 								name="reclaim_header_patient">
 							</xsl:call-template>
@@ -255,9 +257,9 @@
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/@title)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/@title)" />
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:givenname)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/invoice:givenname)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:when>
@@ -270,9 +272,9 @@
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/@title)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/@title)" />
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:givenname)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/invoice:givenname)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:otherwise>
@@ -326,11 +328,11 @@
 														<xsl:when
 															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:company) > 0">
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:company/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:city)" />
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:city)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:when>
@@ -339,11 +341,11 @@
 														<xsl:when
 															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:company) > 0">
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:company/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:company/invoice:postal/invoice:city)" />
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:street, '        ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_zsr/invoice:person/invoice:postal/invoice:city)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:otherwise>
@@ -1116,7 +1118,7 @@
 										<fo:block white-space-treatment="preserve">
 											<xsl:choose>
 												<xsl:when
-													test="/invoice:request/invoice:payload/@copy = 'true' or /invoice:request/invoice:payload/@copy = '1'">
+													test="/invoice:request/invoice:payload/@request_subtype = 'copy'">
 													<xsl:value-of select="'Ja'" />
 												</xsl:when>
 												<xsl:otherwise>
@@ -1216,35 +1218,8 @@
 									</fo:table-cell>
 									<fo:table-cell>
 										<fo:block white-space-treatment="preserve">
-											<xsl:choose>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:kvg) > 0">
-													<xsl:value-of select="'KVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:mvg) > 0">
-													<xsl:value-of select="'MVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:ivg) > 0">
-													<xsl:value-of select="'IVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:vvg) > 0">
-													<xsl:value-of select="'VVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:org) > 0">
-													<xsl:value-of select="'ORG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:uvg) > 0">
-													<xsl:value-of select="'UVG'" />
-												</xsl:when>
-												<xsl:otherwise>
-													<xsl:value-of select="'privat'" />
-												</xsl:otherwise>
-											</xsl:choose>
+											<xsl:value-of
+													select="/invoice:request/invoice:payload/invoice:body/invoice:law/@type" />
 											<xsl:value-of select="' '" />
 										</fo:block>
 									</fo:table-cell>
@@ -1548,9 +1523,9 @@
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/@title)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/@title)" />
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:givenname)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:givenname)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:when>
@@ -1563,9 +1538,9 @@
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/@title)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/@salutation, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/@title)" />
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:givenname)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:familyname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:givenname)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:otherwise>
@@ -1580,11 +1555,11 @@
 														<xsl:when
 															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company) > 0">
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:company/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:city)" />
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:city)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:when>
@@ -1593,11 +1568,11 @@
 														<xsl:when
 															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company) > 0">
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:company/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company/invoice:postal/invoice:city)" />
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:postal/invoice:city)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:street, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:zip, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:postal/invoice:city)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:otherwise>
@@ -1612,11 +1587,11 @@
 														<xsl:when
 															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company) > 0">
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:company/invoice:telecom/invoice:email)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:company/invoice:telecom/invoice:email)" />
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:telecom/invoice:email)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_glnn/invoice:person/invoice:telecom/invoice:email)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:when>
@@ -1625,11 +1600,11 @@
 														<xsl:when
 															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company) > 0">
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:company/invoice:telecom/invoice:email)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:company/invoice:telecom/invoice:email)" />
 														</xsl:when>
 														<xsl:otherwise>
 															<xsl:value-of
-																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:telecom/invoice:email)" />
+																select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:telecom/invoice:phone, ' · ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:telecom/invoice:email)" />
 														</xsl:otherwise>
 													</xsl:choose>
 												</xsl:otherwise>
@@ -2188,14 +2163,14 @@
 							MWSt
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
 							font-weight="bold"
 							font-family="tahoma,arial,helvetica,sans-serif">
 							MwSt.Nr.:
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="left" font-size="7px"
 							white-space-treatment="preserve"
 							font-family="tahoma,arial,helvetica,sans-serif">
@@ -2205,22 +2180,6 @@
 								select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/invoice:vat/@vat_number" />
 							<xsl:value-of select="' '" />
 							MWST
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="right" font-size="7px"
-							font-weight="bold"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							Anzahlung:
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="right" font-size="7px"
-							white-space-treatment="preserve"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:value-of select="' '" />
-							<xsl:value-of select="' '" />
-							<xsl:value-of select="$amountPrepaid" />
 						</fo:block>
 					</fo:table-cell>
 					<fo:table-cell>
@@ -2285,7 +2244,7 @@
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
 							font-weight="bold" padding-right="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
@@ -2300,26 +2259,6 @@
 							<xsl:value-of select="' '" />
 							<xsl:value-of
 								select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@currency" />
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="left" font-size="7px"
-							font-weight="bold"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:if
-								test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_reminder) > 0">
-								Mahngebühr:
-							</xsl:if>
-						</fo:block>
-					</fo:table-cell>
-					<fo:table-cell>
-						<fo:block text-align="right" font-size="7px"
-							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:if
-								test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_reminder) > 0">
-								<xsl:value-of
-									select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_reminder" />
-							</xsl:if>
 						</fo:block>
 					</fo:table-cell>
 					<fo:table-cell>
@@ -2381,17 +2320,20 @@
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
 							font-weight="bold" padding-right="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
 							IBAN:
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell number-columns-spanned="5">
-						<fo:block text-align="left" font-size="7px"
+					<fo:table-cell>
+						<fo:block white-space-treatment="preserve" text-align="left" font-size="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
-
+							<xsl:value-of select="' '" />
+							<xsl:value-of select="' '" />							
+							<xsl:value-of
+								select="/invoice:request/invoice:payload/invoice:body/invoice:esrQR/@iban" />
 						</fo:block>
 					</fo:table-cell>
 				</fo:table-row>
@@ -2441,15 +2383,20 @@
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell>
+					<fo:table-cell number-columns-spanned="2">
 						<fo:block text-align="right" font-size="7px"
+							font-weight="bold" padding-right="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
+							Referenz-Nr.:
 						</fo:block>
 					</fo:table-cell>
-					<fo:table-cell number-columns-spanned="3">
-						<fo:block text-align="left" font-size="7px"
+					<fo:table-cell number-columns-spanned="2">
+						<fo:block white-space-treatment="preserve" text-align="left" font-size="7px"
 							font-family="tahoma,arial,helvetica,sans-serif">
-
+							<xsl:value-of select="' '" />
+							<xsl:value-of select="' '" />							
+							<xsl:value-of
+								select="/invoice:request/invoice:payload/invoice:body/invoice:esrQR/@reference_number" />
 						</fo:block>
 					</fo:table-cell>
 					<fo:table-cell>
@@ -3182,6 +3129,8 @@
 		<xsl:param name="DateTime" />
 
 		<!-- new date format 2006-01-14T08:55:22 -->
+		<!-- new date format 2024-11-30T00:00:00 -->
+		<!-- new date format 2025-11-04T00:00:00.000+01:00 -->
 		<xsl:variable name="year">
 			<xsl:value-of select="substring($DateTime,1,4)" />
 		</xsl:variable>
@@ -3198,7 +3147,7 @@
 			<xsl:value-of select="substring($day-temp,1,2)" />
 		</xsl:variable>
 		<xsl:variable name="time">
-			<xsl:value-of select="substring-after($DateTime,'T')" />
+			<xsl:value-of select="substring(substring-after($DateTime,'T'),1,8)" />
 		</xsl:variable>
 
 		<xsl:value-of select="$day" />
@@ -3208,18 +3157,6 @@
 		<xsl:value-of select="$year" />
 		<xsl:value-of select="' '" />
 		<xsl:value-of select="$time" />
-	</xsl:template>
-
-	<xsl:template name="FormatGender">
-		<xsl:choose>
-			<xsl:when
-				test="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/@gender = 'male'">
-				<xsl:value-of select="'Mann / M'" />
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="'Frau / F'" />
-			</xsl:otherwise>
-		</xsl:choose>
 	</xsl:template>
 
 	<xsl:include href="/rsc/templates_50.xsl" />

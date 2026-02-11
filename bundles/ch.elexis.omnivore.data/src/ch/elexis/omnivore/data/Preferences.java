@@ -1,6 +1,5 @@
 package ch.elexis.omnivore.data;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
 import static ch.elexis.omnivore.PreferenceConstants.DATE_MODIFIABLE;
 import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Default;
@@ -14,6 +13,7 @@ import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
 import static ch.elexis.omnivore.PreferenceConstants.nPREF_DEST_DIR;
 import static ch.elexis.omnivore.PreferenceConstants.nPREF_SRC_PATTERN;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ public class Preferences {
 	}
 
 	public static boolean getDateModifiable() {
-		return CoreHub.localCfg.get(DATE_MODIFIABLE, false);
+		return ConfigServiceHolder.get().get(DATE_MODIFIABLE, true);
 	}
 
 	// ----------------------------------------------------------------------------

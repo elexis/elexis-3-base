@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: ch.elexis.base.ch.arzttarife.model;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-ClassPath: .,
- lib/tarifmatcher-1.0.0-standalone.jar
+ lib/tarifmatcher-1.0.1-standalone.jar
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model
@@ -46,9 +46,11 @@ Export-Package: ch.elexis.base.ch.arzttarife,
  ch.elexis.base.ch.arzttarife.util
 Require-Bundle: ch.elexis.core.l10n,
  ch.rgw.utility;bundle-version="3.9.100",
+ ch.rgw.utility.legacy;bundle-version="3.13.0",
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  ch.elexis.core;bundle-version="3.9.0";visibility:=reexport,
+ ch.elexis.core.rcp;bundle-version="3.13.0",
  ch.elexis.core.services;bundle-version="3.9.0",
  ch.elexis.core.jpa,
  ch.elexis.core.jpa.entities;bundle-version="1.0.0",
@@ -68,6 +70,7 @@ Import-Package: ch.elexis.core.findings,
  org.apache.commons.text;version="[1.13.0,2.0.0)"
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.ambulatory.model.importer.AmbulatoryAllowanceReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.ambulatory.model.importer.AmbulatoryTarifsReferenceDataImporter.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.coding.SectionCodeCodingContribution.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.complementary.model.importer.ComplementaryReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.AmbulatoryAllowanceCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.AmbulatoryTarifCodeElementService.xml,

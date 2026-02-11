@@ -6,7 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import ch.elexis.core.services.IDocumentStore;
 import jakarta.inject.Inject;
 
-@Component(immediate = true)
+@Component
 public class OmnivoreDocumentStoreServiceHolder {
 
 	private static IDocumentStore documentStore;

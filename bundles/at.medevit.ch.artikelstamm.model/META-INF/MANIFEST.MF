@@ -8,6 +8,7 @@ Automatic-Module-Name: at.medevit.ch.artikelstamm.service
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.rgw.utility;bundle-version="3.8.0",
  ch.elexis.core;bundle-version="3.9.0",
+ ch.elexis.core.rcp;bundle-version="3.13.0",
  ch.elexis.core.services;bundle-version="3.9.0",
  ch.elexis.core.jpa;bundle-version="3.9.0",
  ch.elexis.core.jpa.entities;bundle-version="3.9.0",

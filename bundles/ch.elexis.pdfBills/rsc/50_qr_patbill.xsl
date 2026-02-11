@@ -273,7 +273,7 @@
 				</fo:flow>
 			</fo:page-sequence>
 			<xsl:if
-				test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+				test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0 or /invoice:request/invoice:payload/@request_subtype = 'copy'">
 				<fo:page-sequence master-reference="Overview">
 					<fo:static-content flow-name="xsl-region-before">
 						<xsl:call-template name="billheader2D">

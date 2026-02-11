@@ -190,7 +190,9 @@ public class QrRnOutputter implements IRnOutputter {
 							// consider fallback to non QR bill, always fall back for tarmed xml version
 							// lower 4.5
 							EsrType outputEsrType = ex.getEsrTypeOrFallback(invoice);
-							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
+							if ("5.0".equals(epdf.getBillVersion())) {
+								epdf.printQrBill(rsc);
+							} else if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
 								epdf.printQrBill(rsc);
 							} else {
 								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version [" //$NON-NLS-1$
@@ -527,6 +529,8 @@ public class QrRnOutputter implements IRnOutputter {
 					+ File.separator + invoice.getNumber() + "_esr.pdf").toFile().orElse(null);
 			File rfFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
 					+ File.separator + invoice.getNumber() + "_rf.pdf").toFile().orElse(null);
+			File qrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
+					+ File.separator + invoice.getNumber() + "_qr.pdf").toFile().orElse(null);
 			if (esrFile.exists()) {
 				Program.launch(esrFile.getAbsolutePath());
 			} else {
@@ -536,6 +540,11 @@ public class QrRnOutputter implements IRnOutputter {
 				Program.launch(rfFile.getAbsolutePath());
 			} else {
 				LoggerFactory.getLogger(getClass()).info("File [" + rfFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+			}
+			if (qrFile.exists()) {
+				Program.launch(qrFile.getAbsolutePath());
+			} else {
+				LoggerFactory.getLogger(getClass()).info("File [" + qrFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error opening output", e);

@@ -3,6 +3,8 @@ package ch.elexis.base.ch.arzttarife.xml.exporter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,6 +36,7 @@ import ch.elexis.TarmedRechnung.XMLExporterProcessing;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.arzttarife.xml.exporter.VatRateSum.VatRateElement;
@@ -43,6 +46,8 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
+import ch.elexis.core.findings.ICoding;
+import ch.elexis.core.findings.codes.ICodingContribution;
 import ch.elexis.core.model.FallConstants;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
@@ -70,6 +75,7 @@ import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.types.Country;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.fd.invoice500.request.BalanceTGType;
@@ -87,6 +93,8 @@ import ch.fd.invoice500.request.EsrAddressType;
 import ch.fd.invoice500.request.EsrQRType;
 import ch.fd.invoice500.request.GarantType;
 import ch.fd.invoice500.request.GuarantorAddressType;
+import ch.fd.invoice500.request.InstructionType;
+import ch.fd.invoice500.request.InstructionsType;
 import ch.fd.invoice500.request.InsuranceAddressType;
 import ch.fd.invoice500.request.InsuredAddressType;
 import ch.fd.invoice500.request.InvoiceType;
@@ -126,6 +134,10 @@ import ch.rgw.tools.VersionInfo;
 
 public class Tarmed50Exporter {
 
+	public static String UNKNOWN_SSN = "7569999999991";
+
+	public static final String EAN_PSEUDO = "2000000000008"; //$NON-NLS-1$
+
 	public static enum EsrType {
 		esr9, esrQR
 	}
@@ -139,6 +151,10 @@ public class Tarmed50Exporter {
 	private EsrType esrType = EsrType.esrQR;
 
 	private boolean updateElectronicDelivery = false;
+
+	private ICodingContribution sectionCodeContribution;
+
+	private boolean addTrustCenterInstructions = false;
 
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall
@@ -322,7 +338,7 @@ public class Tarmed50Exporter {
 		if (referrer != null) {
 			PartnerAddressType referrerPartner = new PartnerAddressType();
 			referrerPartner.setType("referrer");
-			String ean = TarmedRequirements.getEAN(referrer);
+			String ean = TarmedRequirements.getEAN(referrer, EAN_PSEUDO);
 			if (StringUtils.isNotBlank(ean)) {
 				referrerPartner.setGln(ean);
 			}
@@ -353,7 +369,7 @@ public class Tarmed50Exporter {
 		} else {
 			debitor = invoice.getCoverage().getCostBearer();
 		}
-		debitorAddressType.setGln(TarmedRequirements.getEAN(debitor));
+		debitorAddressType.setGln(TarmedRequirements.getEAN(debitor, EAN_PSEUDO));
 
 		Object companyOrPerson = getCompanyOrPerson(debitor, false);
 		if (companyOrPerson instanceof CompanyType) {
@@ -437,7 +453,7 @@ public class Tarmed50Exporter {
 		if (costBearer == null) {
 			costBearer = invoice.getCoverage().getPatient();
 		}
-		String kEAN = TarmedRequirements.getEAN(costBearer);
+		String kEAN = TarmedRequirements.getEAN(costBearer, EAN_PSEUDO);
 		InsuranceAddressType insuranceAddressType = new InsuranceAddressType();
 
 		if (tiersType == Tiers.GARANT) {
@@ -490,7 +506,7 @@ public class Tarmed50Exporter {
 					ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null), IContact.class);
 			if (fixProvider.isPresent()) {
 				logger.info("Fixed provider [" + fixProvider.get().getLabel() + "] ean ["
-						+ TarmedRequirements.getEAN(fixProvider.get()) + "]");
+						+ TarmedRequirements.getEAN(fixProvider.get(), EAN_PSEUDO) + "]");
 				provider = fixProvider.get();
 			}
 		}
@@ -498,12 +514,12 @@ public class Tarmed50Exporter {
 		ProviderGLNAddressType glnAddressType = new ProviderGLNAddressType();
 		ZsrAddressType zsrAddressType = new ZsrAddressType();
 
-		glnAddressType.setGln(TarmedRequirements.getEAN(provider));
+		glnAddressType.setGln(TarmedRequirements.getEAN(provider, EAN_PSEUDO));
 		if(provider instanceof IMandator) {
 			IContact biller = ((IMandator) provider).getBiller();
-			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(biller));
+			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(biller, EAN_PSEUDO));
 		} else {
-			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(provider));
+			glnAddressType.setGlnLocation(TarmedRequirements.getEAN(provider, EAN_PSEUDO));
 		}
 		providerAddressType.setProviderGln(glnAddressType);
 		String zsr = TarmedRequirements.getKSK(provider);
@@ -528,7 +544,7 @@ public class Tarmed50Exporter {
 		BillersAddressType billerAddressType = new BillersAddressType();
 		BillerGLNAddressType glnAddressType = new BillerGLNAddressType();
 		ZsrAddressType zsrAddressType = new ZsrAddressType();
-		glnAddressType.setGln(TarmedRequirements.getEAN(biller));
+		glnAddressType.setGln(TarmedRequirements.getEAN(biller, EAN_PSEUDO));
 		billerAddressType.setBillerGln(glnAddressType);
 
 		String zsr = TarmedRequirements.getKSK(biller);
@@ -647,7 +663,7 @@ public class Tarmed50Exporter {
 		}
 		if (StringUtils.isNotBlank(contact.getStreet())) {
 			StreetType street = new StreetType();
-			street.setStreetName(StringUtils.abbreviate(contact.getStreet(), 35));
+			street.setValue(StringUtils.abbreviate(contact.getStreet(), 35));
 			postalAddressType.setStreet(street);
 		}
 		postalAddressType.setCity(StringUtils
@@ -677,6 +693,12 @@ public class Tarmed50Exporter {
 		LocalDate lastEncounterDate = null;
 		int session = 1;
 		for (IEncounter encounter : encounters) {
+			Optional<String> sectionCode = Optional.empty();
+			IContact biller = encounter.getMandator().getBiller();
+			if (biller.isOrganization()) {
+				sectionCode = getSectionCode(encounter.getMandator());
+			}
+
 			List<IBilled> encounterBilled = encounter.getBilled();
 			// encounters list is ordered by date, so we can just compare with previous
 			LocalDate encounterDate = encounter.getDate();
@@ -698,11 +720,11 @@ public class Tarmed50Exporter {
 										+ encounter.getLabel());
 						continue;
 					}
-
-					if ("001".equals(billable.getCodeSystemCode())) { // tarmed service
+					// tarmed or tardoc service
+					if ("001".equals(billable.getCodeSystemCode()) || "007".equals(billable.getCodeSystemCode())) {
 						ServiceExType serviceExType = new ServiceExType();
 
-						String bezug = (String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+						String bezug = getBezug(billable);
 						if (StringTool.isNothing(bezug)) {
 							bezug = (String) billed.getExtInfo("Bezug"); //$NON-NLS-1$
 						}
@@ -767,8 +789,10 @@ public class Tarmed50Exporter {
 						serviceExType.setSession(session);
 						serviceExType.setName(billed.getText());
 						serviceExType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-						serviceExType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceExType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO));
 						serviceExType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
+
+						sectionCode.ifPresent(c -> serviceExType.setSectionCode(c));
 
 						servicesType.getServiceExOrService().add(serviceExType);
 					} else { // any service
@@ -778,7 +802,7 @@ public class Tarmed50Exporter {
 						serviceType.setVatRate(getVatRate(billed));
 
 						serviceType.setUnit(billed.getPrice().doubleValue());
-						if ("581".equals(billable.getCodeSystemCode())) {
+						if ("581".equals(billable.getCodeSystemCode()) || "005".equals(billable.getCodeSystemCode())) {
 							serviceType.setUnit((double) billed.getPoints() / 100);
 						}
 						serviceType.setUnitFactor(billed.getFactor());
@@ -803,7 +827,7 @@ public class Tarmed50Exporter {
 							serviceType.setXtraDrug(drugType);
 						}
 						serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-						serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO));
 						serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
 
 						// all 406 will have code 2000
@@ -869,6 +893,59 @@ public class Tarmed50Exporter {
 		return servicesType;
 	}
 
+	private Optional<String> getSectionCode(IMandator mandator) {
+		Optional<ICoding> configSectionCode = ArzttarifeUtil.getMandantSectionCode(mandator);
+		if (configSectionCode.isPresent()) {
+			return Optional.of(configSectionCode.get().getCode());
+		}
+		// perform lookup if not configured
+		List<ICoding> specialistCodes = ArzttarifeUtil.getMandantTardocSepcialist(mandator);
+		Optional<ICoding> specialistSectionCode = getSectionCodeForSpecialist(specialistCodes);
+		if (specialistSectionCode.isPresent()) {
+			return Optional.of(specialistSectionCode.get().getCode());
+		}
+		return Optional.empty();
+	}
+
+	private Optional<ICoding> getSectionCodeForSpecialist(List<ICoding> specialistCodes) {
+		if (sectionCodeContribution == null) {
+			sectionCodeContribution = OsgiServiceUtil
+					.getService(ICodingContribution.class, "(system=forumdatenaustausch_sectioncode)").orElse(null);
+		}
+		if (sectionCodeContribution != null) {
+			return getMappedBySpecialistCodeReflective(specialistCodes);
+		} else {
+			logger.warn("No section code coding contribution available");
+		}
+		return Optional.empty();
+	}
+
+	@SuppressWarnings("unchecked")
+	private Optional<ICoding> getMappedBySpecialistCodeReflective(List<ICoding> specialistCodes) {
+		try {
+			Method getterMethod = sectionCodeContribution.getClass().getMethod("getMappedBySpecialistCode",
+					new Class[] { List.class });
+			Object minutes = getterMethod.invoke(sectionCodeContribution, specialistCodes);
+			if (minutes instanceof Optional) {
+				return (Optional<ICoding>) minutes;
+			}
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			LoggerFactory.getLogger(getClass())
+					.warn("Could not get mapped section code of [" + sectionCodeContribution + "]", e.getMessage());
+		}
+		return Optional.empty();
+	}
+
+	private String getBezug(IBillable billable) {
+		if (billable instanceof ITarmedLeistung) {
+			return (String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+		} else if (billable instanceof ITardocLeistung) {
+			return (String) ((ITardocLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+		}
+		return StringUtils.EMPTY;
+	}
+
 	private String getServiceCode(IBilled billed) {
 		String ret = billed.getCode();
 		IBillable billable = billed.getBillable();
@@ -900,9 +977,17 @@ public class Tarmed50Exporter {
 
 	private Integer getServiceExOrServiceTariffType(Object obj) {
 		if (obj instanceof ServiceType) {
-			return Integer.parseInt(((ServiceType) obj).getTariffType());
+			try {
+				return Integer.parseInt(((ServiceType) obj).getTariffType());
+			} catch (NumberFormatException e) {
+				return Integer.MAX_VALUE;
+			}
 		} else if (obj instanceof ServiceExType) {
-			return Integer.parseInt(((ServiceExType) obj).getTariffType());
+			try {
+				return Integer.parseInt(((ServiceExType) obj).getTariffType());
+			} catch (NumberFormatException e) {
+				return Integer.MAX_VALUE;
+			}
 		}
 		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
 	}
@@ -1094,6 +1179,9 @@ public class Tarmed50Exporter {
 			if (name.equalsIgnoreCase("ICD-10")) { //$NON-NLS-1$
 				return "ICD"; //$NON-NLS-1$
 			}
+			if (name.equalsIgnoreCase("TI-Code")) { //$NON-NLS-1$
+				return "cantonal"; //$NON-NLS-1$
+			}
 			if (name.equalsIgnoreCase("by contract")) { //$NON-NLS-1$
 				return "by_contract"; //$NON-NLS-1$
 			}
@@ -1218,7 +1306,7 @@ public class Tarmed50Exporter {
 			ahv = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(), TarmedRequirements.SSN)
 					.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		}
-		return StringUtils.isNotBlank(ahv) ? ahv : null;
+		return StringUtils.isNotBlank(ahv) ? ahv : UNKNOWN_SSN;
 	}
 
 	protected EsrQRType getEsrQR(IInvoice invoice) throws DatatypeConfigurationException {
@@ -1314,13 +1402,11 @@ public class Tarmed50Exporter {
 
 	protected ProcessingType getProcessing(IInvoice invoice) throws DatatypeConfigurationException {
 		ProcessingType processingType = new ProcessingType();
-		LoggerFactory.getLogger(getClass()).warn("TODO PRINT AT INTERMEDIATE");
-		// processingType.setPrintAtIntermediate(printAtIntermediate);
 
 		processingType.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 
 		TransportType transportType = new TransportType();
-		transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator()));
+		transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator(), EAN_PSEUDO));
 		transportType.setTo(XMLExporterUtil.getRecipientEAN(invoice));
 
 		logger.info("Using intermediate EAN [" + XMLExporterUtil.getIntermediateEAN(invoice) + "]");
@@ -1334,6 +1420,9 @@ public class Tarmed50Exporter {
 			String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
 			if (StringUtils.isNotBlank(trustCenter)) {
 				processingType.setSendCopyToTrustcenter(TrustCenters.getTCEAN(trustCenter));
+				if (addTrustCenterInstructions) {
+					addTrustCenterInstructions(processingType, invoice);
+				}
 			}
 		}
 		processingType.setTransport(transportType);
@@ -1346,10 +1435,6 @@ public class Tarmed50Exporter {
 			besr = null;
 			// update processing, print_at_intermediate and transport via EAN
 			if (request.getProcessing() != null) {
-				LoggerFactory.getLogger(getClass()).warn("TODO PRINT AT INTERMEDIATE");
-//				if (request.getProcessing().isPrintCopyToGuarantor() != isPrintAtIntermediate()) {
-//					request.getProcessing().setPrintAtIntermediate(isPrintAtIntermediate());
-//				}
 				if (request.getProcessing().getTransport() != null) {
 					String iEAN = XMLExporterProcessing.getIntermediateEAN(invoice, xmlExporter);
 					List<Via> via = request.getProcessing().getTransport().getVia();
@@ -1362,6 +1447,11 @@ public class Tarmed50Exporter {
 					String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
 					if (StringUtils.isNotBlank(trustCenter)) {
 						request.getProcessing().setSendCopyToTrustcenter(TrustCenters.getTCEAN(trustCenter));
+						if (addTrustCenterInstructions) {
+							addTrustCenterInstructions(request.getProcessing(), invoice);
+						} else {
+							removeTrustCenterInstructions(request.getProcessing(), invoice);
+						}
 					}
 				}
 				// no copy for patient for reminders
@@ -1526,6 +1616,37 @@ public class Tarmed50Exporter {
 		}
 	}
 
+	private void addTrustCenterInstructions(ProcessingType processingType, IInvoice invoice) {
+		logger.info("Adding TrustCenter instructions");
+		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
+		if (tiersType == Tiers.GARANT) {
+			InstructionsType instructions = new InstructionsType();
+			InstructionType instruction = new InstructionType();
+			instruction.setToken("tx_print_to_guarantor");
+			instruction.setValue("true");
+			instructions.getInstruction().add(instruction);
+			processingType.setInstructions(instructions);
+		} else {
+			InstructionsType instructions = new InstructionsType();
+			InstructionType instruction = new InstructionType();
+			instruction.setToken("tx_send_to_insurance");
+			instruction.setValue("true");
+			instructions.getInstruction().add(instruction);
+			processingType.setInstructions(instructions);
+		}
+	}
+
+	private void removeTrustCenterInstructions(ProcessingType processingType, IInvoice invoice) {
+		if (processingType.getInstructions() != null) {
+			InstructionsType instructions = processingType.getInstructions();
+			for (InstructionType instructionType : new ArrayList<>(instructions.getInstruction())) {
+				if(instructionType.getToken().startsWith("tx_")) {
+					instructions.getInstruction().remove(instructionType);
+				}
+			}			
+		}
+	}
+
 	public void addReminderEntry(RequestType request, IInvoice invoice, String reminderLevel) {
 		if (request.getPayload() != null) {
 			try {
@@ -1597,6 +1718,10 @@ public class Tarmed50Exporter {
 				}
 			});
 		}
+	}
+
+	public void setAddTrustCenterInstructions(boolean value) {
+		this.addTrustCenterInstructions = value;
 	}
 
 	/**

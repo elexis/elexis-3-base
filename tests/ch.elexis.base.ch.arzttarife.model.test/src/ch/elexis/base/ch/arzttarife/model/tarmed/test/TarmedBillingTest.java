@@ -71,6 +71,8 @@ public class TarmedBillingTest {
 		coverage = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter.setDate(LocalDate.of(2025, 12, 31));
+		coreModelService.save(encounter);
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
@@ -122,7 +124,7 @@ public class TarmedBillingTest {
 		assertTrue(status.toString(), status.isOK());
 		assertEquals(4, status.get().getAmount(), 0.01d);
 
-		TarmedLeistung code_000750 = TarmedLeistung.getFromCode("00.0750", LocalDate.now(), null);
+		TarmedLeistung code_000750 = TarmedLeistung.getFromCode("00.0750", LocalDate.of(2025, 12, 31), null);
 		assertNotNull(code_000750);
 		status = billingService.bill(code_000750, encounter, 1);
 		assertFalse(status.isOK());
@@ -130,7 +132,7 @@ public class TarmedBillingTest {
 
 	@Test
 	public void testDoNotBillTympanometrieTwicePerSideTicket5004() {
-		ITarmedLeistung code_090510 = TarmedLeistung.getFromCode("09.0510", LocalDate.now(), null);
+		ITarmedLeistung code_090510 = TarmedLeistung.getFromCode("09.0510", LocalDate.of(2025, 12, 31), null);
 		assertNotNull(code_090510);
 
 		Result<IBilled> status;
@@ -153,7 +155,7 @@ public class TarmedBillingTest {
 
 	@Test
 	public void testAddAutoPositions() {
-		ITarmedLeistung code_390590 = TarmedLeistung.getFromCode("39.0590", LocalDate.now(), null);
+		ITarmedLeistung code_390590 = TarmedLeistung.getFromCode("39.0590", LocalDate.of(2025, 12, 31), null);
 
 		status = billingService.bill(code_390590, encounter, 1);
 		assertTrue(status.getMessages().toString(), status.isOK());

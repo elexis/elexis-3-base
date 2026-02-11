@@ -6,7 +6,8 @@ Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.pdfBills.private
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core;bundle-version="3.13.0",
+Require-Bundle: ch.rgw.utility.legacy;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.13.0",
  ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.pdfBills;bundle-version="3.9.0",
  ch.elexis.core.services;bundle-version="3.10.0",

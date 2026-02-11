@@ -34,6 +34,8 @@
     <module>at.medevit.ch.artikelstamm.ui</module>
     <module>at.medevit.elexis.agenda.ui</module>
     <module>at.medevit.elexis.agenda.ui.rcp</module>
+    <module>at.medevit.elexis.aerztekasse.core</module>
+    <module>at.medevit.elexis.aerztekasse.ui</module>
     <module>at.medevit.elexis.bluemedication.core</module>
     <module>at.medevit.elexis.bluemedication.ui</module>
     <module>at.medevit.elexis.ehc.core</module>
@@ -137,6 +139,7 @@
     <module>ch.elexis.pdfBills</module>
     <module>ch.elexis.pdfBills.privat</module>
     <module>ch.elexis.privatrechnung</module>
+    <module>ch.elexis.regiomed.order</module>
     <module>ch.elexis.stickynotes</module>
     <module>ch.elexis.support.dbshaker</module>
     <module>ch.gpb.elexis.cst</module>

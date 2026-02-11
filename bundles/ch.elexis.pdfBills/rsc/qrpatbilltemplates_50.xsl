@@ -26,7 +26,7 @@
 									<xsl:value-of
 										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/@title, ' ')" />
 									<xsl:value-of
-										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:familyname)" />
+										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:billers/invoice:biller_gln/invoice:person/invoice:familyname)" />
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:when>
@@ -41,7 +41,7 @@
 									<xsl:value-of
 										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/@title, ' ')" />
 									<xsl:value-of
-										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:familyname)" />
+										select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:billers/invoice:biller_gln/invoice:person/invoice:familyname)" />
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:otherwise>
@@ -240,7 +240,7 @@
 							<xsl:value-of
 								select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/@title, ' ')" />
 							<xsl:value-of
-								select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:biller/invoice:person/invoice:familyname)" />
+								select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:providers/invoice:provider_gln/invoice:person/invoice:familyname)" />
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:when>
@@ -255,7 +255,7 @@
 							<xsl:value-of
 								select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/@title, ' ')" />
 							<xsl:value-of
-								select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:biller/invoice:person/invoice:familyname)" />
+								select="concat(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:givenname, ' ', /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:providers/invoice:provider_gln/invoice:person/invoice:familyname)" />
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:otherwise>
@@ -577,7 +577,8 @@
 							<xsl:call-template name="FormatNumber">
 								<xsl:with-param name="Number"
 									select="sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type='001']/@amount)
-									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type='007']/@amount)" />
+									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type='007']/@amount)
+									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service[@tariff_type='005']/@amount)" />
 							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
@@ -639,7 +640,7 @@
 						<fo:block text-align="right">
 							<xsl:call-template name="FormatNumber">
 								<xsl:with-param name="Number"
-									select="sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service[@tariff_type!='311' and @tariff_type!='317' and @tariff_type!='452' and @tariff_type!='400' and @tariff_type!='402' and @tariff_type!='406']/@amount)
+									select="sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service[@tariff_type!='311' and @tariff_type!='317' and @tariff_type!='452' and @tariff_type!='400' and @tariff_type!='402' and @tariff_type!='406' and @tariff_type!='005']/@amount)
 									+ sum(/invoice:request/invoice:payload/invoice:body/invoice:services/invoice:service_ex[@tariff_type!='001' and @tariff_type!='007']/@amount)" />
 							</xsl:call-template>
 						</fo:block>
@@ -1142,9 +1143,19 @@
 					<fo:table-cell border-top-style="solid" border-top-width="1pt">
 						<fo:block text-align="right" font-size="8px" font-weight="bold"
 							font-family="tahoma,arial,helvetica,sans-serif">
-							<xsl:call-template name="FormatNumber">
-								<xsl:with-param name="Number" select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:balance/@amount" />
-							</xsl:call-template>
+							<xsl:choose>
+								<xsl:when
+									test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+									<xsl:call-template name="FormatNumber">
+										<xsl:with-param name="Number" select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:balance/@amount" />
+									</xsl:call-template>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name="FormatNumber">
+										<xsl:with-param name="Number" select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount" />
+									</xsl:call-template>
+								</xsl:otherwise>
+							</xsl:choose>
 						</fo:block>
 					</fo:table-cell>
 				</fo:table-row>

@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed50Exporter;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
@@ -37,7 +38,9 @@ import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Rechnung;
+import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.fd.invoice450.request.BalanceTGType;
+import ch.fd.invoice500.request.DiagnosisType;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
@@ -640,6 +643,7 @@ public class XMLExporterTest {
 		Optional<?> invoiceRequest = exporter
 				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice450.request.RequestType);
+
 		BalanceTGType balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().getBody()
 				.getTiersGarant().getBalance();
 		assertNotNull(balance);
@@ -706,6 +710,7 @@ public class XMLExporterTest {
 		Optional<?> invoiceRequest = exporter
 				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "5.0");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice500.request.RequestType);
+
 		ch.fd.invoice500.request.BalanceTGType balance = ((ch.fd.invoice500.request.RequestType) invoiceRequest.get())
 				.getPayload().getBody()
 				.getTiersGarant().getBalance();
@@ -770,6 +775,13 @@ public class XMLExporterTest {
 		Optional<?> invoiceRequest = exporter
 				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice450.request.RequestType);
+
+		// test debitor pseudo ean 2000000000000
+		ch.fd.invoice450.request.GarantType tiers = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get())
+				.getPayload().getBody().getTiersGarant();
+		assertNotNull(tiers);
+		assertEquals(TarmedRequirements.EAN_PSEUDO, tiers.getDebitor().getEanParty());
+
 		BalanceTGType balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().getBody()
 				.getTiersGarant().getBalance();
 		assertNotNull(balance);
@@ -806,12 +818,28 @@ public class XMLExporterTest {
 		Optional<?> invoiceRequest = exporter
 				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "5.0");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice500.request.RequestType);
+
+		// test debitor pseudo ean 2000000000008
+		ch.fd.invoice500.request.GarantType tiers = ((ch.fd.invoice500.request.RequestType) invoiceRequest.get())
+				.getPayload().getBody()
+				.getTiersGarant();
+		assertNotNull(tiers);
+		assertEquals(Tarmed50Exporter.EAN_PSEUDO, tiers.getDebitor().getGln());
+
 		ch.fd.invoice500.request.BalanceTGType balance = ((ch.fd.invoice500.request.RequestType) invoiceRequest.get())
 				.getPayload().getBody().getTiersGarant().getBalance();
 		assertNotNull(balance);
 		assertFalse(((ch.fd.invoice500.request.RequestType) invoiceRequest.get()).getPayload().getRequestSubtype()
 				.equals("storno"));
 		assertEquals(1.00, balance.getAmountPrepaid(), 0.0001);
+
+		List<DiagnosisType> diagnosis = ((ch.fd.invoice500.request.RequestType) invoiceRequest.get()).getPayload()
+				.getBody().getTreatment().getDiagnosis();
+		assertNotNull(diagnosis);
+		assertFalse(diagnosis.isEmpty());
+		Optional<DiagnosisType> cantonalDiag = diagnosis.stream().filter(d -> "cantonal".equalsIgnoreCase(d.getType()))
+				.findAny();
+		assertTrue(cantonalDiag.isPresent());
 
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {

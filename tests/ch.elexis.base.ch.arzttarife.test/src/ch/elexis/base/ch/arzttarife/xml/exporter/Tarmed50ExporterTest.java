@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.xml.exporter;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -19,13 +20,22 @@ import org.junit.Test;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.model.builder.IContactBuilder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.fd.invoice500.request.BalanceTGType;
 import ch.fd.invoice500.request.PatientAddressType;
 import ch.fd.invoice500.request.RequestType;
+import ch.fd.invoice500.request.ServiceExType;
 import ch.fd.invoice500.request.VatRateType;
 import ch.fd.invoice500.request.VatType;
 import ch.rgw.tools.Money;
@@ -159,5 +169,75 @@ public class Tarmed50ExporterTest {
 		assertEquals(invoice.getOpenAmount().doubleValue(), balance.getAmountDue(), 0.03);
 		assertEquals(invoice.getPayedAmount().doubleValue(), balance.getAmountPrepaid(), 0.03);
 		assertEquals(invoice.getDemandAmount().doubleValue(), balance.getAmountReminder(), 0.03);
+	}
+
+	@Test
+	public void doExportServiceCodesTest() throws IOException {
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario);
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
+
+		List<IInvoice> invoices = szenario.getInvoices();
+		IInvoice invoice = invoices.get(0);
+
+		// add dignitaet for mapping to fachbereich
+		IMandator mandator = invoice.getEncounters().get(0).getMandator();
+		ArzttarifeUtil.setMandantTardocSepcialist(mandator,
+				List.of(new TransientCoding("tardoc_dignitaet", "0011", "Handchirurgie"),
+						new TransientCoding("tardoc_dignitaet", "3010", "Allgemeine Innere Medizin"),
+						new TransientCoding("tardoc_dignitaet", "1400", "Psychiatrie und Psychotherapie")));
+		// add biller organization, that triggers section code lookup
+		IOrganization billerOrg = new IContactBuilder.OrganizationBuilder(CoreModelServiceHolder.get(),
+				"Test Biller Org").buildAndSave();
+		billerOrg.addXid(TarmedRequirements.DOMAIN_KSK, "C000003", true);
+		billerOrg.addXid(DOMAIN_EAN, "2000000000003", true);
+
+		billerOrg.setExtInfo("IBAN", "CH5800791123000889012");
+		CoreModelServiceHolder.get().save(billerOrg);
+
+		mandator.setBiller(billerOrg);
+		CoreModelServiceHolder.get().save(mandator);
+
+		Tarmed50Exporter exporter = new Tarmed50Exporter();
+
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		assertTrue(exporter.doExport(invoice, output, IRnOutputter.TYPE.ORIG));
+
+		RequestType invoiceRequest = TarmedJaxbUtil
+				.unmarshalInvoiceRequest500(new ByteArrayInputStream(output.toByteArray()));
+		assertNotNull(invoiceRequest);
+
+		// dignitaet Allgemeine Innere Medizin should map to fachbereich M050.00,
+		// highest weighted
+		List<ServiceExType> withServiceCode = invoiceRequest.getPayload().getBody().getServices()
+				.getServiceExOrService().stream()
+				.filter(s -> s instanceof ServiceExType).map(s -> (ServiceExType) s)
+				.filter(s -> "M100.02".equals(s.getSectionCode())).toList();
+		assertFalse(withServiceCode.isEmpty());
+
+		// configure fachbereich
+		ArzttarifeUtil.setMandantSectionCode(mandator,
+				new TransientCoding("forumdatenaustausch_sectioncode", "M200.04", "Handchirurgie"));
+		CoreModelServiceHolder.get().save(mandator);
+		// cancel and create invoice
+		List<IEncounter> encounters = invoice.getEncounters();
+		InvoiceServiceHolder.get().cancel(invoice, true);
+		invoice = InvoiceServiceHolder.get().invoice(encounters).get();
+
+		output = new ByteArrayOutputStream();
+		assertTrue(exporter.doExport(invoice, output, IRnOutputter.TYPE.ORIG));
+
+		invoiceRequest = TarmedJaxbUtil
+				.unmarshalInvoiceRequest500(new ByteArrayInputStream(output.toByteArray()));
+		assertNotNull(invoiceRequest);
+
+		// configured fachbereich M200.04
+		withServiceCode = invoiceRequest.getPayload().getBody().getServices().getServiceExOrService().stream()
+				.filter(s -> s instanceof ServiceExType).map(s -> (ServiceExType) s)
+				.filter(s -> "M200.04".equals(s.getSectionCode())).toList();
+		assertFalse(withServiceCode.isEmpty());
+
+		TestData.disposeTestSzenarioInstance();
 	}
 }

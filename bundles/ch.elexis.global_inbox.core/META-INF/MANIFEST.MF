@@ -8,7 +8,8 @@ Export-Package: ch.elexis.global_inbox.core.handler,
 Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
  jakarta.enterprise.context;version="[4.0.0,5.0.0)",
  jakarta.inject;version="2.0.1"
-Require-Bundle: ch.elexis.core.tasks,
+Require-Bundle: ch.elexis.core.rcp;bundle-version="3.13.0",
+ ch.elexis.core.tasks,
  ch.elexis.core.services
 Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml,
  OSGI-INF/ch.elexis.global_inbox.core.util.OmnivoreDocumentStoreServiceHolder.xml

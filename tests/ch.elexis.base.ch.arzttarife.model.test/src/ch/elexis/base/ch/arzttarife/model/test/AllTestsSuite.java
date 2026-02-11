@@ -53,6 +53,9 @@ public class AllTestsSuite {
 	@BeforeClass
 	public static void beforeClass() throws IOException, SQLException {
 		if (!setInitialTarifs()) {
+			// remove -Delexis.skip.ds.activation=true from launch config
+			// modify DataSourceConnectionParser#jdbcString to be persistent
+
 			// download and copy tarifs to rsc folder first !
 			IReferenceDataImporter physioImporter = OsgiServiceUtil
 					.getService(IReferenceDataImporter.class, "(" + IReferenceDataImporter.REFERENCEDATAID + "=physio)")
@@ -88,7 +91,7 @@ public class AllTestsSuite {
 			IReferenceDataImporter tardocImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tardoc)").get();
 			result = tardocImporter.performImport(new NullProgressMonitor(),
-					AllTestsSuite.class.getResourceAsStream("/rsc/250808_Anhang_A2_Katalog_des_TARDOC_1.4c.mdb"),
+					AllTestsSuite.class.getResourceAsStream("/rsc/Anhang_A2_Katalog_des_TARDOC_1.4c_251128_2.mdb"),
 					250820);
 			assertTrue(result.isOK());
 			OsgiServiceUtil.ungetService(tardocImporter);
@@ -105,7 +108,7 @@ public class AllTestsSuite {
 			IReferenceDataImporter tarifImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=ambulatorytarif)").get();
 			result = tarifImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
-					.getResourceAsStream("/rsc/250808_LKAAT_1.0c.CSV"),
+					.getResourceAsStream("/rsc/LKAAT_1.0c_251128.CSV"),
 					250820);
 			assertTrue(result.isOK());
 			OsgiServiceUtil.ungetService(tarifImporter);

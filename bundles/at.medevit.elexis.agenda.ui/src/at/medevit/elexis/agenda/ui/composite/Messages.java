@@ -38,6 +38,6 @@ public class Messages {
 	public static String Warnung = ch.elexis.core.l10n.Messages.Warning;
 	public static String Warning_Kein_Pea = ch.elexis.core.l10n.Messages.Warning_No_Pea;
 	public static String Appointment_TrminLinks = ch.elexis.core.l10n.Messages.Appointment_TrminLinks;
-	public static Object AddCombiTerminDialogBefore = ch.elexis.core.l10n.Messages.AddCombiTerminDialogBefore;
+	public static String AddCombiTerminDialogBefore = ch.elexis.core.l10n.Messages.AddCombiTerminDialogBefore;
 
 }

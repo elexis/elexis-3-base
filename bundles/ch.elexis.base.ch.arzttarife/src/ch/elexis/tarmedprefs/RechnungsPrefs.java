@@ -104,6 +104,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	private Label lblFixProvider;
 
 	private TardocSpecialistComposite tardocSpecialist;
+	private SectionCodeComposite sectionCode;
 
 	static TarmedACL ta = TarmedACL.getInstance();
 
@@ -117,7 +118,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			ta.KANTON, ta.LOCAL, ta.DIAGSYS };
 
 	public RechnungsPrefs() {
-		super(Messages.RechnungsPrefs_BillPrefs); // $NON-NLS-1$
+		super(Messages.RechnungsPrefs_BillPrefs);
 	}
 
 	@Override
@@ -166,16 +167,16 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		Group adrs = new Group(ret, SWT.NONE);
 		adrs.setLayout(new GridLayout(2, false));
 		adrs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		adrs.setText(Messages.RechnungsPrefs_BillDetails); // $NON-NLS-1$
+		adrs.setText(Messages.RechnungsPrefs_BillDetails);
 		hTreat = new Hyperlink(adrs, SWT.NONE);
-		hTreat.setText(Messages.RechnungsPrefs_Treator); // $NON-NLS-1$
+		hTreat.setText(Messages.RechnungsPrefs_Treator);
 		hTreat.setForeground(blau);
 		hTreat.addHyperlinkListener(hDetailListener);
 		tTreat = new Text(adrs, SWT.BORDER | SWT.READ_ONLY);
 		tTreat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		Label lMandantType = new Label(adrs, SWT.NONE);
-		lMandantType.setText(Messages.RechnungsPrefs_MandantType); // $NON-NLS-1$
+		lMandantType.setText(Messages.RechnungsPrefs_MandantType);
 		lMandantType.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		cvMandantType = new ComboViewer(adrs);
@@ -218,16 +219,42 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType.getCombo().setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		// TARDOC mandant type
-		Label lTardocSpecialist = new Label(adrs, SWT.NONE);
-		lTardocSpecialist.setText("TARDOC-Dignität"); // $NON-NLS-1$
-		lTardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		Hyperlink hTardocSpecialist = new Hyperlink(adrs, SWT.NONE);
+		hTardocSpecialist.setText(Messages.RechnungsPrefs_TardocSpecialistLink);
+		hTardocSpecialist.setForeground(blau);
+		hTardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		hTardocSpecialist.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				if (tardocSpecialist != null && !tardocSpecialist.isDisposed()) {
+					tardocSpecialist.openSelectionDialog();
+				}
+			}
+		});
 
 		tardocSpecialist = new TardocSpecialistComposite(adrs, SWT.NONE);
 		tardocSpecialist.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
+		// forum datenaustausch fachbereich
+		Hyperlink hSectionCode = new Hyperlink(adrs, SWT.NONE);
+		hSectionCode.setText(Messages.RechnungsPrefs_SectionCodeLink);
+		hSectionCode.setForeground(blau);
+		hSectionCode.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		hSectionCode.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				if (sectionCode != null && !sectionCode.isDisposed()) {
+					sectionCode.openSelectionDialog();
+				}
+			}
+		});
+
+		sectionCode = new SectionCodeComposite(adrs, SWT.NONE);
+		sectionCode.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+
 		// bills electronically
 		bBillsElec = new Button(adrs, SWT.CHECK);
-		bBillsElec.setText("Bills electronically");
+		bBillsElec.setText(Messages.RechnungsPrefs_BillsElectronically);
 		if (actMandant != null) {
 			bBillsElec.setSelection(
 					ConfigServiceHolder.get().get(actMandant, PreferenceConstants.BILL_ELECTRONICALLY, false));
@@ -250,14 +277,14 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cFinanzinstitut.setLayout(new GridLayout(2, false));
 
 		Label lFinanzinstitut = new Label(cFinanzinstitut, SWT.NONE);
-		lFinanzinstitut.setText(Messages.RechnungsPrefs_Financeinst); // $NON-NLS-1$
+		lFinanzinstitut.setText(Messages.RechnungsPrefs_Financeinst);
 		lFinanzinstitut.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 
 		bPost = new Button(cFinanzinstitut, SWT.RADIO);
 		gd = SWTHelper.getFillGridData(1, false, 1, false);
 		gd.verticalAlignment = SWT.TOP;
 		bPost.setLayoutData(gd);
-		bPost.setText(Messages.RechnungsPrefs_post); // $NON-NLS-1$
+		bPost.setText(Messages.RechnungsPrefs_post);
 
 		bPost.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -270,7 +297,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 						actMandant.setExtInfo(ta.RNBANK, StringUtils.EMPTY);
 						// clear data set with BankLister dialog
 						actMandant.setExtInfo(ta.ESRNUMBER, StringUtils.EMPTY);
-						actMandant.setExtInfo(ta.ESRSUB, StringUtils.EMPTY); // $NON-NLS-1$
+						actMandant.setExtInfo(ta.ESRSUB, StringUtils.EMPTY);
 						actMandant.setExtInfo(Messages.RechnungsPrefs_department, StringUtils.EMPTY);
 						actMandant.setExtInfo(Messages.RechnungsPrefs_POBox, StringUtils.EMPTY);
 						actMandant.setExtInfo("IBAN", StringUtils.EMPTY);
@@ -295,7 +322,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cPost.setLayout(new GridLayout(1, false));
 		hPost = new Hyperlink(cPost, SWT.NONE);
 		hPost.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		hPost.setText(Messages.RechnungsPrefs_POAccount); // $NON-NLS-1$
+		hPost.setText(Messages.RechnungsPrefs_POAccount);
 		hPost.setForeground(blau);
 		hPost.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
@@ -313,7 +340,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		gd = SWTHelper.getFillGridData(1, false, 1, false);
 		gd.verticalAlignment = SWT.TOP;
 		bBank.setLayoutData(gd);
-		bBank.setText(Messages.RechnungsPrefs_bank); // $NON-NLS-1$
+		bBank.setText(Messages.RechnungsPrefs_bank);
 		bBank.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -335,7 +362,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cBank.setLayout(new GridLayout(1, false));
 		hBank = new Hyperlink(cBank, SWT.NONE);
 		hBank.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		hBank.setText(Messages.RechnungsPrefs_bankconnection); // $NON-NLS-1$
+		hBank.setText(Messages.RechnungsPrefs_bankconnection);
 		hBank.setForeground(blau);
 		hBank.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
@@ -355,12 +382,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		// Trust Center
 
 		Group gTC = new Group(ret, SWT.NONE);
-		gTC.setText(Messages.RechnungsPrefs_trustcenter); // $NON-NLS-1$
+		gTC.setText(Messages.RechnungsPrefs_trustcenter);
 		gTC.setLayout(new GridLayout());
 		gTC.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		bUseTC = new Button(gTC, SWT.CHECK);
-		bUseTC.setText(Messages.RechnungsPrefs_TrustCenterUsed); // $NON-NLS-1$
+		bUseTC.setText(Messages.RechnungsPrefs_TrustCenterUsed);
 		bUseTC.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -419,7 +446,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		gAuto.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gAuto.setLayout(new FillLayout());
 		final Button bAddChildren = new Button(gAuto, SWT.CHECK);
-		bAddChildren.setText("Kinderzuschläge automatisch verrechnen");
+		bAddChildren.setText(Messages.RechnungsPrefs_AddChildren);
 		bAddChildren.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -433,25 +460,26 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		Group gFixProvider = new Group(ret, SWT.NONE);
 		gFixProvider.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gFixProvider.setLayout(new GridLayout(2, false));
-		gFixProvider.setText("Fixer Leistungserbringer (für alle Mandanten)");
+		gFixProvider.setText(Messages.RechnungsPrefs_FixProviderGroupTitle);
 
 		Hyperlink fixProvider = new Hyperlink(gFixProvider, SWT.NONE);
-		fixProvider.setText("Fixer Leistungserbringer");
+		fixProvider.setText(Messages.RechnungsPrefs_FixProviderLink);
 		fixProvider.setForeground(blau);
 		fixProvider.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				KontaktSelektor ks = new KontaktSelektor(UiDesk.getTopShell(), Kontakt.class, "Kontakt auswählen",
-						"Bitte selektieren Sie den fixen Leistungserbringer", new String[] {});
+				KontaktSelektor ks = new KontaktSelektor(UiDesk.getTopShell(), Kontakt.class,
+						Messages.RechnungsPrefs_SelectContactTitle, Messages.RechnungsPrefs_SelectFixProviderMessage,
+						new String[] {});
 				int ret = ks.open();
 				if (ret == Window.OK) {
 					Kontakt k = (Kontakt) ks.getSelection();
-					ConfigServiceHolder.setGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER,
+					ConfigServiceHolder.get().set(PreferenceConstants.TARMEDBIL_FIX_PROVIDER,
 							(k != null) ? k.getId() : null);
 					String label = (k != null) ? k.getLabel() : StringUtils.EMPTY;
 					lblFixProvider.setText(label);
 				} else {
-					ConfigServiceHolder.setGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null);
+					ConfigServiceHolder.get().set(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null);
 					lblFixProvider.setText(StringConstants.EMPTY);
 				}
 				gFixProvider.layout();
@@ -500,7 +528,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			}
 			KontaktExtDialog dlg = new KontaktExtDialog(getShell(), actMandant, ExtFlds);
 			dlg.create();
-			dlg.setTitle(Messages.RechnungsPrefs_MandatorDetails); // $NON-NLS-1$
+			dlg.setTitle(Messages.RechnungsPrefs_MandatorDetails);
 
 			dlg.open();
 		}
@@ -523,15 +551,15 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
-			Hyperlink hlBank = UiDesk.getToolkit().createHyperlink(ret, Messages.RechnungsPrefs_FinanceInst, SWT.NONE); // $NON-NLS-1$
+			Hyperlink hlBank = UiDesk.getToolkit().createHyperlink(ret, Messages.RechnungsPrefs_FinanceInst, SWT.NONE);
 			hlBank.addHyperlinkListener(new HyperlinkAdapter() {
 
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					KontaktSelektor ksl = new KontaktSelektor(getShell(), Organisation.class,
 							Messages.RechnungsPrefs_paymentinst, Messages.RechnungsPrefs_PleseChooseBank,
-							new String[] { Organisation.FLD_NAME1, Organisation.FLD_NAME2 }); // $NON-NLS-1$
-																								// //$NON-NLS-2$
+							new String[] { Organisation.FLD_NAME1, Organisation.FLD_NAME2 });
+
 					if (ksl.open() == Dialog.OK) {
 						actBank = NoPoUtil.loadAsIdentifiable((Kontakt) ksl.getSelection(), IContact.class)
 								.orElse(null);
@@ -544,14 +572,15 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			updateMandantContactHyper(hlBank, ta.RNBANK);
 			hlBank.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 
-			Hyperlink hlOwner = UiDesk.getToolkit().createHyperlink(ret, "Kontoinhaber", SWT.NONE); //$NON-NLS-1$
+			Hyperlink hlOwner = UiDesk.getToolkit().createHyperlink(ret, Messages.RechnungsPrefs_AccountOwner,
+					SWT.NONE);
 			hlOwner.addHyperlinkListener(new HyperlinkAdapter() {
 
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
-					KontaktSelektor ksl = new KontaktSelektor(getShell(), Kontakt.class, "Kontoinhaber",
-							"Den Kontoinhaber auswählen, falls der nicht dem Mandanten entspricht.",
-							new String[] { Kontakt.FLD_NAME1, Kontakt.FLD_NAME2 }); // $NON-NLS-1$ //$NON-NLS-2$
+					KontaktSelektor ksl = new KontaktSelektor(getShell(), Kontakt.class,
+							Messages.RechnungsPrefs_AccountOwner, Messages.RechnungsPrefs_SelectAccountOwnerMessage,
+							new String[] { Kontakt.FLD_NAME1, Kontakt.FLD_NAME2 });
 					if (ksl.open() == Dialog.OK) {
 						Kontakt accountOwner = (Kontakt) ksl.getSelection();
 						actMandant.setExtInfo(ta.RNACCOUNTOWNER, accountOwner.getId());
@@ -568,12 +597,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			hlOwner.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 
 			Label lbl = new Label(ret, SWT.NONE);
-			lbl.setText("Rechnungsinformationen");
+			lbl.setText(Messages.RechnungsPrefs_InvoiceInfoLabel);
 			tInvoiceInfo = new Text(ret, SWT.BORDER | SWT.MULTI);
 			GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 			gd.heightHint = 50;
 			tInvoiceInfo.setLayoutData(gd);
-			tInvoiceInfo.setToolTipText("Rechnungsinformationen (Optional, max. 140 Zeichen)");
+			tInvoiceInfo.setToolTipText(Messages.RechnungsPrefs_InvoiceInfoTooltip);
 			tInvoiceInfo.setTextLimit(140);
 			if (actMandant.getExtInfo(ta.RNINFORMATION) != null) {
 				tInvoiceInfo.setText((String) actMandant.getExtInfo(ta.RNINFORMATION));
@@ -603,16 +632,16 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		@Override
 		public void create() {
 			super.create();
-			getShell().setText(Messages.RechnungsPrefs_ChooseBank); // $NON-NLS-1$
+			getShell().setText(Messages.RechnungsPrefs_ChooseBank);
 			setTitle(actMandant.getLabel());
-			setMessage(Messages.RechnungsPrefs_ChosseInst); // $NON-NLS-1$
+			setMessage(Messages.RechnungsPrefs_ChosseInst);
 		}
 
 		@Override
 		protected void okPressed() {
 			if (StringUtils.isEmpty((String) actMandant.getExtInfo(ta.RNBANK))) {
 				MessageDialog.openWarning(getShell(), Messages.RechnungsPrefs_ChooseBank,
-						"Es wurde keine Finanzinstitut ausgewählt.");
+						Messages.RechnungsPrefs_NoFinanceInstituteSelected);
 				return;
 			}
 			exTable.okPressed(actMandant);
@@ -664,9 +693,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		@Override
 		public void create() {
 			super.create();
-			getShell().setText(Messages.RechnungsPrefs_postAccount); // $NON-NLS-1$
+			getShell().setText(Messages.RechnungsPrefs_postAccount);
 			setTitle(actMandant.getLabel());
-			setMessage(Messages.RechnungsPrefs_InfoPostAccount); // $NON-NLS-1$
+			setMessage(Messages.RechnungsPrefs_InfoPostAccount);
 		}
 
 		@Override
@@ -690,6 +719,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType.setSelection(new StructuredSelection(ArzttarifeUtil.getMandantType(actMandant)));
 
 		tardocSpecialist.setMandator(m);
+		sectionCode.setMandator(m);
 
 		actBank = CoreModelServiceHolder.get().load((String) actMandant.getExtInfo(ta.RNBANK), IContact.class)
 				.orElse(null);
@@ -710,7 +740,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bBank.setSelection(actBank != null);
 
 		bUseTC.setSelection(TarmedRequirements
-				.hasTCContract(CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null))); // $NON-NLS-1$
+				.hasTCContract(CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null)));
 		// bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1"));
 		// //$NON-NLS-1$
 		// bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1"));

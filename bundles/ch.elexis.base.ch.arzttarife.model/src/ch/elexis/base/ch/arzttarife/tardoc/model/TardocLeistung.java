@@ -19,7 +19,6 @@ import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.arzttarife.util.TarmedDefinitionenUtil;
-import ch.elexis.core.jpa.entities.TardocLeistung.MandantType;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
@@ -94,24 +93,14 @@ public class TardocLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	/**
 	 * Get the AL scaling value to be used when billing this {@link TardocLeistung}
-	 * for the provided {@link Mandant}.
+	 * for the provided {@link Mandant}. Currently no mandator based scaling for
+	 * TARDOC.
 	 *
 	 * @param mandant
 	 * @return
 	 */
 	public double getALScaling(IMandator mandant) {
 		double scaling = 100;
-		if (mandant != null) {
-			MandantType type = getMandantType(mandant);
-			if (type == MandantType.PRACTITIONER) {
-				String f_al_r = getExtension().getLimits()
-						.get(ch.elexis.core.jpa.entities.TardocLeistung.EXT_FLD_F_AL_R);
-				double alScaling = NumberUtils.toDouble(f_al_r);
-				if (alScaling > 0.1) {
-					scaling *= alScaling;
-				}
-			}
-		}
 		return scaling;
 	}
 
@@ -419,22 +408,6 @@ public class TardocLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 			return text.startsWith("+") || text.startsWith("-");
 		}
 		return false;
-	}
-
-	/**
-	 * Get the {@link MandantType} of the {@link IMandator}. If not found the
-	 * default value is {@link MandantType#SPECIALIST}.
-	 *
-	 * @param mandant
-	 * @return
-	 * @since 3.4
-	 */
-	public static MandantType getMandantType(IMandator mandant) {
-		Object typeObj = mandant.getExtInfo(ch.elexis.core.jpa.entities.TardocLeistung.MANDANT_TYPE_EXTINFO_KEY);
-		if (typeObj instanceof String) {
-			return MandantType.valueOf((String) typeObj);
-		}
-		return MandantType.SPECIALIST;
 	}
 
 	/**

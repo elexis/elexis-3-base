@@ -10,6 +10,7 @@ import org.jdom2.input.SAXBuilder;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
+import ch.fd.invoice500.request.RequestType;
 
 public class TarmedXmlUtil {
 
@@ -36,11 +37,30 @@ public class TarmedXmlUtil {
 					LoggerFactory.getLogger(TarmedXmlUtil.class).error("Error loading existing xml document", e);
 				}
 			}
+		} else if ("5.0".equals(version)) {
+			ch.fd.invoice500.request.RequestType invoiceRequest = TarmedJaxbUtil.unmarshalInvoiceRequest500(document);
+			setPrintAtIntermediate(invoiceRequest, value);
+
+			ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
+			if (TarmedJaxbUtil.marshallInvoiceRequest(invoiceRequest, xmlOutput)) {
+				SAXBuilder builder = new SAXBuilder();
+				try {
+					return builder.build(new StringReader(xmlOutput.toString()));
+				} catch (IOException | JDOMException e) {
+					LoggerFactory.getLogger(TarmedXmlUtil.class).error("Error loading existing xml document", e);
+				}
+			}
 		} else {
 			LoggerFactory.getLogger(TarmedXmlUtil.class)
 					.error("Could not modify xml document with version [" + version + "]");
 		}
 		return document;
+	}
+
+	private static void setPrintAtIntermediate(RequestType invoiceRequest, boolean value) {
+		if (invoiceRequest != null && invoiceRequest.getProcessing() != null) {
+			invoiceRequest.getProcessing().setPrintCopyToGuarantor(value);
+		}
 	}
 
 	private static void setPrintAtIntermediate(ch.fd.invoice450.request.RequestType invoiceRequest, boolean value) {

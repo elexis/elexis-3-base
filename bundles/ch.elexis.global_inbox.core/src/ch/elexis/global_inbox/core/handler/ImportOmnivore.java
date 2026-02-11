@@ -1,8 +1,6 @@
 package ch.elexis.global_inbox.core.handler;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -13,12 +11,15 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
+import ch.elexis.global_inbox.core.strategies.FallbackStrategy;
+import ch.elexis.global_inbox.core.strategies.FilePrefixStrategy;
+import ch.elexis.global_inbox.core.strategies.HierarchyStrategy;
+import ch.elexis.global_inbox.core.strategies.IImportStrategy;
+import ch.elexis.global_inbox.core.strategies.PatientFolderStrategy;
 import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
 public class ImportOmnivore {
-
-	private final Pattern PATIENT_MATCH_PATTERN = Pattern.compile("([0-9]+)_(.+)"); //$NON-NLS-1$
 
 	private Logger log;
 	private ImportOmnivoreInboxUtil giutil;
@@ -31,44 +32,91 @@ public class ImportOmnivore {
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-			String filepath = ImportOmnivoreInboxUtil.getDirectory(Constants.PREF_DIR_DEFAULT, deviceName);
-			IVirtualFilesystemHandle dir = null;
-			if (filepath == null) {
-				filepath = Constants.PREF_DIR_DEFAULT;
-				ConfigServiceHolder.get().set(Constants.PREF_DIR, Constants.PREF_DIR_DEFAULT);
-			}
-			try {
-				dir = VirtualFilesystemServiceHolder.get().of(filepath);
-				addFilesInDirRecursive(dir);
-			} catch (Exception e) {
-				log.error("Failed to convert filepath to directory. Filepath: {}", filepath, e);
-				return Status.CANCEL_STATUS;
-			}
+		String filepath = ImportOmnivoreInboxUtil.getDirectory(Constants.PREF_DIR_DEFAULT, deviceName);
+		IVirtualFilesystemHandle dir = null;
+		if (filepath == null) {
+			filepath = Constants.PREF_DIR_DEFAULT;
+			ConfigServiceHolder.get().set(Constants.PREF_DIR, Constants.PREF_DIR_DEFAULT);
+		}
+		try {
+			dir = VirtualFilesystemServiceHolder.get().of(filepath);
+			addFilesInDirRecursive(dir, true);
+		} catch (Exception e) {
+			log.error("Failed to convert filepath to directory. Filepath: {}", filepath, e);
+			return Status.CANCEL_STATUS;
+		}
 
 		return Status.OK_STATUS;
 	}
 
-	private void addFilesInDirRecursive(IVirtualFilesystemHandle dir) throws IOException {
+	private int getPatientStrategyCode() {
+		return ConfigServiceHolder.getGlobal(Constants.PREF_PATIENT_STRATEGY_PREFIX + deviceName, 0);
+	}
+
+	private IImportStrategy getStrategy(int code) {
+		switch (code) {
+		case 0:
+			return new FilePrefixStrategy(giutil, deviceName);
+		case 1:
+			return new PatientFolderStrategy(giutil, deviceName);
+		case 2:
+			return new HierarchyStrategy(giutil, deviceName);
+		case 3:
+		default:
+			return new FallbackStrategy(new FilePrefixStrategy(giutil, deviceName),
+					new HierarchyStrategy(giutil, deviceName));
+		}
+	}
+
+	private void addFilesInDirRecursive(IVirtualFilesystemHandle dir, boolean isRoot) throws IOException {
 		IVirtualFilesystemHandle[] files = dir.listHandles();
 		if (files == null) {
 			return;
 		}
+		int strategyCode = getPatientStrategyCode();
+		IImportStrategy strategy = getStrategy(strategyCode);
+
 		for (IVirtualFilesystemHandle file : files) {
 			if (!file.exists() || file.getName().startsWith(".")) {
 				continue;
 			}
 			if (file.isDirectory()) {
-				addFilesInDirRecursive(file);
+				addFilesInDirRecursive(file, false);
 			} else {
-				Matcher matcher = PATIENT_MATCH_PATTERN.matcher(file.getName());
-				if (matcher.matches()) {
-					String patientNo = matcher.group(1);
-					String fileName = matcher.group(2);
-					String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, fileName);
-					if (tryImportForPatient != null) {
-						log.info("Auto imported file [{}], document id is [{}]", file, tryImportForPatient);
+				boolean imported = strategy.importFile(file);
+
+				if (!imported) {
+					log.debug("No import rule matched for file [{}] using strategy [{}]", file,
+							strategy.getClass().getSimpleName());
+				}
+			}
+		}
+		cleanupDirectory(dir, isRoot);
+	}
+
+	private void cleanupDirectory(IVirtualFilesystemHandle dir, boolean isRoot) throws IOException {
+		if (!isRoot) {
+			IVirtualFilesystemHandle[] remaining = dir.listHandles();
+			boolean hasRealChildren = false;
+
+			if (remaining != null) {
+				for (IVirtualFilesystemHandle h : remaining) {
+					if (!h.exists()) {
 						continue;
 					}
+					if (!h.getName().startsWith(".")) {
+						hasRealChildren = true;
+						break;
+					}
+				}
+			}
+
+			if (!hasRealChildren) {
+				try {
+					dir.delete();
+					log.info("Deleted empty import folder [{}]", dir);
+				} catch (IOException e) {
+					log.warn("Could not delete folder [{}]", dir, e);
 				}
 			}
 		}

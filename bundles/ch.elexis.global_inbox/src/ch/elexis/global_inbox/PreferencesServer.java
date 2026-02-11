@@ -66,7 +66,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 	private Composite mainComposite;
 	private String lastSelectedCategory;
 	private ListViewer categoryListViewer;
-
+	private Combo patientSourceCombo;
 	@Reference
 	private ITaskService taskService;
 
@@ -288,6 +288,20 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			}
 		});
 
+		Label patientSourceLabel = new Label(contentComposite, SWT.NONE);
+		patientSourceLabel.setText(Messages.PreferencesServer_patientSourceLabel);
+		GridData patientSourceLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
+		patientSourceLabelGridData.widthHint = labelWidth;
+		patientSourceLabel.setLayoutData(patientSourceLabelGridData);
+
+		patientSourceCombo = new Combo(contentComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		GridData patientSourceComboGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		patientSourceCombo.setLayoutData(patientSourceComboGridData);
+
+		patientSourceCombo.setItems(new String[] { Messages.PreferencesServer_patientSource_filePrefix,
+				Messages.PreferencesServer_patientSource_folder, Messages.PreferencesServer_patientSource_hierarchy,
+				Messages.PreferencesServer_patientSource_hybrid });
+
 		loadDeviceData();
 		updateDeviceCombo();
 		updateDeviceFields();
@@ -307,7 +321,6 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			lastSelectedCategory = null;
 		}
 	}
-
 
 	private void addCategory(String categoryName) {
 		List<String> categories = getCategoriesForDevice(deviceCombo.getText());
@@ -426,10 +439,16 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			String dir = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice,
 					StringUtils.EMPTY);
 			deviceDirText.setText(StringUtils.defaultString(dir));
-			updateCategoriesListForDevice(selectedDevice);
-		} else {
-			deviceDirText.setText(StringUtils.EMPTY);
 
+			int strategyIndex = ConfigServiceHolder.getGlobal(Constants.PREF_PATIENT_STRATEGY_PREFIX + selectedDevice,
+					0); // Default FILE_PREFIX
+			if (strategyIndex >= 0 && strategyIndex < patientSourceCombo.getItemCount()) {
+				patientSourceCombo.select(strategyIndex);
+			} else {
+				patientSourceCombo.select(0);
+			}
+
+			updateCategoriesListForDevice(selectedDevice);
 		}
 	}
 
@@ -461,7 +480,8 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			ConfigServiceHolder.get().set(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice, deviceDirText.getText());
 			ConfigServiceHolder.get().set(Constants.PREF_SELECTED_DEVICE, selectedDevice);
 			ConfigServiceHolder.get().set(Constants.PREF_CATEGORY_PREFIX + selectedDevice, lastSelectedCategory);
-
+			int strategyIndex = patientSourceCombo.getSelectionIndex();
+			ConfigServiceHolder.get().set(Constants.PREF_PATIENT_STRATEGY_PREFIX + selectedDevice, strategyIndex);
 			if (StringUtils.isNotBlank(destinationDir)) {
 				taskManagerHandler.createAndConfigureTask(selectedDevice, destinationDir);
 			}

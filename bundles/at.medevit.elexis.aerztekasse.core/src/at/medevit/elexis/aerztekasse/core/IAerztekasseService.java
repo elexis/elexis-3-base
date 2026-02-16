@@ -1,6 +1,7 @@
 package at.medevit.elexis.aerztekasse.core;
 
 import java.io.File;
+import java.util.List;
 import java.util.Optional;
 
 import ch.elexis.core.model.IMandator;
@@ -112,4 +113,27 @@ public interface IAerztekasseService {
 	 * @param mandator
 	 */
 	public Optional<String> getAccount(IMandator mandator);
+
+	/**
+	 * Get a list of all xml files located in the directory. Empty list if
+	 * sendDirectory is not readable etc.
+	 * 
+	 * @param sendDirectory
+	 * @return
+	 */
+	public List<File> getXmlFiles(File sendDirectory);
+
+	/**
+	 * Move the file to the configured archive directory
+	 * 
+	 * @param file
+	 */
+	void moveToArchive(File file);
+
+	/**
+	 * Move the file to the configured error directory
+	 * 
+	 * @param file
+	 */
+	void moveToError(File file);
 }

@@ -12,6 +12,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -73,12 +76,7 @@ public class AerztekasseService implements IAerztekasseService {
 	}
 
 	@Override
-	public Result<Object> sendFiles(File sendDirectory) {
-		Result<Object> ret = new Result<>();
-		validDirectories(ret);
-		if (!ret.isOK()) {
-			return ret;
-		}
+	public List<File> getXmlFiles(File sendDirectory) {
 		if (sendDirectory.exists() && sendDirectory.isDirectory() && sendDirectory.canRead()) {
 			File[] xmlFiles = sendDirectory.listFiles(new FileFilter() {
 
@@ -87,6 +85,20 @@ public class AerztekasseService implements IAerztekasseService {
 					return pathname.isFile() && pathname.getName().toLowerCase().endsWith("xml");
 				}
 			});
+			return new ArrayList<>(Arrays.asList(xmlFiles));
+		}
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Result<Object> sendFiles(File sendDirectory) {
+		Result<Object> ret = new Result<>();
+		validDirectories(ret);
+		if (!ret.isOK()) {
+			return ret;
+		}
+		if (sendDirectory.exists() && sendDirectory.isDirectory() && sendDirectory.canRead()) {
+			List<File> xmlFiles = getXmlFiles(sendDirectory);
 			for (File file : xmlFiles) {
 				Result<Object> fileResult = sendFile(file);
 				if (!fileResult.isOK()) {
@@ -103,11 +115,13 @@ public class AerztekasseService implements IAerztekasseService {
 		return ret;
 	}
 
-	private void moveToArchive(File file) {
+	@Override
+	public void moveToArchive(File file) {
 		XMLFileUtil.moveToArchive(file, new File(settings.getArchiveDirectory()));
 	}
 
-	private void moveToError(File file) {
+	@Override
+	public void moveToError(File file) {
 		XMLFileUtil.moveToArchive(file, new File(settings.getErrorDirectory()));
 	}
 

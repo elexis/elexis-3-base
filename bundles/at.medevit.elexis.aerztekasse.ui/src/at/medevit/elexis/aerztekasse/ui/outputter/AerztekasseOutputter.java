@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -81,6 +82,20 @@ public class AerztekasseOutputter extends XMLExporter {
 
 			result.add(Result.SEVERITY.ERROR, 1, ch.elexis.core.l10n.Messages.Outputter_NoCredentialsSet, null, true);
 			return result;
+		}
+
+		List<File> existingXmlFiles = service.getXmlFiles(new File(outputDir));
+		if (!existingXmlFiles.isEmpty()) {
+			int answer = MessageDialog.open(MessageDialog.QUESTION, Display.getDefault().getActiveShell(),
+					"Alte Rechnungen",
+					"Achtung: " + existingXmlFiles.size() + " alte Rechnungen befinden sich im send Ordner.\n"
+							+ "Möchten Sie die Rechnungen archivieren oder versenden?",
+					SWT.NONE, "Archivieren", "Nochmals senden");
+			if (answer == 0) {
+				existingXmlFiles.forEach(f -> {
+					service.moveToArchive(f);
+				});
+			}
 		}
 
 		try {

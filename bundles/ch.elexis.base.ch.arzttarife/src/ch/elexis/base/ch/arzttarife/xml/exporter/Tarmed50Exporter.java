@@ -830,7 +830,7 @@ public class Tarmed50Exporter {
 
 						// all 406 will have code 2000
 						if ("406".equals(billable.getCodeSystemCode()) && !isCovid(billable)) {
-							serviceType.setCode("2000");
+							serviceType.setCode("2002");
 							if ((billable instanceof IArticle
 									&& ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)
 									&& StringUtils.isBlank(getServiceCode(billed))

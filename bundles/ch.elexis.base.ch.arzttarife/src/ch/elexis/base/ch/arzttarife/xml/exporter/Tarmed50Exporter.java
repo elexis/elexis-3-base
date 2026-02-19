@@ -853,6 +853,10 @@ public class Tarmed50Exporter {
 							serviceType.setCode("1000");
 						}
 
+						if ("005".equals(billable.getCodeSystemCode()) || "TMA".equals(billable.getCodeSystemCode())) {
+							sectionCode.ifPresent(c -> serviceType.setSectionCode(c));
+						}
+
 						servicesType.getServiceExOrService().add(serviceType);
 					}
 				}

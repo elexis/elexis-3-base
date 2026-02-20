@@ -58,6 +58,8 @@ public class Tarmed50ExporterTest {
 		Optional<IInvoice> vatInvoice = invoices.stream().filter(i -> i.getBilled().stream()
 				.filter(b -> b.getExtInfo(Verrechnet.VATSCALE) != null).findFirst().isPresent()).findFirst();
 		assertTrue(vatInvoice.isPresent());
+		vatInvoice.get().getAttachments().get(0).setTitle(
+				"invalid äöü toolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolongtoolong testDocument_Title.pdf");
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		assertTrue(exporter.doExport(vatInvoice.get(), output, IRnOutputter.TYPE.ORIG));
 

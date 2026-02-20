@@ -21,6 +21,7 @@ import java.util.UUID;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1127,7 +1128,7 @@ public class Tarmed50Exporter {
 
 					DocumentType document = new DocumentType();
 					document.setDocumentType("UndefinedDoc");
-					document.setFilename(attachment.getTitle());
+					document.setFilename(getValidFilename(attachment.getTitle()));
 					document.setMimeType("application/pdf");
 					document.setBase64(byteArray);
 					documentsType.getDocument().add(document);
@@ -1141,6 +1142,17 @@ public class Tarmed50Exporter {
 		}
 		documentsType.setNumber(new BigInteger(Integer.toString(documentsType.getDocument().size())));
 		return documentsType.getDocument().isEmpty() ? null : documentsType;
+	}
+
+	private String getValidFilename(String title) {
+		if (StringUtils.isNotBlank(title)) {
+			String validTitle = title.replaceAll("[^A-Za-z0-9._-]", "_");
+			if (validTitle.length() > 250) {
+				validTitle = (validTitle.substring(0, 250) + "." + FilenameUtils.getExtension(validTitle));
+			}
+			return validTitle;
+		}
+		return title;
 	}
 
 	protected TreatmentType getTreatment(IInvoice invoice) throws DatatypeConfigurationException {

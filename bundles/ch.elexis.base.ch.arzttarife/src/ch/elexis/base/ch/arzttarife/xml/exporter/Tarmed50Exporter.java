@@ -1387,7 +1387,11 @@ public class Tarmed50Exporter {
 		processingType.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 
 		TransportType transportType = new TransportType();
-		transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator(), EAN_PSEUDO));
+		if (invoice.getMandator().getBiller() != null) {
+			transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator().getBiller(), EAN_PSEUDO));
+		} else {
+			transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator(), EAN_PSEUDO));
+		}
 		transportType.setTo(XMLExporterUtil.getRecipientEAN(invoice));
 
 		logger.info("Using intermediate EAN [" + XMLExporterUtil.getIntermediateEAN(invoice) + "]");

@@ -15,7 +15,8 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
  at.medevit.elexis.outbox;bundle-version="3.13.0",
  info.elexis.target.hapi.fhir;bundle-version="7.2.3"
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.findings.util,
+Import-Package: ch.elexis.core.findings.codes,
+ ch.elexis.core.findings.util,
  ch.elexis.core.findings.util.fhir,
  ch.elexis.core.services.holder,
  org.apache.commons.io;version="[2.18.0,3.0.0)",

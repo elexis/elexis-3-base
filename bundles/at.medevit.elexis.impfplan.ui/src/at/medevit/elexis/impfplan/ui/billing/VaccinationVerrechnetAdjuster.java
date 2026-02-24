@@ -59,6 +59,7 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 							}
 						}
 						billed.setExtInfo(Verrechnet.VATSCALE, Double.toString(0.0));
+						CoreModelServiceHolder.get().save(billed);
 					}
 				}
 			}

@@ -3,7 +3,6 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmed.impl;
 
-import ch.elexis.base.ch.arzttarife.tarmed.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;

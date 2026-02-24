@@ -3,7 +3,6 @@
  */
 package ch.elexis.base.ch.arzttarife.ambulatory.impl;
 
-import ch.elexis.base.ch.arzttarife.ambulatory.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -11,6 +10,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryFactory;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
 

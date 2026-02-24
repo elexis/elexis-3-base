@@ -13,7 +13,7 @@ import org.osgi.service.component.annotations.Component;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.CodingSystem;
 import ch.elexis.core.findings.codes.ICodingContribution;
-import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.findings.codes.TransientCoding;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.JdbcLink.Stm;
 

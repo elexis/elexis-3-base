@@ -5,7 +5,7 @@ import java.util.List;
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
-import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.findings.codes.TransientCoding;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;

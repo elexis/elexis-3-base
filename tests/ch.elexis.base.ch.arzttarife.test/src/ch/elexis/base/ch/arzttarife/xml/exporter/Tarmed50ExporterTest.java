@@ -22,7 +22,7 @@ import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.findings.codes.TransientCoding;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;

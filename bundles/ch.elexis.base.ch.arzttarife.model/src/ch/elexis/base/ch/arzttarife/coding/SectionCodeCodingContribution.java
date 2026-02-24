@@ -20,7 +20,7 @@ import com.opencsv.exceptions.CsvException;
 
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.ICodingContribution;
-import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.findings.codes.TransientCoding;
 
 @Component(property = { "system=forumdatenaustausch_sectioncode" })
 public class SectionCodeCodingContribution implements ICodingContribution {

@@ -3,7 +3,6 @@
  */
 package ch.elexis.base.ch.arzttarife.pandemie.impl;
 
-import ch.elexis.base.ch.arzttarife.pandemie.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;

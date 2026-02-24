@@ -3,19 +3,20 @@
  */
 package ch.elexis.base.ch.arzttarife.tardoc.impl;
 
-import ch.elexis.base.ch.arzttarife.tardoc.*;
-
-import ch.elexis.base.ch.arzttarife.tardoc.model.TardocExclusion;
-import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+import ch.elexis.base.ch.arzttarife.tardoc.MandantType;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocFactory;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationArt;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
+import ch.elexis.base.ch.arzttarife.tardoc.model.TardocExclusion;
+import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation;
 
 /**
  * <!-- begin-user-doc -->

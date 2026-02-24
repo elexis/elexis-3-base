@@ -3,7 +3,6 @@
  */
 package ch.elexis.base.ch.arzttarife.psycho.util;
 
-import ch.elexis.base.ch.arzttarife.psycho.*;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;

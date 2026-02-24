@@ -18,6 +18,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IBilledAdjuster;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Verrechnet;
@@ -46,6 +47,7 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 							}
 						}
 						billed.setExtInfo(Verrechnet.VATSCALE, Double.toString(0.0));
+						CoreModelServiceHolder.get().save(billed);
 					}
 				}
 			}

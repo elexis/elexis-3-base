@@ -17,10 +17,10 @@ import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.IOrderEntry;
 import ch.elexis.core.model.IStock;
 import ch.elexis.core.model.OrderEntryState;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.ArticleTyp;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.regiomed.order.handler.RegiomedSender;
 import ch.elexis.regiomed.order.preferences.RegiomedConstants;
 

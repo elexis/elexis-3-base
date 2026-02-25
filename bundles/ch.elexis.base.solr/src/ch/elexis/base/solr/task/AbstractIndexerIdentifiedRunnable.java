@@ -33,8 +33,8 @@ import ch.elexis.core.eenv.IElexisEnvironmentService;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.SingleIdentifiableTaskResult;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IContextService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRunnable {
 

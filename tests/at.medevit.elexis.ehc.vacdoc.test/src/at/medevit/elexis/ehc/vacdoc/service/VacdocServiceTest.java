@@ -16,18 +16,17 @@ import org.junit.Test;
 import org.osgi.framework.ServiceReference;
 
 import at.medevit.elexis.ehc.vacdoc.test.AllTests;
-import ch.elexis.core.findings.util.fhir.MedicamentCoding;
+import ch.elexis.core.findings.codes.MedicamentCoding;
 
 public class VacdocServiceTest {
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testImport() throws Exception{
-		BufferedInputStream input =
-				new BufferedInputStream(getClass().getResourceAsStream("/rsc/test.json"));
+	public void testImport() throws Exception {
+		BufferedInputStream input = new BufferedInputStream(getClass().getResourceAsStream("/rsc/test.json"));
 		assertNotNull(input);
-		ServiceReference<VacdocService> serviceRef =
-			(ServiceReference<VacdocService>) AllTests.getService(VacdocService.class);
+		ServiceReference<VacdocService> serviceRef = (ServiceReference<VacdocService>) AllTests
+				.getService(VacdocService.class);
 		VacdocService service = AllTests.context.getService(serviceRef);
 		Optional<Bundle> document = service.loadVacdocDocument(input);
 		assertNotNull(document);
@@ -39,10 +38,9 @@ public class VacdocServiceTest {
 		AllTests.ungetService(serviceRef);
 		Optional<Medication> medication = service.getMedication(immunizations.get(0));
 		assertTrue(medication.isPresent());
-		
+
 		Optional<Coding> gtinCoding = medication.get().getCode().getCoding().stream()
-				.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c))
-				.findFirst();
+				.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c.getSystem())).findFirst();
 		assertTrue(gtinCoding.isPresent());
 	}
 
@@ -66,7 +64,7 @@ public class VacdocServiceTest {
 		assertTrue(medication.isPresent());
 
 		Optional<Coding> gtinCoding = medication.get().getCode().getCoding().stream()
-				.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c)).findFirst();
+				.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c.getSystem())).findFirst();
 		assertTrue(gtinCoding.isPresent());
 	}
 }

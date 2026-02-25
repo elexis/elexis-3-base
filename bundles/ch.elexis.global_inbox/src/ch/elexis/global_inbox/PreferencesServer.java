@@ -35,6 +35,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -43,7 +44,6 @@ import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.core.ui.e4.dialog.VirtualFilesystemUriEditorDialog;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.global_inbox.core.handler.TaskManagerHandler;
 import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.ui.Messages;

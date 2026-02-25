@@ -23,12 +23,12 @@ import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Money;
 
 public class ArtikelstammImporterTest {

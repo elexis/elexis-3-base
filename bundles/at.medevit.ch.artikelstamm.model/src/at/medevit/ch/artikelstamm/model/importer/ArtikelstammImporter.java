@@ -56,11 +56,11 @@ import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.jpa.entities.ArtikelstammItem;
 import ch.elexis.core.jpa.model.util.JpaModelUtil;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v5")
 public class ArtikelstammImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {

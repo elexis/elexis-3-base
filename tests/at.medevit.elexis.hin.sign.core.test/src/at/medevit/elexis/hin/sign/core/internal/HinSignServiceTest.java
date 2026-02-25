@@ -14,8 +14,8 @@ import org.junit.Test;
 import at.medevit.elexis.hin.sign.core.IHinSignService;
 import at.medevit.elexis.hin.sign.core.IHinSignService.Mode;
 import at.medevit.elexis.hin.sign.core.test.AllPluginTests;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.status.ObjectStatus;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class HinSignServiceTest {
 

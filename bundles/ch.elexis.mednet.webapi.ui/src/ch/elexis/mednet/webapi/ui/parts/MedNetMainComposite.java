@@ -2,8 +2,6 @@ package ch.elexis.mednet.webapi.ui.parts;
 
 import java.util.Stack;
 
-import jakarta.annotation.PostConstruct;
-
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -32,6 +30,7 @@ import ch.elexis.mednet.webapi.ui.handler.PatientFetcher;
 import ch.elexis.mednet.webapi.ui.navigation.NavigationState;
 import ch.elexis.mednet.webapi.ui.util.ButtonFactory;
 import ch.elexis.mednet.webapi.ui.util.CompositeEffectHandler;
+import jakarta.annotation.PostConstruct;
 
 public class MedNetMainComposite {
 

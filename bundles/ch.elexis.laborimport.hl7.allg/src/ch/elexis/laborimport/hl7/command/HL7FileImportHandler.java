@@ -8,9 +8,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.swt.widgets.Display;
 
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.laborimport.hl7.automatic.AutomaticImportService;
 
 public class HL7FileImportHandler extends AbstractHandler implements IHandler {

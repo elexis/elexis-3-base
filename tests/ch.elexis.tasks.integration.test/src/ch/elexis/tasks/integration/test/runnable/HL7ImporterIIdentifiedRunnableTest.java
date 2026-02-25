@@ -16,8 +16,8 @@ import ch.elexis.core.model.ILabOrder;
 import ch.elexis.core.model.LabOrderState;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.rcp.utils.PlatformHelper;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.tasks.integration.test.AllTests;
 import ch.elexis.tasks.integration.test.internal.TaskServiceHolder;
 

@@ -1,8 +1,9 @@
 package ch.elexis.mednet.webapi.core.service;
 
-import ch.elexis.core.documents.DocumentStore;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import ch.elexis.core.documents.DocumentStore;
 
 @Component(service = {})
 public class DocumentStoreServiceHolder {

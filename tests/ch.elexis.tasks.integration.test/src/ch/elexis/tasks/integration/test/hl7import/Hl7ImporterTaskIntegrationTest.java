@@ -24,6 +24,8 @@ import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable.ReturnParameter;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable.RunContextParameter;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.rcp.utils.PlatformHelper;
 import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IVirtualFilesystemService;
@@ -36,8 +38,6 @@ import ch.elexis.core.tasks.model.OwnerTaskNotification;
 import ch.elexis.core.tasks.model.TaskState;
 import ch.elexis.core.tasks.model.TaskTriggerType;
 import ch.elexis.core.tasks.model.TaskTriggerTypeParameter;
-import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.tasks.integration.test.AllTests;
 import ch.elexis.tasks.integration.test.internal.TaskServiceHolder;
 

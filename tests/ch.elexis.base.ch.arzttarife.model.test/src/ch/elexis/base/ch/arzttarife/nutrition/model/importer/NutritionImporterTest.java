@@ -12,8 +12,8 @@ import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.ICodeElementService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class NutritionImporterTest {
 

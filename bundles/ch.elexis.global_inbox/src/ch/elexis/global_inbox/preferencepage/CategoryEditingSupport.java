@@ -11,8 +11,8 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IDocumentStore;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class CategoryEditingSupport extends EditingSupport {
 

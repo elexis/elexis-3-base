@@ -8,9 +8,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 
 @RunWith(Suite.class)

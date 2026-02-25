@@ -16,8 +16,8 @@ import ch.elexis.base.ch.arzttarife.xml.update.XmlVersionUpdate44to45Test;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ch.BillingLaw;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingSystemService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.tarmedprefs.TarmedRequirementsTest;
 
 @RunWith(Suite.class)

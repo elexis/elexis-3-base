@@ -7,8 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ch.BillingLaw;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingSystemService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 @RunWith(Suite.class)
 @SuiteClasses({ TardocBillingTest.class, TardocGroupLimitsTest.class, AmbulantePauschalenBillingTest.class })

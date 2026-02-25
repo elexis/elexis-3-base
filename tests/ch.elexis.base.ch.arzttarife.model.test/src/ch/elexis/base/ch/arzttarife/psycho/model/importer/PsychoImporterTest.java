@@ -18,8 +18,8 @@ import org.junit.Test;
 import ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieImporterTest;
 import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.ICodeElementService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class PsychoImporterTest {
 

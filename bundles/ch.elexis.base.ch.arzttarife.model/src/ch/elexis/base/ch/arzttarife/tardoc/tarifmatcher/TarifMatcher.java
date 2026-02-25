@@ -20,7 +20,7 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
-import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.oaat_otma.PatientCase;
 import ch.oaat_otma.Service;
 import ch.oaat_otma.casemaster.CasemasterError.CasemasterErrorType;

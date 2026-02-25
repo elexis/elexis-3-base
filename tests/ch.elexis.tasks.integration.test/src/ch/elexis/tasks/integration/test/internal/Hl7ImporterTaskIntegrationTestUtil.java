@@ -22,10 +22,10 @@ import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.builder.ILabItemBuilder;
 import ch.elexis.core.model.builder.IUserBuilder;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.types.LabItemTyp;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class Hl7ImporterTaskIntegrationTestUtil {
 

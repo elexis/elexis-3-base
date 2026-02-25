@@ -17,6 +17,7 @@ package ch.framsteg.elexis.covercard.views.wizard;
 import java.util.Properties;
 
 import org.eclipse.jface.wizard.Wizard;
+
 import ch.framsteg.elexis.covercard.dao.CardInfoData;
 import ch.framsteg.elexis.covercard.dao.PatientInfoData;
 

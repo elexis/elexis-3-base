@@ -30,11 +30,11 @@ import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IDocumentLetter;
 import ch.elexis.core.model.IRecipe;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.status.ObjectStatus;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.Brief;
 import ch.elexis.data.OutputLog;
 

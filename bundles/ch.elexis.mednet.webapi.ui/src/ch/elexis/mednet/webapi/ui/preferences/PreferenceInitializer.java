@@ -6,8 +6,8 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {

@@ -73,5 +73,5 @@ public class PreferenceConstants {
 	public static final String TL_FUTURE_BG_COLOR = "agenda/terminliste/futureBgColor"; // $NON-NLS-1$
 	public static final String TL_PAST_BG_COLOR_DEFAULT = "404040"; // $NON-NLS-1$
 	public static final String TL_FUTURE_BG_COLOR_DEFAULT = "FFFFFF"; // $NON-NLS-1$
-
+	public static final String TL_USE_GLOBAL_SETTINGS = "agenda/terminliste/useGlobalSettings"; // $NON-NLS-1$
 }

@@ -112,5 +112,11 @@ public class Messages {
 	public static String UNKNOWN = ch.elexis.core.l10n.Messages.UNKNOWN;
 	public static String Core_Info = ch.elexis.core.l10n.Messages.Core_Info;
 	public static String AgendaUI_DayOverView_collisions = ch.elexis.core.l10n.Messages.AgendaUI_DayOverView_collisions;
+	public static String TagesView_newTermin = ch.elexis.core.l10n.Messages.TagesView_newTermin;
+	public static String TagesView_createNewTermin = ch.elexis.core.l10n.Messages.TagesView_createNewTermin;
+	public static String TerminListeView_PrintSelected = ch.elexis.core.l10n.Messages.TerminListeView_PrintSelected;
+	public static String TerminListeView_PrintSelectedTooltip = ch.elexis.core.l10n.Messages.TerminListeView_PrintSelectedTooltip;
+	public static String TerminListeView_PrintSeries = ch.elexis.core.l10n.Messages.TerminListeView_PrintSeries;
+	public static String TerminListeView_PrintSeriesTooltip = ch.elexis.core.l10n.Messages.TerminListeView_PrintSeriesTooltip;
 
 }

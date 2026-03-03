@@ -45,6 +45,7 @@ public class FileCommPartnerComposite extends Composite {
 	private Text txtAdditionalParam;
 	private Button btnExecutableWait;
 	private Button[] btnFileTypes = new Button[2];
+	private Text txtGuvkDefault;
 
 	public FileCommPartnerComposite(IPreferencePage preferencePage, ScrolledComposite scrolledComposite,
 			Composite editorParent, FileCommPartner fileCommPartner) {
@@ -147,6 +148,12 @@ public class FileCommPartnerComposite extends Composite {
 				}
 			}
 		});
+
+		new Label(this, SWT.NONE).setText("GuvK (8402)");
+		txtGuvkDefault = new Text(this, SWT.BORDER);
+		txtGuvkDefault.setLayoutData(gridData1Col);
+		txtGuvkDefault.setText(getValueByConfigKey(fileCommPartner.getGuvkDefault()));
+		txtGuvkDefault.setTextLimit(6);
 
 		Group groupFileTypes = new Group(this, SWT.SHADOW_IN);
 		groupFileTypes.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
@@ -304,6 +311,7 @@ public class FileCommPartnerComposite extends Composite {
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferDirectory(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferInDirectory(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferOutDirectory(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getGuvkDefault(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferUsedType(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteable(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteableWait(), null);
@@ -328,6 +336,7 @@ public class FileCommPartnerComposite extends Composite {
 					txtExchangeInDir.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferOutDirectory(),
 					txtExchangeOutDir.getText());
+			fileCommPartner.getSettings().setValue(fileCommPartner.getGuvkDefault(), txtGuvkDefault.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferUsedType(),
 					btnFileTypes[1].getSelection() ? GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND
 							: GDTConstants.GDT_FILETRANSFER_TYP_FEST);

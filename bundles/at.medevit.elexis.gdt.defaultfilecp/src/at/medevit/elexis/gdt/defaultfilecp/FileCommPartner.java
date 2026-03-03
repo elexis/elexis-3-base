@@ -24,6 +24,7 @@ public class FileCommPartner {
 	private static final String FILETRANSFER_EXECUTABLE_WAIT = "executableWait"; //$NON-NLS-1$
 	private static final String FILETRANSFER_VIEWEREXECUTABLE = "viewerexecutable"; //$NON-NLS-1$
 	private static final String FILETRANSFER_ADDITIONAL_PARAMS = "additionalParams"; //$NON-NLS-1$
+	private static final String FILETRANSFER_GUVK_DEFAULT = "guvkDefault"; //$NON-NLS-1$
 
 	public static final String CFG_GDT_FILETRANSFER_IDS = CFG_GDT + "/fileTransferTypes"; //$NON-NLS-1$
 	private static final String CFG_GDT_FILETRANSFER_GLOBAL = CFG_GDT + "fileTransferSettingsGlobal"; //$NON-NLS-1$
@@ -108,6 +109,10 @@ public class FileCommPartner {
 
 	public String getFileTransferExecuteableWait() {
 		return CFG_GDT + "/" + getId() + "/" + FILETRANSFER_EXECUTABLE_WAIT; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public String getGuvkDefault() {
+		return CFG_GDT + "/" + getId() + "/" + FILETRANSFER_GUVK_DEFAULT; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getId() {

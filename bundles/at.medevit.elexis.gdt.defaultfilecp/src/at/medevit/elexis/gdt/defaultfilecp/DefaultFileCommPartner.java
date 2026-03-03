@@ -65,17 +65,39 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 
 	@Override
 	public String[] getSupported8402values() {
-		return Feld8402Constants.enumNameToStringArray(Feld8402Constants.ALL.values());
+		String[] ret = Feld8402Constants.enumNameToStringArray(Feld8402Constants.ALL.values());
+		String defaultValue = defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getGuvkDefault());
+		if (StringUtils.isNotBlank(defaultValue)) {
+			String[] inclDefault = new String[ret.length + 1];
+			inclDefault[0] = defaultValue;
+			System.arraycopy(ret, 0, inclDefault, 1, ret.length);
+			ret = inclDefault;
+		}
+		return ret;
 	}
 
 	@Override
 	public String[] getSupported8402valuesDescription() {
-		return Feld8402Constants.enumNameToStringArrayDescription(Feld8402Constants.ALL.values());
+		String[] ret = Feld8402Constants.enumNameToStringArrayDescription(Feld8402Constants.ALL.values());
+		String defaultValue = defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getGuvkDefault());
+		if (StringUtils.isNotBlank(defaultValue)) {
+			String[] inclDefault = new String[ret.length + 1];
+			inclDefault[0] = StringUtils.EMPTY;
+			System.arraycopy(ret, 0, inclDefault, 1, ret.length);
+			ret = inclDefault;
+		}
+		return ret;
 	}
 
 	@Override
 	public String[] getSupported8402valuesDetailDescription() {
 		return null;
+	}
+
+	@Override
+	public String getDefault8402value() {
+		return StringUtils
+				.defaultString(defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getGuvkDefault()));
 	}
 
 	@Override
@@ -172,6 +194,11 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					@Override
 					public String[] getSupported8402values() {
 						return parent.getSupported8402values();
+					}
+
+					@Override
+					public String getDefault8402value() {
+						return parent.getDefault8402value();
 					}
 
 					@Override

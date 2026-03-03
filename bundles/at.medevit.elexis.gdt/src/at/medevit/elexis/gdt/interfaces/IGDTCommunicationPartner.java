@@ -12,6 +12,8 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.interfaces;
 
+import org.apache.commons.lang3.StringUtils;
+
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.SystemConstants;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht;
@@ -194,5 +196,14 @@ public interface IGDTCommunicationPartner {
 	 * @param gdtSatzNachricht
 	 */
 	default void handleOutput(GDTSatzNachricht gdtSatzNachricht) {
+	}
+
+	/**
+	 * Get the default value to use for the 8402 field.
+	 * 
+	 * @return
+	 */
+	default String getDefault8402value() {
+		return StringUtils.EMPTY;
 	}
 }

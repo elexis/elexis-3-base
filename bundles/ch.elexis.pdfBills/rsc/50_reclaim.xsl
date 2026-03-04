@@ -2119,6 +2119,25 @@
 				</fo:block>
 			</fo:table-cell>
 		</fo:table-row>
+		<xsl:for-each select="invoice:xtra_service">
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>			
+				<fo:table-cell>
+					<fo:block font-size="7px" font-family="tahoma,arial,helvetica,sans-serif">
+						<xsl:value-of select="@token"/>='<xsl:value-of select="@value"/>'
+					</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template name="reclaim_tp_summary_total">

@@ -124,6 +124,7 @@ import ch.fd.invoice500.request.TreatmentType;
 import ch.fd.invoice500.request.VatRateType;
 import ch.fd.invoice500.request.VatType;
 import ch.fd.invoice500.request.XtraDrugType;
+import ch.fd.invoice500.request.XtraServiceType;
 import ch.fd.invoice500.request.ZipType;
 import ch.fd.invoice500.request.ZsrAddressType;
 import ch.rgw.tools.Money;
@@ -824,6 +825,17 @@ public class Tarmed50Exporter {
 								serviceType.setName(serviceType.getName() + " (Substitution nicht möglich)");
 							}
 							serviceType.setXtraDrug(drugType);
+						}
+						if ("005".equals(billable.getCodeSystemCode())) {
+							List<IDiagnosisReference> diagnoses = billed.getEncounter().getDiagnoses();
+							List<IDiagnosisReference> icd10Diagnoses = diagnoses.stream()
+									.filter(d -> d.getCodeSystemName().toLowerCase().contains("icd")).toList();
+							if (!icd10Diagnoses.isEmpty()) {
+								XtraServiceType xtraServiceType = new XtraServiceType();
+								xtraServiceType.setToken("ICD10");
+								xtraServiceType.setValue(icd10Diagnoses.get(0).getCode());
+								serviceType.getXtraService().add(xtraServiceType);
+							}
 						}
 						serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
 						serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO));

@@ -61,13 +61,23 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 				@Override
 				protected void setPrice(ArtikelstammItem billable, IBilled billed) {
 					billed.setFactor(1.0);
-					billed.setNetPrice(billable.getPurchasePrice());
-					Money sellingPrice = billable.getSellingPrice();
-					if (sellingPrice.isZero()) {
-						sellingPrice = MargePreference.calculateVKP(getPurchasePrice());
+					if (isAllowanceEncounter(billed.getEncounter()) && billable.isInSLList()) {
+						billed.setNetPrice(billable.getPurchasePrice());
+						billed.setPoints(0);
+					} else {
+						billed.setNetPrice(billable.getPurchasePrice());
+						Money sellingPrice = billable.getSellingPrice();
+						if (sellingPrice.isZero()) {
+							sellingPrice = MargePreference.calculateVKP(getPurchasePrice());
+						}
+						int vkPreis = sellingPrice.getCents();
+						billed.setPoints(Math.round(vkPreis));
 					}
-					int vkPreis = sellingPrice.getCents();
-					billed.setPoints(Math.round(vkPreis));
+				}
+
+				private boolean isAllowanceEncounter(IEncounter encounter) {
+					return encounter.getBilled().stream().filter(b -> "005".equals(b.getBillable().getCodeSystemCode()))
+							.findAny().isPresent();
 				}
 
 				@Override

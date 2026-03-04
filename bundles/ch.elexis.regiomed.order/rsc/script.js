@@ -26,6 +26,11 @@ document.addEventListener('keydown', function(e) {
                 closeQtyModal();
                 return;
             }
+			var c = document.getElementById('confirmOrderModal');
+			if (c && c.style.display === 'flex') {
+			    closeConfirmModal();
+			    return;
+			}
             window.closeMainDialog();
         } catch (e) {}
     }
@@ -76,18 +81,25 @@ function triggerSearch() {
     var val = document.getElementById('searchInput').value;
     if (val.length < 3) return;
 
-    document.getElementById('loading').style.display = 'block';
+    var loading = document.getElementById('loading');
+    if (loading) loading.style.display = 'block';
+    
     document.getElementById('searchResultsBody').innerHTML = '';
     selectedSearchIndex = -1;
-    document.getElementById('btnApply').disabled = true;
+    
+    var btn = document.getElementById('btnApply');
+    if (btn) btn.disabled = true;
 
     window.location = 'regiomed:searchQuery:' + encodeURIComponent(val);
 }
 
 function fillSearchResults(htmlRows) {
-    document.getElementById('loading').style.display = 'none';
+    var loading = document.getElementById('loading');
+    if (loading) loading.style.display = 'none';
+    
     var body = document.getElementById('searchResultsBody');
     body.innerHTML = htmlRows;
+   
     var headerStock = document.getElementById('headerStock');
     var firstRow = body.querySelector('tr.search-row'); 
     if (headerStock) {
@@ -97,21 +109,36 @@ function fillSearchResults(htmlRows) {
             headerStock.style.display = 'none';
         }
     }
-
+    var headerImage = document.getElementById('headerImage');
     var metaRow = document.getElementById('meta-stocks');
+    
     if (metaRow) {
+        var hasImages = metaRow.getAttribute('data-has-images') === 'true';
+        if (headerImage) {
+            headerImage.style.display = hasImages ? 'table-cell' : 'none';
+        }
         var stocksStr = metaRow.getAttribute('data-stocks');
         var lastFilter = metaRow.getAttribute('data-last-filter');
         if (lastFilter) {
             currentStockFilter = lastFilter;
         }
-        if (stocksStr) {
+        if (stocksStr && stocksStr.length > 0) {
             renderStockFilters(stocksStr.split(','));
             filterRows(currentStockFilter, false);
+        } else {
+             var cont = document.getElementById('stockFilterContainer');
+             if(cont) cont.style.display = 'none';
         }
     } else {
         document.getElementById('stockFilterContainer').style.display = 'none';
+        if (headerImage) headerImage.style.display = 'none';
     }
+}
+
+function openExternalUrl(event, url) {
+    event.stopPropagation();
+    event.preventDefault();
+    window.location = 'regiomed:openUrl:' + encodeURIComponent(url);
 }
 
 function renderStockFilters(stocks) {
@@ -300,4 +327,36 @@ function showToast(msg) {
     setTimeout(function() {
         t.className = t.className.replace('show', '');
     }, 3000);
+}
+
+function triggerViewSearch() {
+    var val = document.getElementById('searchInput').value;
+    if (val.length < 3) return;
+
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('searchResultsBody').innerHTML = '';
+    window.location = 'regiomed:searchQuery:' + encodeURIComponent(val);
+}
+
+function showConfirmModal(title, message) {
+    document.getElementById('confirmModalTitle').innerText = title;
+    document.getElementById('confirmModalBody').innerText = message;
+    document.getElementById('confirmOrderModal').style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmOrderModal').style.display = 'none';
+}
+
+function proceedWithOrder() {
+    closeConfirmModal();
+    window.location = 'regiomed:confirmOrder';
+}
+
+function handleDragStart(e, index) {
+    e.dataTransfer.effectAllowed = "copy";
+    e.dataTransfer.setData("text/plain", "REGIOMED_ITEM:" + index);
+}
+function applySearchResult(index) {
+    window.location = 'regiomed:selectResult:' + index;
 }

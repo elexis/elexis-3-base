@@ -122,6 +122,18 @@ public class RegiomedAlternativesResponse {
 		@SerializedName("GalAvailMessage")
 		private String availMessage;
 
+		@SerializedName("AvailableInventory")
+		private int availableInventory;
+
+		@SerializedName("Images")
+		private String images;
+
+		@SerializedName("ImageFront")
+		private String imageFront;
+
+		@SerializedName("Compendium")
+		private String compendium;
+
 		public String getAltType() {
 			return altType;
 		}
@@ -184,6 +196,39 @@ public class RegiomedAlternativesResponse {
 
 		public void setAvailMessage(String availMessage) {
 			this.availMessage = availMessage;
+		}
+
+		// Neue Getter/Setter
+		public int getAvailableInventory() {
+			return availableInventory;
+		}
+
+		public void setAvailableInventory(int availableInventory) {
+			this.availableInventory = availableInventory;
+		}
+
+		public String getImages() {
+			return images;
+		}
+
+		public void setImages(String images) {
+			this.images = images;
+		}
+
+		public String getImageFront() {
+			return imageFront;
+		}
+
+		public void setImageFront(String imageFront) {
+			this.imageFront = imageFront;
+		}
+
+		public String getCompendium() {
+			return compendium;
+		}
+
+		public void setCompendium(String compendium) {
+			this.compendium = compendium;
 		}
 	}
 }

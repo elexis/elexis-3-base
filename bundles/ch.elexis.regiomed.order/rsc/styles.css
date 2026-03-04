@@ -224,7 +224,12 @@ body, table, th, td, input, select, button, textarea {
  .modal-large {
 	 width: 700px;
 	 height: 700px;
-	 max-height: 90vh;
+	 resize: both;
+	 overflow: auto;
+	 max-width: 98vw;
+	 max-height: 98vh;
+	 min-width: 500px;
+	 min-height: 400px;
 }
  .modal-header {
 	 font-size: 16px;
@@ -464,6 +469,36 @@ body, table, th, td, input, select, button, textarea {
 }
  tr.search-row:hover {
 	 filter: brightness(0.96);
+}
+.product-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 2px;
+    background: #fff;
+    object-fit: contain;
+}
+.img-cell {
+    text-align: center;
+    vertical-align: middle;
+    width: 60px;
+}
+.compendium-link {
+    font-size: 11px;
+    color: #005b96;
+    text-decoration: none;
+    background-color: #e2f0fb;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+}
+.compendium-link:hover {
+    background-color: #cce5ff;
+    text-decoration: underline;
+}
+#headerImage { 
+    display: none !important; 
 }
  @keyframes fadein {
 	 from {

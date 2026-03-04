@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -29,12 +31,16 @@ import org.slf4j.LoggerFactory;
 import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IStock;
 import ch.elexis.core.model.IStockEntry;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IStockService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.regiomed.order.client.RegiomedOrderClient;
 import ch.elexis.regiomed.order.config.RegiomedConfig;
@@ -44,6 +50,7 @@ import ch.elexis.regiomed.order.model.RegiomedOrderResponse.AlternativeResult;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse.ArticleResult;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse.ProductResult;
+import ch.elexis.regiomed.order.preferences.RegiomedConstants;
 import ch.elexis.regiomed.order.service.RegiomedLocalArticleService;
 import ch.elexis.regiomed.order.service.RegiomedServerService;
 
@@ -85,7 +92,8 @@ public class RegiomedCheckDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Messages.RegiomedCheckDialog_Title);
+		String orderName = determineOrderName();
+		newShell.setText(Messages.RegiomedCheckDialog_Title + orderName);
 		newShell.setImage(Images.IMG_LOGO.getImage());
 	}
 
@@ -112,7 +120,7 @@ public class RegiomedCheckDialog extends Dialog {
 
 			@Override
 			public void changing(LocationEvent event) {
-				if (event.location != null && event.location.startsWith("regiomed:")) {
+				if (event.location != null && event.location.startsWith(RegiomedConstants.CONST_REGIOMED_URL_PREFIX)) {
 					handleBrowserAction(event.location);
 					event.doit = false;
 				}
@@ -169,8 +177,11 @@ public class RegiomedCheckDialog extends Dialog {
 			break;
 		case "saveFilter":
 			if (parts.length > 2) {
-				ConfigServiceHolder.get().setActiveUserContact("ch.elexis.regiomed.stockFilter", parts[2]);
+				ConfigServiceHolder.get().setActiveUserContact(RegiomedConstants.CONST_STOCK_FILTER_KEY, parts[2]);
 			}
+			break;
+		case "confirmOrder":
+			Display.getDefault().asyncExec(() -> executeSuperOkPressed());
 			break;
 		default:
 			log.warn("Unknown Regiomed action: {}", action);
@@ -278,10 +289,12 @@ public class RegiomedCheckDialog extends Dialog {
 				} else {
 					currentSearchResults = Collections.emptyList();
 				}
-				String lastFilter = ConfigServiceHolder.get().getActiveUserContact("ch.elexis.regiomed.stockFilter",
-						"ALL");
+				String lastFilter = ConfigServiceHolder.get()
+						.getActiveUserContact(RegiomedConstants.CONST_STOCK_FILTER_KEY, "ALL");
+
 				String rowsHtml = RegiomedCheckTemplate.generateSearchResultRows(currentSearchResults, localStockMap,
-						allStocks, lastFilter);
+						allStocks, lastFilter, false);
+
 				String safeHtml = rowsHtml.replace("'", "\\'").replace("\n", "");
 				browser.execute("fillSearchResults('" + safeHtml + "');");
 
@@ -334,16 +347,18 @@ public class RegiomedCheckDialog extends Dialog {
 
 	private void refreshBrowser() {
 		if (browser != null && !browser.isDisposed()) {
+			String orderName = determineOrderName();
+
 			String html = RegiomedCheckTemplate.generateHtml(controller.getResponse(), searchAvailable,
 					controller.getRemovedIdentifiers(), controller.getReplacements(), controller.getReplacementNames(),
-					controller.getReplacementInventory(), controller.getForcedItems());
+					controller.getReplacementInventory(), controller.getForcedItems(), orderName);
 			browser.setText(html);
 		}
 	}
 
 	private void showJsError(String prodName, String reason) {
 		String msg = Messages.RegiomedCheckDialog_ItemRejected + "\n" + prodName + "\n\n"
-				+ Messages.RegiomedCheckDialog_Reason + " " + reason;
+				+ Messages.RegiomedCheckDialog_Reason + StringUtils.SPACE + reason;
 		String jsCall = "showErrorModal('" + escapeJs(Messages.RegiomedCheckDialog_NotOrderable) + "', '"
 				+ escapeJs(msg).replace("\n", "\\n") + "'); unlockLastRow();";
 		if (browser != null && !browser.isDisposed()) {
@@ -352,7 +367,7 @@ public class RegiomedCheckDialog extends Dialog {
 	}
 
 	private String escapeJs(String text) {
-		return text == null ? "" : text.replace("'", "\\'").replace("\"", "\\\"");
+		return text == null ? StringUtils.EMPTY : text.replace("'", "\\'").replace("\"", "\\\"");
 	}
 
 	public List<ArticleResult> getDeletedArticles() {
@@ -361,7 +376,7 @@ public class RegiomedCheckDialog extends Dialog {
 		return controller.getResponse().getArticles().stream()
 				.filter(item -> controller.getRemovedIdentifiers()
 						.contains(controller.makeKey(item.getPharmaCode(), item.getEanID())))
-				.collect(java.util.stream.Collectors.toList());
+				.collect(Collectors.toList());
 	}
 
 	public Map<String, String> getReplacements() {
@@ -377,6 +392,65 @@ public class RegiomedCheckDialog extends Dialog {
 		okButton = createButton(parent, IDialogConstants.OK_ID, Messages.RegiomedCheckDialog_OrderBinding, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, Messages.RegiomedCheckDialog_Cancel, false);
 		updateStateAndUI();
+	}
+
+	private String determineOrderName() {
+		String orderName = StringUtils.EMPTY;
+
+		IMandator activeMandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
+
+		if (activeMandator != null) {
+			String mandantId = activeMandator.getId();
+
+			boolean hasOwnLogin = ConfigServiceHolder.get().get(mandantId + RegiomedConstants.SUFFIX_OVERRIDE_GLOBAL,
+					false);
+
+			if (hasOwnLogin) {
+				IContact contact = CoreModelServiceHolder.get().load(mandantId, IContact.class).orElse(null);
+
+				if (contact != null) {
+					String vorname = StringUtils.trimToEmpty(contact.getDescription2());
+					String nachname = StringUtils.trimToEmpty(contact.getDescription1());
+
+					if (!vorname.isEmpty() || !nachname.isEmpty()) {
+						orderName = StringUtils.SPACE + (vorname + StringUtils.SPACE + nachname).trim();
+					} else {
+						orderName = contact.getDescription1();
+					}
+				}
+			}
+		}
+
+		return orderName;
+	}
+
+	private void executeSuperOkPressed() {
+		super.okPressed();
+	}
+
+	@Override
+	protected void okPressed() {
+		IMandator activeMandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
+		boolean isMandantSpecific = false;
+
+		if (activeMandator != null) {
+			isMandantSpecific = ConfigServiceHolder.get()
+					.get(activeMandator.getId() + RegiomedConstants.SUFFIX_OVERRIDE_GLOBAL, false);
+		}
+
+		if (isMandantSpecific) {
+			String orderName = determineOrderName();
+			String title = Messages.RegiomedCheckDialog_ConfirmOrderTitle;
+			String msg = Messages.RegiomedCheckDialog_ConfirmOrderMsgPrefix + orderName
+					+ Messages.RegiomedCheckDialog_ConfirmOrderMsgSuffix;
+			String jsCall = "showConfirmModal('" + escapeJs(title) + "', '" + escapeJs(msg).replace("\n", "\\n")
+					+ "');";
+			if (browser != null && !browser.isDisposed()) {
+				browser.execute(jsCall);
+			}
+			return;
+		}
+		super.okPressed();
 	}
 
 	@Override

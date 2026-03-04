@@ -38,6 +38,18 @@
             </div>
          </div>
       </div>
+      <div id="confirmOrderModal" class="modal-overlay" style="z-index: 3000;">
+         <div class="modal-content">
+            <div class="modal-header" style="color:#005b96;">
+               <span id="confirmModalTitle"></span>
+            </div>
+            <div id="confirmModalBody" class="modal-body" style="white-space: pre-wrap; margin-bottom: 15px; line-height: 1.5;"></div>
+            <div class="modal-footer">
+               <button class="btn-modal btn-cancel" onclick="closeConfirmModal()">${messages.cancel?no_esc}</button>
+               <button class="btn-modal btn-confirm" onclick="proceedWithOrder()">Verbindlich bestellen</button>
+            </div>
+         </div>
+      </div>
       <div id="searchModal" class="modal-overlay" style="z-index: 2000;">
          <div class="modal-content modal-large">
             <div class="modal-header">${messages.searchAltTitle?no_esc}</div>
@@ -76,7 +88,7 @@
                <#if logoBase64??>
                <img src='${logoBase64}' class='logo-img' alt='Regiomed Logo'>
                </#if>
-               <div class='logo-text'>${messages.orderTitle?no_esc}</div>
+               <div class='logo-text'>${dynamicOrderTitle?no_esc}</div>
             </div>
             <div>${currentDate}</div>
          </div>

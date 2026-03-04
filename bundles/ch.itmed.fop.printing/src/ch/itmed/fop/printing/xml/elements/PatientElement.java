@@ -116,6 +116,10 @@ public class PatientElement {
 		}
 		p.appendChild(c);
 
+		c = doc.createElement("AHV"); //$NON-NLS-1$
+		c.appendChild(doc.createTextNode(pd.getAHV()));
+		p.appendChild(c);
+
 		c = doc.createElement("OrderNumber"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getOrderNumber()));
 		p.appendChild(c);

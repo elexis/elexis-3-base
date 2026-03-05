@@ -20,6 +20,7 @@ import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation.LimitationUnit;
 import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedUtil;
+import ch.elexis.base.ch.arzttarife.tarmed.prefs.RechnungsPrefs;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillableOptifier;
@@ -164,9 +165,25 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				CoreModelServiceHolder.get().save(encounter);
 				CoreModelServiceHolder.get().save(matcherResult.get());
 			}
+			if (bOptify) {
+				additions(code, encounter, save);
+			}
 		}
 
 		return matcherResult;
+	}
+
+	private void additions(TardocLeistung code, IEncounter encounter, boolean save) {
+		if (TarmedUtil.getConfigValue(getClass(), IMandator.class, RechnungsPrefs.PREF_ADDCHILDREN, false)) {
+			Optional<IBilled> alreadyPresent = encounter.getBilled().stream()
+					.filter(b -> "CG.15.0010".equals(b.getCode())).findFirst();
+			if (alreadyPresent.isEmpty()
+					&& ("AA.00.0010".equals(code.getCode()) || "CA.00.0010".equals(code.getCode()))) {
+				if (encounter.getPatient().getAgeInYears() < 12) {
+					add(TardocLeistung.getFromCode("CG.15.0010", encounter.getDate(), null), encounter, save);
+				}
+			}
+		}
 	}
 
 	private void addKumulationBezug(IBilled newBilled, IEncounter encounter) {

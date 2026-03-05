@@ -2119,6 +2119,28 @@
 				</fo:block>
 			</fo:table-cell>
 		</fo:table-row>
+		<xsl:if test="string-length(@service_attributes) > 0">
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="7px" white-space-treatment="ignore"
+						font-family="tahoma,arial,helvetica,sans-serif">
+						<xsl:call-template name="ServiceAttributes">
+							<xsl:with-param name="Attributes" select="@service_attributes" />
+						</xsl:call-template>
+					</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</xsl:if>
 		<xsl:for-each select="invoice:xtra_service">
 			<fo:table-row>
 				<fo:table-cell>
@@ -2130,7 +2152,7 @@
 					<fo:block text-align="right" font-size="7px"
 						font-family="tahoma,arial,helvetica,sans-serif">
 					</fo:block>
-				</fo:table-cell>			
+				</fo:table-cell>
 				<fo:table-cell>
 					<fo:block font-size="7px" font-family="tahoma,arial,helvetica,sans-serif">
 						<xsl:value-of select="@token"/>='<xsl:value-of select="@value"/>'
@@ -3115,6 +3137,18 @@
 				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="ServiceAttributes">
+		<xsl:param name="Attributes" />
+		SA='
+		<xsl:if test="floor($Attributes div 1) mod 2 = 1">
+			Code207
+		</xsl:if>
+		<xsl:if test="floor($Attributes div 2) mod 2 = 1">
+			franchiseFree
+		</xsl:if>
+		'
 	</xsl:template>
 
 	<xsl:template name="FormatDate">

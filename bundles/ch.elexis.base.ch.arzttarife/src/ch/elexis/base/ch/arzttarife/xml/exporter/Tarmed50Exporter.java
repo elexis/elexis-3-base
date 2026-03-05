@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -711,6 +712,8 @@ public class Tarmed50Exporter {
 
 			boolean bRFE = false; // RFE already encoded
 
+			List<IBilled> franchiseFree = getFranchiseFree(encounterBilled);
+
 			try {
 				for (IBilled billed : encounterBilled) {
 					IBillable billable = billed.getBillable();
@@ -794,6 +797,11 @@ public class Tarmed50Exporter {
 
 						sectionCode.ifPresent(c -> serviceExType.setSectionCode(c));
 
+						if (!franchiseFree.isEmpty() && franchiseFree.contains(billed)) {
+							// Bit 2 (0x000002) franchiseFree
+							serviceExType.setServiceAttributes(serviceExType.getServiceAttributes() | 0x000002);
+						}
+
 						servicesType.getServiceExOrService().add(serviceExType);
 					} else { // any service
 						ServiceType serviceType = new ServiceType();
@@ -823,6 +831,8 @@ public class Tarmed50Exporter {
 							XtraDrugType drugType = new XtraDrugType();
 							if ("true".equals(billed.getExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE))) {
 								serviceType.setName(serviceType.getName() + " (Substitution nicht möglich)");
+								// set Bit 1 (0x000001) Code207
+								serviceType.setServiceAttributes(serviceType.getServiceAttributes() | 0x000001);
 							}
 							serviceType.setXtraDrug(drugType);
 						}
@@ -869,6 +879,11 @@ public class Tarmed50Exporter {
 							sectionCode.ifPresent(c -> serviceType.setSectionCode(c));
 						}
 
+						if (!franchiseFree.isEmpty() && franchiseFree.contains(billed)) {
+							// Bit 2 (0x000002) franchiseFree
+							serviceType.setServiceAttributes(serviceType.getServiceAttributes() | 0x000002);
+						}
+
 						servicesType.getServiceExOrService().add(serviceType);
 					}
 				}
@@ -906,6 +921,22 @@ public class Tarmed50Exporter {
 		}
 
 		return servicesType;
+	}
+
+	private List<IBilled> getFranchiseFree(List<IBilled> encounterBilled) {
+		if (encounterBilled.stream().filter(b -> "AA.00.0090".equals(b.getCode())).findAny().isPresent()) {
+			List<IBilled> ret = new ArrayList<IBilled>();
+			for (IBilled billed : encounterBilled) {
+				if ("AA.00.0090".equals(billed.getCode())) {
+					ret.add(billed);
+				}
+				if (billed.getBillable() instanceof IArticle && ((IArticle) billed.getBillable()).isVaccination()) {
+					ret.add(billed);
+				}
+			}
+			return ret;
+		}
+		return Collections.emptyList();
 	}
 
 	private Optional<String> getSectionCode(IMandator mandator) {

@@ -42,5 +42,14 @@ public class RegiomedProductLookupResponse {
 
 		@SerializedName("AvailableInventory")
 		public String availableInventory;
+
+		@SerializedName("Images")
+		public String images;
+
+		@SerializedName("ImageFront")
+		public String imageFront;
+
+		@SerializedName("Compendium")
+		public String compendium;
 	}
 }

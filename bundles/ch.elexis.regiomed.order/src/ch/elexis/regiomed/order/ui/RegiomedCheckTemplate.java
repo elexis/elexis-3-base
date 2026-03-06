@@ -54,14 +54,14 @@ public class RegiomedCheckTemplate {
 
 	public static String generateHtml(RegiomedOrderResponse response, boolean isSearchAvailable, Set<String> removed,
 			Map<String, String> replacements, Map<String, String> replacementNames,
-			Map<String, Integer> replacementInventory, Set<String> forcedItems) {
+			Map<String, Integer> replacementInventory, Set<String> forcedItems, String orderName) {
 		try {
 			RenderingContext context = createContext(response, isSearchAvailable, removed, replacements,
 					replacementNames, replacementInventory, forcedItems);
 
 			Map<String, Object> root = new HashMap<>();
 			root.put("cssContent", loadResourceFile("/rsc/styles.css")); //$NON-NLS-1$ //$NON-NLS-2$
-
+			root.put("dynamicOrderTitle", Messages.RegiomedCheckTemplate_OrderTitle + orderName);
 			List<ArticleResult> allArticles = response.getArticles() != null ? response.getArticles()
 					: Collections.emptyList();
 
@@ -109,11 +109,13 @@ public class RegiomedCheckTemplate {
 	}
 
 	public static String generateSearchResultRows(List<ProductResult> products,
-			Map<Integer, Map<String, Integer>> localStockMap, List<IStock> allStocks, String lastFilter) {
+			Map<Integer, Map<String, Integer>> localStockMap, List<IStock> allStocks, String lastFilter,
+			boolean enableDragAndDrop) {
 		try {
 			Map<String, Object> root = new HashMap<>();
 
 			root.put("lastFilter", lastFilter);
+			root.put("enableDragAndDrop", enableDragAndDrop);
 
 			List<String> availableElexisStocks = new ArrayList<>();
 			if (allStocks != null) {
@@ -122,11 +124,13 @@ public class RegiomedCheckTemplate {
 			root.put("availableElexisStocks", availableElexisStocks);
 
 			if (products == null || products.isEmpty()) {
-				root.put("products", Collections.emptyList()); //$NON-NLS-1$
-				root.put("noResultsMsg", Messages.RegiomedCheckTemplate_NoResults); //$NON-NLS-1$
+				root.put("products", Collections.emptyList());
+				root.put("hasImageColumn", false);
+				root.put("noResultsMsg", Messages.RegiomedCheckTemplate_NoResults);
 			} else {
 				List<SearchProductViewModel> viewModels = new ArrayList<>();
 				boolean anyHasStock = false;
+				boolean anyHasImage = false;
 
 				for (int i = 0; i < products.size(); i++) {
 					SearchProductViewModel vm = new SearchProductViewModel(products.get(i), i);
@@ -136,30 +140,35 @@ public class RegiomedCheckTemplate {
 						stocks.forEach(vm::addLocalStock);
 					}
 
+					if (vm.hasImage()) {
+						anyHasImage = true;
+					}
+
 					viewModels.add(vm);
 					if (vm.hasStock() || vm.getTotalLocalStock() > 0) {
 						anyHasStock = true;
 					}
 				}
-				root.put("products", viewModels); //$NON-NLS-1$
-				root.put("hasStockColumn", anyHasStock); //$NON-NLS-1$
-				root.put("noResultsMsg", Messages.RegiomedCheckTemplate_NoResults); //$NON-NLS-1$
+				root.put("products", viewModels);
+				root.put("hasStockColumn", anyHasStock);
+				root.put("hasImageColumn", anyHasImage);
+				root.put("noResultsMsg", Messages.RegiomedCheckTemplate_NoResults);
 			}
 
-			Template temp = cfg.getTemplate("regiomed_search_rows_html.ftlh"); //$NON-NLS-1$
+			Template temp = cfg.getTemplate("regiomed_search_rows_html.ftlh");
 			StringWriter out = new StringWriter();
 			temp.process(root, out);
-			return out.toString().replace("\r", StringUtils.EMPTY).replace("\n", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-3$
+			return out.toString().replace("\r", StringUtils.EMPTY).replace("\n", StringUtils.EMPTY);
 
 		} catch (Exception e) {
-			log.error("Error generating search result rows template", e); //$NON-NLS-1$
-			return "<tr><td colspan='5' style='color:red'>Error: " + e.getMessage().replace("'", StringUtils.EMPTY) //$NON-NLS-1$ //$NON-NLS-2$
-					+ "</td></tr>"; // $NON-NLS-4$
+			log.error("Error generating search result rows template", e);
+			return "<tr><td colspan='6' style='color:red'>Error: " + e.getMessage().replace("'", StringUtils.EMPTY)
+					+ "</td></tr>";
 		}
 	}
 
 	public static String generateSearchResultRows(List<ProductResult> products) {
-		return generateSearchResultRows(products, null, null, "ALL");
+		return generateSearchResultRows(products, null, null, "ALL", false);
 	}
 
 	private static String loadResourceFile(String path) {
@@ -242,6 +251,21 @@ public class RegiomedCheckTemplate {
 			return null;
 		}
 	}
+
+	public static String generateHtmlForSearch() {
+		try {
+			Map<String, Object> root = new HashMap<>();
+			root.put("cssContent", loadResourceFile("/rsc/styles.css"));
+			root.put("messages", loadMessagesMap());
+			root.put("logoBase64", loadLogoBase64("rsc/logo/regiomed_logo.png"));
+			Template temp = cfg.getTemplate("regiomed_search_view.ftlh");
+			StringWriter out = new StringWriter();
+			temp.process(root, out);
+			return out.toString();
+		} catch (Exception e) {
+			return "<html><body>Error: " + e.getMessage() + "</body></html>";
+		}
+		}
 
 	private static Map<String, String> loadMessagesMap() {
 		Map<String, String> m = new HashMap<>();

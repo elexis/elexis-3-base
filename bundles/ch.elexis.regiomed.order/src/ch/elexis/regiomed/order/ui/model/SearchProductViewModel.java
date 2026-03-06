@@ -51,6 +51,25 @@ public class SearchProductViewModel {
 		return StringUtils.isNotBlank(product.availableInventory);
 	}
 
+	public String getImageUrl() {
+		if (StringUtils.isNotBlank(product.imageFront)) {
+			return product.imageFront;
+		}
+		return product.images;
+	}
+
+	public boolean hasImage() {
+		return StringUtils.isNotBlank(product.imageFront) || StringUtils.isNotBlank(product.images);
+	}
+
+	public String getCompendiumUrl() {
+		return product.compendium;
+	}
+
+	public boolean hasCompendium() {
+		return StringUtils.isNotBlank(product.compendium);
+	}
+
 	public void addLocalStock(String stockCode, int quantity) {
 		localStocks.put(stockCode, quantity);
 	}
@@ -77,7 +96,7 @@ public class SearchProductViewModel {
 
 	public String getRowColorClass() {
 		if (localStocks.isEmpty()) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		if (localStocks.size() > 1) {
 			return "stock-row-mixed";
@@ -89,7 +108,7 @@ public class SearchProductViewModel {
 
 	private String escapeHtml(String text) {
 		if (StringUtils.isBlank(text))
-			return "";
+			return StringUtils.EMPTY;
 		return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
 	}
 
@@ -106,7 +125,7 @@ public class SearchProductViewModel {
 
 	public String getRowStyle() {
 		if (localStocks.isEmpty()) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		if (localStocks.size() > 1) {
 			return "background-color: #fffdf0; border-left: 4px solid #e0c060;";

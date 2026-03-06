@@ -39,7 +39,10 @@ public class Messages {
 	public static String RegiomedPreferencePage_InvalidMailTitle = ch.elexis.core.l10n.Messages.RegiomedPreferencePage_InvalidMailTitle;
 	public static String RegiomedPreferencePage_EnterMailOrDisable = ch.elexis.core.l10n.Messages.RegiomedPreferencePage_EnterMailOrDisable;
 	public static String RegiomedPreferencePage_InvalidMailMessage = ch.elexis.core.l10n.Messages.RegiomedPreferencePage_InvalidMailMessage;
-
+	public static String RegiomedPreferencePage_EditSettingsFor = ch.elexis.core.l10n.Messages.RegiomedPreferencePage_EditSettingsFor;
+	public static String RegiomedPreferencePage_OverrideGlobal = ch.elexis.core.l10n.Messages.RegiomedPreferencePage_OverrideGlobal;
+	public static String RegiomedPreferencePage_GlobalSettings = ch.elexis.core.l10n.Messages.RegiomedPreferencePage_GlobalSettings;
+	public static String RegiomedPreferencePage_MandatorPrefix = ch.elexis.core.l10n.Messages.RegiomedPreferencePage_MandatorPrefix;
 	public static String RegiomedCheckDialog_Title = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_Title;
 	public static String RegiomedCheckDialog_OrderBinding = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_OrderBinding;
 	public static String RegiomedCheckDialog_Cancel = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_Cancel;
@@ -74,6 +77,9 @@ public class Messages {
 	public static String RegiomedCheckDialog_ItemRejected = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_ItemRejected;
 	public static String RegiomedCheckDialog_Reason = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_Reason;
 	public static String RegiomedCheckDialog_NotOrderable = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_NotOrderable;
+	public static String RegiomedCheckDialog_ConfirmOrderTitle = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_ConfirmOrderTitle;
+	public static String RegiomedCheckDialog_ConfirmOrderMsgPrefix = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_ConfirmOrderMsgPrefix;
+	public static String RegiomedCheckDialog_ConfirmOrderMsgSuffix = ch.elexis.core.l10n.Messages.RegiomedCheckDialog_ConfirmOrderMsgSuffix;
 	public static String RegiomedCheckTemplate_SuccessApplied = ch.elexis.core.l10n.Messages.RegiomedCheckTemplate_SuccessApplied;
 	public static String RegiomedCheckTemplate_AllChecksSuccess = ch.elexis.core.l10n.Messages.RegiomedCheckTemplate_AllChecksSuccess;
 	public static String RegiomedCheckTemplate_NoResults = ch.elexis.core.l10n.Messages.RegiomedCheckTemplate_NoResults;
@@ -103,5 +109,19 @@ public class Messages {
 	public static String Core_Reset = ch.elexis.core.l10n.Messages.Core_Reset;
 	public static String RegiomedCheckTemplate_CorrectedItems = ch.elexis.core.l10n.Messages.RegiomedCheckTemplate_CorrectedItems;
 	public static String RegiomedCheckTemplate_ColLager = ch.elexis.core.l10n.Messages.Core_Stock;
+	public static String RegiomedSearchView_CartLabel = ch.elexis.core.l10n.Messages.RegiomedSearchView_CartLabel;
+	public static String RegiomedSearchView_CreateOrderBtn = ch.elexis.core.l10n.Messages.RegiomedSearchView_CreateOrderBtn;
+	public static String RegiomedSearchView_ColProductName = ch.elexis.core.l10n.Messages.RegiomedSearchView_ColProductName;
+	public static String RegiomedSearchView_ColQuantity = ch.elexis.core.l10n.Messages.RegiomedSearchView_ColQuantity;
+	public static String RegiomedSearchView_ColLocalStock = ch.elexis.core.l10n.Messages.RegiomedSearchView_ColLocalStock;
+	public static String RegiomedSearchView_ColRegioStock = ch.elexis.core.l10n.Messages.RegiomedSearchView_ColRegioStock;
+	public static String RegiomedSearchView_ColEan = ch.elexis.core.l10n.Messages.RegiomedSearchView_ColEan;
+	public static String RegiomedSearchView_ColPrice = ch.elexis.core.l10n.Messages.RegiomedSearchView_ColPrice;
+	public static String RegiomedSearchView_NotFoundTitle = ch.elexis.core.l10n.Messages.RegiomedSearchView_NotFoundTitle;
+	public static String RegiomedSearchView_NotFoundMessage = ch.elexis.core.l10n.Messages.RegiomedSearchView_NotFoundMessage;
+	public static String RegiomedSearchView_OrderPrefix = ch.elexis.core.l10n.Messages.RegiomedSearchView_OrderPrefix;
+	public static String RegiomedSearchView_NewOrderTitle = ch.elexis.core.l10n.Messages.RegiomedSearchView_NewOrderTitle;
+	public static String RegiomedSearchView_NewOrderMessage = ch.elexis.core.l10n.Messages.RegiomedSearchView_NewOrderMessage;
+
 
 }

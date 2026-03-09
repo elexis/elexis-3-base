@@ -24,9 +24,9 @@ import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable.ReturnParameter;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable.RunContextParameter;
+import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.rcp.utils.PlatformHelper;
-import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
@@ -201,7 +201,7 @@ public class Hl7ImporterTaskIntegrationTest {
 		assertNotNull(runnable);
 
 		ITaskDescriptor taskDescriptor = TaskServiceHolder.get().createTaskDescriptor(runnable);
-		taskDescriptor.setOwner(activeUser);
+		taskDescriptor.setOwner(activeUser.getId());
 		taskDescriptor.setTriggerType(TaskTriggerType.SYSTEM_EVENT);
 		taskDescriptor.setTriggerParameter("topic", ElexisEventTopics.PERSISTENCE_EVENT_CREATE);
 		taskDescriptor.setTriggerParameter(ElexisEventTopics.PROPKEY_CLASS, "ch.elexis.data.LabResult");
@@ -217,7 +217,7 @@ public class Hl7ImporterTaskIntegrationTest {
 		assertNotNull(hl7ImporterRunnable);
 
 		ITaskDescriptor hl7ImporterTaskDescriptor = TaskServiceHolder.get().createTaskDescriptor(hl7ImporterRunnable);
-		hl7ImporterTaskDescriptor.setOwner(activeUser);
+		hl7ImporterTaskDescriptor.setOwner(activeUser.getId());
 		hl7ImporterTaskDescriptor.setSingleton(true);
 		hl7ImporterTaskDescriptor.setTriggerType(TaskTriggerType.FILESYSTEM_CHANGE);
 		hl7ImporterTaskDescriptor.setTriggerParameter(RunContextParameter.STRING_URL, url);

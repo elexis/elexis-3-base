@@ -63,7 +63,6 @@ import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.IOrderEntry;
 import ch.elexis.core.model.IStock;
 import ch.elexis.core.model.IStockEntry;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IOrderService;
 import ch.elexis.core.services.IStockService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -71,6 +70,7 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StockServiceHolder;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.regiomed.order.messages.Messages;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse.ProductResult;
@@ -477,14 +477,12 @@ public class RegiomedSearchView extends ViewPart {
 				newOrder.setTimestamp(LocalDateTime.now());
 				newOrder.setName(orderName);
 				CoreModelServiceHolder.get().save(newOrder);
-				orderService.getHistoryService().logCreateOrder(newOrder);
 				String mandatorId = ContextServiceHolder.get().getActiveMandator().map(IMandator::getId).orElse(null);
 				IStock stock = StockServiceHolder.get().getMandatorDefaultStock(mandatorId);
 				for (Map.Entry<IArticle, Integer> entrySet : articlesToOrder.entrySet()) {
 					IArticle article = entrySet.getKey();
 					int qty = entrySet.getValue();
 					IOrderEntry entry = newOrder.addEntry(article, stock, null, qty);
-					orderService.getHistoryService().logChangedAmount(newOrder, entry, 0, qty);
 					CoreModelServiceHolder.get().save(entry);
 				}
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IArticle.class);

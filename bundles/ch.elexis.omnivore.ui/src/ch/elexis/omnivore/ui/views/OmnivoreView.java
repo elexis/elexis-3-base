@@ -113,11 +113,11 @@ import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.omnivore.data.AutomaticBilling;
 import ch.elexis.omnivore.data.Utils;
 import ch.elexis.omnivore.model.IDocumentHandle;
-import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.util.UiUtils;
+import ch.elexis.omnivore.util.CategoryUtil;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 

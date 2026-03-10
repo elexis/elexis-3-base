@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.omnivore.model.util.Utils;
+import ch.elexis.omnivore.util.Utils;
 
 public class Preferences {
 

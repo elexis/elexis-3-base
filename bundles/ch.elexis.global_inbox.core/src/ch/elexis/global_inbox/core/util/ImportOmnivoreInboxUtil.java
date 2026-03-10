@@ -6,15 +6,15 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.MimeType;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class ImportOmnivoreInboxUtil {
 
@@ -30,7 +30,8 @@ public class ImportOmnivoreInboxUtil {
 	 * @return the document id if import was successful, else <code>null</code>
 	 */
 	public @Nullable String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName) {
-		INamedQuery<IPatient> namedQuery = CoreModelServiceHolder.get().getNamedQuery(IPatient.class, "code");
+		INamedQuery<IPatient> namedQuery = PortableServiceLoader.getCoreModelService().getNamedQuery(IPatient.class,
+				"code");
 		Optional<IPatient> loaded = namedQuery
 				.executeWithParametersSingleResult(namedQuery.getParameterMap("code", patientNo));
 		if (loaded.isPresent()) {
@@ -83,8 +84,8 @@ public class ImportOmnivoreInboxUtil {
 
 	public static String getDirectory(String defaultValue, String deviceName) {
 		try {
-			String deviceDir = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + deviceName,
-					defaultValue);
+			String deviceDir = PortableServiceLoader.get(IConfigService.class)
+					.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + deviceName, defaultValue);
 			if (deviceDir == null) {
 				logger.warn("Directory for device [{}] is null. Using default value [{}].", deviceName, defaultValue);
 			}
@@ -97,7 +98,8 @@ public class ImportOmnivoreInboxUtil {
 
 	public static String getCategory(IVirtualFilesystemHandle file) {
 		try {
-			String category = ConfigServiceHolder.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
+			String category = PortableServiceLoader.get(IConfigService.class)
+					.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
 			IVirtualFilesystemHandle parent = file.getParent();
 			if (parent == null) {
 				logger.warn("Parent directory for file [{}] is null.", file.getAbsolutePath());

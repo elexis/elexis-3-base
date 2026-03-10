@@ -44,10 +44,10 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.Preferences;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.TransientCategory;
-import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.util.CategorySelectDialog;
+import ch.elexis.omnivore.util.CategoryUtil;
 import ch.rgw.tools.TimeTool;
 
 public class FileImportDialog extends TitleAreaDialog {
@@ -164,8 +164,7 @@ public class FileImportDialog extends TitleAreaDialog {
 				String old = cbCategories.getText();
 				CategorySelectDialog catSelectDialog = new CategorySelectDialog(getShell(),
 						MessageFormat.format(Messages.DocumentMetaDataDialog_deleteCategoryConfirm, old),
-						Messages.DocumentMetaDataDialog_deleteCategoryConfirmText,
-						CategoryUtil.getCategoriesNames());
+						Messages.DocumentMetaDataDialog_deleteCategoryConfirmText, CategoryUtil.getCategoriesNames());
 
 				if (catSelectDialog.open() == Dialog.OK) {
 					String newCategory = catSelectDialog.getSelectedCategory();
@@ -201,12 +200,9 @@ public class FileImportDialog extends TitleAreaDialog {
 			tKeywords.setText(dh.getKeywords());
 			cbCategories.setText(dh.getCategory().getName());
 		}
-		bEditCat.setEnabled(
-				AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.UPDATE)));
-		bDeleteCat.setEnabled(
-				AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.DELETE)));
-		bNewCat.setEnabled(
-				AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.CREATE)));
+		bEditCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.UPDATE)));
+		bDeleteCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.DELETE)));
+		bNewCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.CREATE)));
 
 		return ret;
 	}

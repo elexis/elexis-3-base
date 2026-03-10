@@ -18,8 +18,8 @@ Require-Bundle: ch.elexis.core;bundle-version="3.13.0",
  ch.elexis.global_inbox.core
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: ch.elexis.omnivore.model,
- ch.elexis.omnivore.model.util,
  ch.elexis.omnivore.ui.util,
+ ch.elexis.omnivore.util,
  org.apache.commons.io,
  org.apache.commons.lang3.time;version="3.7.0",
  org.eclipse.e4.core.di.annotations;version="1.6.0",

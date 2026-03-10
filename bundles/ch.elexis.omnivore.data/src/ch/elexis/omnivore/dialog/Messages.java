@@ -1,7 +1,5 @@
 package ch.elexis.omnivore.dialog;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 
 	// public static String OmnivoreView_categoryColumn;

@@ -66,8 +66,8 @@ import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.omnivore.PreferenceConstants;
 import ch.elexis.omnivore.data.Preferences;
-import ch.elexis.omnivore.model.util.Utils;
 import ch.elexis.omnivore.ui.jobs.OutsourceUiJob;
+import ch.elexis.omnivore.util.Utils;
 
 //FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
 //FIXME: We want a layout that will use all the available space, auto re-size input fields etc., have nested elements, and still NOT result in "dialog has invalid data" error messages.

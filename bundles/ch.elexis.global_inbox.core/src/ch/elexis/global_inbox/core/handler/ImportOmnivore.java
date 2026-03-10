@@ -8,9 +8,10 @@ import org.eclipse.core.runtime.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.cdi.PortableServiceLoader;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.global_inbox.core.strategies.FallbackStrategy;
 import ch.elexis.global_inbox.core.strategies.FilePrefixStrategy;
 import ch.elexis.global_inbox.core.strategies.HierarchyStrategy;
@@ -36,10 +37,10 @@ public class ImportOmnivore {
 		IVirtualFilesystemHandle dir = null;
 		if (filepath == null) {
 			filepath = Constants.PREF_DIR_DEFAULT;
-			ConfigServiceHolder.get().set(Constants.PREF_DIR, Constants.PREF_DIR_DEFAULT);
+			PortableServiceLoader.get(IConfigService.class).set(Constants.PREF_DIR, Constants.PREF_DIR_DEFAULT);
 		}
 		try {
-			dir = VirtualFilesystemServiceHolder.get().of(filepath);
+			dir = PortableServiceLoader.get(IVirtualFilesystemService.class).of(filepath);
 			addFilesInDirRecursive(dir, true);
 		} catch (Exception e) {
 			log.error("Failed to convert filepath to directory. Filepath: {}", filepath, e);
@@ -50,7 +51,8 @@ public class ImportOmnivore {
 	}
 
 	private int getPatientStrategyCode() {
-		return ConfigServiceHolder.getGlobal(Constants.PREF_PATIENT_STRATEGY_PREFIX + deviceName, 0);
+		return PortableServiceLoader.get(IConfigService.class)
+				.getGlobal(Constants.PREF_PATIENT_STRATEGY_PREFIX + deviceName, 0);
 	}
 
 	private IImportStrategy getStrategy(int code) {

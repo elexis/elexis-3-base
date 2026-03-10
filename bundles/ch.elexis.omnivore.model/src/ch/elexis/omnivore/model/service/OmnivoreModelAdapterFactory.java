@@ -22,7 +22,7 @@ public class OmnivoreModelAdapterFactory extends AbstractModelAdapterFactory {
 
 	@Override
 	protected void initializeMappings() {
-		addMapping(new MappingEntry(IDocumentHandle.class, ch.elexis.omnivore.model.DocumentDocHandle.class,
+		addMapping(new MappingEntry(IDocumentHandle.class, ch.elexis.omnivore.model.impl.DocumentDocHandle.class,
 				DocHandle.class));
 	}
 }

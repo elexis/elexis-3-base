@@ -49,8 +49,8 @@ import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.ui.Messages;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.TransientCategory;
-import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.util.CategorySelectDialog;
+import ch.elexis.omnivore.util.CategoryUtil;
 
 public class PreferencesServer extends PreferencePage implements IWorkbenchPreferencePage {
 

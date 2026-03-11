@@ -55,7 +55,10 @@ import ch.elexis.core.data.util.FileUtility;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -104,7 +107,10 @@ public class Importer extends ImporterPage {
 	 * @return
 	 */
 	private Result<?> importFile(final String filepath) {
-		File file = new File(filepath);
+		File file = toLocalFile(filepath);
+		if (file == null) {
+			return new Result<Object>(SEVERITY.ERROR, 1, "Ungültiger Pfad/URI: " + filepath, MY_LAB, true);
+		}
 		Result<?> rs = null;
 		try {
 			rs = hlp.importFile(file, null, false);
@@ -234,6 +240,30 @@ public class Importer extends ImporterPage {
 			return bundleLocation;
 		} catch (Throwable throwable) {
 			return null;
+		}
+	}
+
+	private File toLocalFile(String pathOrUri) {
+		if (StringUtils.isBlank(pathOrUri)) {
+			return null;
+		}
+
+		File direct = new File(pathOrUri);
+		if (direct.isAbsolute()) {
+			return direct;
+		}
+
+		try {
+			IVirtualFilesystemService vfs = VirtualFilesystemServiceHolder.get();
+			if (vfs == null) {
+				return direct;
+			}
+
+			IVirtualFilesystemHandle handle = vfs.of(pathOrUri);
+			return handle.toFile().orElse(null);
+		} catch (Exception e) {
+			logger.warn("Could not resolve path via VFS: {}", pathOrUri, e);
+			return direct;
 		}
 	}
 

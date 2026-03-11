@@ -19,7 +19,7 @@
             </invoice:error>
         </invoice:rejected>
     </invoice:status>
-    <invoice:invoice case_id="obe6c21c29a337c590657" invoice_date="2015-02-26T10:30:53.816+01:00" invoice_id="015999002766" invoice_timestamp="1422456026" response_id="99009960_12.03.15_1382" response_timestamp="1426122914">
+    <invoice:invoice case_id="obe6c21c29a337c590657" invoice_date="2015-02-26T10:30:36.348+01:00" invoice_id="015999002766" invoice_timestamp="1422456026" response_id="99009960_12.03.15_1382" response_timestamp="1426122914">
         <invoice:biller ean_party="7601000019202"/>
         <invoice:insurance ean_party="7601003002119"/>
         <invoice:reply ean_party="7601003002119">

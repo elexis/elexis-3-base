@@ -14,10 +14,10 @@ import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.global_inbox.core.handler.ImportOmnivoreIdentifiedRunnable;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
-@ApplicationScoped
+@Singleton
 @Component(immediate = true)
 public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFactory {
 

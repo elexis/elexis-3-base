@@ -10,8 +10,7 @@ Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
  jakarta.inject;version="2.0.1"
 Require-Bundle: ch.elexis.core.cdi;bundle-version="3.13.0",
  ch.elexis.core.tasks.model;bundle-version="3.13.0"
-Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml,
- OSGI-INF/ch.elexis.global_inbox.core.util.OmnivoreDocumentStoreServiceHolder.xml
+Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml
 Automatic-Module-Name: ch.elexis.global.inbox.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21

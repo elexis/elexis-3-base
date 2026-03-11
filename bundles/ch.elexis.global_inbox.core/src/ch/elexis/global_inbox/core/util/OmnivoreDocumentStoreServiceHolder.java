@@ -1,30 +1,17 @@
 package ch.elexis.global_inbox.core.util;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IDocumentStore;
-import jakarta.inject.Inject;
 
-@Component
 public class OmnivoreDocumentStoreServiceHolder {
 
-	private static IDocumentStore documentStore;
-
-	@Inject
-	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
-	public void setDocumentStore(IDocumentStore documentStore) {
-		OmnivoreDocumentStoreServiceHolder.documentStore = documentStore;
-	}
-
 	public static IDocumentStore get() {
-		if (documentStore == null) {
-			throw new IllegalStateException("No IDocumentStore available");
-		}
-		return documentStore;
+		return PortableServiceLoader.getService(IDocumentStore.class, "(storeid=ch.elexis.data.store.omnivore)")
+				.orElseThrow(() -> new IllegalStateException("No IDocumentStore available"));
 	}
 
 	public static boolean isAvailable() {
-		return documentStore != null;
+		return PortableServiceLoader.getService(IDocumentStore.class, "(storeid=ch.elexis.data.store.omnivore)")
+				.isPresent();
 	}
 }

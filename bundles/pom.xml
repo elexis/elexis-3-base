@@ -12,6 +12,10 @@
 		<artifactId>elexis-3-base</artifactId>
 		<version>3.13.0-SNAPSHOT</version>
 	</parent>
+
+	<properties>
+		<jandex-plugin.version>3.2.7</jandex-plugin.version>
+	</properties>
 	
 	<modules>
 		<module>ch.elexis.ebanking.qr</module>

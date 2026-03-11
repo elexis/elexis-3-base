@@ -237,6 +237,7 @@
         <setEntry value="ch.elexis.base.ch.arzttarife.model.test@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model@3:true"/>
         <setEntry value="ch.elexis.base.ch.ticode@default:default"/>
+        <setEntry value="ch.elexis.core.cdi@default:default"/>
         <setEntry value="ch.elexis.core.findings.util@default:default"/>
         <setEntry value="ch.elexis.core.findings@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x.tests@default:false"/>
@@ -255,6 +256,7 @@
         <setEntry value="ch.elexis.core.model@3:true"/>
         <setEntry value="ch.elexis.core.rcp@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
+        <setEntry value="ch.elexis.core.tasks.model@default:default"/>
         <setEntry value="ch.elexis.core.tasks.test@default:false"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.test.context@default:default"/>

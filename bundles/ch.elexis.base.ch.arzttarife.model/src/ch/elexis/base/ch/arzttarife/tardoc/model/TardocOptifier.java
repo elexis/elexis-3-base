@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
@@ -150,6 +151,12 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 		Result<IBilled> matcherResult = tarifMatcher.evaluate(newBilled, encounter);
 
+		List<ITardocKumulation> customKumulations = CustomKumulations.of(newBilled);
+		if (customKumulations != null && !customKumulations.isEmpty()) {
+			LoggerFactory.getLogger(getClass())
+					.info("Using custom kumulation for [" + newBilled.getCode() + "] overriding tarif matcher.");
+			matcherResult = verifier.checkCustomKumulations(customKumulations);
+		}
 		if (!matcherResult.isOK()) {
 			if (bAllowOverrideStrict) {
 				if (save) {
@@ -169,7 +176,6 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				additions(code, encounter, save);
 			}
 		}
-
 		return matcherResult;
 	}
 

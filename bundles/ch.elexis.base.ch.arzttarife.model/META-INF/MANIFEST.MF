@@ -97,6 +97,7 @@ Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.ambulatory.model.import
  OSGI-INF/ch.elexis.base.ch.arzttarife.psycho.model.importer.PsychoLimitationReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.psycho.model.importer.PsychoReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tardoc.model.TardocDignitaetCodingContribution.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.tardoc.model.importer.TardocCustomKumulationsReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tardoc.model.importer.TardocReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.CasemasterService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.MapperService.xml,

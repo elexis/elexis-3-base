@@ -123,7 +123,9 @@ public class CSVWriter {
 	private static void writeRow(OutputStreamWriter writer, Object[] objects) throws IOException {
 		StringBuffer buf = new StringBuffer();
 		for (Object obj : objects) {
+			buf.append("\"");
 			buf.append(obj != null ? obj.toString() : StringUtils.EMPTY);
+			buf.append("\"");
 			buf.append(CSVWriter.DELIMITER);
 		}
 		buf.deleteCharAt(buf.length() - 1); // last delimiter not needed

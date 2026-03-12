@@ -7,13 +7,17 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocConstants;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -74,6 +78,13 @@ public class TardocBillingTest extends AbstractTardocTest {
 		code_TK000010 = TardocLeistung.getFromCode("TK.00.0010", LocalDate.of(2026, 1, 1), null);
 		code_AR300130 = TardocLeistung.getFromCode("AR.00.0130", LocalDate.of(2026, 1, 1), null);
 
+		// import custom kumulations
+		IReferenceDataImporter customImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+				"(" + IReferenceDataImporter.REFERENCEDATAID + "=tardoccustomkumulations)").get();
+		IStatus importResult = customImporter.performImport(new NullProgressMonitor(),
+				AllTestsSuite.class.getResourceAsStream("/rsc/tardoc_custom_kumulations.csv"), 1);
+		assertTrue(importResult.isOK());
+		OsgiServiceUtil.ungetService(customImporter);
 	}
 
 	@Override
@@ -269,7 +280,28 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertNotNull(bezug);
 		assertEquals("TK.00.0010", bezug);
 	}
+	
+	@Test
+	public void customKumulationsTardocPosition() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
 
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("AA.30.0080", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// allow combination of AA.30.0080 and AA.30.0090
+		status = billingService.bill(TardocLeistung.getFromCode("AA.30.0090", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// do not allow WA.00.0010
+		status = billingService.bill(TardocLeistung.getFromCode("WA.00.0010", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+	}
+	
 	@Test
 	public void limitTardocMultiSessionSameLaw() {
 		// 30 mal pro 90 Tage

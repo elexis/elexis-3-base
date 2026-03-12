@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocGroup;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp;
 import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
@@ -153,6 +155,21 @@ public class TardocVerifier implements IBillableVerifier {
 							+ tardocLeistung.getCode() + ".";
 					return new Result<IBilled>(Result.SEVERITY.WARNING, TarifMatcher.LEISTUNGSTYP, msg, null, false);
 				}
+			}
+		}
+		return new Result<IBilled>(null);
+	}
+
+	public Result<IBilled> checkCustomKumulations(List<ITardocKumulation> customKumulations) {
+		for (ITardocKumulation iTardocKumulation : customKumulations) {
+			// allow inclusion
+			if (iTardocKumulation.getTyp() == TardocKumulationTyp.INCLUSION) {
+				continue;
+			} else if (iTardocKumulation.getTyp() == TardocKumulationTyp.EXCLUSION) {
+				return new Result<IBilled>(Result.SEVERITY.WARNING, TarifMatcher.KOMBINATION,
+						"Die Leistung  " + iTardocKumulation.getMasterCode() + " ist nicht kombinierbar mit "
+								+ iTardocKumulation.getSlaveCode() + ".",
+						null, false);
 			}
 		}
 		return new Result<IBilled>(null);

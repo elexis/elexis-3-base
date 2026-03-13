@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -511,13 +512,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 	}
 
 	private void applyCalculateFactorBasedPrice(IBilled billed, TardocLeistung code, IEncounter encounter) {
-		// lookup bezug
-		Optional<String> bezug = Optional.empty();
-		// lookup available masters
-		List<IBilled> masters = getPossibleMasters(billed, encounter.getBilled());
-		if (!masters.isEmpty()) {
-			bezug = Optional.of(masters.get(0).getCode());
-		}
+
+		Predicate<TardocLeistung> factorFilter = getFactorFilter(billed, encounter);
 
 		Double alFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_AL);
 		double alSum = 0.0;
@@ -526,7 +522,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			for (IBilled v : encounter.getBilled()) {
 				if (v.getBillable() instanceof TardocLeistung) {
 					TardocLeistung tl = (TardocLeistung) v.getBillable();
-					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+					if (factorFilter.test(tl)) {
 						alSum += (tl.getAL(encounter.getMandator()) * v.getAmount());
 					}
 				}
@@ -540,7 +536,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			for (IBilled v : encounter.getBilled()) {
 				if (v.getBillable() instanceof TardocLeistung) {
 					TardocLeistung tl = (TardocLeistung) v.getBillable();
-					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+					if (factorFilter.test(tl)) {
 						tlSum += (tl.getIPL() * v.getAmount());
 					}
 				}
@@ -549,6 +545,42 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL, Double.toString(tlSum));
 			billed.setPrimaryScale((int) (tlFactor * 100));
 		}
+	}
+
+	private Predicate<TardocLeistung> getFactorFilter(IBilled billed, IEncounter encounter) {
+		return new Predicate<TardocLeistung>() {
+			
+			private Optional<String> bezugFilter = initBezug(billed, encounter);
+
+			private Optional<String> notInChapterFilter = initNotInChapterFilter(billed);
+			
+			@Override
+			public boolean test(TardocLeistung tl) {
+				boolean ret = bezugFilter.isEmpty() || bezugFilter.get().equals(tl.getCode());
+				if (ret && notInChapterFilter.isPresent()) {
+					ret = !notInChapterFilter.get().equals(tl.getParent().getCode());
+				}
+				return ret;
+			}
+
+			private Optional<String> initNotInChapterFilter(IBilled billed) {
+				if (billed.getBillable() instanceof TardocLeistung
+						&& ((TardocLeistung) billed.getBillable()).getParent().getCode().equals("AA.30")) {
+					return Optional.of("AA.30");
+				}
+				return Optional.empty();
+			}
+
+			private Optional<String> initBezug(IBilled billed, IEncounter encounter) {
+				Optional<String> ret = Optional.empty();
+				// lookup available masters
+				List<IBilled> masters = getPossibleMasters(billed, encounter.getBilled());
+				if (!masters.isEmpty()) {
+					ret = Optional.of(masters.get(0).getCode());
+				}
+				return ret;
+			}
+		};
 	}
 
 	private boolean isFactorBased(TardocLeistung code) {

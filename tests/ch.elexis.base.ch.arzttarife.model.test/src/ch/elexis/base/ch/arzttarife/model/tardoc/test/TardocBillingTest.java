@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocConstants;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -187,10 +188,14 @@ public class TardocBillingTest extends AbstractTardocTest {
 		encounter.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter);
 
-		Result<IBilled> status = billingService.bill(code_AA300040, encounter, 1);
+		Result<IBilled> status = billingService.bill(code_000010, encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
-		int noZuschalgCents = billed.getTotal().getCents();
+		double noZuschalgAL = ArzttarifeUtil.getAL(billed);
+
+		// add same chapter, AL of this should be ignored for zuschlag
+		status = billingService.bill(code_AA300040, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
 
 		// zuschlag
 		status = billingService.bill(code_AA300050, encounter, 1);
@@ -202,7 +207,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		// zuschlag prozent
 		assertEquals(1.0, billed.getAmount(), 0.001);
 		assertFalse(billed.getPrice().isZero());
-		assertEquals(Math.round(noZuschalgCents * 0.25), billed.getTotal().getCents(), 0.01);
+		assertEquals(Math.round(noZuschalgAL * 0.25), billed.getTotal().getCents(), 0.01);
 	}
 
 	@Test

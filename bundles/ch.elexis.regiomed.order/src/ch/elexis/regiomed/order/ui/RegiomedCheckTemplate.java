@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IStock;
+import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.icons.ImageSize;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.regiomed.order.messages.Messages;
@@ -116,7 +117,7 @@ public class RegiomedCheckTemplate {
 
 			root.put("lastFilter", lastFilter);
 			root.put("enableDragAndDrop", enableDragAndDrop);
-
+			root.put("dndPrefix", ExtensionPointConstantsUi.PAYLOAD_REGIOMED_ITEM);
 			List<String> availableElexisStocks = new ArrayList<>();
 			if (allStocks != null) {
 				availableElexisStocks = allStocks.stream().map(IStock::getCode).collect(Collectors.toList());

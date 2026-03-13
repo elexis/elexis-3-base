@@ -355,8 +355,9 @@ function proceedWithOrder() {
 
 function handleDragStart(e, index) {
     e.dataTransfer.effectAllowed = "copy";
-    e.dataTransfer.setData("text/plain", "REGIOMED_ITEM:" + index);
+    e.dataTransfer.setData("text/plain",index);
 }
+
 function applySearchResult(index) {
     window.location = 'regiomed:selectResult:' + index;
 }

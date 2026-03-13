@@ -70,6 +70,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StockServiceHolder;
+import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.regiomed.order.messages.Messages;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
@@ -306,7 +307,7 @@ public class RegiomedSearchView extends ViewPart {
 			public void drop(DropTargetEvent event) {
 				if (event.data instanceof String) {
 					String data = (String) event.data;
-					if (data.startsWith(RegiomedConstants.CONST_REGIOMED_ITEM_PREFIX)) {
+					if (data.startsWith(ExtensionPointConstantsUi.PAYLOAD_REGIOMED_ITEM)) {
 						try {
 							int index = Integer.parseInt(data.split(":")[1]);
 							addItemToCart(index);
@@ -492,6 +493,19 @@ public class RegiomedSearchView extends ViewPart {
 				cartViewer.refresh();
 			}
 		}
+	}
+
+	public IArticle getArticleForDropIndex(String payload) {
+		try {
+			int index = Integer.parseInt(payload.split(":")[1]);
+			if (index >= 0 && index < currentSearchResults.size()) {
+				ProductResult product = currentSearchResults.get(index);
+				return localArticleService.findLocalArticle(product.ean, product.pharmaCode, product.prodName);
+			}
+		} catch (Exception e) {
+			log.error("Error resolving the item for the external DND drop", e);
+		}
+		return null;
 	}
 
 	@Override

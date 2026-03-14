@@ -1706,7 +1706,8 @@ public class Tarmed50Exporter {
 				if(instructionType.getToken().startsWith("tx_")) {
 					instructions.getInstruction().remove(instructionType);
 				}
-			}			
+			}
+			processingType.setInstructions(null);
 		}
 	}
 

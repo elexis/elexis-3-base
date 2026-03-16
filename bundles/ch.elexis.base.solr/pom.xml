@@ -35,11 +35,6 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>ch.elexis.core</groupId>
-			<artifactId>ch.elexis.core.spotlight</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
 			<version>${solrj.version}</version>

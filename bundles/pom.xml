@@ -6,7 +6,7 @@
 	<artifactId>ch.elexis.base.bundles</artifactId>
 	<name>Elexis-Base bundles</name>
 	<packaging>pom</packaging>
-	
+
 	<parent>
 		<groupId>ch.elexis.base</groupId>
 		<artifactId>elexis-3-base</artifactId>
@@ -15,8 +15,17 @@
 
 	<properties>
 		<jandex-plugin.version>3.2.7</jandex-plugin.version>
+		<solrj.version>9.8.0</solrj.version>
 	</properties>
-	
+
+	<repositories>
+		<repository>
+			<id>github-elexis</id>
+			<name>GitHub Elexis Packages</name>
+			<url>https://maven.pkg.github.com/elexis/packages</url>
+		</repository>
+	</repositories>
+
 	<modules>
 		<module>ch.elexis.ebanking.qr</module>
 		<module>at.medevit.atc_codes</module>

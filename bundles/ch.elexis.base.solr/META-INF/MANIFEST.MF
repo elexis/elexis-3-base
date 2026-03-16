@@ -9,12 +9,11 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.apache.solr.solrj;bundle-version="9.8.0",
  ch.rgw.utility;bundle-version="3.13.0",
  ch.elexis.core;bundle-version="3.13.0",
- ch.elexis.core.rcp;bundle-version="3.13.0",
+ ch.elexis.core.cdi;bundle-version="3.13.0",
  ch.elexis.core.model;bundle-version="3.13.0",
- ch.elexis.core.services;bundle-version="3.13.0",
- ch.elexis.omnivore.model;bundle-version="3.9.0",
- ch.elexis.core.tasks;bundle-version="3.9.0",
- ch.elexis.core.spotlight;bundle-version="3.9.0"
+ ch.elexis.core.tasks.model;bundle-version="3.13.0",
+ ch.elexis.core.spotlight;bundle-version="3.13.0",
+ ch.elexis.omnivore;bundle-version="3.13.0"
 Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.elexis.base.solr.task

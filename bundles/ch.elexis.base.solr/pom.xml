@@ -9,9 +9,9 @@
 		<artifactId>ch.elexis.base.bundles</artifactId>
 		<version>3.13.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>ch.elexis.global_inbox.core</artifactId>
+	<artifactId>ch.elexis.base.solr</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>[bundle] Global Inbox Core</name>
+	<name>[bundle] Solr</name>
 	<organization>
 		<name>elexis.info</name>
 	</organization>
@@ -33,4 +33,16 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>ch.elexis.core</groupId>
+			<artifactId>ch.elexis.core.spotlight</artifactId>
+			<version>${version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>${solrj.version}</version>
+		</dependency>
+	</dependencies>
 </project>

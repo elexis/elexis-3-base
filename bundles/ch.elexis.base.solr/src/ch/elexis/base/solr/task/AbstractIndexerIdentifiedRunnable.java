@@ -29,11 +29,11 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
 import org.apache.solr.client.solrj.response.SolrResponseBase;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.eenv.IElexisEnvironmentService;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.SingleIdentifiableTaskResult;
 import ch.elexis.core.model.tasks.TaskException;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IContextService;
 
 public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRunnable {
@@ -61,7 +61,8 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 	@Override
 	public Map<String, Serializable> getDefaultRunContext() {
 		Map<String, Serializable> defaultRunContext = new HashMap<>();
-		Optional<IElexisEnvironmentService> eeService = OsgiServiceUtil.getService(IElexisEnvironmentService.class);
+		Optional<IElexisEnvironmentService> eeService = PortableServiceLoader
+				.getOptional(IElexisEnvironmentService.class);
 		if (eeService.isPresent()) {
 			defaultRunContext.put(RCP_STRING_SERVICE_URL, eeService.get().getSolrBaseUrl());
 		}
@@ -90,10 +91,11 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 		solrClientBuilder.withConnectionTimeout(5 * 1000);
 		solrClientBuilder.withSocketTimeout(10 * 1000);
 
-		Optional<IContextService> contextService = OsgiServiceUtil.getService(IContextService.class);
-		Optional<IElexisEnvironmentService> eeService = OsgiServiceUtil.getService(IElexisEnvironmentService.class);
+		Optional<IContextService> contextService = PortableServiceLoader.getOptional(IContextService.class);
+		Optional<IElexisEnvironmentService> eeService = PortableServiceLoader
+				.getOptional(IElexisEnvironmentService.class);
 		if (contextService.isPresent() && eeService.isPresent()) {
-			if (IElexisEnvironmentService.ES_STATION_ID_DEFAULT.equals(contextService.get().getStationIdentifier())) {
+			if (contextService.get().getStationIdentifier().toLowerCase().contains("server")) {
 				// this is Elexis-Server running in EE
 				// see https://solr.apache.org/guide/8_11/basic-authentication-plugin.html
 				String solrPassword = System.getenv("X_EE_SOLR_ELEXIS_SERVER_PASSWORD"); //$NON-NLS-1$

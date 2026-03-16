@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Global Inbox Core
 Bundle-SymbolicName: ch.elexis.global_inbox.core
+Bundle-Vendor: elexis.info
 Bundle-Version: 3.13.0.qualifier
 Export-Package: ch.elexis.global_inbox.core.handler,
  ch.elexis.global_inbox.core.util

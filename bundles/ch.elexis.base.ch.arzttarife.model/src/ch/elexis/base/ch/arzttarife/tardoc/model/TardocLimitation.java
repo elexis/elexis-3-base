@@ -632,13 +632,24 @@ public class TardocLimitation {
 		return ret;
 	}
 
-	private Result<IBilled> testDay(IEncounter kons, IBilled verrechnet) {
+	private Result<IBilled> testDay(IEncounter kons, IBilled newVerrechnet) {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		if (shouldSkipTest()) {
 			return ret;
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
-			if (getVerrechnetAmount(verrechnet) > amount) {
+			IPatient patient = kons.getPatient();
+			List<IEncounter> sameDayEncounters = patient.getCoverages().stream()
+					.flatMap(c -> c.getEncounters().stream())
+					.filter(e -> e.getDate().equals(kons.getDate()))
+					.collect(Collectors.toList());
+
+			List<IBilled> alreadyBilled = sameDayEncounters.stream()
+					.flatMap(e -> filterWithSameCode(newVerrechnet, e.getBilled()).stream())
+					.collect(Collectors.toList());
+			double alreadyBilledAmount = alreadyBilled.stream().mapToDouble(b -> b.getAmount()).sum();
+
+			if (getVerrechnetAmount(newVerrechnet) + alreadyBilledAmount > amount) {
 				ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null, false);
 			}
 		}

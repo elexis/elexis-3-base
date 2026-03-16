@@ -19,9 +19,13 @@ import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.rgw.tools.Result;
 
 public class TardocBillingTest extends AbstractTardocTest {
@@ -292,6 +296,28 @@ public class TardocBillingTest extends AbstractTardocTest {
 		// do not allow WA.00.0010
 		status = billingService.bill(TardocLeistung.getFromCode("WA.00.0010", LocalDate.of(2026, 1, 1), null),
 				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+	}
+
+	@Test
+	public void selberTagLimitTardocPosition() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		encounter1.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter1);
+
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("AA.10.0030", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// limit once per day
+		status = billingService.bill(TardocLeistung.getFromCode("AA.10.0030", LocalDate.of(2026, 1, 1), null),
+				encounter1, 1);
 		billed = status.get();
 		assertFalse(status.getMessages().toString(), status.isOK());
 	}

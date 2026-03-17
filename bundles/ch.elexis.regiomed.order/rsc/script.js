@@ -354,8 +354,13 @@ function proceedWithOrder() {
 }
 
 function handleDragStart(e, index) {
-    e.dataTransfer.effectAllowed = "copy";
-    e.dataTransfer.setData("text/plain",index);
+    var storeString = window.getArticleStoreString(index);
+    if (storeString && storeString.trim() !== "") {
+        e.dataTransfer.effectAllowed = "copy";
+        e.dataTransfer.setData("text/plain", storeString);
+    } else {
+        e.preventDefault();
+    }
 }
 
 function applySearchResult(index) {

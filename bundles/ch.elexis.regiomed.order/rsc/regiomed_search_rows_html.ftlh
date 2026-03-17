@@ -13,7 +13,7 @@
             data-has-stock="${hasStockColumn?c}">
             <td <#if enableDragAndDrop!false>
                     draggable="true" 
-                    ondragstart="handleDragStart(event, '${dndPrefix}${p.index}')"
+                    ondragstart="handleDragStart(event, ${p.index})"
                     title="Hier greifen, um den Artikel in den Warenkorb zu ziehen"
                     style="cursor: grab;"
                 </#if>>

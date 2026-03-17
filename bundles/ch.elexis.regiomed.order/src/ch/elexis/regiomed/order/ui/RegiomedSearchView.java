@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -52,13 +50,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.equo.chromium.swt.Browser;
+import com.equo.chromium.swt.BrowserFunction;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IArticle;
@@ -74,16 +71,14 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StockServiceHolder;
-import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
+import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.views.BestellView;
 import ch.elexis.regiomed.order.messages.Messages;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse.ProductResult;
 import ch.elexis.regiomed.order.preferences.RegiomedConstants;
 import ch.elexis.regiomed.order.service.RegiomedLocalArticleService;
 import ch.elexis.regiomed.order.service.RegiomedServerService;
-import jakarta.inject.Inject;
 
 public class RegiomedSearchView extends ViewPart {
 	public static final String ID = "ch.elexis.regiomed.order.ui.RegiomedSearchView";
@@ -110,33 +105,6 @@ public class RegiomedSearchView extends ViewPart {
 		}
 	}
 
-	@Optional
-	@Inject
-	public void handleBestellViewDrop(@UIEventTopic("ch/elexis/BestellenView/dropped") String payload) {
-		if (payload == null || !payload.startsWith(ExtensionPointConstantsUi.PAYLOAD_REGIOMED_ITEM)) {
-			return;
-		}
-
-		IArticle art = getArticleForDropIndex(payload);
-
-		Display.getDefault().asyncExec(() -> {
-			if (art != null) {
-				try {
-					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.findView(BestellView.ID);
-					if (view instanceof BestellView) {
-						((BestellView) view).addItemsToOrder(Collections.singletonList(art));
-					}
-				} catch (Exception e) {
-					log.error("Error adding the Regiomed item to the order", e);
-				}
-			} else {
-				MessageDialog.openWarning(Display.getDefault().getActiveShell(),
-						Messages.RegiomedSearchView_NotFoundTitle, Messages.RegiomedSearchView_ArticleNotFoundMessage);
-			}
-		});
-	}
-
 	@Override
 	public void createPartControl(Composite parent) {
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
@@ -147,6 +115,7 @@ public class RegiomedSearchView extends ViewPart {
 
 		browser = new Browser(topComposite, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		browser.addLocationListener(new LocationListener() {
 			@Override
 			public void changing(LocationEvent event) {
@@ -159,6 +128,28 @@ public class RegiomedSearchView extends ViewPart {
 			public void changed(LocationEvent event) {
 			}
 		});
+
+		new BrowserFunction(browser, "getArticleStoreString") {
+			@Override
+			public Object function(Object[] arguments) {
+				if (arguments != null && arguments.length > 0) {
+					try {
+						int index = ((Double) Double.parseDouble(arguments[0].toString())).intValue();
+						if (index >= 0 && index < currentSearchResults.size()) {
+							ProductResult product = currentSearchResults.get(index);
+							IArticle localArticle = localArticleService.findLocalArticle(product.ean,
+									product.pharmaCode, product.prodName);
+							if (localArticle != null) {
+								return StoreToStringServiceHolder.getStoreToString(localArticle);
+							}
+						}
+					} catch (Exception e) {
+						log.error("Fehler beim Holen des Drag-Payloads für Regiomed", e);
+					}
+				}
+				return "";
+			}
+		};
 
 		Composite bottomComposite = new Composite(sashForm, SWT.NONE);
 		bottomComposite.setLayout(new GridLayout(1, false));
@@ -340,14 +331,19 @@ public class RegiomedSearchView extends ViewPart {
 			public void drop(DropTargetEvent event) {
 				if (event.data instanceof String) {
 					String data = (String) event.data;
-					if (data.startsWith(ExtensionPointConstantsUi.PAYLOAD_REGIOMED_ITEM)) {
-						try {
-							int index = Integer.parseInt(data.split(":")[1]);
-							addItemToCart(index);
-						} catch (Exception ex) {
-							log.error("Error processing drag & drop event", ex);
+					StoreToStringServiceHolder.get().loadFromString(data).ifPresent(ident -> {
+						if (ident instanceof IArticle) {
+							IArticle droppedArticle = (IArticle) ident;
+							for (int i = 0; i < currentSearchResults.size(); i++) {
+								ProductResult p = currentSearchResults.get(i);
+								IArticle local = localArticleService.findLocalArticle(p.ean, p.pharmaCode, p.prodName);
+								if (local != null && local.getId().equals(droppedArticle.getId())) {
+									addItemToCart(i);
+									break;
+								}
+							}
 						}
-					}
+					});
 				}
 			}
 		});
@@ -526,19 +522,6 @@ public class RegiomedSearchView extends ViewPart {
 				cartViewer.refresh();
 			}
 		}
-	}
-
-	public IArticle getArticleForDropIndex(String payload) {
-		try {
-			int index = Integer.parseInt(payload.split(":")[1]);
-			if (index >= 0 && index < currentSearchResults.size()) {
-				ProductResult product = currentSearchResults.get(index);
-				return localArticleService.findLocalArticle(product.ean, product.pharmaCode, product.prodName);
-			}
-		} catch (Exception e) {
-			log.error("Error resolving the item for the external DND drop", e);
-		}
-		return null;
 	}
 
 	@Override

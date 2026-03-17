@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -50,6 +52,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,12 +76,14 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StockServiceHolder;
 import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.views.BestellView;
 import ch.elexis.regiomed.order.messages.Messages;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
 import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse.ProductResult;
 import ch.elexis.regiomed.order.preferences.RegiomedConstants;
 import ch.elexis.regiomed.order.service.RegiomedLocalArticleService;
 import ch.elexis.regiomed.order.service.RegiomedServerService;
+import jakarta.inject.Inject;
 
 public class RegiomedSearchView extends ViewPart {
 	public static final String ID = "ch.elexis.regiomed.order.ui.RegiomedSearchView";
@@ -102,6 +108,33 @@ public class RegiomedSearchView extends ViewPart {
 			this.product = product;
 			this.localStocks = localStocks;
 		}
+	}
+
+	@Optional
+	@Inject
+	public void handleBestellViewDrop(@UIEventTopic("ch/elexis/BestellenView/dropped") String payload) {
+		if (payload == null || !payload.startsWith(ExtensionPointConstantsUi.PAYLOAD_REGIOMED_ITEM)) {
+			return;
+		}
+
+		IArticle art = getArticleForDropIndex(payload);
+
+		Display.getDefault().asyncExec(() -> {
+			if (art != null) {
+				try {
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.findView(BestellView.ID);
+					if (view instanceof BestellView) {
+						((BestellView) view).addItemsToOrder(Collections.singletonList(art));
+					}
+				} catch (Exception e) {
+					log.error("Error adding the Regiomed item to the order", e);
+				}
+			} else {
+				MessageDialog.openWarning(Display.getDefault().getActiveShell(),
+						Messages.RegiomedSearchView_NotFoundTitle, Messages.RegiomedSearchView_ArticleNotFoundMessage);
+			}
+		});
 	}
 
 	@Override

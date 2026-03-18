@@ -3,6 +3,7 @@ package ch.elexis.base.ch.arzttarife.tardoc.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,7 +32,9 @@ import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.PatientConstants;
 import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.BillingServiceHolder;
@@ -95,6 +98,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 		boolean bAllowOverrideStrict = TarmedUtil.getConfigValue(getClass(), IUser.class,
 				Preferences.LEISTUNGSCODES_ALLOWOVERRIDE_STRICT, false);
+
+		code = adjustCode(code, encounter);
 
 		IBilled newBilled = getOrInitializeBilled(code, encounter, false);
 
@@ -172,6 +177,32 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 
 		return matcherResult;
+	}
+
+	private TardocLeistung adjustCode(TardocLeistung code, IEncounter encounter) {
+		Optional<LocalDate> palliativeCareDate = getPalliativeCare(encounter.getPatient());
+		if (palliativeCareDate.isPresent() && !palliativeCareDate.get().isAfter(encounter.getDate())) {
+			if (code.getCode().equals("CA.00.0010")) {
+				return TardocLeistung.getFromCode("CA.15.0010", encounter.getDate(), null);
+			} else if (code.getCode().equals("CA.00.0020")) {
+				return TardocLeistung.getFromCode("CA.15.0020", encounter.getDate(), null);
+			} else if (code.getCode().equals("CA.00.0040")) {
+				return TardocLeistung.getFromCode("CA.15.0030", encounter.getDate(), null);
+			} else if (code.getCode().equals("CA.00.0050")) {
+				return TardocLeistung.getFromCode("CA.15.0040", encounter.getDate(), null);
+			}
+		}
+		return code;
+	}
+
+	private Optional<LocalDate> getPalliativeCare(IPatient patient) {
+		if (patient.getExtInfo(PatientConstants.FLD_EXTINFO_PALLIATIVECARE) instanceof String) {
+			LocalDate palliativeCareLocalDate = LocalDate.parse(
+					(String) patient.getExtInfo(PatientConstants.FLD_EXTINFO_PALLIATIVECARE),
+					DateTimeFormatter.ofPattern("yyyyMMdd"));
+			return Optional.of(palliativeCareLocalDate);
+		}
+		return Optional.empty();
 	}
 
 	private void additions(TardocLeistung code, IEncounter encounter, boolean save) {

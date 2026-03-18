@@ -17,8 +17,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
-import ch.elexis.core.ui.UiDesk;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import ch.elexis.core.ui.UiDesk;
 
 public class ArtikelstammLabelProvider extends LabelProvider implements IColorProvider {
 
@@ -34,7 +34,7 @@ public class ArtikelstammLabelProvider extends LabelProvider implements IColorPr
 	public String getText(Object element) {
 		IArtikelstammItem item = (IArtikelstammItem) element;
 		StringBuilder sb = new StringBuilder();
-		if (item.getDeductible() > 0) {
+		if (item.getDeductible() != null && item.getDeductible() > 0) {
 			sb.append("[" + item.getDeductible() + "%] "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		sb.append(item.getLabel());

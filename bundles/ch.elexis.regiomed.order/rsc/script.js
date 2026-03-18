@@ -354,9 +354,15 @@ function proceedWithOrder() {
 }
 
 function handleDragStart(e, index) {
-    e.dataTransfer.effectAllowed = "copy";
-    e.dataTransfer.setData("text/plain", "REGIOMED_ITEM:" + index);
+    var storeString = window.getArticleStoreString(index);
+    if (storeString && storeString.trim() !== "") {
+        e.dataTransfer.effectAllowed = "copy";
+        e.dataTransfer.setData("text/plain", storeString);
+    } else {
+        e.preventDefault();
+    }
 }
+
 function applySearchResult(index) {
     window.location = 'regiomed:selectResult:' + index;
 }

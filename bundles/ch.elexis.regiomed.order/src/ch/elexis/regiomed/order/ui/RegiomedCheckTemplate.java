@@ -116,7 +116,6 @@ public class RegiomedCheckTemplate {
 
 			root.put("lastFilter", lastFilter);
 			root.put("enableDragAndDrop", enableDragAndDrop);
-
 			List<String> availableElexisStocks = new ArrayList<>();
 			if (allStocks != null) {
 				availableElexisStocks = allStocks.stream().map(IStock::getCode).collect(Collectors.toList());

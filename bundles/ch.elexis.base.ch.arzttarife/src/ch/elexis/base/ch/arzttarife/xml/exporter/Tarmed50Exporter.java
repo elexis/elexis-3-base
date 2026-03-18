@@ -852,6 +852,13 @@ public class Tarmed50Exporter {
 						serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO));
 						serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
 
+						if ("402".equals(billable.getCodeSystemCode()) && StringUtils
+								.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_INDICATIONCODE))) {
+							XtraServiceType xtraServiceType = new XtraServiceType();
+							xtraServiceType.setToken("SLIndication");
+							xtraServiceType.setValue((String) billed.getExtInfo(Constants.FLD_EXT_INDICATIONCODE));
+							serviceType.getXtraService().add(xtraServiceType);
+						}
 						// all 406 will have code 2000
 						if ("406".equals(billable.getCodeSystemCode()) && !isCovid(billable)) {
 							serviceType.setCode("2002");

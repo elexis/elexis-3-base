@@ -122,6 +122,6 @@ public class Messages {
 	public static String RegiomedSearchView_OrderPrefix = ch.elexis.core.l10n.Messages.RegiomedSearchView_OrderPrefix;
 	public static String RegiomedSearchView_NewOrderTitle = ch.elexis.core.l10n.Messages.RegiomedSearchView_NewOrderTitle;
 	public static String RegiomedSearchView_NewOrderMessage = ch.elexis.core.l10n.Messages.RegiomedSearchView_NewOrderMessage;
-
+	public static String RegiomedSearchView_ArticleNotFoundMessage = ch.elexis.core.l10n.Messages.BestellView_ArticleNotFoundMessage;
 
 }

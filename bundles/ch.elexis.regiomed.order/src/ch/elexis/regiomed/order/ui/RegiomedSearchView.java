@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.equo.chromium.swt.Browser;
+import com.equo.chromium.swt.BrowserFunction;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IArticle;
@@ -69,6 +70,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StockServiceHolder;
+import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.regiomed.order.messages.Messages;
@@ -113,6 +115,7 @@ public class RegiomedSearchView extends ViewPart {
 
 		browser = new Browser(topComposite, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		browser.addLocationListener(new LocationListener() {
 			@Override
 			public void changing(LocationEvent event) {
@@ -125,6 +128,28 @@ public class RegiomedSearchView extends ViewPart {
 			public void changed(LocationEvent event) {
 			}
 		});
+
+		new BrowserFunction(browser, "getArticleStoreString") {
+			@Override
+			public Object function(Object[] arguments) {
+				if (arguments != null && arguments.length > 0) {
+					try {
+						int index = ((Double) Double.parseDouble(arguments[0].toString())).intValue();
+						if (index >= 0 && index < currentSearchResults.size()) {
+							ProductResult product = currentSearchResults.get(index);
+							IArticle localArticle = localArticleService.findLocalArticle(product.ean,
+									product.pharmaCode, product.prodName);
+							if (localArticle != null) {
+								return StoreToStringServiceHolder.getStoreToString(localArticle);
+							}
+						}
+					} catch (Exception e) {
+						log.error("Fehler beim Holen des Drag-Payloads für Regiomed", e);
+					}
+				}
+				return "";
+			}
+		};
 
 		Composite bottomComposite = new Composite(sashForm, SWT.NONE);
 		bottomComposite.setLayout(new GridLayout(1, false));
@@ -306,14 +331,19 @@ public class RegiomedSearchView extends ViewPart {
 			public void drop(DropTargetEvent event) {
 				if (event.data instanceof String) {
 					String data = (String) event.data;
-					if (data.startsWith(RegiomedConstants.CONST_REGIOMED_ITEM_PREFIX)) {
-						try {
-							int index = Integer.parseInt(data.split(":")[1]);
-							addItemToCart(index);
-						} catch (Exception ex) {
-							log.error("Error processing drag & drop event", ex);
+					StoreToStringServiceHolder.get().loadFromString(data).ifPresent(ident -> {
+						if (ident instanceof IArticle) {
+							IArticle droppedArticle = (IArticle) ident;
+							for (int i = 0; i < currentSearchResults.size(); i++) {
+								ProductResult p = currentSearchResults.get(i);
+								IArticle local = localArticleService.findLocalArticle(p.ean, p.pharmaCode, p.prodName);
+								if (local != null && local.getId().equals(droppedArticle.getId())) {
+									addItemToCart(i);
+									break;
+								}
+							}
 						}
-					}
+					});
 				}
 			}
 		});

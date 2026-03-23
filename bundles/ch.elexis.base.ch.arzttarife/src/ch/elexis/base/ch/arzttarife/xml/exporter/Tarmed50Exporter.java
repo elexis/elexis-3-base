@@ -13,9 +13,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,15 +62,19 @@ import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IInvoiceBillRecordInfo;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.builder.IInvoiceBillRecordInfoBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.format.PostalAddress;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.ICoverageService.Tiers;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
@@ -170,6 +176,7 @@ public class Tarmed50Exporter {
 	public boolean doExport(final IInvoice invoice, final OutputStream dest, final IRnOutputter.TYPE type) {
 
 		try {
+			HashMap<Object, IInvoiceBillRecordInfo> invoiceBillRecordInfos = new HashMap<Object, IInvoiceBillRecordInfo>();
 			besr = null;
 			// build the tarmed invoice request for the IInvoice
 			RequestType requestType = new RequestType();
@@ -179,7 +186,7 @@ public class Tarmed50Exporter {
 			requestType.setGuid(uuid);
 
 			requestType.setProcessing(getProcessing(invoice));
-			requestType.setPayload(getPayload(invoice, type));
+			requestType.setPayload(getPayload(invoice, type, invoiceBillRecordInfos));
 
 			if (updateElectronicDelivery) {
 				updateElectronicDelivery(invoice, requestType);
@@ -193,11 +200,32 @@ public class Tarmed50Exporter {
 				CoreModelServiceHolder.get().save(invoice);
 			}
 
+			createInvoiceBillRecordInfo(requestType.getPayload().getInvoice().getRequestId(), invoiceBillRecordInfos);
+
 			return TarmedJaxbUtil.marshallInvoiceRequest(requestType, dest);
 
 		} catch (DatatypeConfigurationException e) {
 			LoggerFactory.getLogger(getClass()).error("Error generating tarmed xml model", e);
 			return false;
+		}
+	}
+
+	private void createInvoiceBillRecordInfo(String requsetId,
+			HashMap<Object, IInvoiceBillRecordInfo> invoiceBillRecordInfos) {
+		List<IInvoiceBillRecordInfo> existingInfo = CoreModelServiceHolder.get().getQuery(IInvoiceBillRecordInfo.class)
+				.and(ModelPackage.Literals.IINVOICE_BILL_RECORD_INFO__BILLID, COMPARATOR.EQUALS, requsetId).execute();
+		if (existingInfo.isEmpty()) {
+			invoiceBillRecordInfos.values().stream().forEach(i -> i.setBillid(requsetId));
+			CoreModelServiceHolder.get().save(new ArrayList<>(invoiceBillRecordInfos.values()));
+		} else {
+			if (existingInfo.size() == invoiceBillRecordInfos.size()) {
+				LoggerFactory.getLogger(getClass())
+						.info("Existing record infos for request [" + requsetId + "] skipping creation");
+			} else {
+				LoggerFactory.getLogger(getClass())
+						.warn("Existing record infos [" + existingInfo.size() + "] for request [" + requsetId
+								+ "], not matching [" + invoiceBillRecordInfos.size() + "] skipping creation");
+			}
 		}
 	}
 
@@ -231,7 +259,8 @@ public class Tarmed50Exporter {
 	protected Object getBalance(IInvoice invoice) {
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
 
-		ServicesFinancialInfo financialInfo = ServicesFinancialInfo.of(getServices(invoice), invoice.getDateFrom());
+		ServicesFinancialInfo financialInfo = ServicesFinancialInfo.of(getServices(invoice, null),
+				invoice.getDateFrom());
 
 		if (tiersType == Tiers.GARANT) {
 			BalanceTGType balanceTGType = new BalanceTGType();
@@ -689,7 +718,8 @@ public class Tarmed50Exporter {
 		return postalAddressType;
 	}
 
-	protected ServicesType getServices(IInvoice invoice) {
+	protected ServicesType getServices(IInvoice invoice,
+			Map<Object, IInvoiceBillRecordInfo> invoiceBillRecordInfos) {
 		ServicesType servicesType = new ServicesType();
 		List<IEncounter> encounters = invoice.getEncounters();
 		LocalDate lastEncounterDate = null;
@@ -714,7 +744,6 @@ public class Tarmed50Exporter {
 			boolean bRFE = false; // RFE already encoded
 
 			List<IBilled> franchiseFree = getFranchiseFree(encounterBilled);
-
 			try {
 				for (IBilled billed : encounterBilled) {
 					IBillable billable = billed.getBillable();
@@ -804,6 +833,12 @@ public class Tarmed50Exporter {
 						}
 
 						servicesType.getServiceExOrService().add(serviceExType);
+
+						if (invoiceBillRecordInfos != null) {
+							invoiceBillRecordInfos.put(serviceExType,
+									new IInvoiceBillRecordInfoBuilder(CoreModelServiceHolder.get(), invoice, billed)
+											.build());
+						}
 					} else { // any service
 						ServiceType serviceType = new ServiceType();
 
@@ -893,6 +928,12 @@ public class Tarmed50Exporter {
 						}
 
 						servicesType.getServiceExOrService().add(serviceType);
+
+						if (invoiceBillRecordInfos != null) {
+							invoiceBillRecordInfos.put(serviceType,
+									new IInvoiceBillRecordInfoBuilder(CoreModelServiceHolder.get(), invoice, billed)
+											.build());
+						}
 					}
 				}
 			} catch (DatatypeConfigurationException e) {
@@ -925,6 +966,9 @@ public class Tarmed50Exporter {
 				((ServiceExType) list.get(i)).setRecordId(i + 1);
 			} else if (list.get(i) instanceof ServiceType) {
 				((ServiceType) list.get(i)).setRecordId(i + 1);
+			}
+			if (invoiceBillRecordInfos != null && invoiceBillRecordInfos.get(list.get(i)) != null) {
+				invoiceBillRecordInfos.get(list.get(i)).setBillrecordid(Integer.toString(i + 1));
 			}
 		}
 
@@ -1099,14 +1143,15 @@ public class Tarmed50Exporter {
 		return ret;
 	}
 
-	protected PayloadType getPayload(IInvoice invoice, TYPE type) throws DatatypeConfigurationException {
+	protected PayloadType getPayload(IInvoice invoice, TYPE type,
+			Map<Object, IInvoiceBillRecordInfo> invoiceBillRecordInfos) throws DatatypeConfigurationException {
 		PayloadType payloadType = new PayloadType();
 
 		payloadType.setRequestType("invoice");
 		payloadType.setRequestSubtype("normal");
 		payloadType.setInvoice(getInvoice(invoice));
 
-		payloadType.setBody(getBody(invoice));
+		payloadType.setBody(getBody(invoice, invoiceBillRecordInfos));
 		if (type == TYPE.COPY) {
 			payloadType.setRequestSubtype("copy");
 		}
@@ -1127,7 +1172,8 @@ public class Tarmed50Exporter {
 		return invoiceType;
 	}
 
-	protected BodyType getBody(IInvoice invoice) throws DatatypeConfigurationException {
+	protected BodyType getBody(IInvoice invoice, Map<Object, IInvoiceBillRecordInfo> invoiceBillRecordInfos)
+			throws DatatypeConfigurationException {
 		BodyType bodyType = new BodyType();
 
 		bodyType.setRole("physician");
@@ -1149,7 +1195,7 @@ public class Tarmed50Exporter {
 
 		bodyType.setTreatment(getTreatment(invoice));
 
-		bodyType.setServices(getServices(invoice));
+		bodyType.setServices(getServices(invoice, invoiceBillRecordInfos));
 
 		if (invoice.getAttachments() != null && !invoice.getAttachments().isEmpty()) {
 			bodyType.setDocuments(getDocuments(invoice));

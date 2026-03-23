@@ -237,6 +237,7 @@
         <setEntry value="org.postgresql.jdbc@default:default"/>
         <setEntry value="slf4j.api@default:default"/>
         <setEntry value="slf4j.osgi@default:default"/>
+        <setEntry value="wrapped.io.smallrye.common.smallrye-common-annotation@default:default"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="at.medevit.elexis.tarmed.model@default:default"/>
@@ -247,6 +248,7 @@
         <setEntry value="ch.elexis.base.ch.labortarif.model@default:default"/>
         <setEntry value="ch.elexis.base.ch.ticode@default:default"/>
         <setEntry value="ch.elexis.core.application@default:default"/>
+        <setEntry value="ch.elexis.core.cdi@default:default"/>
         <setEntry value="ch.elexis.core.data@default:default"/>
         <setEntry value="ch.elexis.core.documents@default:default"/>
         <setEntry value="ch.elexis.core.findings.util@default:default"/>
@@ -265,6 +267,7 @@
         <setEntry value="ch.elexis.core.rcp@default:default"/>
         <setEntry value="ch.elexis.core.serial@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
+        <setEntry value="ch.elexis.core.tasks.model@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.ui.contacts@default:default"/>

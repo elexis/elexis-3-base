@@ -25,9 +25,13 @@ import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.findings.codes.TransientCoding;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IInvoiceBillRecordInfo;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.builder.IContactBuilder;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.data.Verrechnet;
@@ -128,6 +132,36 @@ public class Tarmed50ExporterTest {
 		PatientAddressType patient = invoiceRequest.getPayload().getBody().getTiersGarant().getPatient();
 		assertEquals(2, patient.getPerson().getTelecom().getPhone().size());
 		assertEquals("444-444 44 44", patient.getPerson().getTelecom().getPhone().get(0));
+	}
+
+	@Test
+	public void doExportInvoiceBillRecordInfoTest() throws IOException {
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario);
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
+		Tarmed50Exporter exporter = new Tarmed50Exporter();
+
+		List<IInvoice> invoices = szenario.getInvoices();
+		Optional<IInvoice> mobileInvoice = invoices.stream()
+				.filter(i -> StringUtils.isNotBlank(i.getCoverage().getPatient().getMobile())).findFirst();
+
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		assertTrue(exporter.doExport(mobileInvoice.get(), output, IRnOutputter.TYPE.ORIG));
+
+		// IInvoiceBillRecordInfo
+		IQuery<IInvoiceBillRecordInfo> query = CoreModelServiceHolder.get().getQuery(IInvoiceBillRecordInfo.class);
+		query.and(ModelPackage.Literals.IINVOICE_BILL_RECORD_INFO__INVOICE, COMPARATOR.EQUALS, mobileInvoice.get());
+		List<IInvoiceBillRecordInfo> result = query.execute();
+
+		assertFalse(result.isEmpty());
+		assertEquals(mobileInvoice.get().getBilled().size(), result.size());
+		Optional<IInvoiceBillRecordInfo> infoForBilled = result.stream()
+				.filter(info -> info.getBilled().equals(mobileInvoice.get().getEncounters().get(0).getBilled().get(0)))
+				.findFirst();
+		assertTrue(infoForBilled.isPresent());
+		assertEquals(InvoiceServiceHolder.get().getCombinedId(mobileInvoice.get()), infoForBilled.get().getBillid());
+		assertFalse(infoForBilled.get().getBillrecordid().isBlank());
 	}
 
 	@Test

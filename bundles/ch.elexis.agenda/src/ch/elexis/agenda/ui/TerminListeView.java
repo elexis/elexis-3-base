@@ -17,15 +17,29 @@ package ch.elexis.agenda.ui;
 
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
-import org.eclipse.e4.core.di.annotations.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -33,23 +47,31 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IAppointmentSeries;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.agenda.CollisionErrorLevel;
+import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.AppointmentState;
+import ch.elexis.core.types.AppointmentType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
@@ -65,6 +87,7 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.dialogs.AppointmentDialog;
+import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.rgw.tools.TimeTool;
 import jakarta.inject.Inject;
 
@@ -73,21 +96,38 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	ScrolledForm form;
 	CommonViewer cv = new CommonViewer();
 	LockRequestingRestrictedAction<IAppointment> terminAendernAction;
+	IAction newTerminAction;
+	IAction printAction;
+	IAction printSeriesAction;
+	IAction delAction;
 
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
+	private CommonViewerContentProvider contentProvider;
 
 	@Inject
-	void activePatient(@Optional IPatient patient) {
+	void activePatient(@org.eclipse.e4.core.di.annotations.Optional IPatient patient) {
 		Display.getDefault().asyncExec(() -> {
 			refresh();
 		});
 	}
 
 	@Inject
-	@Optional
+	@org.eclipse.e4.core.di.annotations.Optional
 	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IAppointment appointment) {
 		if (cv != null) {
 			cv.notify(CommonViewer.Message.update, appointment);
+		}
+	}
+
+	@Inject
+	@org.eclipse.e4.core.di.annotations.Optional
+	public void reloadDelete(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Object payload) {
+		if (payload == IAppointment.class || payload instanceof IAppointment) {
+			if (cv != null) {
+				Display.getDefault().asyncExec(() -> {
+					cv.notify(CommonViewer.Message.update);
+				});
+			}
 		}
 	}
 
@@ -135,14 +175,13 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
 
-		CommonViewerContentProvider contentProvider = new ch.elexis.core.ui.util.viewers.CommonViewerContentProvider(
-				cv) {
+		contentProvider = new CommonViewerContentProvider(cv) {
 
-			private static final int QUERY_LIMIT = 50;
+			private static final int QUERY_LIMIT = 15;
 
 			@Override
 			public Object[] getElements(final Object inputElement) {
-				java.util.Optional<IPatient> actPat = ContextServiceHolder.get().getActivePatient();
+				Optional<IPatient> actPat = ContextServiceHolder.get().getActivePatient();
 				IQuery<IAppointment> query = getBaseQuery();
 				if (actPat.isPresent()) {
 					query.and("patId", COMPARATOR.EQUALS, actPat.get().getId());
@@ -172,7 +211,8 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		};
 
 		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new AppointmentLabelProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.V_SCROLL | SWT.FULL_SELECTION, cv));
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI,
+						cv));
 		vc.setContentType(ContentType.GENERICOBJECT);
 		cv.create(vc, body, SWT.NONE, this);
 		sort(SWT.DOWN);
@@ -183,7 +223,188 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			}
 		});
 
+		cv.getViewerWidget().addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+				boolean isRecurring = false;
+				boolean hasSelection = false;
+				int selectionCount = 0;
+
+				if (sel != null && !sel.isEmpty()) {
+					hasSelection = true;
+					selectionCount = sel.size();
+					Object o = sel.getFirstElement();
+					if (o instanceof IAppointment) {
+						IAppointment app = (IAppointment) o;
+						ContextServiceHolder.get().setTyped(app);
+						isRecurring = app.isRecurring();
+					}
+				} else {
+					ContextServiceHolder.get().removeTyped(IAppointment.class);
+				}
+
+				if (terminAendernAction != null) {
+					terminAendernAction.setEnabled(selectionCount == 1);
+				}
+
+				if (printAction != null) {
+					printAction.setEnabled(hasSelection);
+				}
+				if (printSeriesAction != null) {
+					printSeriesAction.setEnabled(isRecurring);
+				}
+				if (delAction != null) {
+					AgendaActions.updateActions();
+				}
+			}
+		});
+
+		makeActions();
+
 		getSite().getPage().addPartListener(udpateOnVisible);
+	}
+
+	private void makeActions() {
+		delAction = AgendaActions.getDelTerminAction();
+
+		newTerminAction = new Action(Messages.TagesView_newTermin) {
+			{
+				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
+				setToolTipText(Messages.TagesView_createNewTermin);
+			}
+
+			@Override
+			public void run() {
+				String resource = ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, StringUtils.EMPTY);
+				LocalDateTime start = LocalDateTime.now();
+				int minute = start.getMinute();
+				int mod = minute % 15;
+				start = start.plusMinutes(15 - mod).withSecond(0).withNano(0);
+				LocalDateTime end = start.plusMinutes(30);
+				IAppointment appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(), resource, start, end,
+						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
+						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+				Optional<IPatient> pat = ContextServiceHolder.get().getActivePatient();
+				if (pat.isPresent()) {
+					appointment.setSubjectOrPatient(pat.get().getId());
+				}
+
+				AppointmentDialog dlg = new AppointmentDialog(appointment);
+				dlg.setCollisionErrorLevel(CollisionErrorLevel.ERROR);
+				dlg.setExpanded(true);
+				dlg.open();
+				refresh();
+			}
+		};
+
+		printAction = new Action(Messages.TerminListeView_PrintSelected) {
+			{
+				setImageDescriptor(Images.IMG_PRINTER.getImageDescriptor());
+				setToolTipText(Messages.TerminListeView_PrintSelectedTooltip);
+			}
+
+			@Override
+			public void run() {
+				IStructuredSelection sel = (IStructuredSelection) cv.getViewerWidget().getSelection();
+				if (sel != null && !sel.isEmpty()) {
+					List<IAppointment> list = new ArrayList<>();
+					for (Object obj : sel.toList()) {
+						if (obj instanceof IAppointment) {
+							list.add((IAppointment) obj);
+						}
+					}
+					Collections.sort(list, new Comparator<IAppointment>() {
+						@Override
+						public int compare(IAppointment o1, IAppointment o2) {
+							return o1.getStartTime().compareTo(o2.getStartTime());
+						}
+					});
+
+					TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list);
+					dlg.setBlockOnOpen(true);
+					dlg.open();
+				}
+			}
+		};
+
+		printSeriesAction = new Action(Messages.TerminListeView_PrintSeries) {
+			{
+				setImageDescriptor(Images.IMG_PRINTER.getImageDescriptor());
+				setToolTipText(Messages.TerminListeView_PrintSeriesTooltip);
+				setEnabled(false);
+			}
+
+			@Override
+			public void run() {
+				IStructuredSelection sel = (IStructuredSelection) cv.getViewerWidget().getSelection();
+				if (sel != null && !sel.isEmpty()) {
+					Object o = sel.getFirstElement();
+					if (o instanceof IAppointment) {
+						IAppointment app = (IAppointment) o;
+						if (app.isRecurring()) {
+							Optional<IAppointmentSeries> series = AppointmentServiceHolder.get()
+									.getAppointmentSeries(app);
+							if (series.isPresent()) {
+								List<IAppointment> list = series.get().getAppointments();
+								Collections.sort(list, (o1, o2) -> o1.getStartTime().compareTo(o2.getStartTime()));
+
+								TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list);
+								dlg.setBlockOnOpen(true);
+								dlg.open();
+							}
+						}
+					}
+				}
+			}
+		};
+		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				IStructuredSelection sel = (IStructuredSelection) cv.getViewerWidget().getSelection();
+				boolean isRecurring = false;
+				int count = 0;
+
+				if (sel != null && !sel.isEmpty()) {
+					count = sel.size();
+					Object obj = sel.getFirstElement();
+					if (obj instanceof IAppointment) {
+						isRecurring = ((IAppointment) obj).isRecurring();
+					}
+				}
+
+				manager.add(newTerminAction);
+				manager.add(new Separator());
+
+				if (count == 1) {
+					manager.add(terminAendernAction);
+					manager.add(AgendaActions.getTerminStatusAction());
+				}
+
+				manager.add(printAction);
+
+				if (isRecurring) {
+					manager.add(printSeriesAction);
+				}
+
+				manager.add(new Separator());
+				manager.add(delAction);
+				AgendaActions.updateActions();
+			}
+		});
+
+		Menu menu = menuMgr.createContextMenu(cv.getViewerWidget().getControl());
+		cv.getViewerWidget().getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, cv.getViewerWidget());
+		IActionBars actionBars = getViewSite().getActionBars();
+		IToolBarManager toolBarManager = actionBars.getToolBarManager();
+		toolBarManager.add(newTerminAction);
+		IMenuManager viewMenu = actionBars.getMenuManager();
+		viewMenu.add(printAction);
+		viewMenu.add(printSeriesAction);
+
+		actionBars.updateActionBars();
 	}
 
 	@Override
@@ -198,8 +419,25 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	private void updateSelection(IPatient patient) {
 		if (patient == null) {
 			form.setText(Messages.TerminListView_noPatientSelected);
+			ContextServiceHolder.get().removeTyped(IAppointment.class);
+			AgendaActions.updateActions();
+
+			if (printAction != null)
+				printAction.setEnabled(false);
+			if (printSeriesAction != null)
+				printSeriesAction.setEnabled(false);
+			if (terminAendernAction != null)
+				terminAendernAction.setEnabled(false);
+			if (newTerminAction != null)
+				newTerminAction.setEnabled(false);
+
 		} else {
 			form.setText(patient.getLabel());
+			if (newTerminAction != null)
+				newTerminAction.setEnabled(true);
+			if (cv.getViewerWidget().getContentProvider() instanceof CommonViewerContentProvider) {
+				contentProvider.resetLimit();
+			}
 			cv.notify(CommonViewer.Message.update);
 		}
 	}
@@ -230,11 +468,45 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	@Override
 	public void refresh() {
 		if (CoreUiUtil.isActiveControl(form)) {
+			if (cv.getViewerWidget().getLabelProvider() instanceof AppointmentLabelProvider) {
+				((AppointmentLabelProvider) cv.getViewerWidget().getLabelProvider()).reloadColors();
+			}
 			updateSelection(ContextServiceHolder.get().getActivePatient().orElse(null));
 		}
 	}
 
 	private static final class AppointmentLabelProvider extends LabelProvider implements IColorProvider {
+
+		private Color colorPast;
+		private Color colorFuture;
+		private LocalDateTime cachedNow;
+
+		public AppointmentLabelProvider() {
+			reloadColors();
+		}
+
+		public void reloadColors() {
+			cachedNow = LocalDateTime.now();
+			boolean useGlobal = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_USE_GLOBAL_SETTINGS, false);
+
+			String hexPast;
+			String hexFuture;
+
+			if (useGlobal) {
+				hexPast = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_PAST_BG_COLOR,
+						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
+				hexFuture = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_FUTURE_BG_COLOR,
+						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+			} else {
+				hexPast = ConfigServiceHolder.getUser(PreferenceConstants.TL_PAST_BG_COLOR,
+						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
+				hexFuture = ConfigServiceHolder.getUser(PreferenceConstants.TL_FUTURE_BG_COLOR,
+						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+			}
+
+			colorPast = UiDesk.getColorFromRGB(hexPast);
+			colorFuture = UiDesk.getColorFromRGB(hexFuture);
+		}
 
 		@Override
 		public String getText(Object element) {
@@ -287,13 +559,9 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		@Override
 		public Color getBackground(Object element) {
 			if (isPastAppointment(element)) {
-				String hex = ConfigServiceHolder.getUser(PreferenceConstants.TL_PAST_BG_COLOR,
-						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
-				return UiDesk.getColorFromRGB(hex);
+				return colorPast;
 			} else {
-				String hex = ConfigServiceHolder.getUser(PreferenceConstants.TL_FUTURE_BG_COLOR,
-						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
-				return UiDesk.getColorFromRGB(hex);
+				return colorFuture;
 			}
 		}
 
@@ -320,7 +588,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 				return false;
 			}
 			IAppointment a = (IAppointment) element;
-			LocalDateTime now = LocalDateTime.now();
+			LocalDateTime now = (cachedNow != null) ? cachedNow : LocalDateTime.now();
 			if (a.getEndTime() != null) {
 				return a.getEndTime().isBefore(now);
 			}

@@ -23,10 +23,10 @@ import ch.elexis.core.findings.codes.CodingSystem;
 import ch.elexis.core.findings.migration.IMigratorService;
 import ch.elexis.core.findings.util.model.TransientLocalCoding;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.fire.core.internal.FIREServiceTest;
 

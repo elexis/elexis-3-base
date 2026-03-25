@@ -52,6 +52,8 @@ public class TarifMatcher<T extends IBillable> {
 	private MapperService mapperService;
 	private IBillableOptifier<T> optifier;
 
+	private List<String> skipPauschaleCodes = List.of("C99.80Z");
+
 	public TarifMatcher(IBillableOptifier<T> optifier) {
 		this.optifier = optifier;
 	}
@@ -92,7 +94,7 @@ public class TarifMatcher<T extends IBillable> {
 						AmbulatoryAllowance pauschale = AmbulatoryAllowance.getFromCode(
 								patientCase.getGrouperResult().group, AmbulantePauschalenTyp.PAUSCHALE,
 								patientCase.getEntryDate());
-						if (pauschale != null) {
+						if (pauschale != null && !isSkipAmbulatoryAllowance(pauschale)) {
 							ret = optifier.add((T) pauschale, encounter, 1, false);
 							if (ret.isOK()) {
 								for (IBilled encounterBilled : encounter.getBilled()) {
@@ -124,6 +126,10 @@ public class TarifMatcher<T extends IBillable> {
 			}
 		}
 		return ret;
+	}
+
+	private boolean isSkipAmbulatoryAllowance(AmbulatoryAllowance pauschale) {
+		return skipPauschaleCodes.contains(pauschale.getCode());
 	}
 
 	private Map<MapperLogEntryLevel, Integer> logEntrySortMap() {

@@ -389,6 +389,17 @@ public class TardocLimitation {
 
 		if (rechnungssteller != null) {
 			List<IBilled> all = findVerrechnetByPatientCodeDuringPeriod(kons.getCoverage().getPatient(), code);
+			// filter same law
+			BillingLaw filterLaw = kons.getCoverage().getBillingSystem().getLaw();
+			if (filterLaw != null) {
+				all = all.parallelStream().filter(billed -> {
+					IEncounter encounter = billed.getEncounter();
+					if (encounter.getCoverage() != null && encounter.getCoverage().getBillingSystem() != null) {
+						return filterLaw.equals(encounter.getCoverage().getBillingSystem().getLaw());
+					}
+					return false;
+				}).collect(Collectors.toList());
+			}
 			// filter for matching rechnungssteller
 			all = all.parallelStream().filter(billed -> {
 				IEncounter encounter = billed.getEncounter();

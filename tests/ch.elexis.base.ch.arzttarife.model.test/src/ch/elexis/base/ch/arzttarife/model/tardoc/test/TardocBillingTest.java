@@ -15,8 +15,15 @@ import ch.elexis.base.ch.arzttarife.tardoc.model.TardocConstants;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.builder.ICoverageBuilder;
+import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.test.initializer.TestDatabaseInitializer;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 
 public class TardocBillingTest extends AbstractTardocTest {
@@ -261,5 +268,45 @@ public class TardocBillingTest extends AbstractTardocTest {
 		String bezug = (String) billed.getExtInfo("Bezug");
 		assertNotNull(bezug);
 		assertEquals("TK.00.0010", bezug);
+	}
+
+	@Test
+	public void limitTardocMultiSessionSameLaw() {
+		// 30 mal pro 90 Tage
+		TardocLeistung studyCode = TardocLeistung.getFromCode("AA.15.0010", LocalDate.of(2026, 1, 1), null);
+
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+		Result<IBilled> status = billingService.bill(studyCode, encounter, 15);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		encounter1.setDate(LocalDate.of(2026, 1, 7));
+		CoreModelServiceHolder.get().save(encounter1);
+
+		status = billingService.bill(studyCode, encounter1, 15);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(studyCode, encounter1, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		ICoverage otherCoverage = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Unfall", "UVG")
+				.buildAndSave();
+
+		IEncounter otherEncounter = new IEncounterBuilder(coreModelService, otherCoverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		otherEncounter.setDate(LocalDate.of(2026, 1, 14));
+		CoreModelServiceHolder.get().save(otherEncounter);
+
+		status = billingService.bill(studyCode, otherEncounter, 15);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
 	}
 }

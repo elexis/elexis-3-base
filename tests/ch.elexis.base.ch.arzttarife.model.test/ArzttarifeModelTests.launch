@@ -60,6 +60,7 @@
         <setEntry value="com.opencsv@default:default"/>
         <setEntry value="com.sun.jna.platform@default:default"/>
         <setEntry value="com.sun.jna@default:default"/>
+        <setEntry value="com.sun.xml.bind.jaxb-osgi@default:default"/>
         <setEntry value="info.elexis.target.hapi.fhir@default:default"/>
         <setEntry value="jakarta.activation-api@default:default"/>
         <setEntry value="jakarta.annotation-api@default:default"/>
@@ -201,6 +202,7 @@
         <setEntry value="org.glassfish.jersey.core.jersey-common*3.1.99.SNAPSHOT@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-server@default:default"/>
         <setEntry value="org.glassfish.jersey.ext.jersey-proxy-client@default:default"/>
+        <setEntry value="org.glassfish.jersey.media.jersey-media-jaxb@default:default"/>
         <setEntry value="org.glassfish.jersey.media.jersey-media-multipart@default:default"/>
         <setEntry value="org.hamcrest.core@default:default"/>
         <setEntry value="org.hamcrest@default:default"/>
@@ -255,6 +257,7 @@
         <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
         <setEntry value="ch.elexis.core.model@3:true"/>
         <setEntry value="ch.elexis.core.rcp@default:default"/>
+        <setEntry value="ch.elexis.core.services.rcp@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks.model@default:default"/>
         <setEntry value="ch.elexis.core.tasks.test@default:false"/>

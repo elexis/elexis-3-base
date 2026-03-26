@@ -382,9 +382,11 @@ public class InboxView extends ViewPart {
 		addFilterActions(menuManager);
 
 		InboxServiceHolder.get().addUpdateListener(new IInboxUpdateListener() {
+			@Override
 			public void update(final IInboxElement element) {
 				if (viewer != null && !viewer.getControl().isDisposed()) {
 					Display.getDefault().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							contentProvider.refreshElement(element);
 							viewer.refresh(false);
@@ -456,11 +458,15 @@ public class InboxView extends ViewPart {
 
 	public List<IInboxElement> getOpenInboxElements() {
 		if (selectedMandators == null || selectedMandators.isEmpty()) {
-			mandatorColumn.getColumn().setWidth(0);
+			if (Display.getCurrent() != null) {
+				mandatorColumn.getColumn().setWidth(0);
+			}
 			return InboxServiceHolder.get().getInboxElements(
 					ContextServiceHolder.get().getActiveMandator().orElse(null), null, IInboxElementService.State.NEW);
 		} else {
-			mandatorColumn.getColumn().setWidth(75);
+			if (Display.getCurrent() != null) {
+				mandatorColumn.getColumn().setWidth(75);
+			}
 			List<IInboxElement> mandatorsElements = new ArrayList<>();
 			for (IMandator mandator : selectedMandators) {
 				mandatorsElements.addAll(

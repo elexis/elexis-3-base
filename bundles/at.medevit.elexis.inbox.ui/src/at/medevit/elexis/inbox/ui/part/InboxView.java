@@ -20,6 +20,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -81,6 +82,7 @@ import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
 import at.medevit.elexis.inbox.ui.preferences.Preferences;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -103,6 +105,17 @@ public class InboxView extends ViewPart {
 	private boolean setAutoSelectPatient;
 
 	private TableViewerColumn mandatorColumn;
+
+	@Optional
+	@Inject
+	public void reloadGroupedElements(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz) {
+		if (GroupedInboxElements.class.equals(clazz) && viewer != null && !viewer.getControl().isDisposed()) {
+			Display.getDefault().asyncExec(() -> {
+				contentProvider.refreshGroupedElements();
+				viewer.refresh();
+			});
+		}
+	}
 
 	@Optional
 	@Inject
@@ -638,5 +651,9 @@ public class InboxView extends ViewPart {
 	public void setSelectedMandators(List<IMandator> mandators) {
 		this.selectedMandators = mandators;
 		reload();
+	}
+
+	public List<IMandator> getSelectedMandators() {
+		return selectedMandators;
 	}
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part.provider;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Display;
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import at.medevit.elexis.inbox.ui.part.InboxView;
+import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -118,6 +120,18 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 			};
 			job.schedule();
 		}
+	}
+
+	public void refreshGroupedElements() {
+		new ArrayList<IInboxElement>(items).stream().filter(ie -> ie instanceof GroupedInboxElements)
+				.forEach(ie -> {
+					if (ie.getState() == State.SEEN) {
+						items.remove(ie);
+						if (filteredItems != null) {
+							filteredItems.remove(ie);
+						}
+					}
+				});
 	}
 
 	public void refreshElement(IInboxElement element) {

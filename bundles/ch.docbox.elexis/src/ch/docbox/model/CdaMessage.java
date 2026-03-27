@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import ch.docbox.cdach.CdaChXPath;
 import ch.docbox.elexis.UserDocboxPreferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
@@ -224,12 +226,21 @@ public class CdaMessage extends PersistentObject {
 					path = path.trim();
 				}
 				try {
+					String osPath = path;
+					if (StringUtils.isNotBlank(path)) {
+						IVirtualFilesystemHandle h = VirtualFilesystemServiceHolder.get().of(path, true);
+						java.util.Optional<File> local = h.toFile();
+						if (local.isPresent()) {
+							osPath = local.get().getAbsolutePath();
+						}
+					}
+
 					Program program = Program.findProgram(ext);
 					if (program != null) {
-						program.execute(path);
+						program.execute(osPath);
 					} else {
-						if (Program.launch(path) == false) {
-							Runtime.getRuntime().exec(path);
+						if (!Program.launch(osPath)) {
+							Runtime.getRuntime().exec(osPath);
 						}
 					}
 				} catch (Exception ex) {

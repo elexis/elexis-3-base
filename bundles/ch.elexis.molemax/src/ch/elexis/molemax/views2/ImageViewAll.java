@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +55,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
 import ch.elexis.molemax.handler.ThumbnailHandler;
@@ -62,7 +63,7 @@ import ch.elexis.molemax.handler.ThumbnailHandler;
 public class ImageViewAll {
 	private ImageOverview overviewInstance;
 	private List<Image> createdImages = new ArrayList<>();
-	private Patient aktuellerPatient;
+	private IPatient aktuellerPatient;
 	private static final int AUTO_SCROLL_MARGIN = 40;
 	private static final int AUTO_SCROLL_SPEED = 75;
 	private String groupName = null;
@@ -327,9 +328,9 @@ public class ImageViewAll {
 			                    
 			                    if (groupName == null) {
 			                        if (fileModifiedDate.equals(today)) {
-			                            groupName = today.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+										groupName = today.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 			                        } else {
-			                            groupName = fileModifiedDate.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+										groupName = fileModifiedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 			                        }
 			                    }
 								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + File.separator + groupName;
@@ -410,7 +411,6 @@ public class ImageViewAll {
 						}
 					}
 				} else {
-					String sourcePath = (String) event.data;
 					GalleryItem targetGroup = gallery.getItem(new Point(event.x, event.y));
 					if (targetGroup != null) {
 				}
@@ -441,7 +441,7 @@ public class ImageViewAll {
 		}
 	}
 
-	public void updateGalleryForPatient(Patient aktuellerPatient) {
+	public void updateGalleryForPatient(IPatient aktuellerPatient) {
 		this.aktuellerPatient = aktuellerPatient;
 		initializeGallery();
 		processDirectories();
@@ -459,10 +459,39 @@ public class ImageViewAll {
 		if (mainDirectory.exists() && mainDirectory.isDirectory()) {
 			File[] groupDirectories = mainDirectory.listFiles(File::isDirectory);
 			if (groupDirectories != null) {
-				Arrays.sort(groupDirectories, (file1, file2) -> file2.getName().compareTo(file1.getName()));
+
+				Arrays.sort(groupDirectories, (file1, file2) -> {
+					LocalDate date1 = parseDirectoryDate(file1.getName());
+					LocalDate date2 = parseDirectoryDate(file2.getName());
+
+					if (date1 != null && date2 != null) {
+						return date2.compareTo(date1);
+					}
+					else if (date1 != null) {
+						return -1;
+					} else if (date2 != null) {
+						return 1;
+					}
+					else {
+						return file2.getName().compareToIgnoreCase(file1.getName());
+					}
+				});
+
 				for (File groupDir : groupDirectories) {
 					processGroupDirectory(groupDir);
 				}
+			}
+		}
+	}
+
+	private LocalDate parseDirectoryDate(String dirName) {
+		try {
+			return LocalDate.parse(dirName, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+		} catch (Exception e1) {
+			try {
+				return LocalDate.parse(dirName, DateTimeFormatter.ofPattern("yyyyMMdd"));
+			} catch (Exception e2) {
+				return null;
 			}
 		}
 	}

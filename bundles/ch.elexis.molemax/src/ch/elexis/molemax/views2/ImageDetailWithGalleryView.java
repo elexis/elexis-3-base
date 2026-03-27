@@ -507,7 +507,6 @@ public class ImageDetailWithGalleryView {
 	}
 
 	private static BufferedImage convertToAWT(ImageData data) {
-		DirectColorModel colorModel = new DirectColorModel(24, 0xFF0000, 0xFF00, 0xFF);
 		BufferedImage bufferedImage = new BufferedImage(data.width, data.height, BufferedImage.TYPE_INT_RGB);
 		for (int y = 0; y < data.height; y++) {
 			for (int x = 0; x < data.width; x++) {

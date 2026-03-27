@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.molemax.Messages;
 
 public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -30,7 +30,6 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 	private StringFieldEditor customBaseDirEditor;
 	private Text dateFormatText;
 	private Text timeFormatText;
-	private String selectedSeparator = "_";
 	private String selectedDateFormat = "yyyyMMdd";
 	private String selectedTimeFormat = "hhmmss";
 	private Spinner nameSpinner, firstNameSpinner;
@@ -39,8 +38,9 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 
 	public MolemaxImagePrefs() {
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.LOCAL));
 	}
+
 	protected void createFieldEditors() {
 		addField(new DirectoryFieldEditor(BASEDIR, Messages.MolemaxPrefs_basedir, getFieldEditorParent()));
 		customBaseDirEditor = new StringFieldEditor(CUSTOM_BASEDIR, "Patienten Ordner Struktur",
@@ -54,14 +54,15 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		slashButton.setText("/");
 		slashButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				selectedSeparator = "/";
+				appendToGeneratedStructure("/");
 			}
 		});
+
 		underLineButton = new Button(separatorButtonContainer, SWT.PUSH);
 		underLineButton.setText("_");
 		underLineButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				selectedSeparator = "_";
+				appendToGeneratedStructure("_");
 			}
 		});
 
@@ -154,9 +155,7 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		if (charCount > 0 && (component.equals("Name") || component.equals("Vorname"))) {
 			component = component + "-" + charCount;
 		}
-		if (!currentText.isEmpty()) {
-			currentText += selectedSeparator;
-		}
+
 		customBaseDirEditor.setStringValue(currentText + component);
 	}
 
@@ -164,8 +163,8 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		String customPath = getPreferenceStore().getString(CUSTOM_BASEDIR);
 		return customPath;
 	}
+
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-
 	}
 }

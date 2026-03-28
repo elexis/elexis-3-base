@@ -125,6 +125,9 @@ import jakarta.inject.Named;
  * A class do receive documents by drag&drop. Documents are imported into the
  * database and linked to the selected patient. On double-click they are opened
  * with their associated application.
+ *
+ * 20260108js: The first column with empty header and empty rows exists to provide room for open/close-branch icons in the non-flat view.
+ * 20260108js: It does however exist and remain visible in a completely empty state when the flat-view is activated.
  */
 
 public class OmnivoreView extends ViewPart implements IRefreshable {
@@ -136,11 +139,53 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private Action exportAction;
 	private Action doubleClickAction;
 	private Action flatViewAction;
-	private final String[] colLabels = { StringUtils.EMPTY, Messages.OmnivoreView_categoryColumn,
-			Messages.OmnivoreView_dateColumn, Messages.OmnivoreView_dateOriginColumn, Messages.OmnivoreView_titleColumn,
-			Messages.OmnivoreView_keywordsColumn };
-	private final String colWidth = "20,80,80,150,500"; //$NON-NLS-1$
-	private final String sortSettings = "0,1,-1,false"; //$NON-NLS-1$
+	
+	//20260108js Auto formatted line breaks at non-sensical points are very unhelpful when checking column widths or sortSettings against columnNames.
+	//20260108js Attempts to review and understand code for quality assurance (over adherence to auto formatting rules) will constantly be hindered by this.
+	//20260108js For now, I tried to lay out the column names on one line per item.
+	//20260108js I do however understand that auto formatting (or some human with similar priorities) will scramble that again and again, probably with the local save/load or the next upload to github.
+
+	//20260108js The fact that an addition of a width was forgotton just ONE LINE DIRECTLY BELOW where a new colLabels String was added, should prove my point without a doubt.
+	//20260108js That this error prevailed in a published version (for how many revisions?) proves that build time testing is cannot fix low code readability & comprehensibility & lack of comments.
+	
+	//TODO: 20260108js Please ensure that automatic code formatting (or humans with similar priorities) do NOT impair the quick comprehensibility (!!!) of code by inserting line breaks at fixed lengths.
+	//TODO: 20260108js We all have 16:9 or 16:10 screens, my comments fit on these lines when I write them, and even I haven't used a 24-needle printer and perforated endless paper for years.
+	
+	//TODO: 20260108js AND IF you should EVER be re-considering auto formatting styles, please note that Pascal-like bracketing & indentation is much less error prone than Java/C/etc.-like b&i.
+	//TODO: 20260108js I.e. the opening and closing curly brackets could be placed into the same column as the first character of each line at the same level within a given block.
+	//TODO: 20260108js I have experienced examples where bracketing was messed up, producing erroneous code, right in this project when "freeing up space = removing comments".
+		
+	//20260108js: REMINDER: Whenever you add a colLabels entry here, you MUST add a colWidth and probably a sortSettings entry below.
+	//20260108js: REMINDER: Or else, your omnivore view will fail to display all columns. As definitely shown in Elexis 3.13 (and possibly in other versions >= 3.8). 
+	//20260108js: NOTE: That has now been mitigated; at least some degree of omissions here or in old config entries may be auto-fixed by code further below.  
+	private final String[] colLabels = { StringUtils.EMPTY,
+										 Messages.OmnivoreView_categoryColumn,
+										 Messages.OmnivoreView_dateColumn,
+										 Messages.OmnivoreView_dateOriginColumn, 
+										 Messages.OmnivoreView_titleColumn,
+										 Messages.OmnivoreView_keywordsColumn };
+	
+	//20260108js: CAVE: What follows is a highly error prone way to prepare an array of constants:
+	//20260108js: CAVE: You MUST NOT add ANY SPACES or non-numeric chars except for the comma inside this String!
+	//20260108js: OR you'll catch hundreds of lines on the console signaling a few "Number format exception"s after conversion to an array of (supposed) integers below.
+	//20260108js: Which, of course, completely kills the construction of this view.
+	//20260108js: That's Java and provocation of coding errors at its best.
+	
+	//TODO: 20260108js: You might consider refactoring this code, and all similar constructs, to some direct definition of arrays colWidth[] and sortSettings[] right from the start.
+	//TODO: 20260108js: I see however that this might pose a large task - given that user preferences are stored in strings similar to this constant, and overlaid whenever they're flagged to be used.
+	
+	//20260108js: Original error inserted between 3.8 and 3.13; breaking omnivore: Inserting an additional width was forgotten when inserting OmnivoreView_dateOriginColumn above.
+	//20260108js: I've inserted (!) the missing value here; AND also added code further below to harden this program against future similar errors.
+	private final String colWidth = 	"20,80,80,80,150,500"; //$NON-NLS-1$
+	//TODO: 20260108js: This MIGHT still fail - I observed that when a two element constant here and a three element constant from PreferencePage were used together,
+	//TODO: 20260108js: even when all added hardenings did apparently work as expected. But that's a scenario so improbable in reality that I won't spend any more time on it right now.
+	
+	//20260108js: Inserting an additional sort setting was ALSO forgotten when inserting OmnivoreView_dateOriginColumn
+	//20260108js: CAVE: I have just fixed this here; and NOT checked whether this oblivion might have caused separate undesired effects; NEITHER added ANY hardening/or handling of missing values below.   
+	//20260108js: I don't understand why 0 and false were used in the same set of constants. So I chose the shorter one.
+	private final String sortSettings = "0,1,1,-1,0,0"; //$NON-NLS-1$	//20260108js: Inserting an additional sort setting was probably forgotten when inserting OmnivoreView_dateOriginColumn
+	//TODO: 20260108js: Check whether related corrections are required in other files.
+	
 	private boolean bFlat = false;
 	private String searchTitle = StringUtils.EMPTY;
 	private String searchKW = StringUtils.EMPTY;
@@ -239,6 +284,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		}
 
 		private boolean filterMatches(String[] kws, IDocumentHandle h) {
+			//TODO: 20260108js: Check if searches in Title and Keywords (="Titel" und "Stichwörter" in DE) fields are processed in equivalent ways.
 			if (!h.getTitle().toLowerCase().contains(searchTitle.toLowerCase()))
 				return false;
 			String dkw = h.getKeywords().toLowerCase();
@@ -338,6 +384,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				return;
 			}
 			switch (columnIndex) {
+			//20260108js: The first column with empty header and empty rows exists to provide room for open/close-branch icons in the non-flat view.
+			//20260108js: It does however exist and remain visible in a completely empty state when the flat-view is activated.
 			case 0:
 				cell.setText(StringUtils.EMPTY);
 				break;
@@ -459,6 +507,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			cols[i].setText(colLabels[i]);
 			cols[i].setData(new Integer(i));
 		}
+		
 		applyUsersColumnWidthSetting();
 
 		table.setHeaderVisible(true);
@@ -538,7 +587,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void dragSetData(DragSourceEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-
+				//TODO: 20260108js: Check if some corresponding getKeywords() has been lost here; compare with improved drag/drop support from 2.1.7js and 3.7js
 				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
 					String[] files = new String[selection.size()];
 					for (int index = 0; index < selection.size(); index++) {
@@ -617,16 +666,75 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		viewer.refresh();
 	}
 
+	//20260108js: Please DO ensure that userColWidth contains enough entries for all columns, 
+	//20260108js: BOTH IF they're obtained from the constant array above, OR through ConfigServiceHolder.
+	//20260108js: CAVE: AS LONG AS String[] is constructed from colWidth.split(",") instead of being directly defined as a constant of arrays: colWidth must NOT contain ANY chars but 0..9+-,  
 	private void applyUsersColumnWidthSetting() {
 		TreeColumn[] treeColumns = table.getColumns();
 		String[] userColWidth = colWidth.split(","); //$NON-NLS-1$
+		
+		//20260108js: Eclipse debugging stepwise execution does not work as expected.
+		//20260108js: And results aren't always as expected, either. So: Doing it the old way, time and again around here. 
+		//System.out.println("String colWidth: "+colWidth);
+		//System.out.println("String[] userColWidth from local constant String: "+userColWidth);
+		//System.out.println("userColWidth.length from local constant String:   "+userColWidth.length);
+		//System.out.println("String[] treeColumns: "+treeColumns);
+		//System.out.println("treeColumns.length:   "+treeColumns.length);
+		
 		if (ConfigServiceHolder.getUser(PreferencePage.SAVE_COLUM_WIDTH, false)) {
 			String ucw = ConfigServiceHolder.getUser(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, colWidth);
+			//20260108js: Ensure that the required number of additional entries with reasonable (above zero!) values are available,
+			//20260108js: even when the userColWidth string from PreferencePage covers fewer columns - e.g. after an upgrade from Elexis 3.7 (or maybe more) to 3.13 ff.
+			//20260108js: And don't just make additionally needed ones up - but copy them from what's defined in the local constant String colWidth.
+			//System.out.println("ucw: "+ucw);
+			String[] userColWidthFromPP = ucw.split(","); //$NON-NLS-1$
+			if ( userColWidthFromPP.length < userColWidth.length ) {
+				for (int i = userColWidthFromPP.length; i < userColWidth.length; i++ ) {
+					ucw = ucw.concat(","+userColWidth[i]);
+					//System.out.println("ucw: "+ucw);
+				}
+			}
+			//System.out.println("ucw: "+ucw);
 			userColWidth = ucw.split(","); //$NON-NLS-1$
 		}
+		
+		//20260108js: While we're at it... let's make this robust against people forgetting to add local colWidth entries after adding treeColumns entries above (in the future, again).
+		//20260108js: And let's do that BEFORE the final for-loop, so that the extended userColWidth will be stored in user preferences later on and work normally in the future.
+		//
+		//20260108js: The implementation is super clumsy, but it fits the existing variables and approaches and requires only local additions in the code. Plus, efficiency doesn't matter here at all.
+		if ( userColWidth.length < treeColumns.length ) {	//20260108js: Can happen, as seen in 3.13, when treeColumns entry is added but adding a colWidth entry is forgotten.
+			String availColWidths = "";
+			//System.out.println("availColWidths: "+availColWidths);
+			for (int i = 0; i < userColWidth.length; i++ ) {
+				availColWidths = availColWidths.concat(userColWidth[i]+",");
+				//System.out.println("availColWidths: "+availColWidths);
+			}
+			for (int i = userColWidth.length; i < treeColumns.length; i++ ) {
+				availColWidths = availColWidths.concat(userColWidth[0]);	//20260108js: use the constant width intended for the first (very narrow) column to generate any forgotten widths. 
+				if ( i < treeColumns.length -1 ) availColWidths = availColWidths.concat(",");
+				//System.out.println("availColWidths: "+availColWidths);
+			}
+			//System.out.println("availColWidths: "+availColWidths);
+			userColWidth = availColWidths.split(",");
+		}
 
-		for (int i = 0; i < treeColumns.length && (i < userColWidth.length); i++) {
+		//System.out.println("userColWidth.length: "+userColWidth.length);
+		//20260108js: CAVE: Just limiting the following for-loop applying widths to treeColumns[i] by ... && (i < userColWidth.length) does protect from an access outside of array bounds -
+		//20260108js: but it does NOT protect from a column with undefined (or zero) width, resulting in some users painfully missing the last column(s) in the display.
+		//20260108js: The previous fixes may make this additional condition now technically unnecessary.
+		//20260108js: But I don't remove it, just in case an overzealous person removes my preceding code-hardenings again.
+		
+		//20260108js: (And... up to here, I haven't even *looked* at possible consequences of possibly similarly forgotten entries to sortSettings... BUT I've already added a missing one, and cleaned all.)
+		//TODO: 20260108js: The last comment should probably be moved to some place where sortSettings... is actually being put to use. And missing entries could cause trouble that's hard to debug. 
+
+		for (int i = 0; ( (i < treeColumns.length) && (i < userColWidth.length) ); i++) {	//20260108js: Fixed missing first set of brackets. Hmm.
+			//System.out.println("i: "+i);
+			//System.out.println("userColWidth[i]: "+userColWidth[i]);
+			//System.out.println("Integer.parseInt(userColWidth[i]): "+Integer.parseInt(userColWidth[i]));
+			//System.out.println("treeColumns[i].getWidth(): "+treeColumns[i].getWidth());
+			//System.out.println("About to treeColumns["+i+"].setWidth("+userColWidth[i]+")...");
 			treeColumns[i].setWidth(Integer.parseInt(userColWidth[i]));
+			//System.out.println("treeColumns[i].getWidth(): "+treeColumns[i].getWidth());
 		}
 	}
 
@@ -748,6 +856,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 								"You have insufficient rights to delete document categories");
 					}
 				} else {
+					//TODO: 20260108js: Check if some corresponding getKeywords() has been lost here; compare with improved drag/drop support from 2.1.7js and 3.7js
 					if (SWTHelper.askYesNo(Messages.OmnivoreView_reallyDeleteCaption,
 							MessageFormat.format(Messages.OmnivoreView_reallyDeleteContents, dh.getTitle()))) {
 						OmnivoreModelServiceHolder.get().delete(dh);
@@ -773,6 +882,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void doRun(IDocumentHandle dh) {
 				if (dh.isCategory()) {
+					//TODO: 20260108js: Check if some corresponding getKeywords() has been lost here; compare with improved drag/drop support from 2.1.7js and 3.7js
 					if (AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.UPDATE).and(Right.EXECUTE))) {
 
 						InputDialog id = new InputDialog(getViewSite().getShell(),

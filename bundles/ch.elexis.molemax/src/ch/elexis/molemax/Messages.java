@@ -50,5 +50,21 @@ public class Messages {
 	public static String BefundePrefs_enterRenameCaption = ch.elexis.core.l10n.Messages.BefundePrefs_enterRenameCaption;
 	public static String Rename_Group_Text = ch.elexis.core.l10n.Messages.Rename_Group_Text;
 	public static String BriefAuswahlRenameButtonText = ch.elexis.core.l10n.Messages.BriefAuswahlRenameButtonText;
+	public static String ImageViewAll_Confirm_delete = ch.elexis.core.l10n.Messages.ImageViewAll_Confirm_delete;
+	public static String ImageViewAll_DeleteEmptyGroup = ch.elexis.core.l10n.Messages.ImageViewAll_DeleteEmptyGroup;
+	public static String ImageViewAll_DeleteGroupWithImages = ch.elexis.core.l10n.Messages.ImageViewAll_DeleteGroupWithImages;
+	public static String ImageViewAll_DeleteMultipleGroups = ch.elexis.core.l10n.Messages.ImageViewAll_DeleteMultipleGroups;
+	public static String ImageViewAll_DeleteMultipleImages = ch.elexis.core.l10n.Messages.ImageViewAll_DeleteMultipleImages;
+	public static String ImageViewAll_DeleteSingleImage = ch.elexis.core.l10n.Messages.ImageViewAll_DeleteSingleImage;
+	public static String ImageViewAll_DeleteSelectedElements = ch.elexis.core.l10n.Messages.ImageViewAll_DeleteSelectedElements;
+	public static String ImageViewAll_FileAction = ch.elexis.core.l10n.Messages.ImageViewAll_FileAction;
+	public static String ImageViewAll_FileExistsAction = ch.elexis.core.l10n.Messages.ImageViewAll_FileExistsAction;
+	public static String ImageViewAll_Overwrite = ch.elexis.core.l10n.Messages.ImageViewAll_Overwrite;
+	public static String ImageViewAll_Rename = ch.elexis.core.l10n.Messages.ImageViewAll_Rename;
+	public static String ImageViewAll_Cancel = ch.elexis.core.l10n.Messages.ImageViewAll_Cancel;
+	public static String ImageViewAll_CreateThumbnails = ch.elexis.core.l10n.Messages.ImageViewAll_CreateThumbnails;
+	public static String ImageViewAll_CreateThumbnailFor = ch.elexis.core.l10n.Messages.ImageViewAll_CreateThumbnailFor;
+	public static String ImageViewAll_EnterNewFilename = ch.elexis.core.l10n.Messages.ImageViewAll_EnterNewFilename;
+	public static String ImageViewAll_PleaseEnterNewFilename = ch.elexis.core.l10n.Messages.ImageViewAll_PleaseEnterNewFilename;
 
 }

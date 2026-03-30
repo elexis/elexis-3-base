@@ -16,8 +16,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.molemax.Messages;
 
 public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -25,7 +25,7 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 
 	public MolemaxPrefs() {
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.LOCAL));
 	}
 
 	@Override

@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -92,7 +91,7 @@ public class Overview extends ViewPart implements IRefreshable {
 	AllSlotsDisplay dispAll;
 	RowDisplay dispRow;
 	TimeMachineDisplay tmd;
-	Patient pat;
+	IPatient pat;
 	String date;
 	Composite outer;
 	private IAction selectDateAction, restoreAction /* , newDateAction */;
@@ -107,7 +106,7 @@ public class Overview extends ViewPart implements IRefreshable {
 	@Inject
 	void activePatient(IPatient patient) {
 		CoreUiUtil.runAsyncIfActive(() -> {
-			setPatient((Patient) NoPoUtil.loadAsPersistentObject(patient), null);
+			setPatient(patient, null);
 		}, form);
 	}
 
@@ -167,16 +166,17 @@ public class Overview extends ViewPart implements IRefreshable {
 	 * @param p   the patient
 	 * @param dat the date. if date is null, take the latest available sequenze.
 	 */
-	public void setPatient(final Patient p, String dat) {
+	public void setPatient(final IPatient p, String dat) {
 		if (p == null) {
 			form.setText(Messages.Overview_noPatient);
+			pat = null;
 			return;
 		}
 		if (dat == null) {
 			dat = Tracker.getLastSequenceDate(p);
 		}
 		// save time if this patient and date are already selected
-		if (p.equals(pat) && dat.equals(date)) {
+		if (p.equals(pat) && (dat != null && dat.equals(date))) {
 			return;
 		}
 		for (int i = 0; i < 12; i++) {
@@ -190,7 +190,7 @@ public class Overview extends ViewPart implements IRefreshable {
 			trackers[i] = Tracker.getImageStack(base);
 		}
 		dispAll.reload();
-		form.setText(p.getLabel()); // +", ab "+dat);
+		form.setText(p.getLabel() + " (" + p.getPatientNr() + ")");
 		setTopControl(dispAll);
 	}
 
@@ -217,7 +217,7 @@ public class Overview extends ViewPart implements IRefreshable {
 			dispAll.setUser();
 		}
 		if (obj instanceof Patient) {
-			setPatient((Patient) obj, null);
+			refresh();
 		}
 
 	}

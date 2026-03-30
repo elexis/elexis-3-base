@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,12 +31,15 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.LocalConfigService;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.molemax.views.MolemaxPrefs;
@@ -106,7 +110,7 @@ public class Tracker extends PersistentObject {
 	 * @param slot   whicht region this detail belongs
 	 * @param pos    position of this detail within the region
 	 */
-	public Tracker(final Patient p, final Tracker parent, String date, final int slot, final Rectangle pos) {
+	public Tracker(final IPatient p, final Tracker parent, String date, final int slot, final Rectangle pos) {
 		create(null);
 		if (date == null) {
 			date = new TimeTool().toString(TimeTool.DATE_GER);
@@ -127,7 +131,7 @@ public class Tracker extends PersistentObject {
 	 * @param slot which of the 12 basic regions this image belongs to
 	 * @param file file in which the image resides
 	 */
-	public Tracker(final Patient p, final String date, final int slot, final File file) {
+	public Tracker(final IPatient p, final String date, final int slot, final File file) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(makeDescriptor(p, date, slot));
@@ -177,7 +181,7 @@ public class Tracker extends PersistentObject {
 							int slotnr = map[i - v];
 							Tracker trytracker = new Tracker(p, date, slotnr, new File(path, tryname));
 						}
-						ElexisEventDispatcher.fireSelectionEvent(p);
+						ContextServiceHolder.get().setActivePatient(p);
 						// GlobalEvents.getInstance().fireSelectionEvent(p);
 					}
 				}
@@ -333,8 +337,8 @@ public class Tracker extends PersistentObject {
 		return TABLENAME;
 	}
 
-	public Patient getPatient() {
-		return Patient.load(get("PatientID"));
+	public Optional<IPatient> getPatient() {
+		return CoreModelServiceHolder.get().load(get("PatientID"),IPatient.class);
 	}
 
 	public Tracker getParent() {
@@ -365,7 +369,7 @@ public class Tracker extends PersistentObject {
 		if (parent != null) {
 			date = parent.getDate();
 		}
-		ret.append(makeDescriptor(getPatient(), date, getSlot())).append(File.separator).append(get("koord"));
+		ret.append(makeDescriptor(getPatient().get(), date, getSlot())).append(File.separator).append(get("koord"));
 		return ret.toString();
 	}
 
@@ -411,7 +415,7 @@ public class Tracker extends PersistentObject {
 		return ret;
 	}
 
-	public static String getLastSequenceDate(final Patient pat) {
+	public static String getLastSequenceDate(final IPatient pat) {
 		Query<Tracker> qbe = new Query<Tracker>(Tracker.class);
 		qbe.add("PatientID", "=", pat.getId());
 		qbe.add("ParentID", "=", "NIL");
@@ -443,7 +447,7 @@ public class Tracker extends PersistentObject {
 	 * @return a Tracker for the requested patient and region. Might be null id no
 	 *         such tracker exists
 	 */
-	public static Tracker loadBase(final Patient patient, final String date, final int slot) {
+	public static Tracker loadBase(final IPatient patient, final String date, final int slot) {
 		Query<Tracker> qbe = new Query<Tracker>(Tracker.class);
 		qbe.add("PatientID", "=", patient.getId());
 		qbe.add("slot", "=", Integer.toString(slot));
@@ -518,17 +522,17 @@ public class Tracker extends PersistentObject {
 	 * @param slot image slot
 	 * @return the full path of the directory where images of this slot are stored
 	 */
-	public static String makeDescriptor(final Patient p, String date, final int slot) {
+	public static String makeDescriptor(final IPatient p, String date, final int slot) {
 		if (date == null) {
 			date = getLastSequenceDate(p);
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY)).append(File.separator);
-		String name = p.getName();
+		ret.append(getImagePath(MolemaxPrefs.BASEDIR)).append(File.separator);
+		String name = p.getDescription1();
 		ret.append(name.length() > 2 ? name.substring(0, 2) : name);
-		String vname = p.getVorname();
+		String vname = p.getDescription2();
 		ret.append(vname.length() > 2 ? vname.substring(0, 2) : vname);
-		ret.append(p.getPatCode()).append(File.separator).append(new TimeTool(date).toString(TimeTool.DATE_COMPACT))
+		ret.append(p.getPatientNr()).append(File.separator).append(new TimeTool(date).toString(TimeTool.DATE_COMPACT))
 				.append(File.separator).append(slot);
 		return ret.toString();
 	}
@@ -554,9 +558,10 @@ public class Tracker extends PersistentObject {
 		return sb.toString();
 	}
 
-	public static String makeDescriptorImage(final Patient p) {
-		String basePath = CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY);
-		String customPath = CoreHub.localCfg.get(MolemaxImagePrefs.CUSTOM_BASEDIR, StringUtils.EMPTY);
+	public static String makeDescriptorImage(final IPatient p) {
+		String basePath = getImagePath(MolemaxPrefs.BASEDIR);
+		String customPath = getImagePath(MolemaxImagePrefs.CUSTOM_BASEDIR);
+		
 		if (StringUtils.isBlank(basePath) || StringUtils.isBlank(customPath)) {
 			log.log("Error: Base path or user-defined path is not set.", Log.WARNINGS);
 			return StringUtils.EMPTY;
@@ -569,6 +574,8 @@ public class Tracker extends PersistentObject {
 		for (int i = 0; i < pathSegments.length; i++) {
 			String segment = pathSegments[i];
 			Matcher matcher = pattern.matcher(segment);
+			StringBuffer resolvedSegment = new StringBuffer();
+			
 			while (matcher.find()) {
 				String match = matcher.group();
 				String keyword = match.split("-")[0];
@@ -576,37 +583,40 @@ public class Tracker extends PersistentObject {
 				if (match.contains("-") && !keyword.equals("Datum") && !keyword.equals("Uhrzeit")) {
 					length = Integer.parseInt(match.split("-")[1]);
 				}
+				
+				String replacement = StringUtils.EMPTY;
+				
 				if (keyword.equals("PatNum")) {
-					String patCode = p.getPatCode();
-					ret.append(patCode);
+					replacement = p.getPatientNr();
 				} else if (keyword.equals("Name")) {
-					String namCode = p.getName();
-					if (length != -1 && namCode.length() > length) {
-						namCode = namCode.substring(0, length);
+					replacement = p.getDescription1();
+					if (length != -1 && replacement.length() > length) {
+						replacement = replacement.substring(0, length);
 					}
-					ret.append(namCode);
 				} else if (keyword.equals("Vorname")) {
-					String vorCode = p.getVorname();
-					if (length != -1 && vorCode.length() > length) {
-						vorCode = vorCode.substring(0, length);
+					replacement = p.getDescription2();
+					if (length != -1 && replacement.length() > length) {
+						replacement = replacement.substring(0, length);
 					}
-					ret.append(vorCode);
 				} else if (keyword.equals("Datum")) {
 					String dateFormat = match.split("-")[1];
 					SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-					String formattedDate = sdf.format(new Date());
-					ret.append(formattedDate);
+					replacement = sdf.format(new Date());
 				} else if (keyword.equals("Uhrzeit")) {
 					String timeFormat = match.split("-")[1];
 					SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
-					String formattedTime = sdf.format(new Date());
-					ret.append(formattedTime);
+					replacement = sdf.format(new Date());
 				}
+				
+				matcher.appendReplacement(resolvedSegment, Matcher.quoteReplacement(replacement));
 			}
+			matcher.appendTail(resolvedSegment);
+			ret.append(resolvedSegment.toString());
 			if (i < pathSegments.length - 1) {
 				ret.append(File.separator);
 			}
 		}
+		
 		return ret.toString();
 	}
 
@@ -662,7 +672,7 @@ public class Tracker extends PersistentObject {
 		return super.delete();
 	}
 	public boolean isValid() {
-		if (getPatient().isValid()) {
+		if (getPatient().isPresent()) {
 			return super.isValid();
 		}
 		return false;
@@ -670,17 +680,28 @@ public class Tracker extends PersistentObject {
 
 	@SuppressWarnings("unchecked")
 	public void setInfoString(final String name, final String text) {
-		Map extinfo = getMap("ExtInfo");
+		Map<Object, Object> extinfo = (Map<Object, Object>) getMap("ExtInfo");
 		extinfo.put(name, text);
 		setMap("ExtInfo", extinfo);
 	}
 
+	@SuppressWarnings("unchecked")
 	public String getInfoString(final String name) {
-		Map extinfo = getMap("ExtInfo");
-		return checkNull(extinfo.get(name));
+		Map<Object, Object> extinfo = (Map<Object, Object>) getMap("ExtInfo");
+		return checkNull((String) extinfo.get(name));
 	}
 
 	private static String getRegexSafeSeparator() {
 		return Pattern.quote(File.separator);
+	}
+
+	private static String getImagePath(String key) {
+		ConfigServicePreferenceStore globalStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
+		boolean isGlobal = globalStore.getBoolean(MolemaxImagePrefs.STORE_GLOBAL);
+		if (isGlobal) {
+			return globalStore.getString(key);
+		} else {
+			return LocalConfigService.get(key, StringUtils.EMPTY);
+		}
 	}
 }

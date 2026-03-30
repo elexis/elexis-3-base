@@ -1,5 +1,8 @@
 package ch.elexis.molemax.views2;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -186,4 +189,15 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 		stackComposite.redraw();
 	}
 
+	public String formatDateForDisplay(String dirName) {
+		if (dirName != null && dirName.length() == 8 && dirName.matches("\\d{8}")) {
+			try {
+				LocalDate date = LocalDate.parse(dirName, DateTimeFormatter.ofPattern("yyyyMMdd"));
+				return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+			} catch (Exception e) {
+				return dirName;
+			}
+		}
+		return dirName;
+	}
 }

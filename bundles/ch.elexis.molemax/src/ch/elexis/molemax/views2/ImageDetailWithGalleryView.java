@@ -300,7 +300,7 @@ public class ImageDetailWithGalleryView {
 		File directory = new File(folderPath);
 		if (directory.exists() && directory.isDirectory()) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-			group.setText(directory.getName());
+			group.setText(overviewInstance.formatDateForDisplay(directory.getName()));
 			group.setExpanded(true);
 			addImagesToGalleryFromDirectory(directory, group);
 			File[] imageDirectories = directory.listFiles(File::isDirectory);

@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -69,6 +71,7 @@ public class ImageViewAll {
 	private String groupName = null;
 	private Gallery gallery;
 	private GalleryItem lastClickedGroupItem = null;
+
 	public void setOverviewInstance(ImageOverview overview) {
 		this.overviewInstance = overview;
 	}
@@ -108,6 +111,7 @@ public class ImageViewAll {
 					event.data = new String[] { imgFile.getAbsolutePath() };
 				}
 			}
+
 			public void dragSetData(DragSourceEvent event) {
 				GalleryItem[] selection = gallery.getSelection();
 				if (selection.length > 0) {
@@ -115,6 +119,7 @@ public class ImageViewAll {
 					event.data = new String[] { imgFile.getAbsolutePath() };
 				}
 			}
+
 			public void dragFinished(DragSourceEvent event) {
 				if (event.detail == DND.DROP_MOVE) {
 					GalleryItem[] selection = gallery.getSelection();
@@ -180,24 +185,8 @@ public class ImageViewAll {
 					if (ImageViewAll.this.aktuellerPatient != null) {
 						updateGalleryForPatient(ImageViewAll.this.aktuellerPatient);
 					}
-				} 
-				else if (e.keyCode == SWT.DEL) {
-					GalleryItem[] selection = gallery.getSelection();
-					if (selection == null || selection.length == 0) {
-						return;
-					}
-					if (selection.length > 0) {
-						boolean confirm = MessageDialog.openConfirm(gallery.getShell(), Messages.ImageSlot_imageDel,
-								selection.length > 1
-										? Messages.ImageSlot_these + selection.length + " "
-												+ Messages.ImageSlot_imagesdelete
-										: Messages.ImageSlot_reallydelete);
-						if (confirm) {
-							for (GalleryItem selectedItem : selection) {
-								deleteSelectedItem(selectedItem);
-							}
-						}
-					}
+				} else if (e.keyCode == SWT.DEL) {
+					promptAndDeleteSelection();
 				}
 			}
 		});
@@ -207,34 +196,30 @@ public class ImageViewAll {
 		deleteItem.setText(Messages.ImageSlot_delete);
 		deleteItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				GalleryItem[] selection = gallery.getSelection();
-				if (selection.length > 0) {
-					boolean confirm = MessageDialog.openConfirm(gallery.getShell(), Messages.ImageSlot_imageDel,
-							selection.length > 1
-									? Messages.ImageSlot_these + selection.length + " "
-											+ Messages.ImageSlot_imagesdelete
-									: Messages.ImageSlot_reallydelete);
-					if (confirm) {
-						for (GalleryItem selectedItem : selection) {
-							deleteSelectedItem(selectedItem);
-						}
-					}
-				}
+				promptAndDeleteSelection();
 			}
 		});
+
 		gallery.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				if (e.button == 3) {
-					GalleryItem clickedGroupItem = null;
-					for (GalleryItem item : gallery.getItems()) {
-						if (item.getBounds().contains(new Point(e.x, e.y))) {
-							clickedGroupItem = item;
+					GalleryItem clickedItem = gallery.getItem(new Point(e.x, e.y));
 
-							break;
+					if (clickedItem == null) {
+						for (GalleryItem item : gallery.getItems()) {
+							if (item.getBounds().contains(new Point(e.x, e.y))) {
+								clickedItem = item;
+								break;
+							}
 						}
 					}
-					if (clickedGroupItem != null && clickedGroupItem.getParentItem() == null) {
-						lastClickedGroupItem = clickedGroupItem;
+
+					if (clickedItem != null) {
+						gallery.setSelection(new GalleryItem[] { clickedItem });
+
+						if (clickedItem.getParentItem() == null) {
+							lastClickedGroupItem = clickedItem;
+						}
 						gallery.setMenu(contextMenu);
 					} else {
 						gallery.setMenu(null);
@@ -249,15 +234,14 @@ public class ImageViewAll {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (lastClickedGroupItem != null) {
-					String currentName = lastClickedGroupItem.getText();
+					String actualDirName = new File((String) lastClickedGroupItem.getData()).getName();
 					InputDialog renameDialog = new InputDialog(gallery.getShell(), Messages.BefundePrefs_enterRenameCaption,
-							Messages.Rename_Group_Text, currentName, null);
+							Messages.Rename_Group_Text, actualDirName, null);
 					if (renameDialog.open() == InputDialog.OK) {
 						String newName = renameDialog.getValue();
-						if (newName != null && !newName.trim().isEmpty() && !newName.equals(currentName)) {
-							boolean success = renameGroupDirectory(currentName, newName);
+						if (newName != null && !newName.trim().isEmpty() && !newName.equals(actualDirName)) {
+							boolean success = renameGroupDirectory(actualDirName, newName);
 							if (success) {
-								lastClickedGroupItem.setText(newName);
 								updateGalleryForPatient(aktuellerPatient);
 							} else {
 								MessageDialog.openError(gallery.getShell(), Messages.Core_Error,
@@ -278,6 +262,7 @@ public class ImageViewAll {
 					event.detail = (event.operations & DND.DROP_MOVE) != 0 ? DND.DROP_MOVE : DND.DROP_NONE;
 				}
 			}
+
 			public void dragOver(DropTargetEvent event) {
 				Point mouseCoords = Display.getCurrent().getCursorLocation();
 				mouseCoords = gallery.toControl(mouseCoords);
@@ -291,15 +276,19 @@ public class ImageViewAll {
 					animateScrollBar(verticalScrollBar, scrollPosition, newScrollPosition);
 				}
 			}
+
 			public void dropAccept(DropTargetEvent event) {
 			}
+
 			public void dragOperationChanged(DropTargetEvent event) {
 				if (event.detail == DND.DROP_DEFAULT) {
 					event.detail = (event.operations & DND.DROP_COPY) != 0 ? DND.DROP_COPY : DND.DROP_NONE;
 				}
 			}
+
 			public void dragLeave(DropTargetEvent event) {
 			}
+
 			public void drop(DropTargetEvent event) {
 				DropTarget dropTarget = (DropTarget) event.widget;
 				Control control = dropTarget.getControl();
@@ -307,7 +296,7 @@ public class ImageViewAll {
 				groupName = null;
 				for (GalleryItem group : gallery.getItems()) {
 					if (group.getBounds().contains(coords)) {
-						groupName = group.getText();
+						groupName = new File((String) group.getData()).getName();
 						break;
 					}
 				}
@@ -320,19 +309,20 @@ public class ImageViewAll {
 							try {
 								image = new Image(Display.getDefault(), file);
 								String targetPath;
-								
-			                    Path filePath = Paths.get(file);
-			                    BasicFileAttributes attrs = Files.readAttributes(filePath, BasicFileAttributes.class);
-			                    LocalDate fileModifiedDate = LocalDate.ofInstant(attrs.lastModifiedTime().toInstant(), ZoneId.systemDefault());
-			                    LocalDate today = LocalDate.now();
-			                    
-			                    if (groupName == null) {
-			                        if (fileModifiedDate.equals(today)) {
-										groupName = today.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-			                        } else {
-										groupName = fileModifiedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-			                        }
-			                    }
+
+								Path filePath = Paths.get(file);
+								BasicFileAttributes attrs = Files.readAttributes(filePath, BasicFileAttributes.class);
+								LocalDate fileModifiedDate = LocalDate.ofInstant(attrs.lastModifiedTime().toInstant(),
+										ZoneId.systemDefault());
+								LocalDate today = LocalDate.now();
+
+								if (groupName == null) {
+									if (fileModifiedDate.equals(today)) {
+										groupName = today.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+									} else {
+										groupName = fileModifiedDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+									}
+								}
 								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + File.separator + groupName;
 								File targetDir = new File(targetPath);
 								if (!targetDir.exists()) {
@@ -359,8 +349,8 @@ public class ImageViewAll {
 										break;
 									case CustomFileDialog.RENAME_ID:
 										InputDialog renameDialog = new InputDialog(gallery.getShell(),
-												"Neuen Dateinamen eingeben",
-												"Bitte geben Sie den neuen Dateinamen ein:", targetFile.getName(),
+												Messages.ImageViewAll_EnterNewFilename,
+												Messages.ImageViewAll_PleaseEnterNewFilename, targetFile.getName(),
 												null);
 										if (renameDialog.open() == InputDialog.OK) {
 											String newName = renameDialog.getValue();
@@ -403,8 +393,9 @@ public class ImageViewAll {
 							}
 						}
 						updateGalleryForPatient(aktuellerPatient);
+						String displayGroupName = overviewInstance.formatDateForDisplay(groupName);
 						for (GalleryItem group : gallery.getItems()) {
-							group.setExpanded(group.getText().equals(groupName));
+							group.setExpanded(group.getText().equals(displayGroupName));
 						}
 						if (lastAddedItem != null && Arrays.asList(gallery.getItems()).contains(lastAddedItem)) {
 							gallery.setSelection(new GalleryItem[] { lastAddedItem });
@@ -413,32 +404,110 @@ public class ImageViewAll {
 				} else {
 					GalleryItem targetGroup = gallery.getItem(new Point(event.x, event.y));
 					if (targetGroup != null) {
-				}
+					}
 				}
 			}
 		});
 	}
 
-	private void deleteSelectedItem(GalleryItem selectedItem) {
-		String filePath = (String) selectedItem.getData() + File.separator + selectedItem.getText();
-		File fileToDelete = new File(filePath);
-		File thumbnailToDelete = new File(fileToDelete.getParentFile(), "thumbnails/" + fileToDelete.getName());
-		if (fileToDelete.exists() && fileToDelete.delete()) {
-			if (thumbnailToDelete.exists()) {
-				thumbnailToDelete.delete();
+	private void promptAndDeleteSelection() {
+		GalleryItem[] selection = gallery.getSelection();
+		if (selection == null || selection.length == 0) {
+			return;
+		}
+
+		String title = Messages.ImageViewAll_Confirm_delete;
+		String message = StringUtils.EMPTY;
+
+		if (selection.length == 1 && selection[0].getParentItem() == null) {
+			int imageCount = selection[0].getItemCount();
+			if (imageCount == 0) {
+				message = MessageFormat.format(Messages.ImageViewAll_DeleteEmptyGroup, selection[0].getText());
+			} else {
+				message = MessageFormat.format(Messages.ImageViewAll_DeleteGroupWithImages, selection[0].getText(),
+						imageCount);
 			}
-			Image img = selectedItem.getImage();
-			if (img != null && !img.isDisposed()) {
-				img.dispose();
-				createdImages.remove(img);
+		} else {
+			int groupCount = 0;
+			int imageCount = 0;
+			for (GalleryItem item : selection) {
+				if (item.getParentItem() == null) {
+					groupCount++;
+				} else {
+					imageCount++;
+				}
 			}
-			selectedItem.getParentItem().remove(selectedItem);
-			File parentDir = fileToDelete.getParentFile();
-			if (isEmptyDirectory(parentDir)) {
-				parentDir.delete();
-				updateGalleryForPatient(aktuellerPatient);
+
+			if (groupCount > 0 && imageCount == 0) {
+				message = MessageFormat.format(Messages.ImageViewAll_DeleteMultipleGroups, groupCount);
+			} else if (groupCount == 0 && imageCount > 0) {
+				message = imageCount > 1 ? MessageFormat.format(Messages.ImageViewAll_DeleteMultipleImages, imageCount)
+						: Messages.ImageViewAll_DeleteSingleImage;
+			} else {
+				message = Messages.ImageViewAll_DeleteSelectedElements;
 			}
 		}
+
+		boolean confirm = MessageDialog.openConfirm(gallery.getShell(), title, message);
+		if (confirm) {
+			for (GalleryItem selectedItem : selection) {
+				if (!selectedItem.isDisposed()) {
+					deleteSelectedItem(selectedItem);
+				}
+			}
+		}
+	}
+
+	private void deleteSelectedItem(GalleryItem selectedItem) {
+		if (selectedItem == null || selectedItem.isDisposed()) {
+			return;
+		}
+
+		if (selectedItem.getParentItem() == null) {
+			String dirPath = (String) selectedItem.getData();
+			if (dirPath == null)
+				return;
+
+			File dirToDelete = new File(dirPath);
+			if (dirToDelete.exists() && dirToDelete.isDirectory()) {
+				deleteDirectoryRecursively(dirToDelete);
+				gallery.remove(selectedItem);
+				updateGalleryForPatient(aktuellerPatient);
+			}
+
+		} else {
+			String filePath = (String) selectedItem.getData() + File.separator + selectedItem.getText();
+			File fileToDelete = new File(filePath);
+			File thumbnailToDelete = new File(fileToDelete.getParentFile(), "thumbnails/" + fileToDelete.getName());
+
+			if (fileToDelete.exists() && fileToDelete.delete()) {
+				if (thumbnailToDelete.exists()) {
+					thumbnailToDelete.delete();
+				}
+				Image img = selectedItem.getImage();
+				if (img != null && !img.isDisposed()) {
+					img.dispose();
+					createdImages.remove(img);
+				}
+				selectedItem.getParentItem().remove(selectedItem);
+
+				File parentDir = fileToDelete.getParentFile();
+				if (isEmptyDirectory(parentDir)) {
+					parentDir.delete();
+					updateGalleryForPatient(aktuellerPatient);
+				}
+			}
+		}
+	}
+
+	private void deleteDirectoryRecursively(File directoryToBeDeleted) {
+		File[] allContents = directoryToBeDeleted.listFiles();
+		if (allContents != null) {
+			for (File file : allContents) {
+				deleteDirectoryRecursively(file);
+			}
+		}
+		directoryToBeDeleted.delete();
 	}
 
 	public void updateGalleryForPatient(IPatient aktuellerPatient) {
@@ -459,24 +528,7 @@ public class ImageViewAll {
 		if (mainDirectory.exists() && mainDirectory.isDirectory()) {
 			File[] groupDirectories = mainDirectory.listFiles(File::isDirectory);
 			if (groupDirectories != null) {
-
-				Arrays.sort(groupDirectories, (file1, file2) -> {
-					LocalDate date1 = parseDirectoryDate(file1.getName());
-					LocalDate date2 = parseDirectoryDate(file2.getName());
-
-					if (date1 != null && date2 != null) {
-						return date2.compareTo(date1);
-					}
-					else if (date1 != null) {
-						return -1;
-					} else if (date2 != null) {
-						return 1;
-					}
-					else {
-						return file2.getName().compareToIgnoreCase(file1.getName());
-					}
-				});
-
+				Arrays.sort(groupDirectories, (file1, file2) -> file2.getName().compareTo(file1.getName()));
 				for (File groupDir : groupDirectories) {
 					processGroupDirectory(groupDir);
 				}
@@ -484,21 +536,9 @@ public class ImageViewAll {
 		}
 	}
 
-	private LocalDate parseDirectoryDate(String dirName) {
-		try {
-			return LocalDate.parse(dirName, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-		} catch (Exception e1) {
-			try {
-				return LocalDate.parse(dirName, DateTimeFormatter.ofPattern("yyyyMMdd"));
-			} catch (Exception e2) {
-				return null;
-			}
-		}
-	}
-
 	private void processGroupDirectory(File groupDir) {
 		GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-		group.setText(groupDir.getName());
+		group.setText(overviewInstance.formatDateForDisplay(groupDir.getName()));
 		group.setData(groupDir.getAbsolutePath());
 		addImagesToGalleryFromDirectory(groupDir, group);
 		File[] imageDirectories = groupDir.listFiles(File::isDirectory);
@@ -561,11 +601,11 @@ public class ImageViewAll {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(gallery.getShell());
 		try {
 			dialog.run(true, true, monitor -> {
-				monitor.beginTask("Thumbnails erstellen", imagesToProcess.size());
+				monitor.beginTask(Messages.ImageViewAll_CreateThumbnails, imagesToProcess.size());
 				for (File imgFile : imagesToProcess) {
 					if (monitor.isCanceled())
 						return;
-					monitor.subTask("Erstelle Thumbnail für " + imgFile.getName());
+					monitor.subTask(Messages.ImageViewAll_CreateThumbnailFor + imgFile.getName());
 					addImageToGallery(imgFile, parentGroup, null);
 					monitor.worked(1);
 				}
@@ -642,9 +682,12 @@ public class ImageViewAll {
 		public static final int CANCEL_ID = 2;
 
 		public CustomFileDialog(Shell parentShell) {
-			super(parentShell, "Dateiaktion", null, "Die Datei existiert bereits. Was möchten Sie tun?",
-					MessageDialog.QUESTION, new String[] { "Überschreiben", "Umbenennen", "Abbrechen" }, 0);
+			super(parentShell, Messages.ImageViewAll_FileAction, null, Messages.ImageViewAll_FileExistsAction,
+					MessageDialog.QUESTION, new String[] { Messages.ImageViewAll_Overwrite,
+							Messages.ImageViewAll_Rename, Messages.ImageViewAll_Cancel },
+					0);
 		}
+
 		public int open() {
 			return super.open();
 		}

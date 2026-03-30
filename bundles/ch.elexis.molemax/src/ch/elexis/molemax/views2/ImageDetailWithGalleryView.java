@@ -300,7 +300,7 @@ public class ImageDetailWithGalleryView {
 		File directory = new File(folderPath);
 		if (directory.exists() && directory.isDirectory()) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-			group.setText(directory.getName());
+			group.setText(overviewInstance.formatDateForDisplay(directory.getName()));
 			group.setExpanded(true);
 			addImagesToGalleryFromDirectory(directory, group);
 			File[] imageDirectories = directory.listFiles(File::isDirectory);
@@ -507,7 +507,6 @@ public class ImageDetailWithGalleryView {
 	}
 
 	private static BufferedImage convertToAWT(ImageData data) {
-		DirectColorModel colorModel = new DirectColorModel(24, 0xFF0000, 0xFF00, 0xFF);
 		BufferedImage bufferedImage = new BufferedImage(data.width, data.height, BufferedImage.TYPE_INT_RGB);
 		for (int y = 0; y < data.height; y++) {
 			for (int x = 0; x < data.width; x++) {

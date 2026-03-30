@@ -17,19 +17,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
 
 public class BaseSelectorDialog extends TitleAreaDialog {
 	List list;
-	Patient pat;
+	IPatient pat;
 	java.util.List<Tracker> dates;
 	String ret = null;
 
-	BaseSelectorDialog(final org.eclipse.swt.widgets.Shell shell, final Patient patient) {
+	BaseSelectorDialog(final org.eclipse.swt.widgets.Shell shell, final IPatient patient) {
 		super(shell);
 		pat = patient;
 		Query<Tracker> qbe = new Query<Tracker>(Tracker.class);

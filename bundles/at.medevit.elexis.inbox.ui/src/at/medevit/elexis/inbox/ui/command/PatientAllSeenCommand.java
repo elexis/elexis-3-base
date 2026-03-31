@@ -3,6 +3,8 @@ package at.medevit.elexis.inbox.ui.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,7 +24,6 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
-import jakarta.inject.Inject;
 
 public class PatientAllSeenCommand extends AbstractHandler implements IHandler {
 

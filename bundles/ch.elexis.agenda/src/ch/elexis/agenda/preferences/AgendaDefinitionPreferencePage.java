@@ -34,12 +34,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.agenda.Messages;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.mail.MailAccount.TYPE;
 import ch.elexis.core.mail.MailTextTemplate;
 import ch.elexis.core.mail.ui.client.MailClientComponent;
 import ch.elexis.core.model.ITextTemplate;
 import ch.elexis.core.model.agenda.AreaType;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -76,6 +76,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 	private ComboViewer comboViewerAreaType;
 	private ComboViewer appointmentTemplatesViewer, accountsViewer;
 	private String selectedTemplateName;
+	private Button btnUseColorizedDropdown;
 
 	/**
 	 * Create the preference page.
@@ -278,12 +279,17 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		separatorGridData.horizontalAlignment = GridData.FILL;
 		separatorGridData.verticalIndent = 0;
 		separator.setLayoutData(separatorGridData);
-
 		btnAvoidDoubleBooking = new Button(container, SWT.CHECK);
 		btnAvoidDoubleBooking.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		btnAvoidDoubleBooking.setText(Messages.AgendaDefinitionen_AvoidPatientDoubleBooking);
-		btnAvoidDoubleBooking.setSelection(CoreHub.localCfg.get(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
+		btnAvoidDoubleBooking.setSelection(LocalConfigService.get(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
 				PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT));
+		btnUseColorizedDropdown = new Button(container, SWT.CHECK);
+		btnUseColorizedDropdown.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		btnUseColorizedDropdown.setText(Messages.AgendaDefinitionen_useColorizedPatientSearch);
+		btnUseColorizedDropdown
+				.setSelection(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_USE_COLORIZED_PATIENT_DROPDOWN,
+						PreferenceConstants.AG_USE_COLORIZED_PATIENT_DROPDOWN_DEFAULT));
 		Label spacing = new Label(container, SWT.NONE);
 		emailConfirmationsGroup(container);
 		loadCombos();
@@ -303,8 +309,10 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		ConfigServiceHolder.setGlobalAsList(PreferenceConstants.AG_BEREICHE, areas);
 		ConfigServiceHolder.setGlobalAsList(PreferenceConstants.AG_TERMINTYPEN, appointmentTypes);
 		ConfigServiceHolder.setGlobalAsList(PreferenceConstants.AG_TERMINSTATUS, appointmentStatus);
-		CoreHub.localCfg.set(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING, btnAvoidDoubleBooking.getSelection());
-		CoreHub.localCfg.flush();
+		LocalConfigService.set(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
+				btnAvoidDoubleBooking.getSelection());
+		ConfigServiceHolder.get().set(PreferenceConstants.AG_USE_COLORIZED_PATIENT_DROPDOWN,
+				btnUseColorizedDropdown.getSelection());
 
 		super.performApply();
 	}
@@ -380,6 +388,8 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 			String template = selectedTemplateName;
 			ConfigServiceHolder.get().set(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE, template);
 		}
+		ConfigServiceHolder.get().set(PreferenceConstants.AG_USE_COLORIZED_PATIENT_DROPDOWN,
+				btnUseColorizedDropdown.getSelection());
 		return super.performOk();
 	}
 

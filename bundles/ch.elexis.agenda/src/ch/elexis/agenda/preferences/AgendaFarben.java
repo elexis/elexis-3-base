@@ -12,14 +12,20 @@
 
 package ch.elexis.agenda.preferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -42,6 +48,9 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 
 	// private ColorCellEditor[] editors;
 	// private String[] columnProperties;
+	
+	// Liste um die UI-Updates zu speichern
+	private List<Runnable> uiUpdaters = new ArrayList<>();
 
 	public AgendaFarben() {
 		prefs = new ConfigServicePreferenceStore(Scope.USER);
@@ -129,20 +138,53 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		terminListeColors.setText(Messages.AgendaFarben_Terminliste);
 		terminListeColors.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		terminListeColors.setLayout(new GridLayout(2, false));
+		final Button cbGlobal = new Button(terminListeColors, SWT.CHECK);
+		cbGlobal.setText(Messages.AgendaFarben_Preferences_GlobalSettings);
+		GridData gdCb = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1);
+		cbGlobal.setLayoutData(gdCb);
+		boolean isGlobal = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_USE_GLOBAL_SETTINGS, false);
+		cbGlobal.setSelection(isGlobal);
+		cbGlobal.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean isSelected = cbGlobal.getSelection();
+				for (Runnable updater : uiUpdaters) {
+					updater.run();
+				}
+				new Thread(() -> {
+					ConfigServiceHolder.get().set(PreferenceConstants.TL_USE_GLOBAL_SETTINGS, isSelected);
+				}).start();
+			}
+		});
 		createColorRow(terminListeColors, Messages.AgendaFarben_PastAppointments, PreferenceConstants.TL_PAST_BG_COLOR,
-				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
+				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT, cbGlobal);
 		createColorRow(terminListeColors, Messages.AgendaFarben_FutureAppointments,
-				PreferenceConstants.TL_FUTURE_BG_COLOR, PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+				PreferenceConstants.TL_FUTURE_BG_COLOR, PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT, cbGlobal);
 		return par;
 	}
 
-	private void createColorRow(Composite parent, String labelText, String prefKey, String defaultColor) {
+	private void createColorRow(Composite parent, String labelText, String prefKey, String defaultColor,
+			Button cbGlobal) {
 		Label text = new Label(parent, SWT.NONE);
 		text.setText(labelText);
 		Label colorPreview = new Label(parent, SWT.BORDER);
 		colorPreview.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		String coldesc = ConfigServiceHolder.getUser(prefKey, defaultColor);
-		colorPreview.setBackground(UiDesk.getColorFromRGB(coldesc));
+		Runnable updateColorPreview = new Runnable() {
+			@Override
+			public void run() {
+				String coldesc;
+				if (cbGlobal.getSelection()) {
+					coldesc = ConfigServiceHolder.getGlobal(prefKey, defaultColor);
+				} else {
+					coldesc = ConfigServiceHolder.getUser(prefKey, defaultColor);
+				}
+				if (!colorPreview.isDisposed()) {
+					colorPreview.setBackground(UiDesk.getColorFromRGB(coldesc));
+				}
+			}
+		};
+		uiUpdaters.add(updateColorPreview);
+		updateColorPreview.run();
 		colorPreview.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -152,8 +194,13 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 					return;
 				}
 				String symbolic = UiDesk.createColor(selected);
-				colorPreview.setBackground(UiDesk.getColorFromRGB(symbolic));
-				ConfigServiceHolder.setUser(prefKey, symbolic);
+				if (cbGlobal != null && cbGlobal.getSelection()) {
+					ConfigServiceHolder.get().set(prefKey, symbolic);
+					ConfigServiceHolder.setUser(prefKey, null);
+				} else {
+					ConfigServiceHolder.setUser(prefKey, symbolic);
+				}
+				updateColorPreview.run();
 			}
 		});
 		colorPreview.setToolTipText(Messages.AgendaFarben_DoubleClickToChange);

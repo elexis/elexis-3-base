@@ -249,24 +249,39 @@ public class AppointmentDetailComposite extends Composite {
 			}
 		});
 
-		AsyncContentProposalProvider<IPatient> provider = new PatientContentProposalProvider();
-		ContentProposalAdapter adapter = new ContentProposalAdapter(txtPatSearch, new TextContentAdapter(), provider,
-				null, null);
-		provider.configureContentProposalAdapter(adapter);
+		boolean useColorizedDropdown = ConfigServiceHolder.getGlobal(
+				PreferenceConstants.AG_USE_COLORIZED_PATIENT_DROPDOWN,
+				PreferenceConstants.AG_USE_COLORIZED_PATIENT_DROPDOWN_DEFAULT);
 
-		adapter.addContentProposalListener(proposal -> {
-			@SuppressWarnings("unchecked")
-			IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
-			txtPatSearch.setText(prop.getLabel());
-			txtPatSearch.setData(prop.getIdentifiable());
-			appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
-			txtPatSearch.setSelection(txtPatSearch.getText().length());
-			refreshPatientModel();
-		});
+		if (useColorizedDropdown) {
+			new ColorizedPatientSearchDropdown(txtPatSearch, pat -> {
+				txtPatSearch.setData(pat);
+				txtPatSearch.setText(pat.getLabel());
+				txtPatSearch.setSelection(txtPatSearch.getText().length());
+				appointment.setSubjectOrPatient(pat.getId());
+				refreshPatientModel();
+			});
 
-		txtPatSearch.addModifyListener(e -> {
-			onPatientSearchModify();
-		});
+			txtPatSearch.addModifyListener(e -> onPatientSearchModify());
+
+		} else {
+			AsyncContentProposalProvider<IPatient> provider = new PatientContentProposalProvider();
+			ContentProposalAdapter adapter = new ContentProposalAdapter(txtPatSearch, new TextContentAdapter(),
+					provider, null, null);
+			provider.configureContentProposalAdapter(adapter);
+
+			adapter.addContentProposalListener(proposal -> {
+				@SuppressWarnings("unchecked")
+				IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
+				txtPatSearch.setText(prop.getLabel());
+				txtPatSearch.setData(prop.getIdentifiable());
+				appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
+				txtPatSearch.setSelection(txtPatSearch.getText().length());
+				refreshPatientModel();
+			});
+
+			txtPatSearch.addModifyListener(e -> onPatientSearchModify());
+		}
 	}
 
 	private class PatientContentProposalProvider extends AsyncContentProposalProvider<IPatient> {

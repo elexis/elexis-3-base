@@ -164,6 +164,10 @@ public class Tarmed50Exporter {
 
 	private boolean addTrustCenterInstructions = false;
 
+	private List<String> vaccineConsultationCodes = List.of("AA.00.0090", "CG.00.0010", "CG.00.0020", "CG.00.0030",
+			"CG.00.0040", "CG.00.0050", "CG.00.0060", "CG.00.0070", "CG.00.0080", "CG.00.0090", "CG.00.0100",
+			"CG.00.0110", "CG.00.0120", "CG.00.0130", "CG.00.0140", "CG.00.0150", "CG.00.0160", "CG.00.0170");
+
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall
 	 * it into the provided {@link OutputStream}.
@@ -976,17 +980,19 @@ public class Tarmed50Exporter {
 	}
 
 	private List<IBilled> getFranchiseFree(List<IBilled> encounterBilled) {
-		if (encounterBilled.stream().filter(b -> "AA.00.0090".equals(b.getCode())).findAny().isPresent()) {
-			List<IBilled> ret = new ArrayList<IBilled>();
-			for (IBilled billed : encounterBilled) {
-				if ("AA.00.0090".equals(billed.getCode())) {
-					ret.add(billed);
-				}
-				if (billed.getBillable() instanceof IArticle && ((IArticle) billed.getBillable()).isVaccination()) {
-					ret.add(billed);
-				}
+		List<IBilled> vaccinations = encounterBilled.stream()
+				.filter(billed -> billed.getBillable() instanceof IArticle
+						&& ((IArticle) billed.getBillable()).isVaccination()
+						&& StringUtils.isBlank((String) billed.getExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE)))
+				.toList();
+		if (!vaccinations.isEmpty()) {
+			Optional<IBilled> vaccineConsultationService = encounterBilled.stream()
+					.filter(b -> vaccineConsultationCodes.contains(b.getCode())).findFirst();
+			if (vaccineConsultationService.isPresent()) {
+				List<IBilled> ret = new ArrayList<IBilled>(vaccinations);
+				ret.add(vaccineConsultationService.get());
+				return ret;
 			}
-			return ret;
 		}
 		return Collections.emptyList();
 	}

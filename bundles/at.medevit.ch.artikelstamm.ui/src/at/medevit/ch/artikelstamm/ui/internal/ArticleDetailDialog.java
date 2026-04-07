@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -38,6 +39,7 @@ public class ArticleDetailDialog extends Dialog {
 	private IArtikelstammItem article;
 
 	private ArtikelstammLabelProvider labelProvider;
+	private Button bFranchiseFree;
 	private Text tIndication;
 
 	public ArticleDetailDialog(Shell shell, IBilled tl) {
@@ -61,6 +63,15 @@ public class ArticleDetailDialog extends Dialog {
 		lIcon.setImage(labelProvider.getImage(article));
 		Label lTitle = new Label(title, SWT.NONE);
 		lTitle.setText(labelProvider.getText(article));
+
+		if (article.isVaccination()) {
+			Label lFranchiseFree = new Label(ret, SWT.NONE);
+			lFranchiseFree.setText("Impfung nicht franchise befreit");
+
+			bFranchiseFree = new Button(ret, SWT.CHECK);
+			bFranchiseFree.setSelection(
+					StringUtils.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE)));
+		}
 
 		Label lIndication = new Label(ret, SWT.NONE);
 		lIndication.setText("Inkationscode");
@@ -122,6 +133,14 @@ public class ArticleDetailDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
+		if (article.isVaccination()) {
+			if (bFranchiseFree.getSelection()) {
+				billed.setExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE, Boolean.TRUE.toString());
+			} else {
+				billed.setExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE, null);
+			}
+			CoreModelServiceHolder.get().save(billed);
+		}
 		if (article.isInSLList()) {
 			if (isValidIndicationCode(tIndication.getText())) {
 				billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, tIndication.getText());

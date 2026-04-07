@@ -63,6 +63,8 @@ public class PsychoOptifier extends AbstractOptifier<PsychoLeistung> {
 			setPrice(billable, billed);
 			Result<IBilled> limitationsResult = verifier.checkLimitations(encounter, billable, billed);
 			if (!limitationsResult.isOK()) {
+				// reset possible modifications
+				encounter.removeBilled(billed);
 				return limitationsResult;
 			}
 			if (save) {

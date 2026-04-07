@@ -163,7 +163,10 @@ public class ColorizedPatientSearchDropdown {
 
 		viewer.setInput(results);
 		Point size = textWidget.getSize();
-		Point location = textWidget.toDisplay(0, size.y);
+		// Fix for Linux/GTK: Calculate coordinates relative to the parent
+		// to ignore the internal offsets of the SWT.SEARCH widget.
+		Point location = textWidget.getParent().toDisplay(textWidget.getLocation().x,
+				textWidget.getLocation().y + size.y);
 		popup.setBounds(location.x, location.y, size.x, 200);
 		popup.setVisible(true);
 	}

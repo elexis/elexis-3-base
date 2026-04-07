@@ -46,8 +46,7 @@ public class PsychoLimitation {
 		if (limitations == null) {
 			limitations = loadLimitations();
 		}
-		return limitations.get(leistung.getCode());
-
+		return limitations.getOrDefault(leistung.getCode(), Collections.emptyList());
 	}
 
 	private static Map<String, List<PsychoLimitation>> loadLimitations() {

@@ -90,10 +90,30 @@ public class AmbulatoryAllowanceCodeElementService implements ICodeElementServic
 		return LocalDate.now();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ICodeElement> getElements(Map<Object, Object> context) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<? extends EntityWithId> clazz = ch.elexis.core.jpa.entities.AmbulantePauschalen.class;
+		EntityManager em = (EntityManager) entityManager.getEntityManager();
+		TypedQuery<? extends EntityWithId> query = em.createQuery("SELECT entity FROM " + clazz.getSimpleName()
+				+ " entity WHERE entity.id <> 'Version'", clazz);
+		List<? extends EntityWithId> found = query.getResultList();
+		if (!found.isEmpty()) {
+			ArzttarifeModelAdapterFactory adapterFactory = ArzttarifeModelAdapterFactory.getInstance();
+			List<IAmbulatoryAllowance> ret = (List<IAmbulatoryAllowance>) (List<?>) found.parallelStream()
+					.map(e -> adapterFactory.getModelAdapter(e, null, false).orElse(null)).collect(Collectors.toList());
+			LocalDate validAt = getDate(context);
+			if (validAt != null) {
+				ret = ret.stream().filter(e -> isValidAt(e, validAt)).toList();
+			}
+			return (List<ICodeElement>) (List<?>) ret;
+		}
+		return Collections.emptyList();
+	}
+
+	private boolean isValidAt(IAmbulatoryAllowance element, LocalDate date) {
+		return date.isAfter(element.getValidFrom()) || date.equals(element.getValidFrom())
+				&& (date.isBefore(element.getValidTo()) || date.equals(element.getValidTo()));
 	}
 
 	@Override
@@ -130,7 +150,7 @@ public class AmbulatoryAllowanceCodeElementService implements ICodeElementServic
 		String[] split = splitIntoTypeAndId(partialStoreToString);
 		if (split != null && split.length == 2) {
 			String id = split[1];
-			Class<? extends EntityWithId> clazz = ch.elexis.core.jpa.entities.TarmedPauschalen.class;
+			Class<? extends EntityWithId> clazz = ch.elexis.core.jpa.entities.AmbulantePauschalen.class;
 			EntityManager em = (EntityManager) entityManager.getEntityManager();
 			TypedQuery<? extends EntityWithId> query = em.createQuery(
 					"SELECT entity FROM " + clazz.getSimpleName() + " entity WHERE entity.id LIKE :idpart", clazz);

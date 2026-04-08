@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocConstants;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.core.constants.StringConstants;
@@ -77,10 +78,30 @@ public class TardocLeistungCodeElementService implements ICodeElementServiceCont
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ICodeElement> getElements(Map<Object, Object> context) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<? extends EntityWithId> clazz = ch.elexis.core.jpa.entities.TardocLeistung.class;
+		EntityManager em = (EntityManager) entityManager.getEntityManager();
+		TypedQuery<? extends EntityWithId> query = em.createQuery("SELECT entity FROM " + clazz.getSimpleName()
+				+ " entity WHERE entity.id <> 'Version' AND entity.isChapter = false", clazz);
+		List<? extends EntityWithId> found = query.getResultList();
+		if (!found.isEmpty()) {
+			ArzttarifeModelAdapterFactory adapterFactory = ArzttarifeModelAdapterFactory.getInstance();
+			List<ITardocLeistung> ret = (List<ITardocLeistung>) (List<?>) found.parallelStream()
+					.map(e -> adapterFactory.getModelAdapter(e, null, false).orElse(null)).collect(Collectors.toList());
+			LocalDate validAt = getDate(context);
+			if(validAt != null) {
+				ret = ret.stream().filter(e -> isValidAt(e, validAt)).toList();
+			}
+			return (List<ICodeElement>) (List<?>) ret;
+		}
+		return Collections.emptyList();
+	}
+
+	private boolean isValidAt(ITardocLeistung element, LocalDate date) {
+		return date.isAfter(element.getValidFrom()) || date.equals(element.getValidFrom())
+				&& (date.isBefore(element.getValidTo()) || date.equals(element.getValidTo()));
 	}
 
 	@Override

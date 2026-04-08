@@ -266,6 +266,7 @@
         <setEntry value="ch.elexis.core.model@default:default"/>
         <setEntry value="ch.elexis.core.rcp@default:default"/>
         <setEntry value="ch.elexis.core.serial@default:default"/>
+        <setEntry value="ch.elexis.core.services.rcp@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks.model@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>

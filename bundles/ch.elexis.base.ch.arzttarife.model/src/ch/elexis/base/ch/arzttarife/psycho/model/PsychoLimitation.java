@@ -258,11 +258,11 @@ public class PsychoLimitation {
 		if (StringUtils.isNotBlank(including)) {
 			List<IBilled> includingBilled = new ArrayList<>(
 					newBilled.getEncounter().getBilled().stream().filter(b -> isIncluding(b.getCode())).toList());
+			if (newIncludingBilled != null) {
+				includingBilled.remove(newIncludingBilled);
+				includingBilled.add(newIncludingBilled);
+			}
 			if (!includingBilled.isEmpty()) {
-				if (newIncludingBilled != null) {
-					includingBilled.remove(newIncludingBilled);
-					includingBilled.add(newIncludingBilled);
-				}
 				sameVerrechnet.addAll(includingBilled);
 			}
 		}

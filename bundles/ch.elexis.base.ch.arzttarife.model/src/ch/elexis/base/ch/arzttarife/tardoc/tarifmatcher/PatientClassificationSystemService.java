@@ -26,7 +26,7 @@ import ch.oaat_otma.grouper.interpreter.Table;
 @Component(service = PatientClassificationSystemService.class)
 public class PatientClassificationSystemService {
 
-	private static final String LKAAT_FILENAME = "system_ambP_11c_251128_lkaat.json";
+	private static final String LKAAT_FILENAME = "system_ambP_11c_260402_lkaat.json";
 	
 	private PatientClassificationSystem classificationSystem;
 

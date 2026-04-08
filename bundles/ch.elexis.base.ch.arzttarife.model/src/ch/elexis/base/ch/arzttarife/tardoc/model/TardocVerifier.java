@@ -17,11 +17,23 @@ import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.services.ICodeElementService;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public class TardocVerifier implements IBillableVerifier {
+
+	private ICodeElementService codeElementService;
+
+	private synchronized ICodeElementService getCodeElementService() {
+		if (codeElementService == null) {
+			codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).orElse(null);
+		}
+		return codeElementService;
+	}
 
 	@Override
 	public Result<IBillable> verifyAdd(IBillable billable, IEncounter encounter, double amount) {
@@ -128,10 +140,20 @@ public class TardocVerifier implements IBillableVerifier {
 			if (encounter.getMandator() != null) {
 				List<ICoding> tardocSpecialist = ArzttarifeUtil.getMandantTardocSepcialist(encounter.getMandator());
 				if (!tardocSpecialist.stream().anyMatch(c -> digni.contains(c.getCode()))) {
+					List<ICodeElement> acquiredRights = ArzttarifeUtil
+							.getMandantTardocAcquiredRights(encounter.getMandator(), getCodeElementService());
+					if (acquiredRights != null && !acquiredRights.isEmpty()) {
+						Optional<ICodeElement> found = acquiredRights.stream()
+								.filter(ce -> ce.getCodeSystemName().equals(tardocLeistung.getCodeSystemName())
+										&& ce.getCode().equals(tardocLeistung.getCode()))
+								.findAny();
+						if (found.isPresent()) {
+							return new Result<IBilled>(null);
+						}
+					}
 					String msg = "Der Mandant hat keine der benötigten Dignitäten [" + digni + "] der Leistung "
 							+ tardocLeistung.getCode() + ".";
-					return new Result<IBilled>(Result.SEVERITY.WARNING, TarifMatcher.LEISTUNGSTYP, msg, null,
-							false);
+					return new Result<IBilled>(Result.SEVERITY.WARNING, TarifMatcher.LEISTUNGSTYP, msg, null, false);
 				}
 			}
 		}

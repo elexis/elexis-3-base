@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
@@ -15,9 +17,13 @@ import ch.elexis.core.findings.util.model.TransientCoding;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.ICodeElementService;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.rgw.tools.Money;
 
 public class ArzttarifeUtil {
@@ -27,6 +33,8 @@ public class ArzttarifeUtil {
 	private static String MANDANT_TARDOC_SPECIALIST_EXTINFO_KEY = "ch.elexis.data.tardoc.mandant.dignitaet";
 
 	private static String MANDANT_SECTIONCODE_EXTINFO_KEY = "ch.elexis.data.mandant.sectioncode";
+
+	private static String MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY = "ch.elexis.data.tardoc.mandant.acquiredrights";
 
 	/**
 	 * Set the {@link MandantType} of the {@link IMandator}.
@@ -85,6 +93,52 @@ public class ArzttarifeUtil {
 				String[] codeParts = codeString.split("\\|");
 				if (codeParts.length == 2) {
 					ret.add(new TransientCoding("tardoc_dignitaet", codeParts[0], codeParts[1]));
+				}
+			}
+			return ret;
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Set the TARDOC acquired rights codes of the {@link IMandator}.
+	 *
+	 * @param mandant
+	 * @param type
+	 */
+	public static void setMandantTardocAcquiredRights(IMandator mandator, List<ICodeElement> acquiredRightsCodes) {
+		if (acquiredRightsCodes != null) {
+			mandator.setExtInfo(MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY, acquiredRightsCodes.stream()
+					.map(c -> c.getCode() + "|" + c.getCodeSystemName()).collect(Collectors.joining("::")));
+		} else {
+			mandator.setExtInfo(MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY, null);
+		}
+	}
+
+	/**
+	 * Get the codings {@link ICoding} of the {@link IMandator} from the TARDOC code
+	 * system, specifying the acquired rights.
+	 *
+	 * @param mandant
+	 * @return
+	 */
+	public static List<ICodeElement> getMandantTardocAcquiredRights(IMandator mandator,
+			ICodeElementService codeElementService) {
+		Object typeObj = mandator.getExtInfo(MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY);
+		if (typeObj instanceof String) {
+			List<ICodeElement> ret = new ArrayList<ICodeElement>();
+			String[] codesString = ((String) typeObj).split("::");
+			for (String codeString : codesString) {
+				if (StringUtils.isNotBlank(codeString)) {
+					String[] codeParts = codeString.split("\\|");
+					if (codeParts.length == 2) {
+						Optional<ICodeElementServiceContribution> tardocContribution = codeElementService
+								.getContribution(CodeElementTyp.SERVICE, codeParts[1]);
+						if (tardocContribution.isPresent()) {
+							Optional<ICodeElement> element = tardocContribution.get().loadFromCode(codeParts[0]);
+							element.ifPresent(e -> ret.add(e));
+						}
+					}
 				}
 			}
 			return ret;

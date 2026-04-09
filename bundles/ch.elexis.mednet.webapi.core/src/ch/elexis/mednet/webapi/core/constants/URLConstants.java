@@ -14,7 +14,7 @@ public class URLConstants {
 	public static String getBaseApiUrl() {
 		Optional<IConfigService> configService = OsgiServiceUtil.getServiceWait(IConfigService.class, 5000);
 		if (configService.isPresent()) {
-			String mode = configService.get().getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
+			String mode = configService.get().get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV");
 
 			if ("PRODUKTIV".equals(mode)) {
 				return "https://www.mednet.swiss";

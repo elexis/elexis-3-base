@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="at.medevit.ch.artikelstamm.model.service.ArticlePriceDiffService">
+   <service>
+      <provide interface="at.medevit.ch.artikelstamm.model.service.ArticlePriceDiffService"/>
+   </service>
+   <reference cardinality="1..1" field="artikelstammModelService" interface="ch.elexis.core.services.IModelService" name="artikelstammModelService" target="(service.model.name=at.medevit.ch.artikelstamm.model)"/>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
+   <reference cardinality="1..1" field="contextService" interface="ch.elexis.core.services.IContextService" name="contextService"/>
+   <reference cardinality="1..1" field="coreModelService" interface="ch.elexis.core.services.IModelService" name="coreModelService" target="(service.model.name=ch.elexis.core.model)"/>
+   <implementation class="at.medevit.ch.artikelstamm.model.service.ArticlePriceDiffService"/>
+</scr:component>

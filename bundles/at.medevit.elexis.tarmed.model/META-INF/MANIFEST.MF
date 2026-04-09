@@ -14,6 +14,7 @@ Import-Package: ch.elexis.core.l10n,
  org.jdom2.output;version="2.0.6",
  org.slf4j;version="1.7.30"
 Export-Package: at.medevit.elexis.tarmed.model,
+ at.medevit.elexis.tarmed.model.wrapper,
  ch.fd.invoice400.request,
  ch.fd.invoice400.response,
  ch.fd.invoice440.request,

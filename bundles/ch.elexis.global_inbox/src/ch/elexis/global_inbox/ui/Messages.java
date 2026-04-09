@@ -48,4 +48,5 @@ public class Messages {
 	public static String PreferencesServer_patientSource_folder = ch.elexis.core.l10n.Messages.PreferencesServer_patientSource_folder;
 	public static String PreferencesServer_patientSource_hierarchy = ch.elexis.core.l10n.Messages.PreferencesServer_patientSource_hierarchy;
 	public static String PreferencesServer_patientSource_hybrid = ch.elexis.core.l10n.Messages.PreferencesServer_patientSource_hybrid;
+	public static String PreferencesServer_suffixModeLabel = ch.elexis.core.l10n.Messages.PreferencesServer_suffixModeLabel;
 }

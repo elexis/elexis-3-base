@@ -117,4 +117,21 @@ public class ImportOmnivoreInboxUtil {
 			return "Error in category resolution";
 		}
 	}
+
+	public String formatDocumentName(String originalFileName, String deviceName) {
+		boolean useSuffix = PortableServiceLoader.get(IConfigService.class)
+				.getGlobal(Constants.PREF_SUFFIX_MODE_PREFIX + deviceName, false);
+
+		int lastDotIndex = originalFileName.lastIndexOf('.');
+		String nameWithoutExt = lastDotIndex > 0 ? originalFileName.substring(0, lastDotIndex) : originalFileName;
+		String extension = lastDotIndex > 0 ? originalFileName.substring(lastDotIndex) : "";
+
+		if (useSuffix) {
+
+			return nameWithoutExt + "_" + deviceName + extension;
+		} else {
+
+			return originalFileName;
+		}
+	}
 }

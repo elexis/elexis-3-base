@@ -33,7 +33,7 @@ public class PatientFolderStrategy implements IImportStrategy {
 				return false;
 
 			String patientNo = m.group(1);
-			String documentName = deviceName + "_" + file.getName();
+			String documentName = giutil.formatDocumentName(file.getName(), deviceName);
 
 			String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, documentName);
 			if (tryImportForPatient != null) {

@@ -1,5 +1,12 @@
 package ch.elexis.global_inbox.core.handler;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.eenv.IElexisEnvironmentService;
 import ch.elexis.core.exceptions.AccessControlException;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
@@ -9,13 +16,6 @@ import ch.elexis.core.tasks.model.ITaskDescriptor;
 import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.core.tasks.model.TaskTriggerType;
 import ch.elexis.core.tasks.model.TaskTriggerTypeParameter;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import org.slf4j.LoggerFactory;
 
 public class TaskManagerHandler {
 
@@ -45,7 +45,6 @@ public class TaskManagerHandler {
 				taskDescriptor.setRunContextParameter("destinationDir", destinationDir);
 				taskDescriptor.setRunContextParameter("referenceId", referenceId);
 				taskDescriptor.setActive(true);
-				taskDescriptor.setRunner(IElexisEnvironmentService.ES_STATION_ID_DEFAULT);
 				taskService.saveTaskDescriptor(taskDescriptor);
 				taskService.refresh(taskDescriptor);
 			} else {

@@ -161,7 +161,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		if (customKumulations != null && !customKumulations.isEmpty()) {
 			LoggerFactory.getLogger(getClass())
 					.info("Using custom kumulation for [" + newBilled.getCode() + "] overriding tarif matcher.");
-			matcherResult = verifier.checkCustomKumulations(customKumulations);
+			matcherResult = verifier.checkCustomKumulations(customKumulations, newBilled);
 		}
 		if (!matcherResult.isOK()) {
 			if (bAllowOverrideStrict) {

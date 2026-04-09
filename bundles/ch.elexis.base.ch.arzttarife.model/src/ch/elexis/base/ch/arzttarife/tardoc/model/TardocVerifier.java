@@ -160,7 +160,7 @@ public class TardocVerifier implements IBillableVerifier {
 		return new Result<IBilled>(null);
 	}
 
-	public Result<IBilled> checkCustomKumulations(List<ITardocKumulation> customKumulations) {
+	public Result<IBilled> checkCustomKumulations(List<ITardocKumulation> customKumulations, IBilled newBilled) {
 		for (ITardocKumulation iTardocKumulation : customKumulations) {
 			// allow inclusion
 			if (iTardocKumulation.getTyp() == TardocKumulationTyp.INCLUSION) {
@@ -169,9 +169,9 @@ public class TardocVerifier implements IBillableVerifier {
 				return new Result<IBilled>(Result.SEVERITY.WARNING, TarifMatcher.KOMBINATION,
 						"Die Leistung  " + iTardocKumulation.getMasterCode() + " ist nicht kombinierbar mit "
 								+ iTardocKumulation.getSlaveCode() + ".",
-						null, false);
+						newBilled, false);
 			}
 		}
-		return new Result<IBilled>(null);
+		return new Result<IBilled>(newBilled);
 	}
 }

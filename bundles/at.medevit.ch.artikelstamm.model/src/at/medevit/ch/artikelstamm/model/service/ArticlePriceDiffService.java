@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +18,9 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.ModelPackage;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.IModelService;
 import ch.rgw.tools.Money;
 
 /**
@@ -27,13 +28,25 @@ import ch.rgw.tools.Money;
  * automatically adjusts prices in open encounters of the current month.
  * (Stripped version without History-Logging for PR #2)
  */
-@Component
+@Component(service = ArticlePriceDiffService.class)
 public class ArticlePriceDiffService {
 
 	private static final Logger log = LoggerFactory.getLogger(ArticlePriceDiffService.class);
 	public static final String PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS = "rdus.autoAdjustOpenEncounters"; //$NON-NLS-1$
 	private Map<String, BigDecimal> oldPrices = new HashMap<>();
 	private Map<String, BigDecimal> newPrices = new HashMap<>();
+
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model)")
+	private IModelService artikelstammModelService;
+
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
+	private IModelService coreModelService;
+
+	@Reference
+	private IConfigService configService;
+
+	@Reference
+	private IContextService contextService;
 
 	/**
 	 * Helper: safely converts {@link Money} to {@link BigDecimal}.
@@ -50,14 +63,14 @@ public class ArticlePriceDiffService {
 	}
 
 	public void captureOldPrices() {
-		List<IArtikelstammItem> allArticles = ArtikelstammModelServiceHolder.get().findAll(IArtikelstammItem.class);
+		List<IArtikelstammItem> allArticles = artikelstammModelService.findAll(IArtikelstammItem.class);
 		oldPrices = allArticles.stream().filter(article -> !"VERSION".equals(article.getId())).collect( //$NON-NLS-1$
 				Collectors.toMap(IArtikelstammItem::getId, a -> toBigDecimal(a.getSellingPrice()), (a, b) -> a));
 		log.info("Cached old article master data ({} items).", oldPrices.size()); //$NON-NLS-1$
 	}
 
 	public void captureNewPrices() {
-		List<IArtikelstammItem> allArticles = ArtikelstammModelServiceHolder.get().findAll(IArtikelstammItem.class);
+		List<IArtikelstammItem> allArticles = artikelstammModelService.findAll(IArtikelstammItem.class);
 		newPrices = allArticles.stream().filter(article -> !"VERSION".equals(article.getId())).collect( //$NON-NLS-1$
 				Collectors.toMap(IArtikelstammItem::getId, a -> toBigDecimal(a.getSellingPrice()), (a, b) -> a));
 		log.info("Loaded new article master data ({} items).", newPrices.size()); //$NON-NLS-1$
@@ -77,7 +90,7 @@ public class ArticlePriceDiffService {
 				continue;
 			}
 			if (newPrice.compareTo(oldPrice) != 0) {
-				IArtikelstammItem art = ArtikelstammModelServiceHolder.get().load(id, IArtikelstammItem.class)
+				IArtikelstammItem art = artikelstammModelService.load(id, IArtikelstammItem.class)
 						.orElse(null);
 				if (art != null) {
 					diffs.put(art, new PriceChange(oldPrice, newPrice));
@@ -94,7 +107,7 @@ public class ArticlePriceDiffService {
 	 */
 	public UpdateStatistics updateOpenEncounters(Map<IArtikelstammItem, PriceChange> priceChanges) {
 		UpdateStatistics stats = new UpdateStatistics();
-		boolean autoAdjust = ConfigServiceHolder.getGlobal(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true);
+		boolean autoAdjust = configService.getGlobal(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true);
 
 		if (priceChanges.isEmpty()) {
 			log.info("No price changes — nothing to update."); //$NON-NLS-1$
@@ -112,7 +125,7 @@ public class ArticlePriceDiffService {
 		LocalDate firstDayOfMonth = currentMonth.atDay(1);
 		LocalDate lastDayOfMonth = currentMonth.atEndOfMonth();
 
-		List<IEncounter> openEncounters = CoreModelServiceHolder.get().getQuery(IEncounter.class)
+		List<IEncounter> openEncounters = coreModelService.getQuery(IEncounter.class)
 				.and(ModelPackage.Literals.IENCOUNTER__INVOICE, ch.elexis.core.services.IQuery.COMPARATOR.EQUALS, null)
 				.and(ModelPackage.Literals.IENCOUNTER__DATE, ch.elexis.core.services.IQuery.COMPARATOR.GREATER_OR_EQUAL,
 						firstDayOfMonth)
@@ -125,7 +138,7 @@ public class ArticlePriceDiffService {
 			updateEncounterPrices(encounter, changeMap, stats);
 		}
 
-		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IEncounter.class);
+		contextService.postEvent(ElexisEventTopics.EVENT_RELOAD, IEncounter.class);
 		return stats;
 	}
 
@@ -146,8 +159,8 @@ public class ArticlePriceDiffService {
 						stats.itemsUpdated++;
 						log.debug("Encounter {} ({}): {} — price set from {} to {}.", encounter.getId(), //$NON-NLS-1$
 								encounter.getDate(), article.getName(), priceChange.oldPrice(), priceChange.newPrice());
-						CoreModelServiceHolder.get().save(billed);
-						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, billed);
+						coreModelService.save(billed);
+						contextService.postEvent(ElexisEventTopics.EVENT_UPDATE, billed);
 					} catch (IllegalStateException e) {
 						log.warn("Cannot set price for {}: {}", article.getName(), e.getMessage()); //$NON-NLS-1$
 					}
@@ -157,8 +170,8 @@ public class ArticlePriceDiffService {
 
 		if (changed) {
 			try {
-				CoreModelServiceHolder.get().save(encounter);
-				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, encounter);
+				coreModelService.save(encounter);
+				contextService.postEvent(ElexisEventTopics.EVENT_UPDATE, encounter);
 				stats.encountersUpdated++;
 				log.debug("Encounter {} saved successfully.", encounter.getId()); //$NON-NLS-1$
 			} catch (Exception e) {

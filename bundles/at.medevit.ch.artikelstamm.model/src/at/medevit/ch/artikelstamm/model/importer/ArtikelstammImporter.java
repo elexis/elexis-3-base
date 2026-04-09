@@ -76,6 +76,9 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 	private VersionUtil versionUtil;
 
+	@Reference
+	private ArticlePriceDiffService diffService;
+	
 	@Activate
 	public void activate() {
 		versionUtil = new VersionUtil(elexisEntityManager);
@@ -124,7 +127,6 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		String bundleVersion = Platform.getBundle("at.medevit.ch.artikelstamm.model").getVersion().toString(); //$NON-NLS-1$
 
-		ArticlePriceDiffService diffService = new ArticlePriceDiffService();
 		try {
 			log.info("Starting Artikelstamm update. Capturing old prices...");
 			diffService.captureOldPrices();

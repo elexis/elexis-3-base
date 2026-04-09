@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.marge.Marge;
@@ -27,11 +29,12 @@ import at.medevit.ch.artikelstamm.model.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
 import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.core.tasks.model.TaskTriggerType;
-import ch.elexis.core.utils.OsgiServiceUtil;
+
 
 public class ArtikelstammPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public Marge margeA, margeB, margeC;
@@ -56,6 +59,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 
 	private Button btnShowGenericWarningMediList;
 	private Button btnShowGenericWarningRecipe;
+	private static final Logger logger = LoggerFactory.getLogger(ArtikelstammPreferencePage.class);
 
 	public static final String PREFERENCE_BASE = "rdus/"; //$NON-NLS-1$
 	public static final String PREFERENCE_UPDATE_INTERVAL = PREFERENCE_BASE + "updateCheckInterval"; //$NON-NLS-1$
@@ -348,19 +352,11 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 					taskService.saveTaskDescriptor(td);
 					taskService.refresh(td);
 				} catch (TaskException ex) {
-<<<<<<< Upstream, based on master
 					logger.error("Error updating the task descriptor for RDUS", ex);
 				}
 			}
 		} catch (Exception ex) {
 			logger.error("General error in toggleRdusTask", ex);
-=======
-					ex.printStackTrace();
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
->>>>>>> 036423d [27529] RDUS PreferencesPage
 		}
 	}
 

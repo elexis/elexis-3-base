@@ -66,7 +66,6 @@ public final class ArticlesElement {
 			if (StringUtils.isNotBlank(dosageInstructions)) {
 				appendChildWithText(doc, articleElement, "DosageInstructions", dosageInstructions); //$NON-NLS-1$
 			}
-			System.out.println("test " + signature.getEndDate());
 			if (signature.getEndDate() != null) {
 				String stopDate = signature.getEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 				appendChildWithText(doc, articleElement, "StopDate", stopDate); //$NON-NLS-1$

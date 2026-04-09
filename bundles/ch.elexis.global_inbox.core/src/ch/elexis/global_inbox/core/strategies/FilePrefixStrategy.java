@@ -25,7 +25,7 @@ public class FilePrefixStrategy implements IImportStrategy {
 		Matcher matcher = PATIENT_MATCH_PATTERN.matcher(file.getName());
 		if (matcher.matches()) {
 			String patientNo = matcher.group(1);
-			String fileName = deviceName + "_" + matcher.group(2);
+			String fileName = giutil.formatDocumentName(matcher.group(2), deviceName);
 			String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, fileName);
 			if (tryImportForPatient != null) {
 				log.info("Auto imported (FILE_PREFIX) file [{}], document id is [{}]", file, tryImportForPatient);

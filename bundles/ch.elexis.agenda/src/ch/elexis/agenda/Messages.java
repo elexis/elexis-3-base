@@ -206,6 +206,8 @@ public final class Messages {
 	public static String AgendaFarben_PastAppointments = ch.elexis.core.l10n.Messages.AgendaFarben_PastAppointments;
 	public static String AgendaFarben_FutureAppointments = ch.elexis.core.l10n.Messages.AgendaFarben_FutureAppointments;
 	public static String AgendaFarben_DoubleClickToChange = ch.elexis.core.l10n.Messages.AgendaFarben_DoubleClickToChange;
-	public static String AgendaDefinitionen_useColorizedPatientSearch = ch.elexis.core.l10n.Messages.AgendaDefinitionen_useColorizedPatientSearch;;
+	public static String AgendaDefinitionen_useColorizedPatientSearch = ch.elexis.core.l10n.Messages.AgendaDefinitionen_useColorizedPatientSearch;
+	public static String Zeitvorgaben_LegendBlueDeviations = ch.elexis.core.l10n.Messages.Zeitvorgaben_LegendBlueDeviations;
+	public static String DefaultOutputter_defaultOutputForCase = ch.elexis.core.l10n.Messages.DefaultOutputter_defaultOutputForCase;
 
 }

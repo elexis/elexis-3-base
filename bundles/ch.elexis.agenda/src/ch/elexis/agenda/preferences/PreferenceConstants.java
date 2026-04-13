@@ -1,6 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
- * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -32,6 +29,7 @@ public class PreferenceConstants {
 	public static final String AG_TYPCOLOR_PREFIX = "agenda/farben/typ/"; //$NON-NLS-1$
 	public static final String AG_STATCOLOR_PREFIX = "agenda/farben/status/"; //$NON-NLS-1$
 	public static final String AG_TYPIMAGE_PREFIX = "agenda/bilder/typ/"; //$NON-NLS-1$
+	public static final String AG_SERIES_COLOR = "ag_series_color"; //$NON-NLS-1$
 	public static final String AG_TIMEPREFERENCES = "agenda/zeitvorgaben"; //$NON-NLS-1$
 	public static final String AG_DAYPREFERENCES = Preferences.AG_DAYPREFERENCES;
 	public static final String AG_SHOW_REASON = "agenda/show_reason"; //$NON-NLS-1$
@@ -76,4 +74,5 @@ public class PreferenceConstants {
 	public static final String TL_PAST_BG_COLOR_DEFAULT = "404040"; // $NON-NLS-1$
 	public static final String TL_FUTURE_BG_COLOR_DEFAULT = "FFFFFF"; // $NON-NLS-1$
 	public static final String TL_USE_GLOBAL_SETTINGS = "agenda/terminliste/useGlobalSettings"; // $NON-NLS-1$
+	public static final String TL_BG_COLOR_DEFAULT = "FFFFFF"; // $NON-NLS-1$
 }

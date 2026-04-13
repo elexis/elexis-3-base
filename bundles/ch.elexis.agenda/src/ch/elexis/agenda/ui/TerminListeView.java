@@ -482,7 +482,8 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 
 		private Color colorPast;
 		private Color colorFuture;
-
+		private Color colorRecurring;
+		
 		// Cached to prevent creating a new LocalDateTime object for every single row
 		// during the rendering phase. This improves UI performance and ensures a
 		// consistent time comparison across all elements in the view.
@@ -498,21 +499,27 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 
 			String hexPast;
 			String hexFuture;
+			String hexRecurring;
 
 			if (useGlobal) {
 				hexPast = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_PAST_BG_COLOR,
 						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
 				hexFuture = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_FUTURE_BG_COLOR,
 						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+				hexRecurring = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SERIES_COLOR,
+						PreferenceConstants.TL_BG_COLOR_DEFAULT);
 			} else {
 				hexPast = ConfigServiceHolder.getUser(PreferenceConstants.TL_PAST_BG_COLOR,
 						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
 				hexFuture = ConfigServiceHolder.getUser(PreferenceConstants.TL_FUTURE_BG_COLOR,
 						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+				hexRecurring = ConfigServiceHolder.getUser(PreferenceConstants.AG_SERIES_COLOR,
+						PreferenceConstants.TL_BG_COLOR_DEFAULT);
 			}
 
 			colorPast = UiDesk.getColorFromRGB(hexPast);
 			colorFuture = UiDesk.getColorFromRGB(hexFuture);
+			colorRecurring = UiDesk.getColorFromRGB(hexRecurring);
 		}
 
 		@Override
@@ -565,6 +572,16 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 
 		@Override
 		public Color getBackground(Object element) {
+			if (!(element instanceof IAppointment)) {
+				return null;
+			}
+			
+			IAppointment appointment = (IAppointment) element;
+			
+			if (appointment.isRecurring()) {
+				return colorRecurring;
+			}
+
 			if (isPastAppointment(element)) {
 				return colorPast;
 			} else {

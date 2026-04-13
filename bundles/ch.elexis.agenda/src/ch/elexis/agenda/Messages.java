@@ -213,4 +213,8 @@ public final class Messages {
 	public static String Zeitvorgaben_HintRightClickReset = ch.elexis.core.l10n.Messages.Zeitvorgaben_HintRightClickReset;
 	public static String Zeitvorgaben_RestoreDefaultsForArea = ch.elexis.core.l10n.Messages.Zeitvorgaben_RestoreDefaultsForArea;
 	public static String Zeitvorgaben_SelectAreaToReset = ch.elexis.core.l10n.Messages.Zeitvorgaben_SelectAreaToReset;
+	public static String AgendaDefinitionen_useColorizedPatientSearch = ch.elexis.core.l10n.Messages.AgendaDefinitionen_useColorizedPatientSearch;
+	public static String AgendaFarben_SpecialAppointments = ch.elexis.core.l10n.Messages.AgendaFarben_SpecialAppointments;
+	public static String AgendaFarben_RecurringAppointment = ch.elexis.core.l10n.Messages.AgendaFarben_RecurringAppointment;
+
 }

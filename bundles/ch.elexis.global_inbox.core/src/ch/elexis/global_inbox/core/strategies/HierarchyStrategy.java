@@ -18,12 +18,10 @@ public class HierarchyStrategy implements IImportStrategy {
 
 	private final Pattern PATIENT_DIR_PATTERN = Pattern.compile("([0-9]+)(?:_[^0-9].*)?");
 
-	private final ImportOmnivoreInboxUtil giutil;
 	private final String deviceName;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	public HierarchyStrategy(ImportOmnivoreInboxUtil giutil, String deviceName) {
-		this.giutil = giutil;
+	public HierarchyStrategy(String deviceName) {
 		this.deviceName = deviceName;
 	}
 
@@ -45,7 +43,8 @@ public class HierarchyStrategy implements IImportStrategy {
 				if (m.matches()) {
 					String patientCandidate = m.group(1);
 					String documentName = buildDocumentName(baseFileName, segmentNames);
-					String importedId = giutil.tryImportForPatient(file, patientCandidate, documentName);
+					String importedId = ImportOmnivoreInboxUtil.tryImportForPatient(file, patientCandidate,
+							documentName);
 
 					if (importedId != null) {
 						log.info("Auto imported (HIERARCHY) file [{}], document id is [{}]", file, importedId);

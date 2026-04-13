@@ -11,12 +11,10 @@ import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
 public class FilePrefixStrategy implements IImportStrategy {
 	private final Pattern PATIENT_MATCH_PATTERN = Pattern.compile("([0-9]+)_(.+)");
-	private final ImportOmnivoreInboxUtil giutil;
 	private final String deviceName;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	public FilePrefixStrategy(ImportOmnivoreInboxUtil giutil, String deviceName) {
-		this.giutil = giutil;
+	public FilePrefixStrategy(String deviceName) {
 		this.deviceName = deviceName;
 	}
 
@@ -25,8 +23,8 @@ public class FilePrefixStrategy implements IImportStrategy {
 		Matcher matcher = PATIENT_MATCH_PATTERN.matcher(file.getName());
 		if (matcher.matches()) {
 			String patientNo = matcher.group(1);
-			String fileName = giutil.formatDocumentName(matcher.group(2), deviceName);
-			String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, fileName);
+			String fileName = ImportOmnivoreInboxUtil.formatDocumentName(matcher.group(2), deviceName);
+			String tryImportForPatient = ImportOmnivoreInboxUtil.tryImportForPatient(file, patientNo, fileName);
 			if (tryImportForPatient != null) {
 				log.info("Auto imported (FILE_PREFIX) file [{}], document id is [{}]", file, tryImportForPatient);
 				return true;

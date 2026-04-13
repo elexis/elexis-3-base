@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +15,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IDiagnosisReference;
@@ -83,6 +83,7 @@ public class CasemasterService {
 					addBilled(encounterBilled, session);
 				}
 			}
+			addTarposReferences(session, iEncounter.getBilled());
 			sessions.add(session);
 		}
 		Patient patient = new Patient();
@@ -92,19 +93,38 @@ public class CasemasterService {
 		return caseMaster.apply(patient);
 	}
 
+	private void addTarposReferences(Session session, List<IBilled> billed) {
+		for (IBilled iBilled : billed) {
+			if (StringUtils.isNotBlank((String) iBilled.getExtInfo("Bezug"))) {
+				String referenceCode = noDots((String) iBilled.getExtInfo("Bezug"));
+				Optional<Tarpo> refFrom = session.getTarpos().stream()
+						.filter(tp -> noDots(iBilled.getCode()).equals(tp.code))
+						.findAny();
+				Optional<Tarpo> refTo = session.getTarpos().stream()
+						.filter(tp -> tp.code.equals(referenceCode))
+						.findAny();
+				if (refFrom.isPresent() && refTo.isPresent()) {
+					refFrom.get().setReferenceTarpo(refTo.get());
+				}
+			}
+		}
+	}
+
+	private String noDots(String string) {
+		return string.replace(".", "");
+	}
+
 	private void addBilled(IBilled billed, Session session) {
 		IBillable billable = billed.getBillable();
 		if (billable != null) {
 			if (billable.getCodeSystemName() != null) {
-				if (billable.getCodeSystemName().toLowerCase().contains("tardoc")
-						|| billable.getCodeSystemName().toLowerCase().contains("ambulantepauschalen")) {
-					session.addService(new Service(billable.getCode(), getSide(billed),
-							Double.valueOf(billed.getAmount()).intValue(), billed.getEncounter().getDate(),
-							session.number));
-				} else if (!(billable instanceof IArticle) || billable.getCodeSystemCode().equals("402")) {
+				session.addService(
+						new Service(billable.getCode(), getSide(billed), Double.valueOf(billed.getAmount()).intValue(),
+								billed.getEncounter().getDate(), session.number));
+				if (billable.getCodeSystemName().toLowerCase().contains("tardoc")) {
 					session.addTarpo(new Tarpo(billable.getCode(), billable.getCodeSystemCode(), billed.getAmount(),
 							billed.getEncounter().getDate(), billed.getAmount(), (billed.getPrice().getCents() / 100),
-							Side.NONE));
+							getSide(billed)));
 				}
 			} else {
 				LoggerFactory.getLogger(getClass()).warn("No code system name for billable [" + billable.getId() + "]");

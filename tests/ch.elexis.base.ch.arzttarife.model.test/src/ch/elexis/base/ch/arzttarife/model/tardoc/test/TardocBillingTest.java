@@ -363,4 +363,63 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 
 	}
+
+	@Test
+	public void referenzLeistungBezugTardocPositions() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("GG.00.0010", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// zuschlag
+		status = billingService.bill(TardocLeistung.getFromCode("GG.00.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		String bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("GG.00.0010", bezug);
+
+		// referenzleistung
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("GG.00.0010", bezug);
+
+		// referenzleistung once per master
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		// add master
+		status = billingService.bill(TardocLeistung.getFromCode("GG.00.0300", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// referenzleistung once per master, but once per session
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		// other referenzleistung
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0070", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// other bezug
+		bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("GG.00.0300", bezug);
+	}
 }

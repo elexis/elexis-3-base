@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,6 +90,14 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 	}
 
+	private boolean isReferenzleistung(ITardocLeistung tardocLeistung) {
+		return tardocLeistung.getServiceTyp() != null && tardocLeistung.getServiceTyp().equals("R");
+	}
+
+	private boolean isHauptleistung(ITardocLeistung tardocLeistung) {
+		return tardocLeistung.getServiceTyp() != null && tardocLeistung.getServiceTyp().equals("H");
+	}
+
 	private Result<IBilled> add(TardocLeistung code, IEncounter encounter, boolean save) {
 		if (tarifMatcher == null) {
 			tarifMatcher = new TarifMatcher<TardocLeistung>(this);
@@ -121,8 +130,13 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 		
 		// Referenzleistung
-		if (code.getServiceTyp() != null && code.getServiceTyp().equals("R")) {
-			addKumulationBezug(newBilled, encounter);
+		if (isReferenzleistung(code)) {
+			Result<IBilled> resultBezug = addKumulationBezug(newBilled, encounter);
+			if (!resultBezug.isOK()) {
+				return resultBezug;
+			} else if (!resultBezug.get().equals(newBilled)) {
+				newBilled = resultBezug.get();
+			}
 		}
 
 		if (bOptify) {
@@ -224,7 +238,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 	}
 
-	private void addKumulationBezug(IBilled newBilled, IEncounter encounter) {
+	private Result<IBilled> addKumulationBezug(IBilled newBilled, IEncounter encounter) {
 		ITardocLeistung code = (ITardocLeistung) newBilled.getBillable();
 		List<ITardocKumulation> kumulations = code.getKumulations(TardocKumulationArt.SERVICE);
 		List<ITardocKumulation> slaveInclusionKumulations = kumulations.stream()
@@ -243,7 +257,102 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 					break;
 				}
 			}
+		} else {
+			// set bezug to hauptleistung of same root chapter
+			List<IBilled> foundMasters = encounter.getBilled().stream()
+					.filter(b -> b.getBillable() instanceof ITardocLeistung
+							&& isHauptleistung((ITardocLeistung) b.getBillable()))
+					.toList();
+			if(!foundMasters.isEmpty()) {
+				String chapter = getRootChapter((ITardocLeistung) newBilled.getBillable());
+				if (StringUtils.isNotBlank(chapter)) {
+					// order by least existing references
+					Map<String, Integer> masterReferenceCountMap = getMasterReferenceCountMap(encounter);
+					List<IBilled> foundMastersSameRootChapter = new ArrayList<>(foundMasters.stream()
+							.filter(b -> getRootChapter((ITardocLeistung) b.getBillable()).equals(chapter))
+							.sorted((l, r) -> {
+								Integer li = masterReferenceCountMap.getOrDefault(l.getCode(), Integer.valueOf(0));
+								Integer ri = masterReferenceCountMap.getOrDefault(r.getCode(), Integer.valueOf(0));
+								return li.compareTo(ri);
+							}).toList());
+					if (!foundMastersSameRootChapter.isEmpty()) {
+						return addReferenceToMaster(newBilled, foundMastersSameRootChapter, encounter, true);
+					}
+				}
+			}
 		}
+		return new Result<IBilled>(newBilled);
+	}
+
+	private Map<String, Integer> getMasterReferenceCountMap(IEncounter encounter) {
+		if (encounter != null) {
+			Map<String, Integer> ret = new HashMap<String, Integer>();
+			for (IBilled billed : encounter.getBilled()) {
+				if (billed.getBillable() instanceof ITardocLeistung) {
+					String reference = (String) billed.getExtInfo("Bezug");
+					if (StringUtils.isNotBlank(reference)) {
+						Integer count = ret.get(reference);
+						if (count == null) {
+							count = Integer.valueOf(0);
+						}
+						ret.put(reference, ++count);
+					}
+				}
+			}
+			return ret;
+		}
+		return Collections.emptyMap();
+	}
+
+	private Result<IBilled> addReferenceToMaster(IBilled newBilled, List<IBilled> masters, IEncounter encounter,
+			boolean trySeparate) {
+		Result<IBilled> ret = new Result<IBilled>(newBilled);
+		for (int i = 0; i < masters.size(); i++) {
+			IBilled masterSameRootChapter = masters.get(i);
+			ret = testBezugLimitOk(newBilled, encounter);
+			if(ret.isOK()) {
+				newBilled.setExtInfo("Bezug", masterSameRootChapter.getCode());
+				return ret;
+			} else if (trySeparate && masters.size() > (i + 1)) {
+				newBilled = initializeBilled((TardocLeistung) newBilled.getBillable(), encounter, false);
+				return addReferenceToMaster(newBilled, masters.subList(i + 1, masters.size()), encounter, false);
+			}
+		}
+		return ret;
+	}
+
+	private Result<IBilled> testBezugLimitOk(IBilled newBilled, IEncounter encounter) {
+		Result<IBilled> ret = new Result<IBilled>(newBilled);
+		if (newBilled.getBillable() instanceof TardocLeistung) {
+			TardocLeistung tardocLeistung = (TardocLeistung) newBilled.getBillable();
+			List<TardocLimitation> mainServiceLimitation = tardocLeistung.getLimitations().stream()
+					.filter(l -> l.getLimitationUnit() == LimitationUnit.MAINSERVICE).toList();
+			if (!mainServiceLimitation.isEmpty()) {
+				for (TardocLimitation tardocLimitation : mainServiceLimitation) {
+					Result<IBilled> testResult = tardocLimitation.test(encounter, newBilled);
+					if (!testResult.isOK()) {
+						return testResult;
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	private String getChapter(ITardocLeistung billable) {
+		ITardocLeistung parent = billable.getParent();
+		while (parent != null && !parent.isChapter()) {
+			parent = parent.getParent();
+		}
+		return (parent != null && parent.isChapter()) ? parent.getCode() : StringUtils.EMPTY;
+	}
+
+	private String getRootChapter(ITardocLeistung billable) {
+		ITardocLeistung parent = billable.getParent();
+		while (parent.getParent() != null) {
+			parent = parent.getParent();
+		}
+		return (parent != null && parent.isChapter()) ? parent.getCode() : StringUtils.EMPTY;
 	}
 
 	private Result<IBilled> setNewBilledSideOrIncrement(IBilled newBilled, IEncounter encounter) {

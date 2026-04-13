@@ -132,7 +132,14 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		createColorRow(terminListeColors, Messages.AgendaFarben_PastAppointments, PreferenceConstants.TL_PAST_BG_COLOR,
 				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
 		createColorRow(terminListeColors, Messages.AgendaFarben_FutureAppointments,
-				PreferenceConstants.TL_FUTURE_BG_COLOR, PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+				PreferenceConstants.TL_FUTURE_BG_COLOR, PreferenceConstants.TL_BG_COLOR_DEFAULT);
+		Group specialColors = new Group(par, SWT.BORDER);
+		specialColors.setText(Messages.AgendaFarben_SpecialAppointments);
+		specialColors.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		specialColors.setLayout(new GridLayout(2, false));
+
+		createColorRow(specialColors, Messages.AgendaFarben_RecurringAppointment, PreferenceConstants.AG_SERIES_COLOR,
+				PreferenceConstants.TL_BG_COLOR_DEFAULT); // $NON-NLS-1$
 		return par;
 	}
 

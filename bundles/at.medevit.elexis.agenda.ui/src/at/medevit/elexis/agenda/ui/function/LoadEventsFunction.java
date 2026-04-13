@@ -34,6 +34,7 @@ import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
@@ -84,6 +85,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					} else {
 						// updated still inside timespan
 						Event event = Event.of(iPeriod, userContact);
+						applySeriesColorIfNecessary(iPeriod, event);
 						eventsMap.put(event.getId(), event);
 					}
 					updated = true;
@@ -93,6 +95,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					} else {
 						// new or moved into timespan
 						Event event = Event.of(iPeriod, userContact);
+						applySeriesColorIfNecessary(iPeriod, event);
 						eventsMap.put(event.getId(), event);
 					}
 					updated = true;
@@ -275,7 +278,11 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			try {
 				List<IPeriod> periods = getPeriods(key);
 				return new EventsJsonValue(key,
-						periods.parallelStream().map(p -> Event.of(p, key.userContact)).collect(Collectors.toList()));
+						periods.parallelStream().map(p -> {
+							Event event = Event.of(p, key.userContact);
+							applySeriesColorIfNecessary(p, event);
+							return event;
+						}).collect(Collectors.toList()));
 			} catch (Exception e) {
 				LoggerFactory.getLogger(getClass()).error("Error loading json events", e);
 				return new EventsJsonValue(key, Collections.emptyList());
@@ -350,5 +357,17 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 
 	public Set<String> getResources() {
 		return resources;
+	}
+
+	private void applySeriesColorIfNecessary(IPeriod period, Event event) {
+		if (period instanceof IAppointment && ((IAppointment) period).isRecurring()) {
+			String coldesc = ConfigServiceHolder.getUserCached("ag_series_color", "FFFFFF"); //$NON-NLS-1$
+
+			if (coldesc.contains(",")) {
+				event.setBackgroundColor("rgb(" + coldesc + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				event.setBackgroundColor(coldesc.startsWith("#") ? coldesc : "#" + coldesc); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 }

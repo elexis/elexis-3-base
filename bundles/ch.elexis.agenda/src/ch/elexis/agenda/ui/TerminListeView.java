@@ -292,7 +292,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 				return UiDesk.getColorFromRGB(hex);
 			} else {
 				String hex = ConfigServiceHolder.getUser(PreferenceConstants.TL_FUTURE_BG_COLOR,
-						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+						PreferenceConstants.TL_BG_COLOR_DEFAULT);
 				return UiDesk.getColorFromRGB(hex);
 			}
 		}

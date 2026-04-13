@@ -32,6 +32,7 @@ public class PreferenceConstants {
 	public static final String AG_TYPCOLOR_PREFIX = "agenda/farben/typ/"; //$NON-NLS-1$
 	public static final String AG_STATCOLOR_PREFIX = "agenda/farben/status/"; //$NON-NLS-1$
 	public static final String AG_TYPIMAGE_PREFIX = "agenda/bilder/typ/"; //$NON-NLS-1$
+	public static final String AG_SERIES_COLOR = "ag_series_color"; //$NON-NLS-1$
 	public static final String AG_TIMEPREFERENCES = "agenda/zeitvorgaben"; //$NON-NLS-1$
 	public static final String AG_DAYPREFERENCES = Preferences.AG_DAYPREFERENCES;
 	public static final String AG_SHOW_REASON = "agenda/show_reason"; //$NON-NLS-1$
@@ -74,6 +75,6 @@ public class PreferenceConstants {
 	public static final String TL_PAST_BG_COLOR = "agenda/terminliste/pastBgColor"; // $NON-NLS-1$
 	public static final String TL_FUTURE_BG_COLOR = "agenda/terminliste/futureBgColor"; // $NON-NLS-1$
 	public static final String TL_PAST_BG_COLOR_DEFAULT = "404040"; // $NON-NLS-1$
-	public static final String TL_FUTURE_BG_COLOR_DEFAULT = "FFFFFF"; // $NON-NLS-1$
+	public static final String TL_BG_COLOR_DEFAULT = "FFFFFF"; // $NON-NLS-1$
 
 }

@@ -143,6 +143,12 @@ public final class Plannables {
 
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
 	public static Color getTypColor(IPlannable p) {
+
+		if (p instanceof IAppointment && ((IAppointment) p).isRecurring()) {
+			String coldesc = ConfigServiceHolder.getUserCached("ag_series_color", "FFFFFF"); //$NON-NLS-1$
+			return UiDesk.getColorFromRGB(coldesc);
+		}
+
 		String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
 				"FFFFFF"); //$NON-NLS-1$
 		return UiDesk.getColorFromRGB(coldesc);

@@ -8,19 +8,20 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.cdi.PortableServiceLoader;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
 public class HierarchyStrategy implements IImportStrategy {
 
 	private final Pattern PATIENT_DIR_PATTERN = Pattern.compile("([0-9]+)(?:_[^0-9].*)?");
 
-	private final ImportOmnivoreInboxUtil giutil;
 	private final String deviceName;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	public HierarchyStrategy(ImportOmnivoreInboxUtil giutil, String deviceName) {
-		this.giutil = giutil;
+	public HierarchyStrategy(String deviceName) {
 		this.deviceName = deviceName;
 	}
 
@@ -42,7 +43,8 @@ public class HierarchyStrategy implements IImportStrategy {
 				if (m.matches()) {
 					String patientCandidate = m.group(1);
 					String documentName = buildDocumentName(baseFileName, segmentNames);
-					String importedId = giutil.tryImportForPatient(file, patientCandidate, documentName);
+					String importedId = ImportOmnivoreInboxUtil.tryImportForPatient(file, patientCandidate,
+							documentName);
 
 					if (importedId != null) {
 						log.info("Auto imported (HIERARCHY) file [{}], document id is [{}]", file, importedId);
@@ -65,8 +67,7 @@ public class HierarchyStrategy implements IImportStrategy {
 	}
 
 	private String buildDocumentName(String baseFileName, List<String> segments) {
-		StringBuilder docNameBuilder = new StringBuilder();
-		docNameBuilder.append(deviceName).append('_');
+		StringBuilder middlePart = new StringBuilder();
 
 		if (!segments.isEmpty()) {
 			// Segments are collected in reverse order (from bottom to top),
@@ -74,11 +75,22 @@ public class HierarchyStrategy implements IImportStrategy {
 			// Loop first collects 2024, then Laboratory.
 			// Builder creates: Device_Laboratory_2024_File.
 			for (int i = segments.size() - 1; i >= 0; i--) {
-				docNameBuilder.append(segments.get(i)).append('_');
+				middlePart.append(segments.get(i)).append('_');
 			}
 		}
 
-		docNameBuilder.append(baseFileName);
-		return docNameBuilder.toString();
+		boolean useSuffix = PortableServiceLoader.get(IConfigService.class)
+				.getGlobal(Constants.PREF_SUFFIX_MODE_PREFIX + deviceName, false);
+
+		int lastDotIndex = baseFileName.lastIndexOf('.');
+		String nameWithoutExt = lastDotIndex > 0 ? baseFileName.substring(0, lastDotIndex) : baseFileName;
+		String extension = lastDotIndex > 0 ? baseFileName.substring(lastDotIndex) : "";
+
+		if (useSuffix) {
+			return middlePart.toString() + nameWithoutExt + "_" + deviceName + extension;
+		} else {
+
+			return middlePart.toString() + baseFileName;
+		}
 	}
 }

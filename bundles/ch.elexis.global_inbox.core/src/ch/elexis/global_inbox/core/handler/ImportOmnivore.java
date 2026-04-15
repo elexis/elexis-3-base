@@ -23,12 +23,11 @@ import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 public class ImportOmnivore {
 
 	private Logger log;
-	private ImportOmnivoreInboxUtil giutil;
+
 	private String deviceName;
 
 	public ImportOmnivore(String deviceName) {
 		log = LoggerFactory.getLogger(getClass());
-		giutil = new ImportOmnivoreInboxUtil();
 		this.deviceName = deviceName;
 	}
 
@@ -58,15 +57,14 @@ public class ImportOmnivore {
 	private IImportStrategy getStrategy(int code) {
 		switch (code) {
 		case 0:
-			return new FilePrefixStrategy(giutil, deviceName);
+			return new FilePrefixStrategy(deviceName);
 		case 1:
-			return new PatientFolderStrategy(giutil, deviceName);
+			return new PatientFolderStrategy(deviceName);
 		case 2:
-			return new HierarchyStrategy(giutil, deviceName);
+			return new HierarchyStrategy(deviceName);
 		case 3:
 		default:
-			return new FallbackStrategy(new FilePrefixStrategy(giutil, deviceName),
-					new HierarchyStrategy(giutil, deviceName));
+			return new FallbackStrategy(new FilePrefixStrategy(deviceName), new HierarchyStrategy(deviceName));
 		}
 	}
 

@@ -12,12 +12,10 @@ import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
 public class PatientFolderStrategy implements IImportStrategy {
 	private final Pattern PATIENT_DIR_PATTERN = Pattern.compile("([0-9]+)(?:_[^0-9].*)?");
-	private final ImportOmnivoreInboxUtil giutil;
 	private final String deviceName;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	public PatientFolderStrategy(ImportOmnivoreInboxUtil giutil, String deviceName) {
-		this.giutil = giutil;
+	public PatientFolderStrategy(String deviceName) {
 		this.deviceName = deviceName;
 	}
 
@@ -33,9 +31,9 @@ public class PatientFolderStrategy implements IImportStrategy {
 				return false;
 
 			String patientNo = m.group(1);
-			String documentName = deviceName + "_" + file.getName();
+			String documentName = ImportOmnivoreInboxUtil.formatDocumentName(file.getName(), deviceName);
 
-			String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, documentName);
+			String tryImportForPatient = ImportOmnivoreInboxUtil.tryImportForPatient(file, patientNo, documentName);
 			if (tryImportForPatient != null) {
 				log.info("Auto imported (FOLDER_WITH_NAME) file [{}], document id is [{}]", file, tryImportForPatient);
 				return true;

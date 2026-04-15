@@ -16,5 +16,5 @@ public class Constants {
 	public static final String PREF_SELECTED_DEVICE = PREFERENCE_BRANCH_SERVER + "selectedDevice"; //$NON-NLS-1$
 	public static final String PREF_CATEGORY_PREFIX = PREFERENCE_BRANCH_SERVER + "categories_"; //$NON-NLS-1$
 	public static final String PREF_PATIENT_STRATEGY_PREFIX = "global_inbox/patient_strategy_"; //$NON-NLS-1$
-
+	public static final String PREF_SUFFIX_MODE_PREFIX = "global_inbox_suffix_mode_"; //$NON-NLS-1$
 }

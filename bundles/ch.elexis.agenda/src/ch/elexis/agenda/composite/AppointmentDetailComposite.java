@@ -54,7 +54,6 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.preferences.Zeitvorgaben;
 import ch.elexis.agenda.ui.Messages;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
@@ -694,7 +693,7 @@ public class AppointmentDetailComposite extends Composite {
 		String type = comboType.getText();
 		Integer d = pref.get(type);
 		if (d == null) {
-			d = pref.get(Zeitvorgaben.AG_KEY_STD);
+			d = pref.get(IAppointmentService.AG_KEY_STD);
 		}
 		if (d == null || d <= 0) {
 			d = 30;
@@ -714,9 +713,13 @@ public class AppointmentDetailComposite extends Composite {
 
 		List<String> allTypes = appointmentService.getTypes();
 		Map<String, Integer> prefs = appointmentService.getPreferredDurations(areaName);
-		final int finalStdDuration = prefs.get(Zeitvorgaben.AG_KEY_STD) != null ? prefs.get(Zeitvorgaben.AG_KEY_STD)
-				: 30;
 
+		final int finalStdDuration = prefs.get(IAppointmentService.AG_KEY_STD) != null
+				? prefs.get(IAppointmentService.AG_KEY_STD)
+				: 30;
+		// Filters out deactivated appointment types. According to Zeitvorgaben.java:
+		// ‘If a setting is 0, then this client does not have that appointment type at
+		// all.’
 		List<String> filteredTypes = allTypes.stream().filter(type -> {
 			Integer duration = prefs.get(type);
 			if (duration == null) {

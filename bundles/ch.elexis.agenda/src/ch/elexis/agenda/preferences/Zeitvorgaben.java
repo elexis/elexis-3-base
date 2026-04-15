@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
+
 import java.util.Hashtable;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +29,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -40,8 +40,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 /**
  * Einstellen von Zeitvorgaben für jeden Termintyp und jeden Mandanten Unter
  * agenda/zeitvorgaben ist für jeden mandanten ein String der Form
@@ -55,7 +56,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
  */
 public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String AG_KEY_STD = "std";
+
 	private static final String FALLBACK_TIME = "30";
 
 	Table table;
@@ -126,9 +127,8 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		Color customColor = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
-		final Color lightGray = new Color(Display.getCurrent(), 240, 240, 240);
-		table.addDisposeListener(e -> lightGray.dispose());
+		Color customColor = CoreUiUtil.getColorForString("0000FF");
+		final Color lightGray = CoreUiUtil.getColorForString("F0F0F0");
 		TableItem t0 = new TableItem(table, SWT.NONE);
 		t0.setText(0, Messages.DefaultOutputter_defaultOutputForCase);
 		for (String typ : Termin.TerminTypes) {
@@ -140,7 +140,7 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 			i = 1;
 			for (String bereich : bereiche) {
 				Hashtable<String, String> map = Plannables.getTimePrefFor(bereich);
-				String tStd = map.get(AG_KEY_STD);
+				String tStd = map.get(IAppointmentService.AG_KEY_STD);
 				String tTyp = map.get(typ);
 
 				t0.setText(i, tStd != null ? tStd : StringUtils.EMPTY);
@@ -199,18 +199,18 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 			}
 			String ntext = text.getText().trim();
 			String typ = it.getText(0);
-			Color customColor = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
+			Color customColor = CoreUiUtil.getColorForString("0000FF");
 			if (typ == null || typ.isEmpty() || typ.equals(Messages.DefaultOutputter_defaultOutputForCase)) {
-				typ = AG_KEY_STD;
+				typ = IAppointmentService.AG_KEY_STD;
 			}
 			Hashtable<String, String> map = Plannables.getTimePrefFor(cols[idx].getText());
-			if (AG_KEY_STD.equals(typ)) {
-				map.put(AG_KEY_STD, ntext);
+			if (IAppointmentService.AG_KEY_STD.equals(typ)) {
+				map.put(IAppointmentService.AG_KEY_STD, ntext);
 				it.setText(idx, ntext);
 				it.setForeground(idx, null);
 			} else if (ntext.isEmpty()) {
 				map.remove(typ);
-				String fallbackStd = map.get(AG_KEY_STD);
+				String fallbackStd = map.get(IAppointmentService.AG_KEY_STD);
 				it.setText(idx, fallbackStd != null ? fallbackStd : StringUtils.EMPTY);
 				it.setForeground(idx, null);
 			} else {
@@ -219,7 +219,7 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 				it.setForeground(idx, customColor);
 			}
 			Plannables.setTimePrefFor(cols[idx].getText(), map);
-			if (AG_KEY_STD.equals(typ)) {
+			if (IAppointmentService.AG_KEY_STD.equals(typ)) {
 				TableItem[] allRows = table.getItems();
 				for (int r = 1; r < allRows.length; r++) {
 					TableItem rowItem = allRows[r];
@@ -270,13 +270,13 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 			String bereich = cols[c].getText();
 			Hashtable<String, String> map = Plannables.getTimePrefFor(bereich);
 
-			String stdValue = map.get(AG_KEY_STD);
+			String stdValue = map.get(IAppointmentService.AG_KEY_STD);
 			if (stdValue == null || stdValue.isEmpty()) {
 				stdValue = FALLBACK_TIME;
 			}
 
 			map.clear();
-			map.put(AG_KEY_STD, stdValue);
+			map.put(IAppointmentService.AG_KEY_STD, stdValue);
 			Plannables.setTimePrefFor(bereich, map);
 
 			TableItem[] allItems = table.getItems();

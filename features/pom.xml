@@ -103,5 +103,6 @@
     <module>ch.framsteg.elexis.labor.teamw.feature</module>
     <module>ch.framsteg.elexis.hin.auth.feature</module>
     <module>ch.framsteg.elexis.docbox.feature</module>
+    <module>ch.elexis.ordermanagement.feature</module>
   </modules>
 </project>

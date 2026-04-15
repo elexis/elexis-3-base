@@ -283,6 +283,9 @@
    <feature id="ch.elexis.regiomed.order.feature">
       <category name="dataexchange"/>
    </feature>
+   <feature id="ch.elexis.ordermanagement.feature">
+      <category name="organisation"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

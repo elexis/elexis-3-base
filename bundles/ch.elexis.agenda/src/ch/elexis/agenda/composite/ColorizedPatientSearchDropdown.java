@@ -35,7 +35,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ISticker;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.services.rcp.holder.StickerServiceHolder;
+import ch.elexis.core.services.holder.StickerServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.ui.e4.fieldassist.PatientSearchToken;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;

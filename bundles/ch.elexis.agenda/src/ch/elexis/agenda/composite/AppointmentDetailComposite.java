@@ -690,12 +690,8 @@ public class AppointmentDetailComposite extends Composite {
 
 	private void applyPreferredDuration() {
 		Map<String, Integer> pref = appointmentService.getPreferredDurations(comboArea.getText());
-		String type = comboType.getText();
-		Integer d = pref.get(type);
-		if (d == null) {
-			d = pref.get(IAppointmentService.AG_KEY_STD);
-		}
-		if (d == null || d <= 0) {
+		Integer d = pref.getOrDefault(comboType.getText(), pref.get(IAppointmentService.AG_KEY_STD));
+		if (d <= 0) {
 			d = 30;
 		}
 		txtDuration.setSelection(d);
@@ -714,9 +710,7 @@ public class AppointmentDetailComposite extends Composite {
 		List<String> allTypes = appointmentService.getTypes();
 		Map<String, Integer> prefs = appointmentService.getPreferredDurations(areaName);
 
-		final int finalStdDuration = prefs.get(IAppointmentService.AG_KEY_STD) != null
-				? prefs.get(IAppointmentService.AG_KEY_STD)
-				: 30;
+		final int finalStdDuration = prefs.get(IAppointmentService.AG_KEY_STD);
 		// Filters out deactivated appointment types. According to Zeitvorgaben.java:
 		// ‘If a setting is 0, then this client does not have that appointment type at
 		// all.’

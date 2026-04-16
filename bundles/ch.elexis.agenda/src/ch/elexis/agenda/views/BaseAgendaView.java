@@ -75,7 +75,6 @@ import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
-import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -186,7 +185,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 					newTerminAction.run();
 				} else {
 					if (pl.isRecurring()) {
-						AppointmentServiceHolder.get().getAppointmentSeries(pl).ifPresent(s -> {
+						appointmentService.getAppointmentSeries(pl).ifPresent(s -> {
 							RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(s);
 							dlg.open();
 							tv.refresh(true);
@@ -266,10 +265,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 	private Integer getPreferredDuration(String areaName, String type) {
 		Map<String, Integer> preferredDurations = appointmentService.getPreferredDurations(areaName);
-		if (preferredDurations.containsKey(type)) {
-			return preferredDurations.get(type);
-		}
-		return 30;
+		return preferredDurations.getOrDefault(type, preferredDurations.get(IAppointmentService.AG_KEY_STD));
 	}
 
 	public IAppointment getSelection() {
@@ -498,8 +494,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 					LocalDateTime start = agenda.getActDate().toLocalDateTime();
 					LocalDateTime end = start.plusMinutes(30);
 					appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(), agenda.getActResource(), start,
-							end, AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
-							AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+							end, appointmentService.getType(AppointmentType.DEFAULT),
+							appointmentService.getState(AppointmentState.DEFAULT)).build();
 					openAppointmentDialog(appointment, true, true);
 				}
 			}
@@ -637,8 +633,8 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 	}
 
 	private void openAppointmentDialog(IAppointment appointment, boolean expanded, boolean scheduleChangeMode) {
-		appointment.setType(AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
-		appointment.setState(AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT));
+		appointment.setType(appointmentService.getType(AppointmentType.DEFAULT));
+		appointment.setState(appointmentService.getState(AppointmentState.DEFAULT));
 		final int minutes = getPreferredDuration(appointment.getSchedule(), appointment.getType());
 		appointment.setEndTime(appointment.getStartTime().plusMinutes(minutes));
 

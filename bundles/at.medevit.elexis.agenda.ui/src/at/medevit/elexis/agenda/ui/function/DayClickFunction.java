@@ -10,6 +10,7 @@ import com.equo.chromium.swt.Browser;
 
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.builder.IAppointmentBuilder;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -75,10 +76,7 @@ public class DayClickFunction extends AbstractBrowserFunction {
 
 	private Integer getPreferredDuration(String areaName, String type) {
 		Map<String, Integer> preferredDurations = AppointmentServiceHolder.get().getPreferredDurations(areaName);
-		if (preferredDurations.containsKey(type)) {
-			return preferredDurations.get(type);
-		}
-		return 30;
+		return preferredDurations.getOrDefault(type, preferredDurations.get(IAppointmentService.AG_KEY_STD));
 	}
 
 	public void setSelectedResources(List<String> selectedResources) {

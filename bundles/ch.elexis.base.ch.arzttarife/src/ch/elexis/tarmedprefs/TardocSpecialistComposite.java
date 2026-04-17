@@ -16,9 +16,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.ICodingService;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.dialog.GenericSelectionDialog;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -80,6 +82,7 @@ public class TardocSpecialistComposite extends Composite {
 			IStructuredSelection selection = gsd.getSelection();
 			ArzttarifeUtil.setMandantTardocSepcialist(mandator, selection.toList());
 			CoreModelServiceHolder.get().save(mandator);
+			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, mandator);
 			updateUi();
 		}
 	}

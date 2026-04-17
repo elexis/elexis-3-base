@@ -24,11 +24,13 @@ import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.ICodeElementService;
-import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class TardocValidDignitaetFilter extends ViewerFilter {
 
 	private ICodeElementService codeElementService;
+
+	private IMandator mandator;
+	private List<ICoding> tardocSpecialist;
 
 	private boolean doFilter = true;
 
@@ -54,12 +56,10 @@ public class TardocValidDignitaetFilter extends ViewerFilter {
 		if (doFilter) {
 			String digni = leistung.getDigniQuali();
 			if (StringUtils.isNotBlank(digni) && !digni.contains("9999")) {
-				Optional<IMandator> mandator = ContextServiceHolder.get().getActiveMandator();
-				if (mandator.isPresent()) {
-					List<ICoding> tardocSpecialist = ArzttarifeUtil.getMandantTardocSepcialist(mandator.get());
+				if (mandator != null) {
 					if (!tardocSpecialist.stream().anyMatch(c -> digni.contains(c.getCode()))) {
 						List<ICodeElement> acquiredRights = ArzttarifeUtil
-								.getMandantTardocAcquiredRights(mandator.get(), getCodeElementService());
+								.getMandantTardocAcquiredRights(mandator, getCodeElementService());
 						if (acquiredRights != null && !acquiredRights.isEmpty()) {
 							Optional<ICodeElement> found = acquiredRights.stream()
 									.filter(ce -> ce.getCodeSystemName().equals(leistung.getCodeSystemName())
@@ -75,5 +75,31 @@ public class TardocValidDignitaetFilter extends ViewerFilter {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Set the {@link IMandator} that will be used to filter TARDOC elements by
+	 * tardoc specialist code and acquired rights.
+	 * 
+	 * @param mandator
+	 */
+	public void setMandator(IMandator mandator) {
+		this.mandator = mandator;
+		if (mandator != null) {
+			tardocSpecialist = ArzttarifeUtil.getMandantTardocSepcialist(mandator);
+		}
+	}
+
+	/**
+	 * Test if the current {@link IMandator} equals the provided {@link IMandator}.
+	 * 
+	 * @param mandator
+	 * @return
+	 */
+	public boolean isEqualMandator(IMandator mandator) {
+		if (this.mandator != null && mandator != null) {
+			return this.mandator.getId().equals(mandator.getId());
+		}
+		return false;
 	}
 }

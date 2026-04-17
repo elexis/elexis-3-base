@@ -55,8 +55,17 @@ public class TardocSelectorPanelProvider extends SelectorPanelProvider {
 	@Inject
 	public void selectedMandator(@Optional IMandator mandator) {
 		if (mandator != null) {
+			validDignitaetFilter.setMandator(mandator);
 			dirty = true;
 			refreshViewer();
+		}
+	}
+
+	@Optional
+	@Inject
+	void udpateMandator(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IMandator mandator) {
+		if (mandator != null && validDignitaetFilter.isEqualMandator(mandator)) {
+			validDignitaetFilter.setMandator(mandator);
 		}
 	}
 

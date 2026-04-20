@@ -13,7 +13,8 @@
 package ch.elexis.agenda.preferences;
 
 
-import java.util.Hashtable;
+import java.text.MessageFormat;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.PreferencePage;
@@ -30,6 +31,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -39,8 +42,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 /**
@@ -55,9 +58,6 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
  *
  */
 public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreferencePage {
-
-
-	private static final String FALLBACK_TIME = "30";
 
 	Table table;
 	TableColumn[] cols;
@@ -139,17 +139,18 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 			it.setText(0, typ);
 			i = 1;
 			for (String bereich : bereiche) {
-				Hashtable<String, String> map = Plannables.getTimePrefFor(bereich);
-				String tStd = map.get(IAppointmentService.AG_KEY_STD);
-				String tTyp = map.get(typ);
+				Map<String, Integer> durations = AppointmentServiceHolder.get().getPreferredDurations(bereich);
+				String tStd = String.valueOf(durations.get(IAppointmentService.AG_KEY_STD));
+				Integer tTypInt = durations.get(typ);
+				String tTyp = tTypInt != null ? String.valueOf(tTypInt) : null;
 
-				t0.setText(i, tStd != null ? tStd : StringUtils.EMPTY);
+				t0.setText(i, tStd);
 
 				if (tTyp != null && !tTyp.isEmpty()) {
 					it.setText(i, tTyp);
 					it.setForeground(i, customColor);
 				} else {
-					it.setText(i, tStd != null ? tStd : StringUtils.EMPTY);
+					it.setText(i, tStd);
 				}
 				i++;
 			}
@@ -172,6 +173,36 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 		legend.setForeground(customColor);
 		legend.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 
+		Label hintLabel = new Label(check, SWT.NONE);
+		hintLabel.setText(Messages.Zeitvorgaben_HintRightClickReset);
+		hintLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		Menu contextMenu = new Menu(cursor);
+		MenuItem resetItem = new MenuItem(contextMenu, SWT.NONE);
+
+		resetItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int colIdx = cursor.getColumn();
+				if (colIdx > 0) {
+					resetBereichToDefault(colIdx, cols[colIdx].getText());
+				}
+			}
+		});
+		cursor.setMenu(contextMenu);
+		cursor.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				table.setSelection(new TableItem[] { cursor.getRow() });
+				int colIdx = cursor.getColumn();
+				if (colIdx > 0) {
+					resetItem.setEnabled(true);
+					resetItem.setText(
+							MessageFormat.format(Messages.Zeitvorgaben_RestoreDefaultsForArea, cols[colIdx].getText()));
+				} else {
+					resetItem.setEnabled(false);
+					resetItem.setText(Messages.Zeitvorgaben_SelectAreaToReset);
+				}
+			}
+		});
 		return check;
 	}
 
@@ -200,25 +231,29 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 			String ntext = text.getText().trim();
 			String typ = it.getText(0);
 			Color customColor = CoreUiUtil.getColorForString("0000FF");
+
 			if (typ == null || typ.isEmpty() || typ.equals(Messages.DefaultOutputter_defaultOutputForCase)) {
 				typ = IAppointmentService.AG_KEY_STD;
 			}
-			Hashtable<String, String> map = Plannables.getTimePrefFor(cols[idx].getText());
+			Map<String, Integer> durations = AppointmentServiceHolder.get().getPreferredDurations(cols[idx].getText());
 			if (IAppointmentService.AG_KEY_STD.equals(typ)) {
-				map.put(IAppointmentService.AG_KEY_STD, ntext);
+				if (ntext.isEmpty()) {
+					ntext = "30";
+				}
+				durations.put(IAppointmentService.AG_KEY_STD, Integer.parseInt(ntext));
 				it.setText(idx, ntext);
 				it.setForeground(idx, null);
 			} else if (ntext.isEmpty()) {
-				map.remove(typ);
-				String fallbackStd = map.get(IAppointmentService.AG_KEY_STD);
-				it.setText(idx, fallbackStd != null ? fallbackStd : StringUtils.EMPTY);
+				durations.remove(typ);
+				Integer fallbackStd = durations.get(IAppointmentService.AG_KEY_STD);
+				it.setText(idx, fallbackStd != null ? String.valueOf(fallbackStd) : StringUtils.EMPTY);
 				it.setForeground(idx, null);
 			} else {
-				map.put(typ, ntext);
+				durations.put(typ, Integer.parseInt(ntext));
 				it.setText(idx, ntext);
 				it.setForeground(idx, customColor);
 			}
-			Plannables.setTimePrefFor(cols[idx].getText(), map);
+			AppointmentServiceHolder.get().setPreferredDurations(cols[idx].getText(), durations);
 			if (IAppointmentService.AG_KEY_STD.equals(typ)) {
 				TableItem[] allRows = table.getItems();
 				for (int r = 1; r < allRows.length; r++) {
@@ -226,8 +261,8 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 					String rowTyp = rowItem.getText(0);
 					if (rowTyp.equals(Messages.DefaultOutputter_defaultOutputForCase))
 						continue;
-					String specificTime = map.get(rowTyp);
-					if (specificTime == null || specificTime.isEmpty()) {
+					Integer specificTime = durations.get(rowTyp);
+					if (specificTime == null) {
 						rowItem.setText(idx, ntext);
 						rowItem.setForeground(idx, null);
 					}
@@ -267,24 +302,22 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 	@Override
 	protected void performDefaults() {
 		for (int c = 1; c < cols.length; c++) {
-			String bereich = cols[c].getText();
-			Hashtable<String, String> map = Plannables.getTimePrefFor(bereich);
-
-			String stdValue = map.get(IAppointmentService.AG_KEY_STD);
-			if (stdValue == null || stdValue.isEmpty()) {
-				stdValue = FALLBACK_TIME;
-			}
-
-			map.clear();
-			map.put(IAppointmentService.AG_KEY_STD, stdValue);
-			Plannables.setTimePrefFor(bereich, map);
-
-			TableItem[] allItems = table.getItems();
-			for (int r = 1; r < allItems.length; r++) {
-				allItems[r].setText(c, stdValue);
-				allItems[r].setForeground(c, null);
-			}
+			resetBereichToDefault(c, cols[c].getText());
 		}
 		super.performDefaults();
+	}
+
+	private void resetBereichToDefault(int colIndex, String bereich) {
+		Map<String, Integer> durations = AppointmentServiceHolder.get().getPreferredDurations(bereich);
+		Integer stdValueInt = durations.get(IAppointmentService.AG_KEY_STD);
+		String stdValueStr = String.valueOf(stdValueInt);
+		durations.clear();
+		durations.put(IAppointmentService.AG_KEY_STD, stdValueInt);
+		AppointmentServiceHolder.get().setPreferredDurations(bereich, durations);
+		TableItem[] allItems = table.getItems();
+		for (int r = 1; r < allItems.length; r++) {
+			allItems[r].setText(colIndex, stdValueStr);
+			allItems[r].setForeground(colIndex, null);
+		}
 	}
 }

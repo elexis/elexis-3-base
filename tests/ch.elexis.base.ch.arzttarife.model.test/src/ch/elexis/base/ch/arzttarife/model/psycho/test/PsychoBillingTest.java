@@ -27,11 +27,11 @@ import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingSystemService;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.test.AbstractTest;
 import ch.elexis.core.types.Gender;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 
 public class PsychoBillingTest extends AbstractTest {

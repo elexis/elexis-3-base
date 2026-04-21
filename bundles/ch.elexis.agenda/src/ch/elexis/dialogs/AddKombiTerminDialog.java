@@ -2,8 +2,8 @@ package ch.elexis.dialogs;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -22,7 +22,8 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.agenda.preferences.Messages;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class AddKombiTerminDialog extends TitleAreaDialog {
@@ -189,12 +190,12 @@ public class AddKombiTerminDialog extends TitleAreaDialog {
 	}
 
 	private String getDauerForBereichAndTyp(String bereich, String typ) {
-		Hashtable<String, String> timePrefs = Plannables.getTimePrefFor(bereich);
-		String dauer = timePrefs.get(typ);
+		Map<String, Integer> durations = AppointmentServiceHolder.get().getPreferredDurations(bereich);
+		Integer dauer = durations.get(typ);
 		if (dauer == null) {
-			dauer = timePrefs.get("std");
+			dauer = durations.get(IAppointmentService.AG_KEY_STD);
 		}
-		return dauer;
+		return String.valueOf(dauer);
 	}
 
 	private void updateOkButtonState() {

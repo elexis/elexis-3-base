@@ -690,11 +690,43 @@ public class AppointmentDetailComposite extends Composite {
 
 	private void applyPreferredDuration() {
 		Map<String, Integer> pref = appointmentService.getPreferredDurations(comboArea.getText());
-		String type = comboType.getText();
-		Integer d = pref.get(type);
-		if (d != null) {
-			txtDuration.setSelection(d);
-			updateDateTimeFields(txtDuration);
+		Integer d = pref.getOrDefault(comboType.getText(), pref.get(IAppointmentService.AG_KEY_STD));
+		if (d <= 0) {
+			d = 30;
+		}
+		txtDuration.setSelection(d);
+		updateDateTimeFields(txtDuration);
+	}
+
+	private void updateTypeCombo(String areaName) {
+		if (comboType == null || comboType.isDisposed())
+			return;
+
+		String currentSelection = comboType.getText();
+		if (StringUtils.isEmpty(currentSelection) && appointment != null) {
+			currentSelection = appointment.getType();
+		}
+
+		List<String> allTypes = appointmentService.getTypes();
+		Map<String, Integer> prefs = appointmentService.getPreferredDurations(areaName);
+
+		final int finalStdDuration = prefs.get(IAppointmentService.AG_KEY_STD);
+		// Filters out deactivated appointment types. According to Zeitvorgaben.java:
+		// ‘If a setting is 0, then this client does not have that appointment type at
+		// all.’
+		List<String> filteredTypes = allTypes.stream().filter(type -> {
+			Integer duration = prefs.get(type);
+			if (duration == null) {
+				duration = finalStdDuration;
+			}
+			return duration != null && duration > 0;
+		}).collect(Collectors.toList());
+		if (StringUtils.isNotBlank(currentSelection) && !filteredTypes.contains(currentSelection)) {
+			filteredTypes.add(currentSelection);
+		}
+		comboType.setItems(filteredTypes.toArray(new String[0]));
+		if (currentSelection != null) {
+			comboType.setText(currentSelection);
 		}
 	}
 
@@ -819,6 +851,7 @@ public class AppointmentDetailComposite extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				if (!comboArea.getText().equals(appointment.getSchedule())) {
 					appointment.setSchedule(comboArea.getText());
+					updateTypeCombo(comboArea.getText());
 					dayBar.setAppointment(appointment);
 					dayBar.refresh();
 					applyPreferredDuration();
@@ -856,6 +889,7 @@ public class AppointmentDetailComposite extends Composite {
 
 	private void loadFromModel() {
 		comboStatus.setText(appointment.getState());
+		updateTypeCombo(appointment.getSchedule());
 		comboType.setText(appointment.getType());
 		chkLocked.setSelection(appointment.isLocked());
 		comboArea.setText(appointment.getSchedule());

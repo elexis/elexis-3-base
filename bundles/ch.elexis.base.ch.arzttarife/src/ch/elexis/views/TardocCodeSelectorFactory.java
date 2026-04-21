@@ -12,6 +12,7 @@
 
 package ch.elexis.views;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 
 import org.apache.commons.lang3.StringUtils;
@@ -154,8 +155,13 @@ public class TardocCodeSelectorFactory extends CodeSelectorFactory {
 
 		@Override
 		public ImageDescriptor getImageDescriptor() {
-			return ImageDescriptor.createFromURI(
-					URI.create("platform:/plugin/ch.elexis.base.ch.arzttarife/rsc/icons/certificate_16x16.png"));
+			try {
+				return ImageDescriptor.createFromURL(
+						URI.create("platform:/plugin/ch.elexis.base.ch.arzttarife/rsc/icons/certificate_16x16.png")
+								.toURL());
+			} catch (MalformedURLException e) {
+				return null;
+			}
 		}
 
 		@Override

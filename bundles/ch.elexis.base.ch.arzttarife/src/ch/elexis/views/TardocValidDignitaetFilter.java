@@ -22,8 +22,8 @@ import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IMandator;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.ICodeElementService;
+import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class TardocValidDignitaetFilter extends ViewerFilter {
 

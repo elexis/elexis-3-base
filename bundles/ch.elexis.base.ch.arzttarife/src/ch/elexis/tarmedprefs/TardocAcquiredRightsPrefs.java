@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
@@ -47,7 +49,6 @@ import ch.elexis.core.ui.dialogs.DiagnoseSelektor;
 import ch.elexis.core.ui.dialogs.ServiceSelektor;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
-import jakarta.inject.Inject;
 
 public class TardocAcquiredRightsPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 

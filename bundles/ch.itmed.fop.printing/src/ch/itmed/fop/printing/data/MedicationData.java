@@ -47,6 +47,12 @@ public final class MedicationData {
 		return prescription.getArticle().getSellingPrice().toString();
 	}
 
+	public String getStopDate() {
+		return prescription.getDateTo() != null
+				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateTo()) //$NON-NLS-1$
+				: StringUtils.EMPTY;
+	}
+
 	public String getDeliveryDate() {
 		LocalDate localDate = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault()); //$NON-NLS-1$

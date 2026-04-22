@@ -4,6 +4,8 @@ import java.math.BigInteger;
 
 import ch.fd.invoice400.response.StatusType;
 import ch.fd.invoice440.response.PayloadType;
+import ch.fd.invoice450.response.AcceptedType;
+import ch.fd.invoice500.response.AcceptedTPType;
 
 /**
  * Wrapper Object providing transparent access for different invoice response
@@ -78,6 +80,35 @@ public class ResponseTypeWrapper {
 			ch.fd.invoice500.response.PayloadType payload = responseType50.getPayload();
 			if (payload != null) {
 				return new StatusTypeWrapper(payload);
+			}
+		}
+		return null;
+	}
+
+	public AcceptedTypeWrapper getAccepted() {
+		if (responseType50 != null) {
+			ch.fd.invoice500.response.PayloadType payload = responseType50.getPayload();
+			if (payload != null && payload.getBody() != null && payload.getBody().getTiersPayant() != null) {
+				AcceptedTPType accepted = payload.getBody().getTiersPayant().getAccepted();
+				if (accepted != null) {
+					return new AcceptedTypeWrapper(accepted);
+				}
+			}
+		} else if (responseType45 != null) {
+			ch.fd.invoice450.response.PayloadType payload = responseType45.getPayload();
+			if (payload != null && payload.getBody() != null) {
+				AcceptedType accepted = payload.getBody().getAccepted();
+				if (accepted != null) {
+					return new AcceptedTypeWrapper(accepted);
+				}
+			}
+		} else if (responseType44 != null) {
+			ch.fd.invoice440.response.PayloadType payload = responseType44.getPayload();
+			if (payload != null && payload.getBody() != null) {
+				ch.fd.invoice440.response.AcceptedType accepted = payload.getBody().getAccepted();
+				if (accepted != null) {
+					return new AcceptedTypeWrapper(accepted);
+				}
 			}
 		}
 		return null;

@@ -93,6 +93,10 @@ public final class MedicationElement {
 		c.appendChild(doc.createTextNode(md.getPrescriptionDate()));
 		p.appendChild(c);
 
+		c = doc.createElement("StopDate"); //$NON-NLS-1$
+		c.appendChild(doc.createTextNode(md.getStopDate()));
+		p.appendChild(c);
+
 		c = doc.createElement("DeliveryDate"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getDeliveryDate()));
 		p.appendChild(c);

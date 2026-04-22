@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.xml.elements;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,6 +65,10 @@ public final class ArticlesElement {
 			String dosageInstructions = signature.getComment();
 			if (StringUtils.isNotBlank(dosageInstructions)) {
 				appendChildWithText(doc, articleElement, "DosageInstructions", dosageInstructions); //$NON-NLS-1$
+			}
+			if (signature.getEndDate() != null) {
+				String stopDate = signature.getEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+				appendChildWithText(doc, articleElement, "StopDate", stopDate); //$NON-NLS-1$
 			}
 			if (signature.getFreeText() != null && !signature.getFreeText().isEmpty()) {
 				Element dose = doc.createElement("Dose"); //$NON-NLS-1$

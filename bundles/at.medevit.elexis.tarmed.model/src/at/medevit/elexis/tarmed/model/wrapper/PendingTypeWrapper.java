@@ -1,5 +1,8 @@
 package at.medevit.elexis.tarmed.model.wrapper;
 
+import java.util.Collections;
+import java.util.List;
+
 import ch.fd.invoice440.response.NotificationType;
 
 /**
@@ -46,6 +49,10 @@ public class PendingTypeWrapper {
 	}
 
 	public String getExplanation() {
+		return getExplanation(true);
+	}
+
+	public String getExplanation(boolean includeMessage) {
 		if (pending40 != null) {
 			return pending40.getExplanation();
 		} else if (pending44 != null) {
@@ -53,16 +60,18 @@ public class PendingTypeWrapper {
 			if (pending44.getExplanation() != null) {
 				builder.append(pending44.getExplanation());
 			}
-			for (NotificationType msg : pending44.getMessage()) {
-				if (msg.getText() != null) {
-					if (builder.length() > 0) {
-						builder.append("\n");
-					}
-					builder.append(msg.getText());
-					if (msg.getCode() != null) {
-						builder.append(" (");
-						builder.append(msg.getCode());
-						builder.append(")");
+			if (includeMessage) {
+				for (NotificationType msg : pending44.getMessage()) {
+					if (msg.getText() != null) {
+						if (builder.length() > 0) {
+							builder.append("\n");
+						}
+						builder.append(msg.getText());
+						if (msg.getCode() != null) {
+							builder.append(" (");
+							builder.append(msg.getCode());
+							builder.append(")");
+						}
 					}
 				}
 			}
@@ -74,16 +83,18 @@ public class PendingTypeWrapper {
 			if (pending45.getExplanation() != null) {
 				builder.append(pending45.getExplanation());
 			}
-			for (ch.fd.invoice450.response.NotificationType msg : pending45.getMessage()) {
-				if (msg.getText() != null) {
-					if (builder.length() > 0) {
-						builder.append("\n");
-					}
-					builder.append(msg.getText());
-					if (msg.getCode() != null) {
-						builder.append(" (");
-						builder.append(msg.getCode());
-						builder.append(")");
+			if (includeMessage) {
+				for (ch.fd.invoice450.response.NotificationType msg : pending45.getMessage()) {
+					if (msg.getText() != null) {
+						if (builder.length() > 0) {
+							builder.append("\n");
+						}
+						builder.append(msg.getText());
+						if (msg.getCode() != null) {
+							builder.append(" (");
+							builder.append(msg.getCode());
+							builder.append(")");
+						}
 					}
 				}
 			}
@@ -95,16 +106,18 @@ public class PendingTypeWrapper {
 			if (pending50.getExplanation() != null) {
 				builder.append(pending50.getExplanation());
 			}
-			for (ch.fd.invoice500.response.NotificationType msg : pending50.getMessage()) {
-				if (msg.getText() != null) {
-					if (builder.length() > 0) {
-						builder.append("\n");
-					}
-					builder.append(msg.getText());
-					if (msg.getCode() != null) {
-						builder.append(" (");
-						builder.append(msg.getCode());
-						builder.append(")");
+			if (includeMessage) {
+				for (ch.fd.invoice500.response.NotificationType msg : pending50.getMessage()) {
+					if (msg.getText() != null) {
+						if (builder.length() > 0) {
+							builder.append("\n");
+						}
+						builder.append(msg.getText());
+						if (msg.getCode() != null) {
+							builder.append(" (");
+							builder.append(msg.getCode());
+							builder.append(")");
+						}
 					}
 				}
 			}
@@ -113,5 +126,16 @@ public class PendingTypeWrapper {
 			}
 		}
 		return null;
+	}
+
+	public List<NotificationTypeWrapper> getMessage() {
+		if (pending44 != null) {
+			return pending44.getMessage().stream().map(n -> new NotificationTypeWrapper(n)).toList();
+		} else if (pending45 != null) {
+			return pending45.getMessage().stream().map(n -> new NotificationTypeWrapper(n)).toList();
+		} else if (pending50 != null) {
+			return pending50.getMessage().stream().map(n -> new NotificationTypeWrapper(n)).toList();
+		}
+		return Collections.emptyList();
 	}
 }

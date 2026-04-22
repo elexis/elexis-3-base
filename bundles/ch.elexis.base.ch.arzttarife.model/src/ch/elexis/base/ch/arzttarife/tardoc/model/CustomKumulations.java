@@ -73,7 +73,7 @@ public class CustomKumulations {
 							customKumulations.put(strings[0], list);
 						}
 					}
-				} catch (IOException | CsvException e) {
+				} catch (IOException e) {
 					LoggerFactory.getLogger(CustomKumulations.class).error("Exception reading custom Kumulations", e);
 				}
 			}

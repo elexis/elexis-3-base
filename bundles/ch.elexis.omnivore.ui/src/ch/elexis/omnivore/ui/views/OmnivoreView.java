@@ -91,7 +91,6 @@ import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.StoreToStringServiceHolder;
 import ch.elexis.core.model.IPatient;
@@ -688,7 +687,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 			@Override
 			public void doRun() {
-				if (ElexisEventDispatcher.getSelectedPatient() == null)
+				if (!ContextServiceHolder.get().getActivePatient().isPresent())
 					return;
 				FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.OPEN);
 				String filename = fd.open();
@@ -828,9 +827,9 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				if (obj == null)
 					return;
 				IDocumentHandle dh = (IDocumentHandle) obj;
-				String mime = dh.getMimeType();
+				IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 				FileDialog fd = new FileDialog(getSite().getShell(), SWT.SAVE);
-				fd.setFileName(mime);
+				fd.setFileName(Utils.generateExportFileName(dh, patient));
 				String fname = fd.open();
 				if (fname != null) {
 					if (!Utils.storeExternal(dh, fname)) {

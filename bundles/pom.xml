@@ -190,6 +190,8 @@
 		<module>ch.framsteg.elexis.hin.auth.fragment</module>
 		<module>ch.framsteg.elexis.labor.teamw</module>
 		<module>ch.elexis.global_inbox.core</module>
+		<module>ch.elexis.ordermanagement.ui</module>
+		<module>ch.elexis.ordermanagement.core</module>
 	</modules>
 
 	<distributionManagement>

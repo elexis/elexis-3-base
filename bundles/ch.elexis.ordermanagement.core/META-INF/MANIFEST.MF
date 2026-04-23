@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ordermanagement V2
+Bundle-SymbolicName: ch.elexis.ordermanagement.core;singleton:=true
+Bundle-Vendor: medelexis.ch
+Bundle-Version: 1.0.0.qualifier
+Export-Package: ch.elexis.ordermanagement.core.logic
+Automatic-Module-Name: ch.elexis.ordermanagement.core
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: ch.elexis.core.services.holder,
+ org.slf4j;version="[2.0.0,3.0.0)"
+Require-Bundle: ch.elexis.core;bundle-version="[3.13.0,4.0.0)"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.ui.views">
+      <view
+            id="ch.elexis.ordermanagement.ui.views.OrderManagementView"
+            name="Bestellungs Management"
+            class="ch.elexis.ordermanagement.ui.views.OrderManagementView"
+            category="ch.elexis.datenKategorie"
+            icon="platform:/plugin/ch.elexis.core.ui.icons/icons/16x16/cart.png"
+            inject="true">
+      </view>
+   </extension>
+</plugin>

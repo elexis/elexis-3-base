@@ -94,7 +94,8 @@ public class TarifMatcher<T extends IBillable> {
 						AmbulatoryAllowance pauschale = AmbulatoryAllowance.getFromCode(
 								patientCase.getGrouperResult().group, AmbulantePauschalenTyp.PAUSCHALE,
 								patientCase.getEntryDate());
-						if (pauschale != null && !isSkipAmbulatoryAllowance(pauschale)) {
+						if (pauschale != null && !isSkipAmbulatoryAllowance(pauschale)
+								&& !isDuplicate(pauschale, encounter)) {
 							ret = optifier.add((T) pauschale, encounter, 1, false);
 							if (ret.isOK()) {
 								for (IBilled encounterBilled : encounter.getBilled()) {
@@ -126,6 +127,18 @@ public class TarifMatcher<T extends IBillable> {
 			}
 		}
 		return ret;
+	}
+
+	private boolean isDuplicate(AmbulatoryAllowance pauschale, IEncounter encounter) {
+		return encounter.getBilled().stream().filter(b -> isSameCode(pauschale.getCode(), b)).findFirst()
+				.isPresent();
+	}
+
+	private boolean isSameCode(String matchCode, IBilled billed) {
+		if (matchCode != null && !matchCode.isEmpty()) {
+			return matchCode.equals(billed.getCode());
+		}
+		return false;
 	}
 
 	private boolean isSkipAmbulatoryAllowance(AmbulatoryAllowance pauschale) {

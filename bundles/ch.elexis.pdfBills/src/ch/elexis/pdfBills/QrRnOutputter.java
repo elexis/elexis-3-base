@@ -187,28 +187,25 @@ public class QrRnOutputter implements IRnOutputter {
 							if (pdfOnly || noPrint) {
 								epdf.setPrint(false);
 							}
+							InvoiceState newInvoiceState = getNewInvoiceState(invoice);
 							// consider fallback to non QR bill, always fall back for tarmed xml version
 							// lower 4.5
 							EsrType outputEsrType = ex.getEsrTypeOrFallback(invoice);
 							if ("5.0".equals(epdf.getBillVersion())) {
-								epdf.printQrBill(rsc);
+								epdf.printQrBill(type, newInvoiceState, rsc);
 							} else if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
-								epdf.printQrBill(rsc);
+								epdf.printQrBill(type, newInvoiceState, rsc);
 							} else {
 								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version [" //$NON-NLS-1$
 										+ epdf.getBillVersion() + "] and esrType [" + outputEsrType + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 								epdf.printBill(rsc);
 							}
 							if (modifyInvoiceState) {
-								int status_vorher = invoice.getState().numericValue();
-								if ((status_vorher == InvoiceState.OPEN.numericValue())
-										|| (status_vorher == InvoiceState.DEMAND_NOTE_1.numericValue())
-										|| (status_vorher == InvoiceState.DEMAND_NOTE_2.numericValue())
-										|| (status_vorher == InvoiceState.DEMAND_NOTE_3.numericValue())) {
-									invoice.setState(InvoiceState.fromState(status_vorher + 1));
-								}
+								invoice.setState(newInvoiceState);
 								invoice.addTrace(InvoiceConstants.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-										+ invoice.getState().getLocaleText());
+										+ invoice.getState().getLocaleText()
+										+ (type == TYPE.COPY ? " (" + Messages.InvoiceOutputter_Copy + ")"
+												: StringUtils.EMPTY));
 								CoreModelServiceHolder.get().save(invoice);
 							}
 							List<File> printed = epdf.getPrintedBill();
@@ -306,6 +303,18 @@ public class QrRnOutputter implements IRnOutputter {
 			});
 		}
 		return res;
+	}
+
+	private InvoiceState getNewInvoiceState(IInvoice invoice) {
+		InvoiceState currentState = invoice.getState();
+		int currentStateInt = currentState.numericValue();
+		if ((currentStateInt == InvoiceState.OPEN.numericValue())
+				|| (currentStateInt == InvoiceState.DEMAND_NOTE_1.numericValue())
+				|| (currentStateInt == InvoiceState.DEMAND_NOTE_2.numericValue())
+				|| (currentStateInt == InvoiceState.DEMAND_NOTE_3.numericValue())) {
+			return InvoiceState.fromState(currentStateInt + 1);
+		}
+		return currentState;
 	}
 
 	private void initSelectedFromProperties(Properties props) {

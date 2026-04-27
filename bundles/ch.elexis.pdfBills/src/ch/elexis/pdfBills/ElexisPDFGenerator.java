@@ -82,6 +82,7 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.ebanking.esr.ESR;
+import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IContact;
@@ -675,13 +676,13 @@ public class ElexisPDFGenerator {
 		}
 	}
 
-	public void printQrBill(File rsc) {
+	public void printQrBill(TYPE type, InvoiceState newInvoiceState, File rsc) {
 		printed = new ArrayList<>();
 		try {
 			if (LocalConfigService.get(QrRnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_BESR, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
 						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
-								+ "_esr.pdf") //$NON-NLS-1$
+								+ getFileNameEnding("_esr", type, newInvoiceState)) //$NON-NLS-1$
 						.toFile().orElse(null);
 				generateQrPatBill(rsc, pdf);
 				printPdf(pdf, false);
@@ -689,7 +690,8 @@ public class ElexisPDFGenerator {
 			}
 			if (LocalConfigService.get(QrRnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_RF, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
-						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf") //$NON-NLS-1$
+						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
+								+ getFileNameEnding("_rf", type, newInvoiceState)) //$NON-NLS-1$
 						.toFile().orElse(null);
 				generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 				printPdf(pdf, false);
@@ -698,7 +700,7 @@ public class ElexisPDFGenerator {
 				if ("5.0".equals(billVersion)) { //$NON-NLS-1$
 					pdf = VirtualFilesystemServiceHolder.get()
 							.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
-									+ "_qr.pdf") //$NON-NLS-1$
+									+ getFileNameEnding("_qr", type, newInvoiceState)) //$NON-NLS-1$
 							.toFile().orElse(null);
 					generatePdf(getXsltForBill(rsc, XsltType.QRPAGE), pdf);
 					printPdf(pdf, false);
@@ -708,6 +710,23 @@ public class ElexisPDFGenerator {
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error printing QR bill", e); //$NON-NLS-1$
 		}
+	}
+
+	private String getFileNameEnding(String start, TYPE type, InvoiceState newInvoiceState) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(start);
+		if (newInvoiceState == InvoiceState.DEMAND_NOTE_1_PRINTED) {
+			sb.append("_m1");
+		} else if (newInvoiceState == InvoiceState.DEMAND_NOTE_2_PRINTED) {
+			sb.append("_m2");
+		} else if (newInvoiceState == InvoiceState.DEMAND_NOTE_3_PRINTED) {
+			sb.append("_m3");
+		}
+		if (type == TYPE.COPY) {
+			sb.append("_copy");
+		}
+		sb.append(".pdf");
+		return sb.toString();
 	}
 
 	private void generateQrPatBill(File rsc, File pdf) {

@@ -1248,7 +1248,7 @@ public class XMLExporter implements IRnOutputter {
 	}
 
 	@Override
-	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState, TYPE type) {
 		String outputDir = LocalConfigService.get(PreferenceConstants.RNN_EXPORTDIR, CoreUtil.getDefaultDBPath());
 		XMLFileUtil.lookupFile(outputDir, invoice, timestamp, invoiceState).ifPresent(xmlFile -> {
 			if (xmlFile.exists()) {

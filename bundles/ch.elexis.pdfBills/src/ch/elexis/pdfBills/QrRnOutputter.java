@@ -524,14 +524,20 @@ public class QrRnOutputter implements IRnOutputter {
 	}
 
 	@Override
-	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState, TYPE type) {
 		try {
-			File esrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
-					+ File.separator + invoice.getNumber() + "_esr.pdf").toFile().orElse(null);
-			File rfFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
-					+ File.separator + invoice.getNumber() + "_rf.pdf").toFile().orElse(null);
-			File qrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
-					+ File.separator + invoice.getNumber() + "_qr.pdf").toFile().orElse(null);
+			File esrFile = VirtualFilesystemServiceHolder.get()
+					.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+							+ PdfFileUtil.getFileName(invoice.getNumber(), "_esr", type, invoiceState))
+					.toFile().orElse(null);
+			File rfFile = VirtualFilesystemServiceHolder.get()
+					.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+							+ PdfFileUtil.getFileName(invoice.getNumber(), "_rf", type, invoiceState))
+					.toFile().orElse(null);
+			File qrFile = VirtualFilesystemServiceHolder.get()
+					.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+							+ PdfFileUtil.getFileName(invoice.getNumber(), "_qr", type, invoiceState))
+					.toFile().orElse(null);
 			if (esrFile.exists()) {
 				Program.launch(esrFile.getAbsolutePath());
 			} else {

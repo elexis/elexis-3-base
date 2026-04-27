@@ -218,7 +218,7 @@ public class AerztekasseOutputter extends XMLExporter {
 	}
 
 	@Override
-	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState, TYPE type) {
 		String archiveDir = service.getGlobalArchiveDir().orElse(StringUtils.EMPTY);
 		XMLFileUtil.lookupFile(archiveDir, invoice, timestamp, invoiceState).ifPresent(xmlFile -> {
 			if (xmlFile.exists()) {

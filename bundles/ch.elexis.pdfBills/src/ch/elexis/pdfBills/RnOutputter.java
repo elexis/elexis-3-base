@@ -442,7 +442,7 @@ public class RnOutputter implements IRnOutputter {
 	}
 
 	@Override
-	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState, TYPE type) {
 		try {
 			File esrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT)
 					+ File.separator + invoice.getNumber() + "_esr.pdf").toFile().orElse(null);

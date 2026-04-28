@@ -422,4 +422,60 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertNotNull(bezug);
 		assertEquals("GG.00.0300", bezug);
 	}
+
+	@Test
+	public void limitTardocDayAndMonth() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		// once per day
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter1.setDate(LocalDate.of(2026, 1, 7));
+		CoreModelServiceHolder.get().save(encounter1);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter1, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter2 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter2.setDate(LocalDate.of(2026, 1, 14));
+		CoreModelServiceHolder.get().save(encounter2);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter2, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter3 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter3.setDate(LocalDate.of(2026, 1, 21));
+		CoreModelServiceHolder.get().save(encounter3);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter3, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// max 4 time in 30 days
+		IEncounter encounter4 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter4.setDate(LocalDate.of(2026, 1, 28));
+		CoreModelServiceHolder.get().save(encounter4);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter4, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+		// more than 30 days
+		encounter4.setDate(LocalDate.of(2026, 2, 1));
+		CoreModelServiceHolder.get().save(encounter4);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter4, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+	}
 }

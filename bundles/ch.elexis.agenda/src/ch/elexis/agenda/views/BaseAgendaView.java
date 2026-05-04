@@ -617,7 +617,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 	protected Color getTypColor(IAppointment p) {
 		if (p.isRecurring()) {
-			String coldesc = ConfigServiceHolder.getUserCached("ag_series_color", "FFFFFF"); //$NON-NLS-1$
+			String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_SERIES_COLOR, "FFFFFF"); //$NON-NLS-1$
 			return UiDesk.getColorFromRGB(coldesc);
 		}
 		String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
@@ -627,7 +627,7 @@ public abstract class BaseAgendaView extends ViewPart implements IRefreshable, I
 
 	protected Color getStateColor(IAppointment p) {
 		if (p.isRecurring()) {
-			String coldesc = ConfigServiceHolder.getUserCached("ag_series_color", "FFFFFF"); //$NON-NLS-1$
+			String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_SERIES_COLOR, "FFFFFF"); //$NON-NLS-1$
 			return UiDesk.getColorFromRGB(coldesc);
 		}
 		if (appointmentService.getType(AppointmentType.BOOKED).equals(p.getType())) {

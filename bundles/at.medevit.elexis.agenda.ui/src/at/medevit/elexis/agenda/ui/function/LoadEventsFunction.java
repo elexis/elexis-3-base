@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder;
 
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.model.Event;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
@@ -361,7 +362,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 
 	private void applySeriesColorIfNecessary(IPeriod period, Event event) {
 		if (period instanceof IAppointment && ((IAppointment) period).isRecurring()) {
-			String coldesc = ConfigServiceHolder.getUserCached("ag_series_color", "FFFFFF"); //$NON-NLS-1$
+			String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_SERIES_COLOR, "FFFFFF"); //$NON-NLS-1$
 
 			if (coldesc.contains(",")) {
 				event.setBackgroundColor("rgb(" + coldesc + ")"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -21,6 +21,8 @@ import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jpa.entities.OccupationalLeistung;
+import ch.elexis.core.time.TimeUtil;
+import ch.rgw.tools.TimeTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=occupational")
 public class OccupationalReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
@@ -34,7 +36,8 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 
 		ExcelWrapper exw = new ExcelWrapper();
 		exw.setFieldTypes(
-				new Class[] { String.class /* Ziffer */, String.class /* Bezeichnung */, String.class /* Fixpreis */
+				new Class[] { String.class /* Ziffer */, String.class /* Bezeichnung */, String.class /* Fixpreis */,
+						TimeTool.class /* Gültig Bis */
 		});
 		if (exw.load(input, 0)) {
 			int first = exw.getFirstRow();
@@ -57,16 +60,17 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 				LocalDate validFrom = LocalDate.of(2018, 1, 1);
 				List<String> codes = parseCode(line.get(0));
 				for (String code : codes) {
-//					LocalDate validTo = null;
+					LocalDate validTo = getValidTo(line.get(3));
 					List<OccupationalLeistung> existing = getExisting(code, validFrom);
 					if (!existing.isEmpty()) {
-//						if (validTo != null) {
-//							for (PsychoLeistung tarmedPauschalen : existing) {
-//								// update validto of existing
-//								tarmedPauschalen.setValidUntil(validTo);
-//								closed.add(tarmedPauschalen);
-//							}
-//						}
+						// only modify if closing within 5 years
+						if (validTo != null && validTo.isBefore(LocalDate.now().plusYears(5))) {
+							for (OccupationalLeistung occupationalLeistung : existing) {
+								// update validto of existing
+								occupationalLeistung.setValidUntil(validTo);
+								closed.add(occupationalLeistung);
+							}
+						}
 					} else {
 						OccupationalLeistung occupationalLeistung = new OccupationalLeistung();
 						occupationalLeistung.setCode(code);
@@ -94,6 +98,28 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 			ret = Status.CANCEL_STATUS;
 		}
 		return ret;
+	}
+
+	private LocalDate getValidTo(String string) {
+		if (StringUtils.isNotBlank(string)) {
+			// 31.12.2026
+			if (string.length() == 10) {
+				try {
+					return LocalDate.parse(string, TimeUtil.DATE_GER);
+				} catch (Exception e) {
+					LoggerFactory.getLogger(getClass()).warn("Could not parse valid to [" + string + "]");
+				}
+			} else {
+				// fallback to TimeTool
+				try {
+					return new TimeTool(string).toLocalDate();
+				} catch (Exception e) {
+					LoggerFactory.getLogger(getClass()).warn("Could not parse valid to [" + string + "]");
+				}
+			}
+			LoggerFactory.getLogger(getClass()).warn("Unknown valid to [" + string + "] format");
+		}
+		return null;
 	}
 
 	private List<String> parseCode(String code) {

@@ -827,9 +827,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				if (obj == null)
 					return;
 				IDocumentHandle dh = (IDocumentHandle) obj;
-				IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 				FileDialog fd = new FileDialog(getSite().getShell(), SWT.SAVE);
-				fd.setFileName(Utils.generateExportFileName(dh, patient));
+				fd.setFileName(Utils.generateExportFileName(dh));
 				String fname = fd.open();
 				if (fname != null) {
 					if (!Utils.storeExternal(dh, fname)) {

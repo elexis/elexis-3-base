@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -36,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.mail.AttachmentsUtil;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
@@ -423,49 +424,23 @@ public class Utils {
 	}
 
 	/**
-	 * Generates a standardised filename for export. Format:
-	 * [PatNr]_[Name]_[Title]_[Date]_[Time].[Extension] * @param dh The document.
+	 * Generates a standardised filename for export.
 	 * 
+	 * @param dh The document.
 	 * @param patient The associated patient (may be null).
 	 * @return The generated filename as a string.
 	 */
-	public static String generateExportFileName(IDocumentHandle dh, IPatient patient) {
-		String patNr = (patient != null) ? patient.getPatientNr() : "0000";
-		String name = (patient != null) ? (patient.getLastName() + StringUtils.SPACE + patient.getFirstName())
-				: "Unbekannter_Patient";
-
+	public static String generateExportFileName(IDocumentHandle dh) {
+		if (dh instanceof IDocument) {
+			return AttachmentsUtil.getFileName((IDocument) dh);
+		}
+		
 		String title = dh.getTitle();
 		if (title == null || title.trim().isEmpty()) {
 			title = "Dokument";
 		}
-
-		String ext = StringUtils.EMPTY;
-
-		int lastDotIndex = title.lastIndexOf('.');
-		if (lastDotIndex > 0) {
-			ext = title.substring(lastDotIndex + 1);
-			title = title.substring(0, lastDotIndex);
-		}
-
-		if (ext.isEmpty()) {
-			String computedExt = getFileEnding(dh.getMimeType());
-			if (computedExt != null && computedExt.startsWith(".")) {
-				computedExt = computedExt.substring(1);
-			}
-			if (computedExt != null && !computedExt.trim().isEmpty()) {
-				ext = computedExt;
-			}
-		}
-		String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));
-
-		String fileName;
-		if (!ext.isEmpty()) {
-			fileName = String.format("%s_%s_%s_%s.%s", patNr, name, title, timestamp, ext);
-		} else {
-			fileName = String.format("%s_%s_%s_%s", patNr, name, title, timestamp);
-		}
-
-		return fileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+		String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));
+		return String.format("%s_%s.tmp", title, timestamp).replaceAll("[^a-züäöA-ZÜÄÖ0-9 _\\.\\-]", "");
 	}
 
 	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {

@@ -58,7 +58,7 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 					continue;
 				}
 
-				LocalDate validFrom = LocalDate.of(2018, 1, 1);
+				LocalDate validFrom = getValidFromVersion(newVersion).toLocalDate();
 				List<String> codes = parseCode(line.get(0));
 				for (String code : codes) {
 					LocalDate validTo = getValidTo(line.get(3));
@@ -105,6 +105,27 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 		} else {
 			ret = Status.CANCEL_STATUS;
 		}
+		return ret;
+	}
+
+	/**
+	 * Convert version Integer in yymmdd format to date.
+	 *
+	 * @param newVersion
+	 * @return
+	 */
+	private TimeTool getValidFromVersion(Integer newVersion) {
+		String intString = Integer.toString(newVersion);
+		if (intString.length() != 6) {
+			throw new IllegalStateException("Version " + newVersion + " can not be parsed to valid date.");
+		}
+		String year = intString.substring(0, 2);
+		String month = intString.substring(2, 4);
+		String day = intString.substring(4, 6);
+		TimeTool ret = new TimeTool();
+		ret.set(TimeTool.YEAR, Integer.parseInt(year) + 2000);
+		ret.set(TimeTool.MONTH, Integer.parseInt(month) - 1);
+		ret.set(TimeTool.DAY_OF_MONTH, Integer.parseInt(day));
 		return ret;
 	}
 

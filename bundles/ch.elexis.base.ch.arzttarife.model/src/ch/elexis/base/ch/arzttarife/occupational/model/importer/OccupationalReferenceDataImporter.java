@@ -47,6 +47,7 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 			monitor.beginTask("Arbeitsmedizinische Vorsorgeuntersuchungen Import", count);
 
 			List<Object> imported = new ArrayList<>();
+			List<Object> updated = new ArrayList<>();
 			List<Object> closed = new ArrayList<>();
 
 			for (int i = 0; i < last; i++) {
@@ -63,12 +64,18 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 					LocalDate validTo = getValidTo(line.get(3));
 					List<OccupationalLeistung> existing = getExisting(code, validFrom);
 					if (!existing.isEmpty()) {
-						// only modify if closing within 5 years
-						if (validTo != null && validTo.isBefore(LocalDate.now().plusYears(5))) {
-							for (OccupationalLeistung occupationalLeistung : existing) {
+						for (OccupationalLeistung occupationalLeistung : existing) {
+							if (validTo != null && validTo.isBefore(LocalDate.now().plusYears(5))) {
 								// update validto of existing
 								occupationalLeistung.setValidUntil(validTo);
 								closed.add(occupationalLeistung);
+							}
+							String codeText = StringUtils
+									.abbreviate(line.get(1).replace(StringUtils.LF, StringUtils.EMPTY)
+											.replace(StringUtils.CR, StringUtils.EMPTY), 255);
+							if (codeText.equals(occupationalLeistung.getCodeText())) {
+								occupationalLeistung.setCodeText(codeText);
+								updated.add(occupationalLeistung);
 							}
 						}
 					} else {
@@ -85,9 +92,10 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 					}
 				}
 			}
-			LoggerFactory.getLogger(getClass())
-					.info("Closing " + closed.size() + " and creating " + imported.size() + " tarifs");
+			LoggerFactory.getLogger(getClass()).info("Closing " + closed.size() + " updating " + updated.size()
+					+ " and creating " + imported.size() + " tarifs");
 			EntityUtil.save(closed);
+			EntityUtil.save(updated);
 			EntityUtil.save(imported);
 			monitor.done();
 

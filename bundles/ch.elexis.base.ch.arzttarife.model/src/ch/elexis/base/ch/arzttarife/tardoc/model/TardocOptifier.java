@@ -52,6 +52,9 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 	private TarifMatcher<TardocLeistung> tarifMatcher;
 
+	private Map<String, List<String>> additionalSlaveToMastersReferences = Map.of("AR.00.0070",
+			List.of("TK.00.0010", "AK.00.0020"), "GG.30.0020", List.of("AA.00.0010"));
+
 	public TardocOptifier() {
 		verifier = new TardocVerifier();
 	}
@@ -254,30 +257,40 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 						.findAny();
 				if (masterBilled.isPresent()) {
 					newBilled.setExtInfo("Bezug", masterBilled.get().getCode());
-					break;
+					return new Result<IBilled>(newBilled);
 				}
 			}
-		} else {
-			// set bezug to hauptleistung of same root chapter
-			List<IBilled> foundMasters = encounter.getBilled().stream()
-					.filter(b -> b.getBillable() instanceof ITardocLeistung
-							&& isHauptleistung((ITardocLeistung) b.getBillable()))
-					.toList();
-			if(!foundMasters.isEmpty()) {
-				String chapter = getRootChapter((ITardocLeistung) newBilled.getBillable());
-				if (StringUtils.isNotBlank(chapter)) {
-					// order by least existing references
-					Map<String, Integer> masterReferenceCountMap = getMasterReferenceCountMap(encounter);
-					List<IBilled> foundMastersSameRootChapter = new ArrayList<>(foundMasters.stream()
-							.filter(b -> getRootChapter((ITardocLeistung) b.getBillable()).equals(chapter))
-							.sorted((l, r) -> {
-								Integer li = masterReferenceCountMap.getOrDefault(l.getCode(), Integer.valueOf(0));
-								Integer ri = masterReferenceCountMap.getOrDefault(r.getCode(), Integer.valueOf(0));
-								return li.compareTo(ri);
-							}).toList());
-					if (!foundMastersSameRootChapter.isEmpty()) {
-						return addReferenceToMaster(newBilled, foundMastersSameRootChapter, encounter, true);
-					}
+		}
+		// set bezug to hauptleistung of same root chapter
+		List<IBilled> foundMasters = encounter.getBilled().stream().filter(
+				b -> b.getBillable() instanceof ITardocLeistung && isHauptleistung((ITardocLeistung) b.getBillable()))
+				.toList();
+		if (!foundMasters.isEmpty()) {
+			Map<String, Integer> masterReferenceCountMap = getMasterReferenceCountMap(encounter);
+			String chapter = getRootChapter((ITardocLeistung) newBilled.getBillable());
+			if (StringUtils.isNotBlank(chapter)) {
+				// order by least existing references
+				List<IBilled> foundMastersSameRootChapter = new ArrayList<>(foundMasters.stream()
+						.filter(b -> getRootChapter((ITardocLeistung) b.getBillable()).equals(chapter))
+						.sorted((l, r) -> {
+							Integer li = masterReferenceCountMap.getOrDefault(l.getCode(), Integer.valueOf(0));
+							Integer ri = masterReferenceCountMap.getOrDefault(r.getCode(), Integer.valueOf(0));
+							return li.compareTo(ri);
+						}).toList());
+				if (!foundMastersSameRootChapter.isEmpty()) {
+					return addReferenceToMaster(newBilled, foundMastersSameRootChapter, encounter, true);
+				}
+			}
+			List<String> additionalReferenceMasters = additionalSlaveToMastersReferences.get(newBilled.getCode());
+			if (additionalReferenceMasters != null) {
+				List<IBilled> foundAdditionalReferenceMasters = foundMasters.stream()
+						.filter(b -> additionalReferenceMasters.contains(b.getCode())).sorted((l, r) -> {
+							Integer li = masterReferenceCountMap.getOrDefault(l.getCode(), Integer.valueOf(0));
+							Integer ri = masterReferenceCountMap.getOrDefault(r.getCode(), Integer.valueOf(0));
+							return li.compareTo(ri);
+						}).toList();
+				if (!foundAdditionalReferenceMasters.isEmpty()) {
+					return addReferenceToMaster(newBilled, foundAdditionalReferenceMasters, encounter, true);
 				}
 			}
 		}

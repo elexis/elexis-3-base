@@ -61,34 +61,30 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 				LocalDate validFrom = getValidFromVersion(newVersion).toLocalDate();
 				List<String> codes = parseCode(line.get(0));
 				for (String code : codes) {
-					LocalDate validTo = getValidTo(line.get(3));
-					List<OccupationalLeistung> existing = getExisting(code, validFrom);
+
+					List<OccupationalLeistung> existing = getExisting(code);
 					if (!existing.isEmpty()) {
 						for (OccupationalLeistung occupationalLeistung : existing) {
-							if (validTo != null && validTo.isBefore(LocalDate.now().plusYears(5))) {
-								// update validto of existing
-								occupationalLeistung.setValidUntil(validTo);
-								closed.add(occupationalLeistung);
-							}
-							String codeText = StringUtils
-									.abbreviate(line.get(1).replace(StringUtils.LF, StringUtils.EMPTY)
-											.replace(StringUtils.CR, StringUtils.EMPTY), 255);
-							if (codeText.equals(occupationalLeistung.getCodeText())) {
-								occupationalLeistung.setCodeText(codeText);
-								updated.add(occupationalLeistung);
+							if (validFrom.equals(occupationalLeistung.getValidFrom())) {
+								String codeText = StringUtils
+										.abbreviate(line.get(1).replace(StringUtils.LF, StringUtils.EMPTY)
+												.replace(StringUtils.CR, StringUtils.EMPTY), 255);
+								if (codeText.equals(occupationalLeistung.getCodeText())) {
+									occupationalLeistung.setCodeText(codeText);
+									updated.add(occupationalLeistung);
+								}
+							} else {
+								if (occupationalLeistung.getValidUntil() == null) {
+									// update validto of existing -> closed
+									occupationalLeistung.setValidUntil(validFrom);
+									closed.add(occupationalLeistung);
+									// create
+									imported.add(createOccupationalLeistung(code, line, validFrom));
+								}
 							}
 						}
 					} else {
-						OccupationalLeistung occupationalLeistung = new OccupationalLeistung();
-						occupationalLeistung.setCode(code);
-						occupationalLeistung.setCodeText(
-								StringUtils.abbreviate(line.get(1).replace(StringUtils.LF, StringUtils.EMPTY)
-										.replace(StringUtils.CR, StringUtils.EMPTY), 255));
-						occupationalLeistung.setValidFrom(validFrom);
-
-						occupationalLeistung.setTp(parseTp(code, line.get(2)));
-
-						imported.add(occupationalLeistung);
+						imported.add(createOccupationalLeistung(code, line, validFrom));
 					}
 				}
 			}
@@ -106,6 +102,27 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 			ret = Status.CANCEL_STATUS;
 		}
 		return ret;
+	}
+
+	private OccupationalLeistung createOccupationalLeistung(String code, List<String> line, LocalDate validFrom) {
+		LocalDate validTo = getValidTo(line.get(3));
+
+		String codeText = StringUtils.abbreviate(
+				line.get(1).replace(StringUtils.LF, StringUtils.EMPTY).replace(StringUtils.CR, StringUtils.EMPTY), 255);
+
+		OccupationalLeistung occupationalLeistung = new OccupationalLeistung();
+		occupationalLeistung.setCode(code);
+		occupationalLeistung.setCodeText(codeText);
+		occupationalLeistung.setValidFrom(validFrom);
+
+		occupationalLeistung.setTp(parseTp(code, line.get(2)));
+
+		if (validTo != null && validTo.isBefore(LocalDate.now().plusYears(5))) {
+			// update validto of existing
+			occupationalLeistung.setValidUntil(validTo);
+		}
+
+		return occupationalLeistung;
 	}
 
 	/**
@@ -185,10 +202,9 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 		throw new IllegalStateException("Could not parse tp [" + string + "] for code [" + code + "]");
 	}
 
-	private List<OccupationalLeistung> getExisting(String code, LocalDate validFrom) {
+	private List<OccupationalLeistung> getExisting(String code) {
 		Map<String, Object> propertyMap = new LinkedHashMap<String, Object>();
 		propertyMap.put("code", code);
-		propertyMap.put("validFrom", validFrom);
 		return EntityUtil.loadByNamedQuery(propertyMap, OccupationalLeistung.class);
 	}
 

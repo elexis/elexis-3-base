@@ -436,6 +436,9 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			if (newTerminAction != null)
 				newTerminAction.setEnabled(true);
 			if (cv.getViewerWidget().getContentProvider() instanceof CommonViewerContentProvider) {
+				// Reset the query limit when a new patient is selected to ensure
+				// we start with the default pagination size and do not carry over
+				// an expanded list state from the previously selected patient.
 				contentProvider.resetLimit();
 			}
 			cv.notify(CommonViewer.Message.update);
@@ -479,6 +482,10 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 
 		private Color colorPast;
 		private Color colorFuture;
+
+		// Cached to prevent creating a new LocalDateTime object for every single row
+		// during the rendering phase. This improves UI performance and ensures a
+		// consistent time comparison across all elements in the view.
 		private LocalDateTime cachedNow;
 
 		public AppointmentLabelProvider() {

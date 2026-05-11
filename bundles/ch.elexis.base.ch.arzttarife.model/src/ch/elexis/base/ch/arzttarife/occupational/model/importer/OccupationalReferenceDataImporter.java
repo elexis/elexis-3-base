@@ -76,11 +76,11 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 							} else {
 								if (occupationalLeistung.getValidUntil() == null) {
 									// update validto of existing -> closed
-									occupationalLeistung.setValidUntil(validFrom);
+									occupationalLeistung.setValidUntil(validFrom.minusDays(1));
 									closed.add(occupationalLeistung);
-									// create
-									imported.add(createOccupationalLeistung(code, line, validFrom));
 								}
+								// create
+								imported.add(createOccupationalLeistung(code, line, validFrom));
 							}
 						}
 					} else {

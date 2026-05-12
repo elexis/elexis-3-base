@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
+ * G. Weirich - initial implementation
  *
  *******************************************************************************/
 
@@ -16,10 +16,13 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -40,8 +43,10 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 	private ConfigServicePreferenceStore prefs;
 	private int typCols, typRows, statusCols;
 
-	// private ColorCellEditor[] editors;
-	// private String[] columnProperties;
+	// UI Components for global updates
+	private Button cbGlobalSettings;
+	private Label lblPastColorPreview;
+	private Label lblFutureColorPreview;
 
 	public AgendaFarben() {
 		prefs = new ConfigServicePreferenceStore(Scope.USER);
@@ -125,24 +130,46 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 
 			});
 		}
+
 		Group terminListeColors = new Group(par, SWT.BORDER);
 		terminListeColors.setText(Messages.AgendaFarben_Terminliste);
 		terminListeColors.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		terminListeColors.setLayout(new GridLayout(2, false));
-		createColorRow(terminListeColors, Messages.AgendaFarben_PastAppointments, PreferenceConstants.TL_PAST_BG_COLOR,
-				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
-		createColorRow(terminListeColors, Messages.AgendaFarben_FutureAppointments,
+
+		cbGlobalSettings = new Button(terminListeColors, SWT.CHECK);
+		cbGlobalSettings.setText(Messages.AgendaFarben_Preferences_GlobalSettings);
+		GridData gdCb = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1);
+		cbGlobalSettings.setLayoutData(gdCb);
+
+		boolean isGlobal = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_USE_GLOBAL_SETTINGS, false);
+		cbGlobalSettings.setSelection(isGlobal);
+		cbGlobalSettings.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean isSelected = cbGlobalSettings.getSelection();
+				updateAllColorPreviews();
+				ConfigServiceHolder.get().set(PreferenceConstants.TL_USE_GLOBAL_SETTINGS, isSelected);
+			}
+		});
+
+		lblPastColorPreview = createColorRow(terminListeColors, Messages.AgendaFarben_PastAppointments,
+				PreferenceConstants.TL_PAST_BG_COLOR, PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
+
+		lblFutureColorPreview = createColorRow(terminListeColors, Messages.AgendaFarben_FutureAppointments,
 				PreferenceConstants.TL_FUTURE_BG_COLOR, PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
+
+		updateAllColorPreviews();
+
 		return par;
 	}
 
-	private void createColorRow(Composite parent, String labelText, String prefKey, String defaultColor) {
+	private Label createColorRow(Composite parent, String labelText, String prefKey, String defaultColor) {
 		Label text = new Label(parent, SWT.NONE);
 		text.setText(labelText);
 		Label colorPreview = new Label(parent, SWT.BORDER);
 		colorPreview.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		String coldesc = ConfigServiceHolder.getUser(prefKey, defaultColor);
-		colorPreview.setBackground(UiDesk.getColorFromRGB(coldesc));
+		colorPreview.setToolTipText(Messages.AgendaFarben_DoubleClickToChange);
+
 		colorPreview.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -152,10 +179,44 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 					return;
 				}
 				String symbolic = UiDesk.createColor(selected);
-				colorPreview.setBackground(UiDesk.getColorFromRGB(symbolic));
-				ConfigServiceHolder.setUser(prefKey, symbolic);
+				boolean isGlobal = cbGlobalSettings != null && cbGlobalSettings.getSelection();
+
+				if (isGlobal) {
+					ConfigServiceHolder.get().set(prefKey, symbolic);
+					ConfigServiceHolder.setUser(prefKey, null);
+				} else {
+					ConfigServiceHolder.setUser(prefKey, symbolic);
+				}
+				updateColorPreview(colorPreview, prefKey, defaultColor, isGlobal);
 			}
 		});
-		colorPreview.setToolTipText(Messages.AgendaFarben_DoubleClickToChange);
+
+		return colorPreview;
+	}
+
+	/**
+	 * Updates a specific color preview label based on the current configuration.
+	 */
+	private void updateColorPreview(Label preview, String prefKey, String defaultColor, boolean isGlobal) {
+		if (preview == null || preview.isDisposed()) {
+			return;
+		}
+		String coldesc = isGlobal ? ConfigServiceHolder.getGlobal(prefKey, defaultColor)
+				: ConfigServiceHolder.getUser(prefKey, defaultColor);
+		preview.setBackground(UiDesk.getColorFromRGB(coldesc));
+	}
+
+	/**
+	 * Refreshes all dynamically created color rows when settings change.
+	 */
+	private void updateAllColorPreviews() {
+		if (cbGlobalSettings == null || cbGlobalSettings.isDisposed()) {
+			return;
+		}
+		boolean isGlobal = cbGlobalSettings.getSelection();
+		updateColorPreview(lblPastColorPreview, PreferenceConstants.TL_PAST_BG_COLOR,
+				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT, isGlobal);
+		updateColorPreview(lblFutureColorPreview, PreferenceConstants.TL_FUTURE_BG_COLOR,
+				PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT, isGlobal);
 	}
 }

@@ -218,6 +218,22 @@
               </command>
            </toolbar>
         </menuContribution>
+        <menuContribution
+              allPopups="false"
+              locationURI="toolbar:ch.elexis.agenda.Terminliste">
+           <command
+                 commandId="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
+                 icon="res/icons/appointmentPrint.png"
+                 label="Termin drucken"
+                 style="push">
+           </command>
+           <command
+                 commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint"
+                 icon="res/icons/appointmentsPrint.png"
+                 label="Terminserie drucken"
+                 style="push">
+           </command>
+        </menuContribution>
 
     </extension>
 

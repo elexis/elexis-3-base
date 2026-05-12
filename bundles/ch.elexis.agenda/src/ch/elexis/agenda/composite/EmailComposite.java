@@ -34,6 +34,7 @@ import ch.elexis.agenda.commands.EmailEditHandler;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.Messages;
 import ch.elexis.core.mail.MailAccount.TYPE;
+import ch.elexis.core.mail.MailConstants;
 import ch.elexis.core.mail.MailTextTemplate;
 import ch.elexis.core.mail.ui.client.MailClientComponent;
 import ch.elexis.core.model.IAppointment;
@@ -143,7 +144,8 @@ public class EmailComposite extends Composite {
 				if (emailEdith == null) {
 					emailEdith = new EmailEditHandler();
 				}
-				String subject = getSelectedEmailTemplateViewerDetails().getName();
+				String subject = (String) getSelectedEmailTemplateViewerDetails()
+						.getExtInfo(MailConstants.TEXTTEMPLATE_SUBJECT);
 				emailEdith.openSendMailDialogWithContent(appointment, pat, preparedMessageText, subject);
 			}
 		});

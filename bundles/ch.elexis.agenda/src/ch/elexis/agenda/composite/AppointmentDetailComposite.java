@@ -155,7 +155,9 @@ public class AppointmentDetailComposite extends Composite {
 		Date timeFrom = txtTimeFrom.getSelection();
 		Date timeTo = txtTimeTo.getSelection();
 		int duration = txtDuration.getSelection();
-
+		if (dateFrom == null || timeFrom == null || timeTo == null) {
+			return;
+		}
 		LocalDate localDateFrom = toLocalDate(dateFrom);
 		LocalTime localTimeFrom = toLocalTime(timeFrom);
 		LocalTime localTimeTo = toLocalTime(timeTo);

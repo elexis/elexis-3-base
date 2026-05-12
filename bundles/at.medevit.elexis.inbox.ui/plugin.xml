@@ -49,6 +49,11 @@
             id="at.medevit.elexis.inbox.ui.selectMandator"
             name="Mandantenauswahl">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.inbox.ui.command.PatientAllSeenCommand"
+            id="at.medevit.elexis.inbox.ui.patientallseen"
+            name="Alle des Patienten gelesen">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -85,6 +90,12 @@
                commandId="at.medevit.elexis.inbox.ui.command.changeMandant"
                icon="rsc/img/user-silhouette-question.png"
                label="%command.label.4"
+               style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.inbox.ui.patientallseen"
+               icon="icon://IMG_TICK"
+               label="Alle des Patienten gelesen"
                style="push">
          </command>
       </menuContribution>

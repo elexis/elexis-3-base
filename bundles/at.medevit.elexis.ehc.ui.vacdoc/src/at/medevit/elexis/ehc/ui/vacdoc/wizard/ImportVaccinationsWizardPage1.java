@@ -30,7 +30,7 @@ import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.findings.util.fhir.MedicamentCoding;
+import ch.elexis.core.findings.codes.MedicamentCoding;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -130,7 +130,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 			if (occurenceDate.equals(vaccDate.getTime())) {
 				String gtin = vaccination.get(Vaccination.FLD_EAN);
 				Optional<Coding> gtinCoding = immunization.getVaccineCode().getCoding().stream()
-						.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c)).findFirst();
+						.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c.getSystem())).findFirst();
 				if (gtinCoding.isPresent()) {
 					if (gtinCoding.isPresent() && gtinCoding.get().getCode().equals(gtin)) {
 						return immunization.getLotNumber().equalsIgnoreCase(vaccination.getLotNo());
@@ -140,7 +140,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 					Optional<Medication> medication = VacdocServiceComponent.getService().getMedication(immunization);
 					if (medication.isPresent()) {
 						gtinCoding = medication.get().getCode().getCoding().stream()
-								.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c)).findFirst();
+								.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c.getSystem())).findFirst();
 						if (gtinCoding.isPresent() && gtinCoding.get().getCode().equals(gtin)) {
 							return immunization.getLotNumber().equalsIgnoreCase(vaccination.getLotNo());
 						}

@@ -3,12 +3,11 @@
  */
 package ch.elexis.base.ch.arzttarife.tardoc;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IService;
-
-import java.time.LocalDate;
-
-import java.util.List;
 
 /**
  * <!-- begin-user-doc -->

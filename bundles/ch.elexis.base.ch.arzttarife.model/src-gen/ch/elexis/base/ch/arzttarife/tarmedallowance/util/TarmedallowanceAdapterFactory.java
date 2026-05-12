@@ -3,7 +3,6 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmedallowance.util;
 
-import ch.elexis.base.ch.arzttarife.tarmedallowance.*;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;

@@ -196,6 +196,49 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</fo:block>
+				<fo:block>
+					<xsl:choose>
+						<xsl:when
+							test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+							<xsl:choose>
+								<xsl:when
+									test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company) > 0">
+									<xsl:if
+										test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company/invoice:postal/invoice:country/@country_code != 'CH'">
+										<xsl:value-of
+											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company/invoice:postal/invoice:country" />
+									</xsl:if>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:if
+										test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/invoice:postal/invoice:country/@country_code != 'CH'">
+										<xsl:value-of
+											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/invoice:postal/invoice:country" />
+									</xsl:if>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:choose>
+								<xsl:when
+									test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company) > 0">
+									<xsl:if
+										test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/invoice:postal/invoice:country/@country_code != 'CH'">
+										<xsl:value-of
+											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/invoice:postal/invoice:country" />
+									</xsl:if>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:if
+										test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:guarantor/invoice:person/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:guarantor/invoice:person/invoice:postal/invoice:country/@country_code != 'CH'">
+										<xsl:value-of
+											select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:guarantor/invoice:person/invoice:postal/invoice:country" />
+									</xsl:if>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:otherwise>
+					</xsl:choose>
+				</fo:block>				
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

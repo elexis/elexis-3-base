@@ -12,6 +12,8 @@
 
 package ch.elexis.views;
 
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -85,7 +87,7 @@ public class TardocCodeSelectorFactory extends CodeSelectorFactory {
 		};
 		slp = new TardocSelectorPanelProvider(cv);
 
-		slp.addActions(new ToggleFiltersAction());
+		slp.addActions(new ToggleFiltersAction(), new ToggleDignitaetFiltersAction());
 
 		MenuManager menu = new MenuManager();
 		menu.add(tvfa);
@@ -134,6 +136,31 @@ public class TardocCodeSelectorFactory extends CodeSelectorFactory {
 		@Override
 		public void run() {
 			slp.toggleFilters();
+		}
+	}
+
+	private class ToggleDignitaetFiltersAction extends Action {
+
+		public ToggleDignitaetFiltersAction() {
+			super(StringUtils.EMPTY, Action.AS_CHECK_BOX);
+			// initial state, active filters
+			setChecked(true);
+		}
+
+		@Override
+		public String getToolTipText() {
+			return "Dignität Filter (de)aktivieren";
+		}
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
+			return ImageDescriptor.createFromURI(
+					URI.create("platform:/plugin/ch.elexis.base.ch.arzttarife/rsc/icons/certificate_16x16.png"));
+		}
+
+		@Override
+		public void run() {
+			slp.toggleDignitaetFilters();
 		}
 	}
 

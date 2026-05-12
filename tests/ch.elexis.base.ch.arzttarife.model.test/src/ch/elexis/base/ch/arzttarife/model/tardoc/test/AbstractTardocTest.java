@@ -5,7 +5,7 @@ import java.util.List;
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
-import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.findings.codes.TransientCoding;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -15,12 +15,12 @@ import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.types.Gender;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
@@ -54,6 +54,7 @@ public abstract class AbstractTardocTest {
 				List.of(new TransientCoding("tardoc_dignitaet", "0010", null),
 						new TransientCoding("tardoc_dignitaet", "0100", null),
 						new TransientCoding("tardoc_dignitaet", "1000", null),
+						new TransientCoding("tardoc_dignitaet", "1100", null),
 						new TransientCoding("tardoc_dignitaet", "0026", null),
 						new TransientCoding("tardoc_dignitaet", "9971", null)));
 		coreModelService.save(mandator);

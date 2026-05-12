@@ -3,14 +3,18 @@ package ch.elexis.base.ch.arzttarife.tardoc.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
@@ -20,6 +24,7 @@ import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation.LimitationUnit;
 import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedUtil;
+import ch.elexis.base.ch.arzttarife.tarmed.prefs.RechnungsPrefs;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillableOptifier;
@@ -29,7 +34,9 @@ import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.PatientConstants;
 import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.BillingServiceHolder;
@@ -44,6 +51,9 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 	private TardocVerifier verifier;
 
 	private TarifMatcher<TardocLeistung> tarifMatcher;
+
+	private Map<String, List<String>> additionalSlaveToMastersReferences = Map.of("AR.00.0070",
+			List.of("TK.00.0010", "AK.00.0020"), "GG.30.0020", List.of("AA.00.0010"));
 
 	public TardocOptifier() {
 		verifier = new TardocVerifier();
@@ -83,6 +93,14 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 	}
 
+	private boolean isReferenzleistung(ITardocLeistung tardocLeistung) {
+		return tardocLeistung.getServiceTyp() != null && tardocLeistung.getServiceTyp().equals("R");
+	}
+
+	private boolean isHauptleistung(ITardocLeistung tardocLeistung) {
+		return tardocLeistung.getServiceTyp() != null && tardocLeistung.getServiceTyp().equals("H");
+	}
+
 	private Result<IBilled> add(TardocLeistung code, IEncounter encounter, boolean save) {
 		if (tarifMatcher == null) {
 			tarifMatcher = new TarifMatcher<TardocLeistung>(this);
@@ -93,6 +111,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 		boolean bAllowOverrideStrict = TarmedUtil.getConfigValue(getClass(), IUser.class,
 				Preferences.LEISTUNGSCODES_ALLOWOVERRIDE_STRICT, false);
+
+		code = adjustCode(code, encounter);
 
 		IBilled newBilled = getOrInitializeBilled(code, encounter, false);
 
@@ -113,8 +133,13 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 		
 		// Referenzleistung
-		if (code.getServiceTyp() != null && code.getServiceTyp().equals("R")) {
-			addKumulationBezug(newBilled, encounter);
+		if (isReferenzleistung(code)) {
+			Result<IBilled> resultBezug = addKumulationBezug(newBilled, encounter);
+			if (!resultBezug.isOK()) {
+				return resultBezug;
+			} else if (!resultBezug.get().equals(newBilled)) {
+				newBilled = resultBezug.get();
+			}
 		}
 
 		if (bOptify) {
@@ -149,6 +174,12 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 		Result<IBilled> matcherResult = tarifMatcher.evaluate(newBilled, encounter);
 
+		List<ITardocKumulation> customKumulations = CustomKumulations.of(newBilled);
+		if (customKumulations != null && !customKumulations.isEmpty()) {
+			LoggerFactory.getLogger(getClass())
+					.info("Using custom kumulation for [" + newBilled.getCode() + "] overriding tarif matcher.");
+			matcherResult = verifier.checkCustomKumulations(customKumulations, newBilled);
+		}
 		if (!matcherResult.isOK()) {
 			if (bAllowOverrideStrict) {
 				if (save) {
@@ -164,12 +195,53 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				CoreModelServiceHolder.get().save(encounter);
 				CoreModelServiceHolder.get().save(matcherResult.get());
 			}
+			if (bOptify) {
+				additions(code, encounter, save);
+			}
 		}
-
 		return matcherResult;
 	}
 
-	private void addKumulationBezug(IBilled newBilled, IEncounter encounter) {
+	private TardocLeistung adjustCode(TardocLeistung code, IEncounter encounter) {
+		Optional<LocalDate> palliativeCareDate = getPalliativeCare(encounter.getPatient());
+		if (palliativeCareDate.isPresent() && !palliativeCareDate.get().isAfter(encounter.getDate())) {
+			if (code.getCode().equals("CA.00.0010")) {
+				return TardocLeistung.getFromCode("CA.15.0010", encounter.getDate(), null);
+			} else if (code.getCode().equals("CA.00.0020")) {
+				return TardocLeistung.getFromCode("CA.15.0020", encounter.getDate(), null);
+			} else if (code.getCode().equals("CA.00.0040")) {
+				return TardocLeistung.getFromCode("CA.15.0030", encounter.getDate(), null);
+			} else if (code.getCode().equals("CA.00.0050")) {
+				return TardocLeistung.getFromCode("CA.15.0040", encounter.getDate(), null);
+			}
+		}
+		return code;
+	}
+
+	private Optional<LocalDate> getPalliativeCare(IPatient patient) {
+		if (patient.getExtInfo(PatientConstants.FLD_EXTINFO_PALLIATIVECARE) instanceof String) {
+			LocalDate palliativeCareLocalDate = LocalDate.parse(
+					(String) patient.getExtInfo(PatientConstants.FLD_EXTINFO_PALLIATIVECARE),
+					DateTimeFormatter.ofPattern("yyyyMMdd"));
+			return Optional.of(palliativeCareLocalDate);
+		}
+		return Optional.empty();
+	}
+
+	private void additions(TardocLeistung code, IEncounter encounter, boolean save) {
+		if (TarmedUtil.getConfigValue(getClass(), IMandator.class, RechnungsPrefs.PREF_ADDCHILDREN, false)) {
+			Optional<IBilled> alreadyPresent = encounter.getBilled().stream()
+					.filter(b -> "CG.15.0010".equals(b.getCode())).findFirst();
+			if (alreadyPresent.isEmpty()
+					&& ("AA.00.0010".equals(code.getCode()) || "CA.00.0010".equals(code.getCode()))) {
+				if (encounter.getPatient().getAgeInYears() < 12) {
+					add(TardocLeistung.getFromCode("CG.15.0010", encounter.getDate(), null), encounter, save);
+				}
+			}
+		}
+	}
+
+	private Result<IBilled> addKumulationBezug(IBilled newBilled, IEncounter encounter) {
 		ITardocLeistung code = (ITardocLeistung) newBilled.getBillable();
 		List<ITardocKumulation> kumulations = code.getKumulations(TardocKumulationArt.SERVICE);
 		List<ITardocKumulation> slaveInclusionKumulations = kumulations.stream()
@@ -185,10 +257,115 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 						.findAny();
 				if (masterBilled.isPresent()) {
 					newBilled.setExtInfo("Bezug", masterBilled.get().getCode());
-					break;
+					return new Result<IBilled>(newBilled);
 				}
 			}
 		}
+		// set bezug to hauptleistung of same root chapter
+		List<IBilled> foundMasters = encounter.getBilled().stream().filter(
+				b -> b.getBillable() instanceof ITardocLeistung && isHauptleistung((ITardocLeistung) b.getBillable()))
+				.toList();
+		if (!foundMasters.isEmpty()) {
+			Map<String, Integer> masterReferenceCountMap = getMasterReferenceCountMap(encounter);
+			String chapter = getRootChapter((ITardocLeistung) newBilled.getBillable());
+			if (StringUtils.isNotBlank(chapter)) {
+				// order by least existing references
+				List<IBilled> foundMastersSameRootChapter = new ArrayList<>(foundMasters.stream()
+						.filter(b -> getRootChapter((ITardocLeistung) b.getBillable()).equals(chapter))
+						.sorted((l, r) -> {
+							Integer li = masterReferenceCountMap.getOrDefault(l.getCode(), Integer.valueOf(0));
+							Integer ri = masterReferenceCountMap.getOrDefault(r.getCode(), Integer.valueOf(0));
+							return li.compareTo(ri);
+						}).toList());
+				if (!foundMastersSameRootChapter.isEmpty()) {
+					return addReferenceToMaster(newBilled, foundMastersSameRootChapter, encounter, true);
+				}
+			}
+			List<String> additionalReferenceMasters = additionalSlaveToMastersReferences.get(newBilled.getCode());
+			if (additionalReferenceMasters != null) {
+				List<IBilled> foundAdditionalReferenceMasters = foundMasters.stream()
+						.filter(b -> additionalReferenceMasters.contains(b.getCode())).sorted((l, r) -> {
+							Integer li = masterReferenceCountMap.getOrDefault(l.getCode(), Integer.valueOf(0));
+							Integer ri = masterReferenceCountMap.getOrDefault(r.getCode(), Integer.valueOf(0));
+							return li.compareTo(ri);
+						}).toList();
+				if (!foundAdditionalReferenceMasters.isEmpty()) {
+					return addReferenceToMaster(newBilled, foundAdditionalReferenceMasters, encounter, true);
+				}
+			}
+		}
+		return new Result<IBilled>(newBilled);
+	}
+
+	private Map<String, Integer> getMasterReferenceCountMap(IEncounter encounter) {
+		if (encounter != null) {
+			Map<String, Integer> ret = new HashMap<String, Integer>();
+			for (IBilled billed : encounter.getBilled()) {
+				if (billed.getBillable() instanceof ITardocLeistung) {
+					String reference = (String) billed.getExtInfo("Bezug");
+					if (StringUtils.isNotBlank(reference)) {
+						Integer count = ret.get(reference);
+						if (count == null) {
+							count = Integer.valueOf(0);
+						}
+						ret.put(reference, ++count);
+					}
+				}
+			}
+			return ret;
+		}
+		return Collections.emptyMap();
+	}
+
+	private Result<IBilled> addReferenceToMaster(IBilled newBilled, List<IBilled> masters, IEncounter encounter,
+			boolean trySeparate) {
+		Result<IBilled> ret = new Result<IBilled>(newBilled);
+		for (int i = 0; i < masters.size(); i++) {
+			IBilled masterSameRootChapter = masters.get(i);
+			ret = testBezugLimitOk(newBilled, encounter);
+			if(ret.isOK()) {
+				newBilled.setExtInfo("Bezug", masterSameRootChapter.getCode());
+				return ret;
+			} else if (trySeparate && masters.size() > (i + 1)) {
+				newBilled = initializeBilled((TardocLeistung) newBilled.getBillable(), encounter, false);
+				return addReferenceToMaster(newBilled, masters.subList(i + 1, masters.size()), encounter, false);
+			}
+		}
+		return ret;
+	}
+
+	private Result<IBilled> testBezugLimitOk(IBilled newBilled, IEncounter encounter) {
+		Result<IBilled> ret = new Result<IBilled>(newBilled);
+		if (newBilled.getBillable() instanceof TardocLeistung) {
+			TardocLeistung tardocLeistung = (TardocLeistung) newBilled.getBillable();
+			List<TardocLimitation> mainServiceLimitation = tardocLeistung.getLimitations().stream()
+					.filter(l -> l.getLimitationUnit() == LimitationUnit.MAINSERVICE).toList();
+			if (!mainServiceLimitation.isEmpty()) {
+				for (TardocLimitation tardocLimitation : mainServiceLimitation) {
+					Result<IBilled> testResult = tardocLimitation.test(encounter, newBilled);
+					if (!testResult.isOK()) {
+						return testResult;
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	private String getChapter(ITardocLeistung billable) {
+		ITardocLeistung parent = billable.getParent();
+		while (parent != null && !parent.isChapter()) {
+			parent = parent.getParent();
+		}
+		return (parent != null && parent.isChapter()) ? parent.getCode() : StringUtils.EMPTY;
+	}
+
+	private String getRootChapter(ITardocLeistung billable) {
+		ITardocLeistung parent = billable.getParent();
+		while (parent.getParent() != null) {
+			parent = parent.getParent();
+		}
+		return (parent != null && parent.isChapter()) ? parent.getCode() : StringUtils.EMPTY;
 	}
 
 	private Result<IBilled> setNewBilledSideOrIncrement(IBilled newBilled, IEncounter encounter) {
@@ -494,13 +671,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 	}
 
 	private void applyCalculateFactorBasedPrice(IBilled billed, TardocLeistung code, IEncounter encounter) {
-		// lookup bezug
-		Optional<String> bezug = Optional.empty();
-		// lookup available masters
-		List<IBilled> masters = getPossibleMasters(billed, encounter.getBilled());
-		if (!masters.isEmpty()) {
-			bezug = Optional.of(masters.get(0).getCode());
-		}
+
+		Predicate<TardocLeistung> factorFilter = getFactorFilter(billed, encounter);
 
 		Double alFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_AL);
 		double alSum = 0.0;
@@ -509,7 +681,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			for (IBilled v : encounter.getBilled()) {
 				if (v.getBillable() instanceof TardocLeistung) {
 					TardocLeistung tl = (TardocLeistung) v.getBillable();
-					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+					if (factorFilter.test(tl)) {
 						alSum += (tl.getAL(encounter.getMandator()) * v.getAmount());
 					}
 				}
@@ -523,7 +695,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			for (IBilled v : encounter.getBilled()) {
 				if (v.getBillable() instanceof TardocLeistung) {
 					TardocLeistung tl = (TardocLeistung) v.getBillable();
-					if (bezug.isEmpty() || bezug.get().equals(tl.getCode())) {
+					if (factorFilter.test(tl)) {
 						tlSum += (tl.getIPL() * v.getAmount());
 					}
 				}
@@ -532,6 +704,42 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL, Double.toString(tlSum));
 			billed.setPrimaryScale((int) (tlFactor * 100));
 		}
+	}
+
+	private Predicate<TardocLeistung> getFactorFilter(IBilled billed, IEncounter encounter) {
+		return new Predicate<TardocLeistung>() {
+			
+			private Optional<String> bezugFilter = initBezug(billed, encounter);
+
+			private Optional<String> notInChapterFilter = initNotInChapterFilter(billed);
+			
+			@Override
+			public boolean test(TardocLeistung tl) {
+				boolean ret = bezugFilter.isEmpty() || bezugFilter.get().equals(tl.getCode());
+				if (ret && notInChapterFilter.isPresent()) {
+					ret = !notInChapterFilter.get().equals(tl.getParent().getCode());
+				}
+				return ret;
+			}
+
+			private Optional<String> initNotInChapterFilter(IBilled billed) {
+				if (billed.getBillable() instanceof TardocLeistung
+						&& ((TardocLeistung) billed.getBillable()).getParent().getCode().equals("AA.30")) {
+					return Optional.of("AA.30");
+				}
+				return Optional.empty();
+			}
+
+			private Optional<String> initBezug(IBilled billed, IEncounter encounter) {
+				Optional<String> ret = Optional.empty();
+				// lookup available masters
+				List<IBilled> masters = getPossibleMasters(billed, encounter.getBilled());
+				if (!masters.isEmpty()) {
+					ret = Optional.of(masters.get(0).getCode());
+				}
+				return ret;
+			}
+		};
 	}
 
 	private boolean isFactorBased(TardocLeistung code) {

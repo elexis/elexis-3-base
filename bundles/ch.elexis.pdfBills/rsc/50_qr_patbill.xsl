@@ -112,12 +112,7 @@
 										<xsl:when test="string-length($couvertLeft) > 1">
 											<fo:table-row>
 												<fo:table-cell>
-													<fo:block margin-top="1cm" font-size="10px">
-														<fo:block font-size="7px" margin-bottom="3mm">
-															<xsl:call-template
-																name="patbill_header_line">
-															</xsl:call-template>
-														</fo:block>
+													<fo:block margin-top="15mm" font-size="10px">
 														<xsl:call-template
 															name="patbill_garant_address">
 														</xsl:call-template>
@@ -136,7 +131,7 @@
 											</fo:table-row>
 											<fo:table-row>
 												<fo:table-cell display-align="after">
-													<fo:block margin-top="15mm">
+													<fo:block margin-top="25mm">
 														<fo:block font-size="7px">
 															PatientIn
 														</fo:block>
@@ -170,12 +165,7 @@
 													</fo:block>
 												</fo:table-cell>
 												<fo:table-cell>
-													<fo:block margin-top="1cm" font-size="10px">
-														<fo:block font-size="7px" margin-bottom="3mm">
-															<xsl:call-template
-																name="patbill_header_line">
-															</xsl:call-template>
-														</fo:block>
+													<fo:block margin-top="15mm" font-size="10px">
 														<xsl:call-template
 															name="patbill_garant_address">
 														</xsl:call-template>
@@ -194,7 +184,7 @@
 													</fo:block>
 												</fo:table-cell>
 												<fo:table-cell display-align="after">
-													<fo:block margin-top="15mm">
+													<fo:block margin-top="25mm">
 														<fo:block font-size="7px">
 															PatientIn
 														</fo:block>
@@ -273,7 +263,7 @@
 				</fo:flow>
 			</fo:page-sequence>
 			<xsl:if
-				test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+				test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0 or /invoice:request/invoice:payload/@request_subtype = 'copy'">
 				<fo:page-sequence master-reference="Overview">
 					<fo:static-content flow-name="xsl-region-before">
 						<xsl:call-template name="billheader2D">

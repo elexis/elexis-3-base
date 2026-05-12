@@ -14,6 +14,14 @@
                   checkEnabled="true">
             </visibleWhen>
          </command>
+         <command
+               commandId="at.medevit.ch.artikelstamm.ui.detail"
+               label="Artikel-Detail"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -26,6 +34,11 @@
                class="at.medevit.ch.artikelstamm.ui.OriginalNoSubstituteState"
                id="at.medevit.ch.artikelstamm.ui.originalNoSubstitute.state">
          </state>
+      </command>
+      <command
+            defaultHandler="at.medevit.ch.artikelstamm.ui.ArticleDetailHandler"
+            id="at.medevit.ch.artikelstamm.ui.detail"
+            name="Article Detail">
       </command>
    </extension>
 

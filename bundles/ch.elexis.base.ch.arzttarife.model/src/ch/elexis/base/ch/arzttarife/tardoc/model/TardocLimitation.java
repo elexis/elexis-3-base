@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
@@ -219,6 +220,8 @@ public class TardocLimitation {
 		} else if (limitationUnit == LimitationUnit.PATIENT_SESSION) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
 					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perPatient);
+		} else if (limitationUnit == LimitationUnit.MAINSERVICE) {
+			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount + "Mal pro Hauptleistung");
 		} else {
 			sb.append("amount " + amount + "x unit " + limitationAmount + "x" + limitationUnit);
 		}
@@ -229,7 +232,8 @@ public class TardocLimitation {
 		return limitationUnit == LimitationUnit.SIDE || limitationUnit == LimitationUnit.SESSION
 				|| limitationUnit == LimitationUnit.DAY || limitationUnit == LimitationUnit.WEEK
 				|| limitationUnit == LimitationUnit.MONTH || limitationUnit == LimitationUnit.YEAR
-				|| limitationUnit == LimitationUnit.COVERAGE || limitationUnit == LimitationUnit.PATIENT_SESSION;
+				|| limitationUnit == LimitationUnit.COVERAGE || limitationUnit == LimitationUnit.PATIENT_SESSION
+				|| limitationUnit == LimitationUnit.MAINSERVICE;
 	}
 
 	public Result<IBilled> test(IEncounter kons, IBilled newVerrechnet) {
@@ -245,8 +249,21 @@ public class TardocLimitation {
 			return testCoverage(kons, newVerrechnet);
 		} else if (limitationUnit == LimitationUnit.PATIENT_SESSION) {
 			return testPatientSession(kons, newVerrechnet);
+		} else if (limitationUnit == LimitationUnit.MAINSERVICE) {
+			return testMainService(kons, newVerrechnet);
 		}
 		return new Result<IBilled>(null);
+	}
+
+	private Result<IBilled> testMainService(IEncounter kons, IBilled newVerrechnet) {
+		Result<IBilled> ret = new Result<IBilled>(null);
+		String bezug = (String) newVerrechnet.getExtInfo("Bezug");
+		if (StringUtils.isNotBlank(bezug)) {
+			if (newVerrechnet.getAmount() > amount) {
+				ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null, false);
+			}
+		}
+		return ret;
 	}
 
 	private Result<IBilled> testPatientSession(IEncounter kons, IBilled newVerrechnet) {
@@ -389,6 +406,17 @@ public class TardocLimitation {
 
 		if (rechnungssteller != null) {
 			List<IBilled> all = findVerrechnetByPatientCodeDuringPeriod(kons.getCoverage().getPatient(), code);
+			// filter same law
+			BillingLaw filterLaw = kons.getCoverage().getBillingSystem().getLaw();
+			if (filterLaw != null) {
+				all = all.parallelStream().filter(billed -> {
+					IEncounter encounter = billed.getEncounter();
+					if (encounter.getCoverage() != null && encounter.getCoverage().getBillingSystem() != null) {
+						return filterLaw.equals(encounter.getCoverage().getBillingSystem().getLaw());
+					}
+					return false;
+				}).collect(Collectors.toList());
+			}
 			// filter for matching rechnungssteller
 			all = all.parallelStream().filter(billed -> {
 				IEncounter encounter = billed.getEncounter();
@@ -632,13 +660,24 @@ public class TardocLimitation {
 		return ret;
 	}
 
-	private Result<IBilled> testDay(IEncounter kons, IBilled verrechnet) {
+	private Result<IBilled> testDay(IEncounter kons, IBilled newVerrechnet) {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		if (shouldSkipTest()) {
 			return ret;
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
-			if (getVerrechnetAmount(verrechnet) > amount) {
+			IPatient patient = kons.getPatient();
+			List<IEncounter> sameDayEncounters = patient.getCoverages().stream()
+					.flatMap(c -> c.getEncounters().stream())
+					.filter(e -> e.getDate().equals(kons.getDate()))
+					.collect(Collectors.toList());
+
+			List<IBilled> alreadyBilled = sameDayEncounters.stream()
+					.flatMap(e -> filterWithSameCode(newVerrechnet, e.getBilled()).stream())
+					.collect(Collectors.toList());
+			double alreadyBilledAmount = alreadyBilled.stream().mapToDouble(b -> b.getAmount()).sum();
+
+			if (getVerrechnetAmount(newVerrechnet) + alreadyBilledAmount > amount) {
 				ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null, false);
 			}
 		}
@@ -688,6 +727,9 @@ public class TardocLimitation {
 
 	private int getVerrechnetAmount(IBilled verrechnet) {
 		List<IBilled> sameVerrechnet = getSameVerrechnetOfKons(verrechnet);
+		// replace value from database with current
+		sameVerrechnet.remove(verrechnet);
+		sameVerrechnet.add(verrechnet);
 		return getVerrechnetCount(sameVerrechnet);
 	}
 

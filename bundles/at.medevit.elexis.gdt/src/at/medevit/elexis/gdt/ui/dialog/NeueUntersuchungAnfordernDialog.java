@@ -86,6 +86,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 	private DateTime dateTimeBirthday;
 	private ContentProposalAdapter guvkAdapter;
 
+	private String default8402value;
 	private String[] supported8402values;
 	private String[] supported8402valuesDescription;
 
@@ -138,6 +139,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 					gdt6302.setValue(GDTConstants.FELDKENNUNG_VERWENDETER_ZEICHENSATZ,
 							cp.getOutgoingDefaultCharset() + StringUtils.EMPTY);
 
+				default8402value = cp.getDefault8402value();
 				supported8402values = cp.getSupported8402values();
 				supported8402valuesDescription = cp.getSupported8402valuesDescription();
 				if (supported8402values != null && supported8402valuesDescription != null) {
@@ -345,6 +347,10 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 			}
 		}
 
+		if (StringUtils.isNotBlank(default8402value)) {
+			txtGuVK.setText(default8402value);
+		}
+
 		return area;
 	}
 
@@ -421,11 +427,8 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		if (supported8402values == null || (txtGuVK.getText().length() > 2)) {
-			super.okPressed();
-			return;
-		}
-		setErrorMessage("Bitte Testart im Geräte- und Verfahrensspezifischen Kennfeld angeben!");
+		super.okPressed();
+		return;
 	}
 
 	public void setTargetIdSelection(String targetIdSelection) {

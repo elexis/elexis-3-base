@@ -58,13 +58,13 @@ import ch.elexis.core.model.InvoiceConstants;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.InvoiceState.REJECTCODE;
 import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.rcp.utils.PlatformHelper;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
-import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
@@ -517,7 +517,7 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 	}
 
 	@Override
-	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState, TYPE type) {
 		try {
 			File esrFile = VirtualFilesystemServiceHolder.get()
 					.of(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator

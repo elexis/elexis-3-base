@@ -25,6 +25,7 @@ Import-Package: at.medevit.elexis.hin.auth.core,
  org.osgi.framework;version="1.10.0",
  org.osgi.service.component.annotations;version="[1.3.0,2.0.0]",
  org.slf4j;version="[1.7.0,2.0.0]"
-Require-Bundle: at.medevit.elexis.emediplan.core;bundle-version="3.12.0"
+Require-Bundle: at.medevit.elexis.emediplan.core;bundle-version="3.12.0",
+ ch.elexis.core.rcp;bundle-version="3.13.0"
 Service-Component: OSGI-INF/at.medevit.elexis.hin.sign.core.internal.HINSignService.xml
 Export-Package: at.medevit.elexis.hin.sign.core

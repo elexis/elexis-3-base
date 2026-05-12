@@ -118,7 +118,14 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		dateTimeBegin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				updateSpinner();
+				int currentDuration = durationSpinner.getSelection();
+				Calendar cal = Calendar.getInstance();
+				cal.clear();
+				cal.set(Calendar.HOUR_OF_DAY, dateTimeBegin.getHours());
+				cal.set(Calendar.MINUTE, dateTimeBegin.getMinutes());
+				cal.add(Calendar.MINUTE, currentDuration);
+				dateTimeEnd.setHours(cal.get(Calendar.HOUR_OF_DAY));
+				dateTimeEnd.setMinutes(cal.get(Calendar.MINUTE));
 			}
 		});
 
@@ -497,8 +504,22 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		int endTime = (dateTimeEnd.getHours() * 60) + dateTimeEnd.getMinutes();
 		int startTime = (dateTimeBegin.getHours() * 60) + dateTimeBegin.getMinutes();
 		int result = endTime - startTime;
-		if (result < 0)
-			result = 0;
+
+		if (result < 0) {
+			result = durationSpinner.getSelection();
+			if (result <= 0) {
+				result = 0;
+			}
+			Calendar cal = Calendar.getInstance();
+			cal.clear();
+			cal.set(Calendar.HOUR_OF_DAY, dateTimeBegin.getHours());
+			cal.set(Calendar.MINUTE, dateTimeBegin.getMinutes());
+			cal.add(Calendar.MINUTE, result);
+
+			dateTimeEnd.setHours(cal.get(Calendar.HOUR_OF_DAY));
+			dateTimeEnd.setMinutes(cal.get(Calendar.MINUTE));
+		}
+
 		durationSpinner.setSelection(result);
 	}
 

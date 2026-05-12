@@ -17,10 +17,7 @@ package ch.framsteg.elexis.covercard.config;
 import java.io.IOException;
 import java.util.Properties;
 
-import jakarta.inject.Inject;
-
 import org.eclipse.jface.preference.PreferencePage;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,9 +31,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.data.Xid;
+import jakarta.inject.Inject;
 
 public class CovercardPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

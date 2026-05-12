@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Aerztekasse Ui
+Bundle-SymbolicName: at.medevit.elexis.aerztekasse.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: ch.elexis.core.ui;bundle-version="3.12.0",
+ ch.elexis.base.ch.arzttarife;bundle-version="3.12.0",
+ at.medevit.elexis.aerztekasse.core;bundle-version="[1.0.0,2.0.0)"
+Bundle-Vendor: medevit.at
+Automatic-Module-Name: at.medevit.elexis.aerztekasse.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: at.medevit.elexis.tarmed.model,
+ ch.elexis.core.data.interfaces,
+ ch.elexis.core.data.util,
+ ch.elexis.data,
+ ch.fd.invoice450.request,
+ ch.fd.invoice500.request,
+ org.eclipse.wb.swt,
+ org.jdom2,
+ org.jdom2.input

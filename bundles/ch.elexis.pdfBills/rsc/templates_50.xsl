@@ -85,11 +85,11 @@
 			</fo:table-body>
 		</fo:table>
 	</xsl:template>
-	
+
 	<xsl:template name="FormatGender">
+		<xsl:param name="Gender" />
 		<xsl:choose>
-			<xsl:when
-				test="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:patient/@gender = 'male'">
+			<xsl:when test="$Gender = 'male'">
 				<xsl:value-of select="'Mann / M'" />
 			</xsl:when>
 			<xsl:otherwise>

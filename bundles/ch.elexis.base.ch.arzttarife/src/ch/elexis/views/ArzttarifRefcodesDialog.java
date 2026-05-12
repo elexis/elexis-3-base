@@ -127,6 +127,8 @@ public class ArzttarifRefcodesDialog extends Dialog {
 				MessageDialog.openWarning(getShell(), "Warnung",
 						"Summe der Bezüge ist grösser als die ursprüngliche Menge.");
 			}
+		} else {
+			super.okPressed();
 		}
 	}
 

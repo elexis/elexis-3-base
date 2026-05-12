@@ -37,11 +37,11 @@ public class PreferenceConstants {
 	public static final String AG_SHOW_REASON = "agenda/show_reason"; //$NON-NLS-1$
 	public static final String AG_BEREICH = "agenda/bereich"; //$NON-NLS-1$
 	public static final String AG_BEREICH_FARBEN = "agenda/bereich/farben"; //$NON-NLS-1$
-	public static final String AG_BIG_SAVE_COLUMNWIDTH = "agenda/big/savecolumnwidth";
-	public static final String AG_BIG_COLUMNWIDTH = "agenda/big/columnwidth";
+	public static final String AG_BIG_SAVE_COLUMNWIDTH = "agenda/big/savecolumnwidth"; // $NON-NLS-1$
+	public static final String AG_BIG_COLUMNWIDTH = "agenda/big/columnwidth"; // $NON-NLS-1$
 
-	public static final String AG_DAY_PRESENTATION_STARTS_AT = "agenda/beginnStundeTagesdarstellung";
-	public static final String AG_DAY_PRESENTATION_ENDS_AT = "agenda/endStundeTagesdarstellung";
+	public static final String AG_DAY_PRESENTATION_STARTS_AT = "agenda/beginnStundeTagesdarstellung"; // $NON-NLS-1$
+	public static final String AG_DAY_PRESENTATION_ENDS_AT = "agenda/endStundeTagesdarstellung"; // $NON-NLS-1$
 
 	public static final String AG_PIXEL_PER_MINUTE = "agenda/proportional/pixelperminute"; //$NON-NLS-1$
 	public static final String AG_RESOURCESTOSHOW = "agenda/proportional/bereichezeigen"; //$NON-NLS-1$
@@ -62,10 +62,12 @@ public class PreferenceConstants {
 	public static final String AG_PRINT_APPOINTMENTCARD_DIRECTPRINT = "agenda/print/appointmentcard_directprint"; //$NON-NLS-1$
 	public static final boolean AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT = false;
 
-	public static final String AG_AVOID_PATIENT_DOUBLE_BOOKING = "agenda/patient/doppelteTerminvergabeVermeiden";
+	public static final String AG_AVOID_PATIENT_DOUBLE_BOOKING = "agenda/patient/doppelteTerminvergabeVermeiden"; // $NON-NLS-1$
 	public static final boolean AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT = false;
-	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT = "agenda/appointment";
-	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE = "agenda/appointmenttemplate";
+	public static final String AG_USE_COLORIZED_PATIENT_DROPDOWN = "agenda/useColorizedPatientDropdown"; // $NON-NLS-1$
+	public static final boolean AG_USE_COLORIZED_PATIENT_DROPDOWN_DEFAULT = false;
+	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT = "agenda/appointment"; // $NON-NLS-1$
+	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE = "agenda/appointmenttemplate"; // $NON-NLS-1$
 	public static final String PREF_DEFAULT_MAIL_ACCOUNT = "account";
 	public static final String AG_USE_MANDATOR_COLORS = "USE_MANDATOR_COLORS"; // $NON-NLS-1$
 

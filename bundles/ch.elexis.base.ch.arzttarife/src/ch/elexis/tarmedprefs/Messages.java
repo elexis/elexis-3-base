@@ -79,7 +79,9 @@ public class Messages {
 	public static String TarmedRequirements_SSNName = ch.elexis.core.l10n.Messages.TarmedRequirements_SSNName;
 	public static String Preferences_pleaseEnterMultiplier = ch.elexis.core.l10n.Messages.Preferences_pleaseEnterMultiplier;
 	public static String TardocSpecialistComposite_selectDignitiesTitle = ch.elexis.core.l10n.Messages.TardocSpecialistComposite_selectDignitiesTitle;
+	public static String SectionCodeComposite_selectSectionCodeTitle = ch.elexis.core.l10n.Messages.SectionCodeComposite_selectSectionCodeTitle;
 	public static String RechnungsPrefs_TardocSpecialistLink = ch.elexis.core.l10n.Messages.RechnungsPrefs_TardocSpecialistLink;
+	public static String RechnungsPrefs_SectionCodeLink = ch.elexis.core.l10n.Messages.RechnungsPrefs_SectionCodeLink;
 	public static String RechnungsPrefs_BillsElectronically = ch.elexis.core.l10n.Messages.RechnungsPrefs_BillsElectronically;
 	public static String RechnungsPrefs_AddChildren = ch.elexis.core.l10n.Messages.RechnungsPrefs_AddChildren;
 	public static String RechnungsPrefs_FixProviderGroupTitle = ch.elexis.core.l10n.Messages.RechnungsPrefs_FixProviderGroupTitle;

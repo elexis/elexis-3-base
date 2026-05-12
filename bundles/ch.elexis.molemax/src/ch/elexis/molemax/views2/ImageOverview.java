@@ -1,5 +1,7 @@
-
 package ch.elexis.molemax.views2;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -18,7 +20,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -26,9 +27,6 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IRefreshable;
-import ch.elexis.data.Anwender;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
 import jakarta.inject.Inject;
@@ -52,7 +50,7 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	}
 
 	private Composite stackComposite;
-	Patient pat;
+	IPatient pat;
 	String date;
 	Composite outer;
 	String pat2;
@@ -65,19 +63,22 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 	protected Composite dispAll;
+
 	@Optional
 	@Inject
 	void activePatient(IPatient patient) {
 		CoreUiUtil.runAsyncIfActive(() -> {
-			Patient newPatient = (Patient) NoPoUtil.loadAsPersistentObject(patient);
-			if (newPatient != null) {
-				if (!newPatient.equals(getSelectedPatient())) {
+			if (patient != null) {
+				if (!patient.equals(getSelectedPatient())) {
 					switchToGalleryView(form.getBody());
 				}
-				setPatient(newPatient, null);
+				setPatient(patient, null);
+			} else {
+				setPatient(null, null);
 			}
 		}, form);
 	}
+
 	public void createPartControl(final Composite parent) {
 		form = tk.createForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -106,24 +107,30 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 			}
 		});
 	}
+
 	void setTopControl(final Control imageViewAll) {
 		stack.topControl = imageViewAll;
 	}
 
 	private void updateGalleryForPatient() {
-		Patient aktuellerPatient = getSelectedPatient();
-		imageViewAll.updateGalleryForPatient(aktuellerPatient);
+		IPatient aktuellerPatient = getSelectedPatient();
+		if (aktuellerPatient != null) {
+			imageViewAll.updateGalleryForPatient(aktuellerPatient);
+		} else {
+			imageViewAll.updateGalleryForPatient(null);
+		}
 	}
 
-	public void setPatient(final Patient p, String dat) {
+	public void setPatient(final IPatient p, String dat) {
 		if (p == null) {
 			form.setText(Messages.Overview_noPatient);
+			pat = null;
 			return;
 		}
 		if (dat == null) {
 			dat = Tracker.getLastSequenceDate(p);
 		}
-		if (p.equals(pat) && dat.equals(date)) {
+		if (p.equals(pat) && (dat != null && dat.equals(date))) {
 			return;
 		}
 		for (int i = 0; i < 12; i++) {
@@ -136,37 +143,26 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 			Tracker base = Tracker.loadBase(p, date, i);
 			trackers[i] = Tracker.getImageStack(base);
 		}
-		form.setText(p.getLabel());
+
+		form.setText(p.getLabel() + " (" + p.getPatientNr() + ")");
 		updateGalleryForPatient();
 	}
+
 	public void setFocus() {
 		// TODO Auto-generated method stub
 	}
+
 	public void refresh() {
 		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
-	
-	public void clearEvent(final Class<? extends PersistentObject> template) {
-		if (template.equals(Patient.class)) {
-			setPatient(null, null);
-		}
-	}
-	
+
 	public void switchToGalleryView(final Composite parent) {
 		stack.topControl = galleryComposite;
 		imageViewAll.getGallery().redraw();
 		stackComposite.layout();
 		stackComposite.redraw();
 	}
-	
-	public void selectionEvent(final PersistentObject obj) {
-		if (obj instanceof Anwender) {
-		}
-		if (obj instanceof Patient) {
-			setPatient((Patient) obj, null);
-		}
-	}
-	
+
 	public void showFullImage(Image image, String folderPath, String absoluteImagePath, String thumbnailImagePath) {
 		if (imageDetailWithGalleryView != null) {
 			imageDetailWithGalleryView = null;
@@ -179,7 +175,7 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 		stackComposite.layout();
 	}
 
-	public Patient getSelectedPatient() {
+	public IPatient getSelectedPatient() {
 		return pat;
 	}
 
@@ -188,10 +184,20 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	}
 
 	public void reloadGallery() {
-		Patient aktuellerPatient = getSelectedPatient();
-		imageViewAll.updateGalleryForPatient(aktuellerPatient);
+		updateGalleryForPatient();
 		stackComposite.layout();
 		stackComposite.redraw();
 	}
 
+	public String formatDateForDisplay(String dirName) {
+		if (dirName != null && dirName.length() == 8 && dirName.matches("\\d{8}")) {
+			try {
+				LocalDate date = LocalDate.parse(dirName, DateTimeFormatter.ofPattern("yyyyMMdd"));
+				return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+			} catch (Exception e) {
+				return dirName;
+			}
+		}
+		return dirName;
+	}
 }

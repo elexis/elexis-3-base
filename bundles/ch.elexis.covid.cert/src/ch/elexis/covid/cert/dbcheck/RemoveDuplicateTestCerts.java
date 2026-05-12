@@ -12,12 +12,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificateInfo.Type;
 

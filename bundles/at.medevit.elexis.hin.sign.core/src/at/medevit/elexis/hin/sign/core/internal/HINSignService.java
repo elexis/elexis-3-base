@@ -171,7 +171,7 @@ public class HINSignService implements IHinSignService {
 	protected Optional<String> getADSwissAuthToken() {
 		if (hinAuthService != null) {
 			return hinAuthService.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP,
-					mode == Mode.TEST ? "ADSwiss_CI-Test" : "ADSwiss_CI"));
+					mode == Mode.TEST ? "hin_authservice_int" : "hin_authservice"));
 		} else {
 			logger.error("No HIN auth service");
 		}
@@ -277,7 +277,7 @@ public class HINSignService implements IHinSignService {
 			logger.warn("Failed to get EPD auth handle", e);
 			if (hinAuthService != null) {
 				Optional<String> message = hinAuthService.handleException(e, Collections.singletonMap(
-						IHinAuthService.TOKEN_GROUP, mode == Mode.TEST ? "ADSwiss_CI-Test" : "ADSwiss_CI"));
+						IHinAuthService.TOKEN_GROUP, mode == Mode.TEST ? "hin_authservice_int" : "hin_authservice"));
 				if (message.isPresent()) {
 					logger.warn("HIN Auth message", message.get());
 				}
@@ -288,7 +288,7 @@ public class HINSignService implements IHinSignService {
 
 	private URL getEPDAuthServiceAuthCodeUrl() throws MalformedURLException {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getADSwissAuthServiceBaseUrl() + "EPDAuth");
+		sb.append(getADSwissAuthServiceBaseUrl());
 		sb.append("?targetUrl=");
 		sb.append(URLEncoder.encode(getRedirectUri() + "/" + getCurrentState(true), StandardCharsets.UTF_8));
 		sb.append("&style=redirect");
@@ -297,13 +297,14 @@ public class HINSignService implements IHinSignService {
 
 	private URL getEPDAuthServiceAuthHandleUrl() throws MalformedURLException {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getADSwissAuthServiceBaseUrl() + "EPDAuth/auth_handle");
+		sb.append(getADSwissAuthServiceBaseUrl() + "/auth_handle");
 		return new URL(sb.toString());
 	}
 
+
 	private String getADSwissAuthServiceBaseUrl() {
-		return mode == Mode.TEST ? "https://oauth2.ci-prep.adswiss.hin.ch/authService/"
-				: "https://oauth2.ci.adswiss.hin.ch/authService/";
+		return mode == Mode.TEST ? "https://oauth2.authservice-int.hin.ch/v1/oauth"
+				: "https://oauth2.authservice.hin.ch/v1/oauth";
 	}
 
 	private Optional<String> getEpdAuthCode(String epdAuthUrl, IHinAuthUi iHinAuthUi) {

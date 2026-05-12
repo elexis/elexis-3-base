@@ -21,7 +21,7 @@ public class TrustCenters {
 	public static final int HAWATRUST = 53;
 	public static final int MEDKEY = 54;
 	public static final int PONTENOVA = 55;
-	public static final int SYNDATA = 55;
+	public static final int SYNDATA = 56;
 	public static final int TC_AARGAU = 57;
 	public static final int THURCARE = 58;
 	public static final int TC_TICINO = 59;

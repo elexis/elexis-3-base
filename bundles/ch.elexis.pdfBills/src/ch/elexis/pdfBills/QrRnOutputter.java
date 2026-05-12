@@ -57,13 +57,13 @@ import ch.elexis.core.model.InvoiceConstants;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.InvoiceState.REJECTCODE;
 import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.rcp.utils.PlatformHelper;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
-import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
@@ -187,28 +187,25 @@ public class QrRnOutputter implements IRnOutputter {
 							if (pdfOnly || noPrint) {
 								epdf.setPrint(false);
 							}
+							InvoiceState newInvoiceState = getNewInvoiceState(invoice);
 							// consider fallback to non QR bill, always fall back for tarmed xml version
 							// lower 4.5
 							EsrType outputEsrType = ex.getEsrTypeOrFallback(invoice);
 							if ("5.0".equals(epdf.getBillVersion())) {
-								epdf.printQrBill(rsc);
+								epdf.printQrBill(type, newInvoiceState, rsc);
 							} else if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
-								epdf.printQrBill(rsc);
+								epdf.printQrBill(type, newInvoiceState, rsc);
 							} else {
 								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version [" //$NON-NLS-1$
 										+ epdf.getBillVersion() + "] and esrType [" + outputEsrType + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 								epdf.printBill(rsc);
 							}
 							if (modifyInvoiceState) {
-								int status_vorher = invoice.getState().numericValue();
-								if ((status_vorher == InvoiceState.OPEN.numericValue())
-										|| (status_vorher == InvoiceState.DEMAND_NOTE_1.numericValue())
-										|| (status_vorher == InvoiceState.DEMAND_NOTE_2.numericValue())
-										|| (status_vorher == InvoiceState.DEMAND_NOTE_3.numericValue())) {
-									invoice.setState(InvoiceState.fromState(status_vorher + 1));
-								}
+								invoice.setState(newInvoiceState);
 								invoice.addTrace(InvoiceConstants.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-										+ invoice.getState().getLocaleText());
+										+ invoice.getState().getLocaleText()
+										+ (type == TYPE.COPY ? " (" + Messages.InvoiceOutputter_Copy + ")"
+												: StringUtils.EMPTY));
 								CoreModelServiceHolder.get().save(invoice);
 							}
 							List<File> printed = epdf.getPrintedBill();
@@ -306,6 +303,18 @@ public class QrRnOutputter implements IRnOutputter {
 			});
 		}
 		return res;
+	}
+
+	private InvoiceState getNewInvoiceState(IInvoice invoice) {
+		InvoiceState currentState = invoice.getState();
+		int currentStateInt = currentState.numericValue();
+		if ((currentStateInt == InvoiceState.OPEN.numericValue())
+				|| (currentStateInt == InvoiceState.DEMAND_NOTE_1.numericValue())
+				|| (currentStateInt == InvoiceState.DEMAND_NOTE_2.numericValue())
+				|| (currentStateInt == InvoiceState.DEMAND_NOTE_3.numericValue())) {
+			return InvoiceState.fromState(currentStateInt + 1);
+		}
+		return currentState;
 	}
 
 	private void initSelectedFromProperties(Properties props) {
@@ -523,14 +532,20 @@ public class QrRnOutputter implements IRnOutputter {
 	}
 
 	@Override
-	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState, TYPE type) {
 		try {
-			File esrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
-					+ File.separator + invoice.getNumber() + "_esr.pdf").toFile().orElse(null);
-			File rfFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
-					+ File.separator + invoice.getNumber() + "_rf.pdf").toFile().orElse(null);
-			File qrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
-					+ File.separator + invoice.getNumber() + "_qr.pdf").toFile().orElse(null);
+			File esrFile = VirtualFilesystemServiceHolder.get()
+					.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+							+ PdfFileUtil.getFileName(invoice.getNumber(), "_esr", type, invoiceState))
+					.toFile().orElse(null);
+			File rfFile = VirtualFilesystemServiceHolder.get()
+					.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+							+ PdfFileUtil.getFileName(invoice.getNumber(), "_rf", type, invoiceState))
+					.toFile().orElse(null);
+			File qrFile = VirtualFilesystemServiceHolder.get()
+					.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+							+ PdfFileUtil.getFileName(invoice.getNumber(), "_qr", type, invoiceState))
+					.toFile().orElse(null);
 			if (esrFile.exists()) {
 				Program.launch(esrFile.getAbsolutePath());
 			} else {

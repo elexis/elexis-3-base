@@ -3,18 +3,19 @@ package ch.elexis.global_inbox.core.util;
 import java.io.InputStream;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.MimeType;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class ImportOmnivoreInboxUtil {
 
@@ -29,8 +30,10 @@ public class ImportOmnivoreInboxUtil {
 	 * @param fileName
 	 * @return the document id if import was successful, else <code>null</code>
 	 */
-	public @Nullable String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName) {
-		INamedQuery<IPatient> namedQuery = CoreModelServiceHolder.get().getNamedQuery(IPatient.class, "code");
+	public static @Nullable String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo,
+			String fileName) {
+		INamedQuery<IPatient> namedQuery = PortableServiceLoader.getCoreModelService().getNamedQuery(IPatient.class,
+				"code");
 		Optional<IPatient> loaded = namedQuery
 				.executeWithParametersSingleResult(namedQuery.getParameterMap("code", patientNo));
 		if (loaded.isPresent()) {
@@ -38,7 +41,7 @@ public class ImportOmnivoreInboxUtil {
 			IDocumentStore iDocumentStore = OmnivoreDocumentStoreServiceHolder.get();
 
 			IPatient pat = loaded.get();
-			String cat = ImportOmnivoreInboxUtil.getCategory(file);
+			String cat = getCategory(file);
 			if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
 				cat = null;
 			}
@@ -72,19 +75,19 @@ public class ImportOmnivoreInboxUtil {
 		return null;
 	}
 
-	private String getFileExtension(IVirtualFilesystemHandle file) {
+	private static String getFileExtension(IVirtualFilesystemHandle file) {
 		String name = file.getName();
 		int lastIndexOf = name.lastIndexOf(".");
 		if (lastIndexOf == -1 || lastIndexOf == 0) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		return name.substring(lastIndexOf + 1);
 	}
 
 	public static String getDirectory(String defaultValue, String deviceName) {
 		try {
-			String deviceDir = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + deviceName,
-					defaultValue);
+			String deviceDir = PortableServiceLoader.get(IConfigService.class)
+					.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + deviceName, defaultValue);
 			if (deviceDir == null) {
 				logger.warn("Directory for device [{}] is null. Using default value [{}].", deviceName, defaultValue);
 			}
@@ -97,7 +100,8 @@ public class ImportOmnivoreInboxUtil {
 
 	public static String getCategory(IVirtualFilesystemHandle file) {
 		try {
-			String category = ConfigServiceHolder.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
+			String category = PortableServiceLoader.get(IConfigService.class)
+					.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
 			IVirtualFilesystemHandle parent = file.getParent();
 			if (parent == null) {
 				logger.warn("Parent directory for file [{}] is null.", file.getAbsolutePath());
@@ -113,6 +117,23 @@ public class ImportOmnivoreInboxUtil {
 		} catch (Exception ex) {
 			logger.error("Error while determining category for file [{}].", file.getAbsolutePath(), ex);
 			return "Error in category resolution";
+		}
+	}
+
+	public static String formatDocumentName(String originalFileName, String deviceName) {
+		boolean useSuffix = PortableServiceLoader.get(IConfigService.class)
+				.getGlobal(Constants.PREF_SUFFIX_MODE_PREFIX + deviceName, false);
+
+		int lastDotIndex = originalFileName.lastIndexOf('.');
+		String nameWithoutExt = lastDotIndex > 0 ? originalFileName.substring(0, lastDotIndex) : originalFileName;
+		String extension = lastDotIndex > 0 ? originalFileName.substring(lastDotIndex) : StringUtils.EMPTY;
+
+		if (useSuffix) {
+
+			return nameWithoutExt + "_" + deviceName + extension;
+		} else {
+
+			return originalFileName;
 		}
 	}
 }

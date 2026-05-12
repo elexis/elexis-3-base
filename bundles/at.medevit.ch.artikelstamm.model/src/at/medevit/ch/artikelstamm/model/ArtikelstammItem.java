@@ -61,19 +61,23 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 				@Override
 				protected void setPrice(ArtikelstammItem billable, IBilled billed) {
 					billed.setFactor(1.0);
-					billed.setNetPrice(billable.getPurchasePrice());
-					Money sellingPrice = billable.getSellingPrice();
-					if (sellingPrice.isZero()) {
-						sellingPrice = MargePreference.calculateVKP(getPurchasePrice());
-					}
-					int vkPreis = sellingPrice.getCents();
-					double pkgSize = Math.abs(billable.getPackageSize());
-					double vkUnits = billable.getSellingSize();
-					if ((pkgSize > 0.0) && (vkUnits > 0.0) && (pkgSize != vkUnits)) {
-						billed.setPoints((int) Math.round(vkUnits * (vkPreis / pkgSize)));
+					if (isAllowanceEncounter(billed.getEncounter()) && billable.isInSLList()) {
+						billed.setNetPrice(billable.getPurchasePrice());
+						billed.setPoints(0);
 					} else {
-						billed.setPoints((int) Math.round(vkPreis));
+						billed.setNetPrice(billable.getPurchasePrice());
+						Money sellingPrice = billable.getSellingPrice();
+						if (sellingPrice.isZero()) {
+							sellingPrice = MargePreference.calculateVKP(getPurchasePrice());
+						}
+						int vkPreis = sellingPrice.getCents();
+						billed.setPoints(Math.round(vkPreis));
 					}
+				}
+
+				private boolean isAllowanceEncounter(IEncounter encounter) {
+					return encounter.getBilled().stream().filter(b -> "005".equals(b.getBillable().getCodeSystemCode()))
+							.findAny().isPresent();
 				}
 
 				@Override

@@ -7,7 +7,8 @@ Bundle-SymbolicName: ch.elexis.molemax;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: elexis.ch
 Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
- ch.elexis.core.ui;bundle-version="3.13.0"
+ ch.elexis.core.ui;bundle-version="3.13.0",
+ ch.elexis.core.services;bundle-version="[3.13.0,4.0.0)"
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: org.apache.commons.io;version="2.15.0"

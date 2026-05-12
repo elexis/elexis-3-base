@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.model;
+package ch.elexis.omnivore.model.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,6 +36,9 @@ import ch.elexis.core.time.TimeUtil;
 import ch.elexis.core.types.DocumentStatus;
 import ch.elexis.core.types.DocumentStatusMapper;
 import ch.elexis.omnivore.Constants;
+import ch.elexis.omnivore.model.IDocumentHandle;
+import ch.elexis.omnivore.model.Messages;
+import ch.elexis.omnivore.model.TransientCategory;
 import ch.elexis.omnivore.model.internal.ModelUtil;
 import ch.elexis.omnivore.model.internal.Preferences;
 import ch.elexis.omnivore.model.service.OmnivoreModelServiceHolder;

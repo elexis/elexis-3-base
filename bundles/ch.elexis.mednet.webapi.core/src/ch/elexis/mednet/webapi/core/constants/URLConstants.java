@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class URLConstants {
 	private static final Logger logger = LoggerFactory.getLogger(URLConstants.class);
@@ -14,7 +14,7 @@ public class URLConstants {
 	public static String getBaseApiUrl() {
 		Optional<IConfigService> configService = OsgiServiceUtil.getServiceWait(IConfigService.class, 5000);
 		if (configService.isPresent()) {
-			String mode = configService.get().getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
+			String mode = configService.get().get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV");
 
 			if ("PRODUKTIV".equals(mode)) {
 				return "https://www.mednet.swiss";

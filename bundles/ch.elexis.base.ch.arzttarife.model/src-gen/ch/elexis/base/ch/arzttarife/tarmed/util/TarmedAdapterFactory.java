@@ -3,7 +3,6 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmed.util;
 
-import ch.elexis.base.ch.arzttarife.tarmed.*;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;

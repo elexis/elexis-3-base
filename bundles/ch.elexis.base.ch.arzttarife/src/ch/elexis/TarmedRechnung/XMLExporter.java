@@ -93,6 +93,7 @@ import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.rcp.utils.PlatformHelper;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -101,7 +102,6 @@ import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
 import ch.elexis.core.utils.CoreUtil;
-import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
@@ -258,18 +258,26 @@ public class XMLExporter implements IRnOutputter {
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask(Messages.RechnungsDrucker_PrintingBills, rnn.size());
-					exporter.setUpdateElectronicDelivery(true);
-					for (Rechnung rn : rnn) {
-						if (doExport(rn, outputDir + File.separator + rn.getNr() + ".xml", type, //$NON-NLS-1$
-								false) == null) {
-							ret.add(Result.SEVERITY.ERROR, 1, Messages.XMLExporter_ErrorInBill + rn.getNr(), rn, true);
+					try {
+						exporter.setUpdateElectronicDelivery(true);
+						exporter50.setUpdateElectronicDelivery(true);
+						exporter50.setAddTrustCenterInstructions(true);
+						for (Rechnung rn : rnn) {
+							if (doExport(rn, outputDir + File.separator + rn.getNr() + ".xml", type, //$NON-NLS-1$
+									false) == null) {
+								ret.add(Result.SEVERITY.ERROR, 1, Messages.XMLExporter_ErrorInBill + rn.getNr(), rn,
+										true);
+							}
+							monitor.worked(1);
+							if (monitor.isCanceled()) {
+								break;
+							}
 						}
-						monitor.worked(1);
-						if (monitor.isCanceled()) {
-							break;
-						}
+					} finally {
+						exporter.setUpdateElectronicDelivery(false);
+						exporter50.setUpdateElectronicDelivery(false);
+						exporter50.setAddTrustCenterInstructions(false);
 					}
-					exporter.setUpdateElectronicDelivery(false);
 					monitor.done();
 				}
 			});
@@ -389,10 +397,10 @@ public class XMLExporter implements IRnOutputter {
 		if (invoice.getDateFrom().isAfter(LocalDate.of(2025, 12, 31))) {
 			if (exporter50.doExport(invoice, xmlOutput, type)) {
 				Document xmlRn = getAsJdomDocument(xmlOutput).orElse(null);
-				ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
-						.unmarshalInvoiceRequest450(new ByteArrayInputStream(xmlOutput.toByteArray()));
+				ch.fd.invoice500.request.RequestType invoiceRequest = TarmedJaxbUtil
+						.unmarshalInvoiceRequest500(new ByteArrayInputStream(xmlOutput.toByteArray()));
 				if (doVerify) {
-					Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
+					Result<IInvoice> res = validator50.checkInvoice(invoice, invoiceRequest);
 					// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
 				}
 
@@ -1240,7 +1248,7 @@ public class XMLExporter implements IRnOutputter {
 	}
 
 	@Override
-	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState, TYPE type) {
 		String outputDir = LocalConfigService.get(PreferenceConstants.RNN_EXPORTDIR, CoreUtil.getDefaultDBPath());
 		XMLFileUtil.lookupFile(outputDir, invoice, timestamp, invoiceState).ifPresent(xmlFile -> {
 			if (xmlFile.exists()) {

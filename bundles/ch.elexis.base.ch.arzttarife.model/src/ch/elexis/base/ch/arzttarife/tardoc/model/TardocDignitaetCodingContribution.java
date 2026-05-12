@@ -18,7 +18,7 @@ import com.opencsv.exceptions.CsvException;
 
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.ICodingContribution;
-import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.findings.codes.TransientCoding;
 
 @Component
 public class TardocDignitaetCodingContribution implements ICodingContribution {

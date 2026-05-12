@@ -1,13 +1,13 @@
 package ch.elexis.mednet.webapi.core.fhir.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Reference;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 

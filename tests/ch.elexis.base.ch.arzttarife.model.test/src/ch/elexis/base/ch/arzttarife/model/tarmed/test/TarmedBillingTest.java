@@ -30,6 +30,7 @@ import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
@@ -37,7 +38,6 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.test.matchers.IBillingMatch;
 import ch.elexis.core.types.Gender;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 

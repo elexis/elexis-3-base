@@ -19,6 +19,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -38,6 +39,8 @@ public class TardocSelectorPanelProvider extends SelectorPanelProvider {
 //	private TardocLawFilter lawFilter = new TardocLawFilter();
 	private TardocValidDateFilter validDateFilter = new TardocValidDateFilter();
 
+	private TardocValidDignitaetFilter validDignitaetFilter = new TardocValidDignitaetFilter();
+
 	private IEncounter previousKons;
 	private ICoverage previousFall;
 	private boolean dirty;
@@ -46,6 +49,23 @@ public class TardocSelectorPanelProvider extends SelectorPanelProvider {
 		super(fields, true);
 		commonViewer = viewer;
 		CoreUiUtil.injectServicesWithContext(this);
+	}
+
+	@Inject
+	public void selectedMandator(@Optional IMandator mandator) {
+		if (mandator != null) {
+			validDignitaetFilter.setMandator(mandator);
+			dirty = true;
+			refreshViewer();
+		}
+	}
+
+	@Optional
+	@Inject
+	void udpateMandator(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IMandator mandator) {
+		if (mandator != null && validDignitaetFilter.isEqualMandator(mandator)) {
+			validDignitaetFilter.setMandator(mandator);
+		}
 	}
 
 	@Inject
@@ -82,6 +102,7 @@ public class TardocSelectorPanelProvider extends SelectorPanelProvider {
 //			viewer.addFilter(lawFilter);
 			selectedEncounter.ifPresent(encounter -> updateValidFilter(encounter));
 			viewer.addFilter(validDateFilter);
+			viewer.addFilter(validDignitaetFilter);
 		}
 		refreshViewer();
 	}
@@ -125,6 +146,13 @@ public class TardocSelectorPanelProvider extends SelectorPanelProvider {
 
 	public void toggleFilters() {
 		validDateFilter.setDoFilter(!validDateFilter.getDoFilter());
+//		lawFilter.setDoFilter(!lawFilter.getDoFilter());
+		dirty = true;
+		refreshViewer();
+	}
+
+	public void toggleDignitaetFilters() {
+		validDignitaetFilter.setDoFilter(!validDignitaetFilter.getDoFilter());
 //		lawFilter.setDoFilter(!lawFilter.getDoFilter());
 		dirty = true;
 		refreshViewer();

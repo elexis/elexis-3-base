@@ -23,9 +23,9 @@ import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.core.model.IBlob;
 import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.fd.invoice450.request.RequestType;
 
 public class XmlVersionUpdate44to45Test {

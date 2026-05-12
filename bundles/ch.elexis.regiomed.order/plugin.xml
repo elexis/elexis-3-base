@@ -19,5 +19,15 @@
             type="ch.elexis.data.Bestellung">
       </Transporter>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.regiomed.order.ui.RegiomedSearchView"
+            icon="platform:/plugin/ch.elexis.core.ui.icons/icons/16x16/system-search-3.png"
+            id="ch.elexis.regiomed.order.ui.RegiomedSearchView"
+            name="Regiomed Produktsuche"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>

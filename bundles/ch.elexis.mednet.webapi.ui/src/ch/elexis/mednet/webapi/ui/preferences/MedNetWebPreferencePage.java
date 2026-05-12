@@ -79,7 +79,7 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 			String userName = configService.getActiveUserContact(PreferenceConstants.MEDNET_USER_STRING,
 					StringUtils.EMPTY);
 			getPreferenceStore().setValue(PreferenceConstants.MEDNET_USER_STRING, userName);
-			String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, DEMO);
+			String mode = configService.get(PreferenceConstants.MEDNET_MODE, PRODUKTIV);
 			getPreferenceStore().setValue(PreferenceConstants.MEDNET_MODE, mode);
 
 			String confirm = configService.getActiveUserContact(PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND, "true"); //$NON-NLS-1$
@@ -93,7 +93,7 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 		String previousMode = getPreferenceStore().getString(PreferenceConstants.MEDNET_MODE);
 		String selectedMode = demoRadioButton.getSelection() ? DEMO : PRODUKTIV;
 		getPreferenceStore().setValue(PreferenceConstants.MEDNET_MODE, selectedMode);
-		configService.setActiveUserContact(PreferenceConstants.MEDNET_MODE, selectedMode);
+		configService.set(PreferenceConstants.MEDNET_MODE, selectedMode);
 		if (!previousMode.equals(selectedMode)) {
 			configService.setActiveMandator(PreferenceConstants.PREF_TOKEN + "mednet", null);
 			configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + "mednet", null);

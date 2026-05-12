@@ -25,9 +25,9 @@ import ch.elexis.omnivore.data.Messages;
 import ch.elexis.omnivore.data.Preferences;
 import ch.elexis.omnivore.data.Utils;
 import ch.elexis.omnivore.model.IDocumentHandle;
-import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.views.FileImportDialog;
+import ch.elexis.omnivore.util.CategoryUtil;
 import ch.rgw.tools.ExHandler;
 
 public class UiUtils {

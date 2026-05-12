@@ -1,9 +1,10 @@
 package ch.elexis.mednet.webapi.core.fhir.resources;
 
-import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 import java.util.UUID;
 
 import org.hl7.fhir.r4.model.Device;
+
+import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 
 
 

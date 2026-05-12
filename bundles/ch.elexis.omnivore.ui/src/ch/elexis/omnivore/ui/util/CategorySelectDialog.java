@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.Messages;
+import ch.elexis.omnivore.util.CategoryUtil;
 
 public class CategorySelectDialog extends Dialog {
 	private Combo combo;

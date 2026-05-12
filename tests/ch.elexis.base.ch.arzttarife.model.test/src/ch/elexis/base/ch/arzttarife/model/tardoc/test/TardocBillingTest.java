@@ -7,15 +7,27 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocConstants;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.builder.ICoverageBuilder;
+import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.rgw.tools.Result;
 
 public class TardocBillingTest extends AbstractTardocTest {
@@ -66,6 +78,13 @@ public class TardocBillingTest extends AbstractTardocTest {
 		code_TK000010 = TardocLeistung.getFromCode("TK.00.0010", LocalDate.of(2026, 1, 1), null);
 		code_AR300130 = TardocLeistung.getFromCode("AR.00.0130", LocalDate.of(2026, 1, 1), null);
 
+		// import custom kumulations
+		IReferenceDataImporter customImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+				"(" + IReferenceDataImporter.REFERENCEDATAID + "=tardoccustomkumulations)").get();
+		IStatus importResult = customImporter.performImport(new NullProgressMonitor(),
+				AllTestsSuite.class.getResourceAsStream("/rsc/tardoc_custom_kumulations.csv"), 1);
+		assertTrue(importResult.isOK());
+		OsgiServiceUtil.ungetService(customImporter);
 	}
 
 	@Override
@@ -187,10 +206,14 @@ public class TardocBillingTest extends AbstractTardocTest {
 		encounter.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter);
 
-		Result<IBilled> status = billingService.bill(code_AA300040, encounter, 1);
+		Result<IBilled> status = billingService.bill(code_000010, encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
-		int noZuschalgCents = billed.getTotal().getCents();
+		double noZuschalgAL = ArzttarifeUtil.getAL(billed);
+
+		// add same chapter, AL of this should be ignored for zuschlag
+		status = billingService.bill(code_AA300040, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
 
 		// zuschlag
 		status = billingService.bill(code_AA300050, encounter, 1);
@@ -202,7 +225,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		// zuschlag prozent
 		assertEquals(1.0, billed.getAmount(), 0.001);
 		assertFalse(billed.getPrice().isZero());
-		assertEquals(Math.round(noZuschalgCents * 0.25), billed.getTotal().getCents(), 0.01);
+		assertEquals(Math.round(noZuschalgAL * 0.25), billed.getTotal().getCents(), 0.01);
 	}
 
 	@Test
@@ -256,5 +279,203 @@ public class TardocBillingTest extends AbstractTardocTest {
 		String bezug = (String) billed.getExtInfo("Bezug");
 		assertNotNull(bezug);
 		assertEquals("TK.00.0010", bezug);
+	}
+
+	@Test
+	public void customKumulationsTardocPosition() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("AA.30.0080", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// allow combination of AA.30.0080 and AA.30.0090
+		status = billingService.bill(TardocLeistung.getFromCode("AA.30.0090", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// do not allow WA.00.0010
+		status = billingService.bill(TardocLeistung.getFromCode("WA.00.0010", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+	}
+
+	@Test
+	public void selberTagLimitTardocPosition() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		encounter1.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter1);
+
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("AA.10.0030", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// limit once per day
+		status = billingService.bill(TardocLeistung.getFromCode("AA.10.0030", LocalDate.of(2026, 1, 1), null),
+				encounter1, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+	}
+
+	@Test
+	public void limitTardocMultiSessionSameLaw() {
+		// 30 mal pro 90 Tage
+		TardocLeistung studyCode = TardocLeistung.getFromCode("AA.15.0010", LocalDate.of(2026, 1, 1), null);
+
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+		Result<IBilled> status = billingService.bill(studyCode, encounter, 15);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		encounter1.setDate(LocalDate.of(2026, 1, 7));
+		CoreModelServiceHolder.get().save(encounter1);
+
+		status = billingService.bill(studyCode, encounter1, 15);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(studyCode, encounter1, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		ICoverage otherCoverage = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Unfall", "UVG")
+				.buildAndSave();
+
+		IEncounter otherEncounter = new IEncounterBuilder(coreModelService, otherCoverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		otherEncounter.setDate(LocalDate.of(2026, 1, 14));
+		CoreModelServiceHolder.get().save(otherEncounter);
+
+		status = billingService.bill(studyCode, otherEncounter, 15);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+	}
+
+	@Test
+	public void referenzLeistungBezugTardocPositions() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("GG.00.0010", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// zuschlag
+		status = billingService.bill(TardocLeistung.getFromCode("GG.00.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		String bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("GG.00.0010", bezug);
+
+		// referenzleistung
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("GG.00.0010", bezug);
+
+		// referenzleistung once per master
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		// add master
+		status = billingService.bill(TardocLeistung.getFromCode("GG.00.0300", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// referenzleistung once per master, but once per session
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		// other referenzleistung
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0070", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// other bezug
+		bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("GG.00.0300", bezug);
+	}
+
+	@Test
+	public void limitTardocDayAndMonth() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		// once per day
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter1.setDate(LocalDate.of(2026, 1, 7));
+		CoreModelServiceHolder.get().save(encounter1);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter1, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter2 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter2.setDate(LocalDate.of(2026, 1, 14));
+		CoreModelServiceHolder.get().save(encounter2);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter2, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		IEncounter encounter3 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter3.setDate(LocalDate.of(2026, 1, 21));
+		CoreModelServiceHolder.get().save(encounter3);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter3, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// max 4 time in 30 days
+		IEncounter encounter4 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter4.setDate(LocalDate.of(2026, 1, 28));
+		CoreModelServiceHolder.get().save(encounter4);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter4, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+		// more than 30 days
+		encounter4.setDate(LocalDate.of(2026, 2, 1));
+		CoreModelServiceHolder.get().save(encounter4);
+		status = billingService.bill(TardocLeistung.getFromCode("CA.05.0030", LocalDate.of(2026, 1, 1), null),
+				encounter4, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
 	}
 }

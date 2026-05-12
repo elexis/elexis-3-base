@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -22,12 +23,15 @@ import ch.elexis.core.findings.IFindingsService;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IDocumentStore;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
+import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
@@ -111,13 +115,35 @@ public class GlobalInboxEntryImportHandler {
 		}
 
 		if (globalInboxEntry.isSendInfoTo()) {
+			IMandator defaultInboxMandator = getDefaultDochandleInboxMandator(patient);
+
 			List<IMandator> notificationTo = globalInboxEntry.getInfoTo();
 			for (IMandator mandator : notificationTo) {
+				if (defaultInboxMandator != null && defaultInboxMandator.getId().equals(mandator.getId())) {
+					// skip default mandator do not create duplicate inbox entry
+					continue;
+				}
 				inboxElementService.createInboxElement(patient, mandator, document);
 			}
 		}
 
 		eventBroker.send(Constants.EVENT_UI_REMOVE_AND_SELECT_NEXT, globalInboxEntry);
+	}
+
+	/**
+	 * Get the {@link IMandator} an IInboxElement will be created for by
+	 * ch.elexis.omnivore.ui.inbox.DocHandleInboxService CREATE event listener.
+	 * 
+	 * @param patient
+	 * @return
+	 */
+	private IMandator getDefaultDochandleInboxMandator(IPatient patient) {
+		Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(patient);
+		if (encounter.isPresent()) {
+			return encounter.get().getMandator();
+		} else {
+			return ContextServiceHolder.get().getActiveMandator().orElse(null);
+		}
 	}
 
 	private ICategory getCategoryOrDefault(String category) {

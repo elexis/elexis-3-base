@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -85,10 +86,11 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 				continue;
 			}
 
-			if (_startDate.isBeforeOrEqual(day)) {
-				if (t.getType().equals(Termin.typReserviert())) {
-					t.delete();
-				}
+			// delete Termin if is delete boundary type, is in future relative to selected
+			// start date and is not created manually
+			if (t.getType().equals(Termin.typReserviert()) && _startDate.isBeforeOrEqual(day)
+					&& StringUtils.isBlank(t.get(Termin.FLD_CREATOR))) {
+				t.delete();
 			}
 			monitor.worked(1);
 		}

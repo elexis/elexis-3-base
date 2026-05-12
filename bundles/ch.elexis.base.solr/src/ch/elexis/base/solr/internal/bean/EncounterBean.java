@@ -1,9 +1,9 @@
 package ch.elexis.base.solr.internal.bean;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.ZoneId;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
 
 import ch.elexis.core.model.IEncounter;

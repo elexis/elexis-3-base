@@ -26,6 +26,12 @@
             id="ch.elexis.arzttarife_ch.nutrition"
             name="Ernährungsberatung">
       </page>
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.tarmedprefs.TardocAcquiredRightsPrefs"
+            id="ch.elexis.tardocacquiredrightsprefs"
+            name="Tardoc-Besitzstandswahrung">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.views">

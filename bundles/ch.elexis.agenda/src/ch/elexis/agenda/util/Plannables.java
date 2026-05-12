@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -346,40 +345,6 @@ public final class Plannables {
 		int w = (int) Math.round(p.getDurationInMinutes() * pixelPerMinute);
 		gc.setBackground(getTypColor(p));
 		gc.fillRectangle(x, r.y, w, r.height);
-	}
-
-	public static Hashtable<String, String> getTimePrefFor(String mandantLabel) {
-		Hashtable<String, String> map = new Hashtable<String, String>();
-		String mTimes = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, //$NON-NLS-1$
-				StringUtils.EMPTY);
-		if (!StringTool.isNothing(mTimes)) {
-			String[] types = mTimes.split("::"); //$NON-NLS-1$
-			for (String t : types) {
-				String[] line = t.split("="); //$NON-NLS-1$
-				if (line.length != 2) {
-					log.warn(Messages.Plannables_errorInAppointmentText + mTimes);
-					continue;
-				}
-				map.put(line[0], line[1]);
-			}
-		}
-		if (map.get("std") == null) { //$NON-NLS-1$
-			map.put("std", "30"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return map;
-	}
-
-	public static void setTimePrefFor(String mandantLabel, Hashtable<String, String> map) {
-		StringBuilder e = new StringBuilder(200);
-		Enumeration<String> keys = map.keys();
-		while (keys.hasMoreElements()) {
-			String k = keys.nextElement();
-			e.append(k).append("=").append(map.get(k)); //$NON-NLS-1$
-			if (keys.hasMoreElements()) {
-				e.append("::"); //$NON-NLS-1$
-			}
-		}
-		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, e.toString()); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("unchecked")

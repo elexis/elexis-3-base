@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
  ch.elexis.core.l10n;bundle-version="3.10.0",
  ch.elexis.core;bundle-version="3.13.0",
+ ch.elexis.core.rcp;bundle-version="3.13.0",
  ch.elexis.core.services;bundle-version="3.10.0",
  ch.elexis.fop_wrapper;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy

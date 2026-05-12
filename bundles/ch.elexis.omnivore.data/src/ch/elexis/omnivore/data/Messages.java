@@ -1,7 +1,5 @@
 package ch.elexis.omnivore.data;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String DocHandle_73 = ch.elexis.core.l10n.Messages.DocHandle_73;
 	public static String DocHandle_cantReadCaption = ch.elexis.core.l10n.Messages.Core_Unable_to_read_file;

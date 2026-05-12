@@ -422,6 +422,6 @@ public class Utils {
 	}
 
 	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {
-		return ch.elexis.omnivore.model.util.Utils.getMembers(dh, pat);
+		return ch.elexis.omnivore.util.Utils.getMembers(dh, pat);
 	}
 }

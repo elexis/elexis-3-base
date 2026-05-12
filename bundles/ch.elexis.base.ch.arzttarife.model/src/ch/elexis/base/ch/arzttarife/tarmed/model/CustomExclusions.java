@@ -47,12 +47,14 @@ public class CustomExclusions {
 				try (CSVReader reader = new CSVReaderBuilder(stringReader).withCSVParser(csvParser).build()) {
 					List<String[]> lines = reader.readAll();
 					for (String[] strings : lines) {
-						List<ITarmedKumulation> list = customExclusions.get(strings[0]);
-						if (list == null) {
-							list = new ArrayList<>();
+						if (strings.length == 3) {
+							List<ITarmedKumulation> list = customExclusions.get(strings[0]);
+							if (list == null) {
+								list = new ArrayList<>();
+							}
+							list.add(new CustomExclusion(strings[0], strings[1], strings[2]));
+							customExclusions.put(strings[0], list);
 						}
-						list.add(new CustomExclusion(strings[0], strings[1], strings[2]));
-						customExclusions.put(strings[0], list);
 					}
 				} catch (IOException | CsvException e) {
 					LoggerFactory.getLogger(CustomExclusions.class).error("Exception reading custom exclusions", e);

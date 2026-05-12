@@ -27,4 +27,5 @@ Import-Package: com.healthmarketscience.jackcess;version="4.0.0",
  jakarta.persistence.criteria;version="[3.2.0,4.0.0)",
  org.apache.commons.io;version="2.6.0",
  org.apache.commons.lang3;version="3.12.0",
- org.apache.commons.lang3.math;version="3.12.0"
+ org.apache.commons.lang3.math;version="3.12.0",
+ org.osgi.service.event;version="[1.4.0,2.0.0)"

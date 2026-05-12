@@ -10,11 +10,14 @@ package ch.fd.invoice500.request;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import at.medevit.elexis.tarmed.model.jaxb.DoubleToStringAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
@@ -49,7 +52,8 @@ public class VatType {
     @XmlAttribute(name = "vat_number")
     protected String vatNumber;
     @XmlAttribute(name = "vat", required = true)
-    protected double vat;
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double vat;
 
     /**
      * Gets the value of the vatRate property.

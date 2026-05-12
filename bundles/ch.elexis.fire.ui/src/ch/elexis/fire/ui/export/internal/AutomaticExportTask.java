@@ -97,7 +97,7 @@ public class AutomaticExportTask extends TimerTask {
 						try {
 							running = true;
 							if (taskDescriptor.getOwner() == null) {
-								taskDescriptor.setOwner(ContextServiceHolder.get().getActiveUser().get());
+								taskDescriptor.setOwner(ContextServiceHolder.get().getActiveUser().get().getId());
 								taskService.saveTaskDescriptor(taskDescriptor);
 							}
 							ITask task = taskService.triggerSync(taskDescriptor, monitor, TaskTriggerType.MANUAL,

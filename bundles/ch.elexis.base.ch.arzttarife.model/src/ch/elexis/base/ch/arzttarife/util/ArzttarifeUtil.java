@@ -3,20 +3,27 @@ package ch.elexis.base.ch.arzttarife.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.core.findings.ICoding;
-import ch.elexis.core.findings.util.model.TransientCoding;
+import ch.elexis.core.findings.codes.TransientCoding;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.ICodeElementService;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.rgw.tools.Money;
 
 public class ArzttarifeUtil {
@@ -24,6 +31,10 @@ public class ArzttarifeUtil {
 	private static String MANDANT_TYPE_EXTINFO_KEY = "ch.elexis.data.tarmed.mandant.type";
 
 	private static String MANDANT_TARDOC_SPECIALIST_EXTINFO_KEY = "ch.elexis.data.tardoc.mandant.dignitaet";
+
+	private static String MANDANT_SECTIONCODE_EXTINFO_KEY = "ch.elexis.data.mandant.sectioncode";
+
+	private static String MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY = "ch.elexis.data.tardoc.mandant.acquiredrights";
 
 	/**
 	 * Set the {@link MandantType} of the {@link IMandator}.
@@ -67,12 +78,11 @@ public class ArzttarifeUtil {
 	}
 
 	/**
-	 * Get the {@link MandantType} of the {@link IMandator}. If not found the
-	 * default value is {@link MandantType#SPECIALIST}.
+	 * Get the codings {@link ICoding} of the {@link IMandator} from the
+	 * tardoc_dignitaet code system, specifying the specialties.
 	 *
 	 * @param mandant
 	 * @return
-	 * @since 3.4
 	 */
 	public static List<ICoding> getMandantTardocSepcialist(IMandator mandator) {
 		Object typeObj = mandator.getExtInfo(MANDANT_TARDOC_SPECIALIST_EXTINFO_KEY);
@@ -88,6 +98,87 @@ public class ArzttarifeUtil {
 			return ret;
 		}
 		return Collections.emptyList();
+	}
+
+	/**
+	 * Set the TARDOC acquired rights codes of the {@link IMandator}.
+	 *
+	 * @param mandant
+	 * @param type
+	 */
+	public static void setMandantTardocAcquiredRights(IMandator mandator, List<ICodeElement> acquiredRightsCodes) {
+		if (acquiredRightsCodes != null) {
+			mandator.setExtInfo(MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY, acquiredRightsCodes.stream()
+					.map(c -> c.getCode() + "|" + c.getCodeSystemName()).collect(Collectors.joining("::")));
+		} else {
+			mandator.setExtInfo(MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY, null);
+		}
+	}
+
+	/**
+	 * Get the codings {@link ICoding} of the {@link IMandator} from the TARDOC code
+	 * system, specifying the acquired rights.
+	 *
+	 * @param mandant
+	 * @return
+	 */
+	public static List<ICodeElement> getMandantTardocAcquiredRights(IMandator mandator,
+			ICodeElementService codeElementService) {
+		Object typeObj = mandator.getExtInfo(MANDANT_TARDOC_ACQUIREDRIGHTS_EXTINFO_KEY);
+		if (typeObj instanceof String) {
+			List<ICodeElement> ret = new ArrayList<ICodeElement>();
+			String[] codesString = ((String) typeObj).split("::");
+			for (String codeString : codesString) {
+				if (StringUtils.isNotBlank(codeString)) {
+					String[] codeParts = codeString.split("\\|");
+					if (codeParts.length == 2) {
+						Optional<ICodeElementServiceContribution> tardocContribution = codeElementService
+								.getContribution(CodeElementTyp.SERVICE, codeParts[1]);
+						if (tardocContribution.isPresent()) {
+							Optional<ICodeElement> element = tardocContribution.get().loadFromCode(codeParts[0]);
+							element.ifPresent(e -> ret.add(e));
+						}
+					}
+				}
+			}
+			return ret;
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Get the coding to the {@link IMandator} from the
+	 * forumdatenaustausch_sectioncode code system, specifying in which department
+	 * services are performed.
+	 * 
+	 * @param mandator
+	 * @return
+	 */
+	public static Optional<ICoding> getMandantSectionCode(IMandator mandator) {
+		Object typeObj = mandator.getExtInfo(MANDANT_SECTIONCODE_EXTINFO_KEY);
+		if (typeObj instanceof String) {
+			String[] codeParts = ((String) typeObj).split("\\|");
+			if (codeParts.length == 2) {
+				return Optional.of(new TransientCoding("forumdatenaustausch_sectioncode", codeParts[0], codeParts[1]));
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Set the forumdatenaustausch_sectioncode the {@link IMandator} is performing
+	 * services in.
+	 *
+	 * @param mandant
+	 * @param type
+	 */
+	public static void setMandantSectionCode(IMandator mandator, ICoding departmentCode) {
+		if (departmentCode != null) {
+			mandator.setExtInfo(MANDANT_SECTIONCODE_EXTINFO_KEY,
+					departmentCode.getCode() + "|" + departmentCode.getDisplay());
+		} else {
+			mandator.setExtInfo(MANDANT_SECTIONCODE_EXTINFO_KEY, null);
+		}
 	}
 
 	/**

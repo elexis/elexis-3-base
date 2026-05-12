@@ -2,6 +2,7 @@ package ch.elexis.base.ch.arzttarife.psycho.model.importer;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -45,7 +46,11 @@ public class PsychoReferenceDataImporter extends AbstractReferenceDataImporter i
 
 			monitor.beginTask("Pyschotherapie Tarif Import", count);
 
+			LocalDate validFrom = LocalDate.of(2022, 7, 1);
+			handleExistingBilled(validFrom);
+
 			List<Object> imported = new ArrayList<>();
+			List<Object> updated = new ArrayList<>();
 			List<Object> closed = new ArrayList<>();
 
 			for (int i = 0; i < last; i++) {
@@ -56,10 +61,15 @@ public class PsychoReferenceDataImporter extends AbstractReferenceDataImporter i
 					continue;
 				}
 
-				LocalDate validFrom = LocalDate.of(2022, 7, 1);
 //				LocalDate validTo = null;
 				List<PsychoLeistung> existing = getExisting(line.get(0), validFrom);
 				if (!existing.isEmpty()) {
+					if (!getId(line.get(0), validFrom).equals(existing.get(0).getId())) {
+						LoggerFactory.getLogger(getClass()).info("Recreate psycho service " + existing.get(0).getId()
+								+ " with id " + getId(line.get(0), validFrom));
+						EntityUtil.remove(existing.get(0));
+						imported.add(getPsychoLeistung(line, validFrom));
+					}
 //					if (validTo != null) {
 //						for (PsychoLeistung tarmedPauschalen : existing) {
 //							// update validto of existing
@@ -68,26 +78,13 @@ public class PsychoReferenceDataImporter extends AbstractReferenceDataImporter i
 //						}
 //					}
 				} else {
-					PsychoLeistung psychoLeistung = new PsychoLeistung();
-					psychoLeistung.setCode(line.get(0));
-					psychoLeistung
-							.setCodeText(StringUtils.abbreviate(line.get(1).replace(StringUtils.LF, StringUtils.EMPTY)
-									.replace(StringUtils.CR, StringUtils.EMPTY), 255));
-					psychoLeistung.setDescription(line.get(2));
-
-					psychoLeistung.setValidFrom(validFrom);
-
-					psychoLeistung.setLimitations(parseLimitations(line.get(3)));
-					psychoLeistung.setExclusions(parseExclusions(line.get(4)));
-
-					psychoLeistung.setTp(parseTp(line.get(0), line.get(5)));
-
-					imported.add(psychoLeistung);
+					imported.add(getPsychoLeistung(line, validFrom));
 				}
 			}
-			LoggerFactory.getLogger(getClass())
-					.info("Closing " + closed.size() + " and creating " + imported.size() + " tarifs");
+			LoggerFactory.getLogger(getClass()).info("Closing " + closed.size() + " updating " + updated.size()
+					+ " and creating " + imported.size() + " tarifs");
 			EntityUtil.save(closed);
+			EntityUtil.save(updated);
 			EntityUtil.save(imported);
 			monitor.done();
 
@@ -98,6 +95,44 @@ public class PsychoReferenceDataImporter extends AbstractReferenceDataImporter i
 			ret = Status.CANCEL_STATUS;
 		}
 		return ret;
+	}
+
+	private Object getPsychoLeistung(List<String> line, LocalDate validFrom) {
+		PsychoLeistung psychoLeistung = new PsychoLeistung();
+		psychoLeistung.setId(getId(line.get(0), validFrom));
+		psychoLeistung.setCode(line.get(0));
+		psychoLeistung.setCodeText(StringUtils.abbreviate(
+				line.get(1).replace(StringUtils.LF, StringUtils.EMPTY).replace(StringUtils.CR, StringUtils.EMPTY),
+				255));
+		psychoLeistung.setDescription(line.get(2));
+
+		psychoLeistung.setValidFrom(validFrom);
+
+		psychoLeistung.setLimitations(parseLimitations(line.get(3)));
+		psychoLeistung.setExclusions(parseExclusions(line.get(4)));
+
+		psychoLeistung.setTp(parseTp(line.get(0), line.get(5)));
+		return psychoLeistung;
+	}
+
+	private void handleExistingBilled(LocalDate validFrom) {
+		List<PsychoLeistung> allExisting = EntityUtil.loadAll(PsychoLeistung.class);
+		for (PsychoLeistung psychoLeistung : allExisting) {
+			String id = getId(psychoLeistung.getCode(), validFrom);
+			if (!id.equals(psychoLeistung.getId())) {
+				int changed = EntityUtil.executeUpdate("UPDATE Verrechnet vr SET vr.leistungenCode='" + id
+						+ "' WHERE vr.leistungenCode='" + psychoLeistung.getId()
+						+ "' AND vr.klasse='ch.elexis.data.PsychoLeistung'");
+				if (changed > 0) {
+					LoggerFactory.getLogger(getClass())
+							.info("Update psycho billed " + psychoLeistung.getId() + " to " + id);
+				}
+			}
+		}
+	}
+
+	private String getId(String code, LocalDate validFrom) {
+		return code + "-" + DateTimeFormatter.ofPattern("yyyyMMdd").format(validFrom);
 	}
 
 	private String parseTp(String code, String string) {

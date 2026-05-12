@@ -268,7 +268,7 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getClientId() {
-		String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO"); //$NON-NLS-1$
+		String mode = configService.get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV"); //$NON-NLS-1$
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) { //$NON-NLS-1$
 			if (properties != null) {
 				Properties idProps = new Properties();
@@ -286,7 +286,7 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getClientSecret() {
-		String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO"); //$NON-NLS-1$
+		String mode = configService.get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV"); //$NON-NLS-1$
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) { //$NON-NLS-1$
 			if (properties != null) {
 				Properties idProps = new Properties();

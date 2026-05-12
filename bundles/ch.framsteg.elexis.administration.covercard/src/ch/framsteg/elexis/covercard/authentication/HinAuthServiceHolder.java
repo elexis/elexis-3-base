@@ -3,7 +3,7 @@ package ch.framsteg.elexis.covercard.authentication;
 import java.util.Optional;
 
 import at.medevit.elexis.hin.auth.core.IHinAuthService;
-import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 
 public class HinAuthServiceHolder {
 

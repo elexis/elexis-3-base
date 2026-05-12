@@ -20,7 +20,7 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
-import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.oaat_otma.PatientCase;
 import ch.oaat_otma.Service;
 import ch.oaat_otma.casemaster.CasemasterError.CasemasterErrorType;
@@ -51,6 +51,8 @@ public class TarifMatcher<T extends IBillable> {
 
 	private MapperService mapperService;
 	private IBillableOptifier<T> optifier;
+
+	private List<String> skipPauschaleCodes = List.of("C99.80Z");
 
 	public TarifMatcher(IBillableOptifier<T> optifier) {
 		this.optifier = optifier;
@@ -92,7 +94,8 @@ public class TarifMatcher<T extends IBillable> {
 						AmbulatoryAllowance pauschale = AmbulatoryAllowance.getFromCode(
 								patientCase.getGrouperResult().group, AmbulantePauschalenTyp.PAUSCHALE,
 								patientCase.getEntryDate());
-						if (pauschale != null) {
+						if (pauschale != null && !isSkipAmbulatoryAllowance(pauschale)
+								&& !isDuplicate(pauschale, encounter)) {
 							ret = optifier.add((T) pauschale, encounter, 1, false);
 							if (ret.isOK()) {
 								for (IBilled encounterBilled : encounter.getBilled()) {
@@ -124,6 +127,22 @@ public class TarifMatcher<T extends IBillable> {
 			}
 		}
 		return ret;
+	}
+
+	private boolean isDuplicate(AmbulatoryAllowance pauschale, IEncounter encounter) {
+		return encounter.getBilled().stream().filter(b -> isSameCode(pauschale.getCode(), b)).findFirst()
+				.isPresent();
+	}
+
+	private boolean isSameCode(String matchCode, IBilled billed) {
+		if (matchCode != null && !matchCode.isEmpty()) {
+			return matchCode.equals(billed.getCode());
+		}
+		return false;
+	}
+
+	private boolean isSkipAmbulatoryAllowance(AmbulatoryAllowance pauschale) {
+		return skipPauschaleCodes.contains(pauschale.getCode());
 	}
 
 	private Map<MapperLogEntryLevel, Integer> logEntrySortMap() {

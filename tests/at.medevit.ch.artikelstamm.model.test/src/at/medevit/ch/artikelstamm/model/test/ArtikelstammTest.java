@@ -17,6 +17,7 @@ import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
@@ -27,7 +28,6 @@ import ch.elexis.core.test.AbstractTest;
 import ch.elexis.core.test.util.TestUtil;
 import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 

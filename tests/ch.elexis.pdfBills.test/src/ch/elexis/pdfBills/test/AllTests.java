@@ -10,8 +10,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.rcp.utils.PlatformHelper;
 import ch.elexis.core.services.LocalConfigService;
-import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.pdfBills.ElexisPDFGeneratorTest;
 import ch.elexis.pdfBills.QrRnOutputter;
 import ch.elexis.pdfBills.RnOutputter;

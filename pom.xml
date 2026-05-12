@@ -62,6 +62,11 @@
 				https://download.elexis.info/elexis/${git.core.branch}/p2/elexis-3-core</url>
 			<layout>p2</layout>
 		</repository>
+			<repository>
+				<id>github-elexis</id>
+				<name>GitHub Elexis Packages</name>
+				<url>https://maven.pkg.github.com/elexis/packages</url>
+			</repository>
 	</repositories>
 	<modules>
 		<module>bundles</module>

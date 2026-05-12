@@ -3,13 +3,13 @@
  */
 package ch.elexis.base.ch.arzttarife.physio.impl;
 
-import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
-import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
+import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;

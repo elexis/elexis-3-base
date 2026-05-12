@@ -3,16 +3,15 @@
  */
 package ch.elexis.base.ch.arzttarife.ambulatory.util;
 
-import ch.elexis.base.ch.arzttarife.ambulatory.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
+import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-
-import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->

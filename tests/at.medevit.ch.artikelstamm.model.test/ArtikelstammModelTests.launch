@@ -48,7 +48,7 @@
         <setEntry value="bcprov@default:default"/>
         <setEntry value="ch.qos.logback.classic@default:default"/>
         <setEntry value="ch.qos.logback.core@2:true"/>
-        <setEntry value="com.google.gson@default:default"/>
+        <setEntry value="com.google.gson*2.12.1@default:default"/>
         <setEntry value="com.google.guava.failureaccess@default:default"/>
         <setEntry value="com.google.guava@default:default"/>
         <setEntry value="com.google.protobuf@default:default"/>
@@ -56,6 +56,7 @@
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.jcraft.jsch@default:default"/>
         <setEntry value="com.mysql.cj@default:default"/>
+        <setEntry value="com.opencsv@default:default"/>
         <setEntry value="com.sun.jna.platform@default:default"/>
         <setEntry value="com.sun.jna@default:default"/>
         <setEntry value="com.sun.xml.bind.jaxb-osgi@default:default"/>
@@ -84,6 +85,7 @@
         <setEntry value="org.apache.commons.collections@default:default"/>
         <setEntry value="org.apache.commons.commons-beanutils@default:default"/>
         <setEntry value="org.apache.commons.commons-codec*1.17.0@default:default"/>
+        <setEntry value="org.apache.commons.commons-collections4@default:default"/>
         <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
         <setEntry value="org.apache.commons.commons-io*2.18.0@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
@@ -94,6 +96,9 @@
         <setEntry value="org.apache.felix.gogo.runtime@default:default"/>
         <setEntry value="org.apache.felix.gogo.shell@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
+        <setEntry value="org.apache.httpcomponents.client5.httpclient5@default:default"/>
+        <setEntry value="org.apache.httpcomponents.core5.httpcore5-h2@default:default"/>
+        <setEntry value="org.apache.httpcomponents.core5.httpcore5@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpclient@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpcore@default:default"/>
         <setEntry value="org.apache.xmlgraphics@default:default"/>
@@ -129,7 +134,6 @@
         <setEntry value="org.eclipse.e4.ui.swt.gtk@default:false"/>
         <setEntry value="org.eclipse.e4.ui.widgets@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.addons.swt@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.cocoa@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_de@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_fr@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_it@default:false"/>
@@ -169,13 +173,11 @@
         <setEntry value="org.eclipse.persistence.core@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa@default:default"/>
-        <setEntry value="org.eclipse.swt.cocoa.macosx.aarch64@default:false"/>
         <setEntry value="org.eclipse.swt.gtk.linux.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.nl_de@default:false"/>
         <setEntry value="org.eclipse.swt.nl_fr@default:false"/>
         <setEntry value="org.eclipse.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
-        <setEntry value="org.eclipse.ui.cocoa@default:false"/>
         <setEntry value="org.eclipse.ui.nl_de@default:false"/>
         <setEntry value="org.eclipse.ui.nl_fr@default:false"/>
         <setEntry value="org.eclipse.ui.nl_it@default:false"/>
@@ -235,13 +237,17 @@
         <setEntry value="ch.elexis.core.l10n@default:default"/>
         <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
         <setEntry value="ch.elexis.core.model@default:default"/>
+        <setEntry value="ch.elexis.core.rcp@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.test.context@default:false"/>
         <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
         <setEntry value="ch.elexis.core.webdav@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
+        <setEntry value="ch.rgw.utility.legacy@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
+        <setEntry value="es.gogo.shell@default:default"/>
+        <setEntry value="info.elexis.server.core.logging@default:default"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>

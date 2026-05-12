@@ -25,12 +25,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import ch.elexis.base.ch.arzttarife.model.psycho.test.PsychoBillingTest;
 import ch.elexis.base.ch.arzttarife.model.tardoc.test.AllTardocTests;
 import ch.elexis.base.ch.arzttarife.model.tarmed.test.AllTarmedTests;
 import ch.elexis.core.common.DBConnection;
 import ch.elexis.core.common.DBConnection.DBType;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IElexisDataSource;
@@ -38,10 +40,10 @@ import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IEncounterService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AllTardocTests.class, PhysioLeistungTest.class, ComplementaryLeistungTest.class, AllTarmedTests.class })
+@SuiteClasses({ PsychoBillingTest.class, AllTardocTests.class, PhysioLeistungTest.class,
+		ComplementaryLeistungTest.class, AllTarmedTests.class })
 public class AllTestsSuite {
 
 	private static IElexisEntityManager entityManager;

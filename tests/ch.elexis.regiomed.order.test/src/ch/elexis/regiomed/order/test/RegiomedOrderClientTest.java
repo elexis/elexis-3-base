@@ -54,8 +54,8 @@ public class RegiomedOrderClientTest {
 		RegiomedOrderResponse response = client.sendOrderWithToken(testConfig, request);
 
 		assertNotNull("Response sollte nicht null sein", response);
-		assertTrue("Order sollte als sent markiert sein", response.orderSent);
-		assertEquals(1, response.articlesOK);
+		assertTrue("Order sollte als sent markiert sein", response.isOrderSent());
+		assertEquals(1, response.getArticlesOK());
 		String authHeader = server.getAuthHeader();
 		assertNotNull("Authorization Header fehlt (war null)!", authHeader);
 		assertTrue("Header '" + authHeader + "' enthält den Token 'MOCK_TOKEN_XYZ_123' nicht!",

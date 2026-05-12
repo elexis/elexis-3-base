@@ -3,19 +3,21 @@
  */
 package ch.elexis.base.ch.arzttarife.tardoc.util;
 
-import ch.elexis.base.ch.arzttarife.tardoc.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocExtension;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocGroup;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
+import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IService;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithExtInfo;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-
-import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->

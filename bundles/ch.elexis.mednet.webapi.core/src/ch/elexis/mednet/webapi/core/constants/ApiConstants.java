@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class ApiConstants {
 
@@ -15,7 +15,7 @@ public class ApiConstants {
 	public static String getBaseApiUrl() {
 		Optional<IConfigService> configService = OsgiServiceUtil.getServiceWait(IConfigService.class, 5000);
 		if (configService.isPresent()) {
-			String mode = configService.get().getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
+			String mode = configService.get().get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV");
 
 			if ("PRODUKTIV".equals(mode)) {
 				return "https://www.mednet.swiss/web/api/v1/external";
@@ -25,21 +25,21 @@ public class ApiConstants {
 		} else {
 			logger.error("Error when retrieving the base API URL from the preferences: {}");
 		}
-		return "https://demo.mednet.swiss/web/api/v1/external";
+		return "https://www.mednet.swiss/web/api/v1/external";
 	}
 
 	public static String getBaseUri() {
 
 		Optional<IConfigService> configService = OsgiServiceUtil.getServiceWait(IConfigService.class, 5000);
 		if (configService.isPresent()) {
-			String mode = configService.get().getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
+			String mode = configService.get().get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV");
 			if ("PRODUKTIV".equals(mode)) {
 				return "https://www.mednetpatient.swiss/idsrv";
 			} else {
 				return "https://demo.mednetpatient.swiss/idsrv";
 			}
 		}
-		return "https://demo.mednetpatient.swiss/idsrv";
+		return "https://www.mednetpatient.swiss/idsrv";
 	}
 
 	public static final String BASE_REDERICT_URI = "https://tools.medelexis.ch/mednet/ac";

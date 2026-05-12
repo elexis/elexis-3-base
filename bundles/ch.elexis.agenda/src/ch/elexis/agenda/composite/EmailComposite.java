@@ -38,6 +38,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ITextTemplate;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IContext;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ITextReplacementService;
@@ -45,7 +46,6 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import jakarta.inject.Inject;
 
 public class EmailComposite extends Composite {

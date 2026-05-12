@@ -82,6 +82,7 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.ebanking.esr.ESR;
+import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IContact;
@@ -675,13 +676,13 @@ public class ElexisPDFGenerator {
 		}
 	}
 
-	public void printQrBill(File rsc) {
+	public void printQrBill(TYPE type, InvoiceState newInvoiceState, File rsc) {
 		printed = new ArrayList<>();
 		try {
 			if (LocalConfigService.get(QrRnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_BESR, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
-						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
-								+ "_esr.pdf") //$NON-NLS-1$
+						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+								+ PdfFileUtil.getFileName(billNr, "_esr", type, newInvoiceState)) //$NON-NLS-1$
 						.toFile().orElse(null);
 				generateQrPatBill(rsc, pdf);
 				printPdf(pdf, false);
@@ -689,7 +690,8 @@ public class ElexisPDFGenerator {
 			}
 			if (LocalConfigService.get(QrRnOutputter.CFG_ROOT + OutputterUtil.CFG_PRINT_RF, true)) {
 				File pdf = VirtualFilesystemServiceHolder.get()
-						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf") //$NON-NLS-1$
+						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+								+ PdfFileUtil.getFileName(billNr, "_rf", type, newInvoiceState)) //$NON-NLS-1$
 						.toFile().orElse(null);
 				generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 				printPdf(pdf, false);
@@ -697,8 +699,8 @@ public class ElexisPDFGenerator {
 
 				if ("5.0".equals(billVersion)) { //$NON-NLS-1$
 					pdf = VirtualFilesystemServiceHolder.get()
-							.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
-									+ "_qr.pdf") //$NON-NLS-1$
+							.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
+									+ PdfFileUtil.getFileName(billNr, "_qr", type, newInvoiceState)) //$NON-NLS-1$
 							.toFile().orElse(null);
 					generatePdf(getXsltForBill(rsc, XsltType.QRPAGE), pdf);
 					printPdf(pdf, false);
@@ -809,8 +811,13 @@ public class ElexisPDFGenerator {
 			XPathExpression expr = xPath.compile("/request/payload"); //$NON-NLS-1$
 			Object result = expr.evaluate(domDocument, XPathConstants.NODE);
 			if (result instanceof Element) {
-				Element element = (Element) result;
-				return Boolean.valueOf(element.getAttribute("copy")); //$NON-NLS-1$
+				if ("5.0".equals(billVersion)) {
+					Element element = (Element) result;
+					return "copy".equals(element.getAttribute("request_subtype")); //$NON-NLS-1$
+				} else {
+					Element element = (Element) result;
+					return Boolean.valueOf(element.getAttribute("copy")); //$NON-NLS-1$
+				}
 			}
 		} catch (XPathExpressionException e) {
 			LoggerFactory.getLogger(getClass()).error("Error getting copy", e); //$NON-NLS-1$

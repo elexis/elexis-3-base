@@ -21,6 +21,8 @@ import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jpa.entities.OccupationalLeistung;
+import ch.elexis.core.time.TimeUtil;
+import ch.rgw.tools.TimeTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=occupational")
 public class OccupationalReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
@@ -34,7 +36,8 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 
 		ExcelWrapper exw = new ExcelWrapper();
 		exw.setFieldTypes(
-				new Class[] { String.class /* Ziffer */, String.class /* Bezeichnung */, String.class /* Fixpreis */
+				new Class[] { String.class /* Ziffer */, String.class /* Bezeichnung */, String.class /* Fixpreis */,
+						TimeTool.class /* Gültig Bis */
 		});
 		if (exw.load(input, 0)) {
 			int first = exw.getFirstRow();
@@ -44,9 +47,10 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 			monitor.beginTask("Arbeitsmedizinische Vorsorgeuntersuchungen Import", count);
 
 			List<Object> imported = new ArrayList<>();
+			List<Object> updated = new ArrayList<>();
 			List<Object> closed = new ArrayList<>();
 
-			for (int i = 0; i < last; i++) {
+			for (int i = 0; i <= last; i++) {
 				List<String> line = exw.getRow(i);
 				if (line == null) {
 					break;
@@ -54,36 +58,40 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 					continue;
 				}
 
-				LocalDate validFrom = LocalDate.of(2018, 1, 1);
+				LocalDate validFrom = getValidFromVersion(newVersion).toLocalDate();
 				List<String> codes = parseCode(line.get(0));
 				for (String code : codes) {
-//					LocalDate validTo = null;
-					List<OccupationalLeistung> existing = getExisting(code, validFrom);
+
+					List<OccupationalLeistung> existing = getExisting(code);
 					if (!existing.isEmpty()) {
-//						if (validTo != null) {
-//							for (PsychoLeistung tarmedPauschalen : existing) {
-//								// update validto of existing
-//								tarmedPauschalen.setValidUntil(validTo);
-//								closed.add(tarmedPauschalen);
-//							}
-//						}
+						for (OccupationalLeistung occupationalLeistung : existing) {
+							if (validFrom.equals(occupationalLeistung.getValidFrom())) {
+								String codeText = StringUtils
+										.abbreviate(line.get(1).replace(StringUtils.LF, StringUtils.EMPTY)
+												.replace(StringUtils.CR, StringUtils.EMPTY), 255);
+								if (codeText.equals(occupationalLeistung.getCodeText())) {
+									occupationalLeistung.setCodeText(codeText);
+									updated.add(occupationalLeistung);
+								}
+							} else {
+								if (occupationalLeistung.getValidUntil() == null) {
+									// update validto of existing -> closed
+									occupationalLeistung.setValidUntil(validFrom.minusDays(1));
+									closed.add(occupationalLeistung);
+								}
+								// create
+								imported.add(createOccupationalLeistung(code, line, validFrom));
+							}
+						}
 					} else {
-						OccupationalLeistung occupationalLeistung = new OccupationalLeistung();
-						occupationalLeistung.setCode(code);
-						occupationalLeistung.setCodeText(
-								StringUtils.abbreviate(line.get(1).replace(StringUtils.LF, StringUtils.EMPTY)
-										.replace(StringUtils.CR, StringUtils.EMPTY), 255));
-						occupationalLeistung.setValidFrom(validFrom);
-
-						occupationalLeistung.setTp(parseTp(code, line.get(2)));
-
-						imported.add(occupationalLeistung);
+						imported.add(createOccupationalLeistung(code, line, validFrom));
 					}
 				}
 			}
-			LoggerFactory.getLogger(getClass())
-					.info("Closing " + closed.size() + " and creating " + imported.size() + " tarifs");
+			LoggerFactory.getLogger(getClass()).info("Closing " + closed.size() + " updating " + updated.size()
+					+ " and creating " + imported.size() + " tarifs");
 			EntityUtil.save(closed);
+			EntityUtil.save(updated);
 			EntityUtil.save(imported);
 			monitor.done();
 
@@ -94,6 +102,70 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 			ret = Status.CANCEL_STATUS;
 		}
 		return ret;
+	}
+
+	private OccupationalLeistung createOccupationalLeistung(String code, List<String> line, LocalDate validFrom) {
+		LocalDate validTo = getValidTo(line.get(3));
+
+		String codeText = StringUtils.abbreviate(
+				line.get(1).replace(StringUtils.LF, StringUtils.EMPTY).replace(StringUtils.CR, StringUtils.EMPTY), 255);
+
+		OccupationalLeistung occupationalLeistung = new OccupationalLeistung();
+		occupationalLeistung.setCode(code);
+		occupationalLeistung.setCodeText(codeText);
+		occupationalLeistung.setValidFrom(validFrom);
+
+		occupationalLeistung.setTp(parseTp(code, line.get(2)));
+
+		if (validTo != null && validTo.isBefore(LocalDate.now().plusYears(5))) {
+			// update validto of existing
+			occupationalLeistung.setValidUntil(validTo);
+		}
+
+		return occupationalLeistung;
+	}
+
+	/**
+	 * Convert version Integer in yymmdd format to date.
+	 *
+	 * @param newVersion
+	 * @return
+	 */
+	private TimeTool getValidFromVersion(Integer newVersion) {
+		String intString = Integer.toString(newVersion);
+		if (intString.length() != 6) {
+			throw new IllegalStateException("Version " + newVersion + " can not be parsed to valid date.");
+		}
+		String year = intString.substring(0, 2);
+		String month = intString.substring(2, 4);
+		String day = intString.substring(4, 6);
+		TimeTool ret = new TimeTool();
+		ret.set(TimeTool.YEAR, Integer.parseInt(year) + 2000);
+		ret.set(TimeTool.MONTH, Integer.parseInt(month) - 1);
+		ret.set(TimeTool.DAY_OF_MONTH, Integer.parseInt(day));
+		return ret;
+	}
+
+	private LocalDate getValidTo(String string) {
+		if (StringUtils.isNotBlank(string)) {
+			// 31.12.2026
+			if (string.length() == 10) {
+				try {
+					return LocalDate.parse(string, TimeUtil.DATE_GER);
+				} catch (Exception e) {
+					LoggerFactory.getLogger(getClass()).warn("Could not parse valid to [" + string + "]");
+				}
+			} else {
+				// fallback to TimeTool
+				try {
+					return new TimeTool(string).toLocalDate();
+				} catch (Exception e) {
+					LoggerFactory.getLogger(getClass()).warn("Could not parse valid to [" + string + "]");
+				}
+			}
+			LoggerFactory.getLogger(getClass()).warn("Unknown valid to [" + string + "] format");
+		}
+		return null;
 	}
 
 	private List<String> parseCode(String code) {
@@ -130,10 +202,9 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 		throw new IllegalStateException("Could not parse tp [" + string + "] for code [" + code + "]");
 	}
 
-	private List<OccupationalLeistung> getExisting(String code, LocalDate validFrom) {
+	private List<OccupationalLeistung> getExisting(String code) {
 		Map<String, Object> propertyMap = new LinkedHashMap<String, Object>();
 		propertyMap.put("code", code);
-		propertyMap.put("validFrom", validFrom);
 		return EntityUtil.loadByNamedQuery(propertyMap, OccupationalLeistung.class);
 	}
 

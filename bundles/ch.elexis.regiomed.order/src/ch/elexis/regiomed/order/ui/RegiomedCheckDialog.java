@@ -1,8 +1,12 @@
 package ch.elexis.regiomed.order.ui;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,39 +14,86 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.equo.chromium.swt.Browser;
+import com.equo.chromium.swt.BrowserFunction;
+
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IStock;
+import ch.elexis.core.model.IStockEntry;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.services.IStockService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.regiomed.order.client.RegiomedOrderClient;
+import ch.elexis.regiomed.order.config.RegiomedConfig;
 import ch.elexis.regiomed.order.messages.Messages;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse;
+import ch.elexis.regiomed.order.model.RegiomedOrderResponse.AlternativeResult;
 import ch.elexis.regiomed.order.model.RegiomedOrderResponse.ArticleResult;
+import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse;
+import ch.elexis.regiomed.order.model.RegiomedProductLookupResponse.ProductResult;
+import ch.elexis.regiomed.order.preferences.RegiomedConstants;
+import ch.elexis.regiomed.order.service.RegiomedLocalArticleService;
+import ch.elexis.regiomed.order.service.RegiomedServerService;
 
 public class RegiomedCheckDialog extends Dialog {
 
-	private final RegiomedOrderResponse response;
-	private final Set<String> removedIdentifiers = new HashSet<>();
-	private int remainingErrors = 0;
+	private static final Logger log = LoggerFactory.getLogger(RegiomedCheckDialog.class);
+
+	private final RegiomedCheckController controller;
+	private final RegiomedServerService serverService = new RegiomedServerService();
+	private final RegiomedLocalArticleService localArticleService = new RegiomedLocalArticleService();
+
+	private boolean searchAvailable = false;
+	private List<ProductResult> currentSearchResults = Collections.emptyList();
+
+	private Browser browser;
+	private Button okButton;
 
 	public RegiomedCheckDialog(Shell parentShell, RegiomedOrderResponse response) {
 		super(parentShell);
-		this.response = response;
-		this.remainingErrors = response.articlesNOK;
+		this.controller = new RegiomedCheckController(response, serverService);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
+		initializeState();
+	}
+
+	private void initializeState() {
+		try {
+			RegiomedConfig config = RegiomedConfig.load();
+			this.searchAvailable = new RegiomedOrderClient().checkSearchAvailability(config);
+		} catch (Exception e) {
+			log.warn("Could not check search availability", e);
+			this.searchAvailable = false;
+		}
+
+		BusyIndicator.showWhile(Display.getDefault(), () -> {
+			controller.loadMissingAlternatives();
+		});
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Messages.RegiomedCheckDialog_Title);
+		String orderName = determineOrderName();
+		newShell.setText(Messages.RegiomedCheckDialog_Title + orderName);
 		newShell.setImage(Images.IMG_LOGO.getImage());
 	}
 
@@ -51,8 +102,16 @@ public class RegiomedCheckDialog extends Dialog {
 		Composite area = (Composite) super.createDialogArea(parent);
 		area.setLayout(new GridLayout(1, false));
 
-		Browser browser = new Browser(area, SWT.NONE);
+		browser = new Browser(area, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		new BrowserFunction(browser, "closeMainDialog") {
+			@Override
+			public Object function(Object[] arguments) {
+				Display.getDefault().asyncExec(() -> cancelPressed());
+				return null;
+			}
+		};
 
 		browser.addLocationListener(new LocationListener() {
 			@Override
@@ -61,105 +120,337 @@ public class RegiomedCheckDialog extends Dialog {
 
 			@Override
 			public void changing(LocationEvent event) {
-				if (event.location != null && event.location.startsWith("regiomed:remove:")) { //$NON-NLS-1$
-					String[] parts = event.location.split(":", -1); //$NON-NLS-1$
-					if (parts.length >= 4) {
-						String pharma = parts[2];
-						String ean = parts[3];
-						if (StringUtils.isBlank(pharma))
-							pharma = "0"; //$NON-NLS-1$
-						if (StringUtils.isBlank(ean))
-							ean = "0"; //$NON-NLS-1$
-						String key = pharma + ":" + ean; //$NON-NLS-1$
-						if (!removedIdentifiers.contains(key)) {
-							removedIdentifiers.add(key);
-							if (isErrorArticle(pharma, ean)) {
-								remainingErrors--;
-								updateOkButtonState();
-							}
-						}
-					}
+				if (event.location != null && event.location.startsWith(RegiomedConstants.CONST_REGIOMED_URL_PREFIX)) {
+					handleBrowserAction(event.location);
 					event.doit = false;
 				}
 			}
 		});
 
-		String html = RegiomedCheckTemplate.generateHtml(response);
-		browser.setText(html);
+		browser.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ESCAPE) {
+				e.doit = false;
+			}
+		});
 
+		refreshBrowser();
 		return area;
 	}
 
-	public List<ArticleResult> getDeletedArticles() {
-		List<ArticleResult> deletedItems = new ArrayList<>();
+	private void handleBrowserAction(String url) {
+		String[] parts = url.split(":");
+		if (parts.length < 2)
+			return;
 
-		if (response.articles == null)
-			return deletedItems;
+		String action = parts[1];
 
-		// Wir müssen die Listen EXAKT so aufbauen wie im Template
-		List<ArticleResult> okItems = response.articles.stream().filter(a -> a.success).collect(Collectors.toList());
-		List<ArticleResult> nokItems = response.articles.stream().filter(a -> !a.success).collect(Collectors.toList());
-
-		// 1. Prüfen, welche NOK-Zeilen gelöscht wurden
-		for (int i = 0; i < nokItems.size(); i++) {
-			String rowId = "nok_row_" + i;
-			if (removedIdentifiers.contains(rowId)) {
-				deletedItems.add(nokItems.get(i));
+		switch (action) {
+		case "force":
+			if (parts.length >= 4) {
+				controller.forceArticle(controller.makeKey(parts[2], parts[3]));
+				updateStateAndUI();
 			}
-		}
-
-		// 2. Prüfen, welche OK-Zeilen gelöscht wurden (falls möglich)
-		for (int i = 0; i < okItems.size(); i++) {
-			String rowId = "ok_row_" + i;
-			if (removedIdentifiers.contains(rowId)) {
-				deletedItems.add(okItems.get(i));
+			break;
+		case "reset":
+			if (parts.length >= 4) {
+				controller.resetArticle(controller.makeKey(parts[2], parts[3]));
+				updateStateAndUI();
 			}
+			break;
+		case "updateQty":
+			handleUpdateQty(parts);
+			break;
+		case "remove":
+			if (parts.length >= 4) {
+				controller.removeArticle(controller.makeKey(parts[2], parts[3]));
+				updateStateAndUI();
+			}
+			break;
+		case "replace":
+			handleReplace(parts);
+			break;
+		case "searchQuery":
+			handleSearchQuery(parts);
+			break;
+		case "selectResult":
+			handleSelectResult(parts);
+			break;
+		case "saveFilter":
+			if (parts.length > 2) {
+				ConfigServiceHolder.get().setActiveUserContact(RegiomedConstants.CONST_STOCK_FILTER_KEY, parts[2]);
+			}
+			break;
+		case "confirmOrder":
+			Display.getDefault().asyncExec(() -> executeSuperOkPressed());
+			break;
+		default:
+			log.warn("Unknown Regiomed action: {}", action);
 		}
-
-		return deletedItems;
 	}
 
-	private boolean isErrorArticle(String pharmaStr, String eanStr) {
-		if (response.articles == null)
-			return false;
-		for (ArticleResult item : response.articles) {
-			String itemPharma = String.valueOf(item.pharmaCode);
-			String itemEan = String.valueOf(item.eanID);
-			if (StringUtils.isBlank(itemPharma) || "null".equals(itemPharma)) {
-				itemPharma = "0";
-			}
-			if (StringUtils.isBlank(itemEan) || "null".equals(itemEan)) {
-				itemEan = "0";
-			}
-			if (itemPharma.equals(pharmaStr) && itemEan.equals(eanStr)) {
-				return !item.success;
+	private void handleReplace(String[] parts) {
+		if (parts.length < 6)
+			return;
+		String orgKey = controller.makeKey(parts[2], parts[3]);
+		String newKey = controller.makeKey(parts[4], parts[5]);
+
+		if (!controller.getReplacements().containsKey(orgKey)) {
+			AlternativeResult selectedAlt = findAlternativeByKey(newKey);
+
+			if (selectedAlt != null) {
+				try {
+					ArticleResult validated = serverService.validateReplacement(selectedAlt);
+					if (validated != null) {
+						controller.replaceArticle(orgKey, newKey, selectedAlt.getDescription(),
+								validated.getAvailableInventory());
+						updateStateAndUI();
+					}
+				} catch (Exception e) {
+					showJsError(selectedAlt.getDescription(), e.getMessage());
+				}
 			}
 		}
-		return false;
 	}
 
-	private void updateOkButtonState() {
-		getShell().getDisplay().asyncExec(() -> {
-			Button okBtn = getButton(IDialogConstants.OK_ID);
-			if (okBtn != null && !okBtn.isDisposed()) {
-				System.out.println("Test " + remainingErrors);
-				okBtn.setEnabled(remainingErrors <= 0);
+	private AlternativeResult findAlternativeByKey(String key) {
+		RegiomedOrderResponse resp = controller.getResponse();
+		if (resp.getAlternatives() != null) {
+			for (AlternativeResult alt : resp.getAlternatives()) {
+				String altKey = controller.makeKey(alt.getPharmaCode(), alt.getEanID());
+				if (altKey.equals(key)) {
+					return alt;
+				}
+			}
+		}
+		return null;
+	}
+
+	private void handleUpdateQty(String[] parts) {
+		if (parts.length < 5)
+			return;
+		try {
+			String pharma = parts[2];
+			String ean = parts[3];
+			int newQty = Integer.parseInt(parts[4]);
+
+			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+				controller.updateQuantity(pharma, ean, newQty);
+			});
+			updateStateAndUI();
+		} catch (NumberFormatException e) {
+			log.error("Invalid quantity format: {}", parts[4], e);
+		}
+	}
+
+	private void handleSearchQuery(String[] parts) {
+		if (parts.length < 3)
+			return;
+		String query = URLDecoder.decode(parts[2], StandardCharsets.UTF_8);
+
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			try {
+				RegiomedProductLookupResponse resp = serverService.searchProducts(query);
+				Map<Integer, Map<String, Integer>> localStockMap = new HashMap<>();
+				List<IStock> allStocks = new ArrayList<>();
+
+				try {
+					IStockService stockService = OsgiServiceUtil.getService(IStockService.class).orElse(null);
+					if (stockService != null) {
+						allStocks = stockService.getAllStocks(true, false);
+
+						if (resp != null && resp.products != null) {
+							for (int i = 0; i < resp.products.size(); i++) {
+								ProductResult p = resp.products.get(i);
+								IArticle localArticle = localArticleService.findLocalArticle(p.ean, p.pharmaCode,
+										p.prodName);
+
+								if (localArticle != null) {
+									Map<String, Integer> stocksForProduct = new HashMap<>();
+									for (IStock stock : allStocks) {
+										IStockEntry entry = stockService.findStockEntryForArticleInStock(stock,
+												localArticle);
+										if (entry != null && entry.getCurrentStock() > 0) {
+											stocksForProduct.put(stock.getCode(), entry.getCurrentStock());
+										}
+									}
+									if (!stocksForProduct.isEmpty()) {
+										localStockMap.put(i, stocksForProduct);
+									}
+								}
+							}
+						}
+					}
+				} catch (Exception ex) {
+					log.error("Error retrieving local stock information", ex);
+				}
+
+				if (resp != null && resp.products != null) {
+					currentSearchResults = resp.products;
+				} else {
+					currentSearchResults = Collections.emptyList();
+				}
+				String lastFilter = ConfigServiceHolder.get()
+						.getActiveUserContact(RegiomedConstants.CONST_STOCK_FILTER_KEY, "ALL");
+
+				String rowsHtml = RegiomedCheckTemplate.generateSearchResultRows(currentSearchResults, localStockMap,
+						allStocks, lastFilter, false);
+
+				String safeHtml = rowsHtml.replace("'", "\\'").replace("\n", "");
+				browser.execute("fillSearchResults('" + safeHtml + "');");
+
+			} catch (Exception e) {
+				log.error("Search failed", e);
+				String errorRow = "<tr><td colspan='4' style='color:red'>" + Messages.RegiomedCheckDialog_ErrorLabel
+						+ ": " + e.getMessage().replace("'", "") + "</td></tr>";
+				browser.execute("fillSearchResults('" + errorRow + "');");
 			}
 		});
 	}
 
+	private void handleSelectResult(String[] parts) {
+		if (parts.length < 6)
+			return;
+
+		try {
+			int index = Integer.parseInt(parts[2]);
+			String orgPharma = parts[4];
+			String orgEan = parts[5];
+
+			if (index >= 0 && index < currentSearchResults.size()) {
+				ProductResult selected = currentSearchResults.get(index);
+
+				try {
+					ArticleResult validated = serverService.validateReplacement(selected);
+					if (validated != null) {
+						String orgKey = controller.makeKey(orgPharma, orgEan);
+						String newKey = controller.makeKey(selected.pharmaCode, selected.ean);
+
+						controller.replaceArticle(orgKey, newKey, selected.prodName, validated.getAvailableInventory());
+						updateStateAndUI();
+					}
+				} catch (Exception e) {
+					showJsError(selected.prodName, e.getMessage());
+				}
+			}
+		} catch (NumberFormatException e) {
+			log.error("Invalid selection index", e);
+		}
+	}
+
+	private void updateStateAndUI() {
+		boolean hasErrors = controller.getRemainingErrors() > 0;
+		if (okButton != null && !okButton.isDisposed()) {
+			okButton.setEnabled(!hasErrors);
+		}
+		refreshBrowser();
+	}
+
+	private void refreshBrowser() {
+		if (browser != null && !browser.isDisposed()) {
+			String orderName = determineOrderName();
+
+			String html = RegiomedCheckTemplate.generateHtml(controller.getResponse(), searchAvailable,
+					controller.getRemovedIdentifiers(), controller.getReplacements(), controller.getReplacementNames(),
+					controller.getReplacementInventory(), controller.getForcedItems(), orderName);
+			browser.setText(html);
+		}
+	}
+
+	private void showJsError(String prodName, String reason) {
+		String msg = Messages.RegiomedCheckDialog_ItemRejected + "\n" + prodName + "\n\n"
+				+ Messages.RegiomedCheckDialog_Reason + StringUtils.SPACE + reason;
+		String jsCall = "showErrorModal('" + escapeJs(Messages.RegiomedCheckDialog_NotOrderable) + "', '"
+				+ escapeJs(msg).replace("\n", "\\n") + "'); unlockLastRow();";
+		if (browser != null && !browser.isDisposed()) {
+			browser.execute(jsCall);
+		}
+	}
+
+	private String escapeJs(String text) {
+		return text == null ? StringUtils.EMPTY : text.replace("'", "\\'").replace("\"", "\\\"");
+	}
+
+	public List<ArticleResult> getDeletedArticles() {
+		if (controller.getResponse().getArticles() == null)
+			return new ArrayList<>();
+		return controller.getResponse().getArticles().stream()
+				.filter(item -> controller.getRemovedIdentifiers()
+						.contains(controller.makeKey(item.getPharmaCode(), item.getEanID())))
+				.collect(Collectors.toList());
+	}
+
+	public Map<String, String> getReplacements() {
+		return controller.getReplacements();
+	}
+
 	public Set<String> getRemovedIdentifiers() {
-		return removedIdentifiers;
+		return controller.getRemovedIdentifiers();
 	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		Button okBtn = createButton(parent, IDialogConstants.OK_ID, Messages.RegiomedCheckDialog_OrderBinding, true);
+		okButton = createButton(parent, IDialogConstants.OK_ID, Messages.RegiomedCheckDialog_OrderBinding, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, Messages.RegiomedCheckDialog_Cancel, false);
+		updateStateAndUI();
+	}
 
-		if (remainingErrors > 0) {
-			okBtn.setEnabled(false);
+	private String determineOrderName() {
+		String orderName = StringUtils.EMPTY;
+
+		IMandator activeMandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
+
+		if (activeMandator != null) {
+			String mandantId = activeMandator.getId();
+
+			boolean hasOwnLogin = ConfigServiceHolder.get().get(mandantId + RegiomedConstants.SUFFIX_OVERRIDE_GLOBAL,
+					false);
+
+			if (hasOwnLogin) {
+				IContact contact = CoreModelServiceHolder.get().load(mandantId, IContact.class).orElse(null);
+
+				if (contact != null) {
+					String vorname = StringUtils.trimToEmpty(contact.getDescription2());
+					String nachname = StringUtils.trimToEmpty(contact.getDescription1());
+
+					if (!vorname.isEmpty() || !nachname.isEmpty()) {
+						orderName = StringUtils.SPACE + (vorname + StringUtils.SPACE + nachname).trim();
+					} else {
+						orderName = contact.getDescription1();
+					}
+				}
+			}
 		}
+
+		return orderName;
+	}
+
+	private void executeSuperOkPressed() {
+		super.okPressed();
+	}
+
+	@Override
+	protected void okPressed() {
+		IMandator activeMandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
+		boolean isMandantSpecific = false;
+
+		if (activeMandator != null) {
+			isMandantSpecific = ConfigServiceHolder.get()
+					.get(activeMandator.getId() + RegiomedConstants.SUFFIX_OVERRIDE_GLOBAL, false);
+		}
+
+		if (isMandantSpecific) {
+			String orderName = determineOrderName();
+			String title = Messages.RegiomedCheckDialog_ConfirmOrderTitle;
+			String msg = Messages.RegiomedCheckDialog_ConfirmOrderMsgPrefix + orderName
+					+ Messages.RegiomedCheckDialog_ConfirmOrderMsgSuffix;
+			String jsCall = "showConfirmModal('" + escapeJs(title) + "', '" + escapeJs(msg).replace("\n", "\\n")
+					+ "');";
+			if (browser != null && !browser.isDisposed()) {
+				browser.execute(jsCall);
+			}
+			return;
+		}
+		super.okPressed();
 	}
 
 	@Override

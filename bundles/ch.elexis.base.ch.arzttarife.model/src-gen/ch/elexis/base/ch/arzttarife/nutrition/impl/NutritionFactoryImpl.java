@@ -3,7 +3,6 @@
  */
 package ch.elexis.base.ch.arzttarife.nutrition.impl;
 
-import ch.elexis.base.ch.arzttarife.nutrition.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;

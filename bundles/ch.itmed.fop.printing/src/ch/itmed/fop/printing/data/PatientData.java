@@ -17,10 +17,13 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
+import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.format.FormatValidator;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Gender;
@@ -103,7 +106,7 @@ public class PatientData {
 		if (date != null) {
 			return date.toLocalDate().format(dateFormat);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public String getSex() {
@@ -226,6 +229,15 @@ public class PatientData {
 		String pid = StringTool.addModulo10(patCode) + "-" //$NON-NLS-1$
 				+ new TimeTool().toString(TimeTool.TIME_COMPACT);
 		return pid;
+	}
+
+	public String getAHV() {
+		IXid ahv = (legalGuardian != null) ? legalGuardian.getXid(XidConstants.DOMAIN_AHV)
+				: patient.getXid(XidConstants.DOMAIN_AHV);
+		if (ahv != null && StringUtils.isNotBlank(ahv.getDomainId())) {
+			return FormatValidator.getFormattedAHVNum(ahv.getDomainId().trim());
+		}
+		return null;
 	}
 
 	public IPatient getPatient() {

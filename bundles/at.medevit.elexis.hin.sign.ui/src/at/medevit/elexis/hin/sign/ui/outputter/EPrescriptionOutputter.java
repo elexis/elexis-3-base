@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.hin.sign.core.IHinSignService;
 import ch.elexis.core.data.interfaces.IOutputter;
 import ch.elexis.core.model.IRecipe;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.status.ObjectStatus;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.Rezept;
 
 public class EPrescriptionOutputter implements IOutputter {

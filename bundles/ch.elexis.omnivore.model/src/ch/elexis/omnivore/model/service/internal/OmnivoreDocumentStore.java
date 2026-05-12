@@ -25,7 +25,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.TransientCategory;
-import ch.elexis.omnivore.model.util.CategoryUtil;
+import ch.elexis.omnivore.util.CategoryUtil;
 
 @Component(immediate = true, property = "storeid=ch.elexis.data.store.omnivore")
 public class OmnivoreDocumentStore implements IDocumentStore {

@@ -872,7 +872,49 @@
 									<fo:table-cell number-columns-spanned="2">
 										<fo:block font-size="7px"
 											font-family="tahoma,arial,helvetica,sans-serif">
-											<!-- add additional receiver address line -->
+											<xsl:choose>
+												<xsl:when
+													test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+													<xsl:choose>
+														<xsl:when
+															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company) > 0">
+															<xsl:if
+																test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company/invoice:postal/invoice:country/@country_code != 'CH'">
+											
+																<xsl:value-of
+																	select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:company/invoice:postal/invoice:country" />
+															</xsl:if>
+														</xsl:when>
+														<xsl:otherwise>
+															<xsl:if
+																test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/invoice:postal/invoice:country/@country_code != 'CH'">
+																<xsl:value-of
+																	select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/invoice:postal/invoice:country" />
+															</xsl:if>
+														</xsl:otherwise>
+													</xsl:choose>
+												</xsl:when>
+												<xsl:otherwise>
+													<xsl:choose>
+														<xsl:when
+															test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company) > 0">
+															<xsl:if
+																test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/invoice:postal/invoice:country/@country_code != 'CH'">
+													
+																<xsl:value-of
+																	select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/invoice:postal/invoice:country" />
+															</xsl:if>
+														</xsl:when>
+														<xsl:otherwise>
+															<xsl:if
+																test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:guarantor/invoice:person/invoice:postal/invoice:country) > 1 and /invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:guarantor/invoice:person/invoice:postal/invoice:country/@country_code != 'CH'">
+																<xsl:value-of
+																	select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:guarantor/invoice:person/invoice:postal/invoice:country" />
+															</xsl:if>
+														</xsl:otherwise>
+													</xsl:choose>
+												</xsl:otherwise>
+											</xsl:choose>											
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
@@ -1118,7 +1160,7 @@
 										<fo:block white-space-treatment="preserve">
 											<xsl:choose>
 												<xsl:when
-													test="/invoice:request/invoice:payload/@copy = 'true' or /invoice:request/invoice:payload/@copy = '1'">
+													test="/invoice:request/invoice:payload/@request_subtype = 'copy'">
 													<xsl:value-of select="'Ja'" />
 												</xsl:when>
 												<xsl:otherwise>
@@ -1218,35 +1260,8 @@
 									</fo:table-cell>
 									<fo:table-cell>
 										<fo:block white-space-treatment="preserve">
-											<xsl:choose>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:kvg) > 0">
-													<xsl:value-of select="'KVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:mvg) > 0">
-													<xsl:value-of select="'MVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:ivg) > 0">
-													<xsl:value-of select="'IVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:vvg) > 0">
-													<xsl:value-of select="'VVG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:org) > 0">
-													<xsl:value-of select="'ORG'" />
-												</xsl:when>
-												<xsl:when
-													test="count(/invoice:request/invoice:payload/invoice:body/invoice:uvg) > 0">
-													<xsl:value-of select="'UVG'" />
-												</xsl:when>
-												<xsl:otherwise>
-													<xsl:value-of select="'privat'" />
-												</xsl:otherwise>
-											</xsl:choose>
+											<xsl:value-of
+													select="/invoice:request/invoice:payload/invoice:body/invoice:law/@type" />
 											<xsl:value-of select="' '" />
 										</fo:block>
 									</fo:table-cell>
@@ -2146,6 +2161,47 @@
 				</fo:block>
 			</fo:table-cell>
 		</fo:table-row>
+		<xsl:if test="string-length(@service_attributes) > 0">
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="7px" white-space-treatment="ignore"
+						font-family="tahoma,arial,helvetica,sans-serif">
+						<xsl:call-template name="ServiceAttributes">
+							<xsl:with-param name="Attributes" select="@service_attributes" />
+						</xsl:call-template>
+					</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</xsl:if>
+		<xsl:for-each select="invoice:xtra_service">
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block text-align="right" font-size="7px"
+						font-family="tahoma,arial,helvetica,sans-serif">
+					</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="7px" font-family="tahoma,arial,helvetica,sans-serif">
+						<xsl:value-of select="@token"/>='<xsl:value-of select="@value"/>'
+					</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template name="reclaim_tp_summary_total">
@@ -3123,6 +3179,18 @@
 				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="ServiceAttributes">
+		<xsl:param name="Attributes" />
+		SA='
+		<xsl:if test="floor($Attributes div 1) mod 2 = 1">
+			Code207
+		</xsl:if>
+		<xsl:if test="floor($Attributes div 2) mod 2 = 1">
+			franchiseFree
+		</xsl:if>
+		'
 	</xsl:template>
 
 	<xsl:template name="FormatDate">

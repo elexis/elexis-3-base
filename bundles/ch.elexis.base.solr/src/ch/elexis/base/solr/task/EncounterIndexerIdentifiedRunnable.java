@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 
 import ch.elexis.base.solr.internal.SolrConstants;
 import ch.elexis.base.solr.internal.bean.EncounterBean;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
@@ -25,7 +26,7 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.services.IQueryCursor;
-import ch.elexis.core.services.holder.StoreToStringServiceHolder;
+import ch.elexis.core.services.IStoreToStringService;
 
 public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifiedRunnable {
 
@@ -114,7 +115,8 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 				} catch (IOException | SolrServerException | IllegalArgumentException e) {
 					logger.warn("addBean exception on encounter [{}]", encounter.getId(), e); //$NON-NLS-1$
 					failures.add(new SingleIdentifiableTaskResult(
-							StoreToStringServiceHolder.getStoreToString(encounter), "commit", e.getMessage())); //$NON-NLS-1$
+							PortableServiceLoader.get(IStoreToStringService.class).getStoreToString(encounter),
+							"commit", e.getMessage())); //$NON-NLS-1$
 				}
 
 				encounterCursor.clear();

@@ -11,10 +11,10 @@ import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.core.test.AbstractTest;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 
 public class ComplementaryLeistungTest extends AbstractTest {

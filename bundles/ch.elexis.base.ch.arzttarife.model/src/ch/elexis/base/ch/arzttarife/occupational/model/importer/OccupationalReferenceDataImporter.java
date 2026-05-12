@@ -50,7 +50,7 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 			List<Object> updated = new ArrayList<>();
 			List<Object> closed = new ArrayList<>();
 
-			for (int i = 0; i < last; i++) {
+			for (int i = 0; i <= last; i++) {
 				List<String> line = exw.getRow(i);
 				if (line == null) {
 					break;

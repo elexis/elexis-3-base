@@ -2183,7 +2183,7 @@
 				</fo:table-cell>
 			</fo:table-row>
 		</xsl:if>
-		<xsl:for-each select="invoice:xtra_service">
+		<xsl:if test="count(invoice:xtra_service) > 0">
 			<fo:table-row>
 				<fo:table-cell>
 					<fo:block text-align="right" font-size="7px"
@@ -2195,13 +2195,19 @@
 						font-family="tahoma,arial,helvetica,sans-serif">
 					</fo:block>
 				</fo:table-cell>
-				<fo:table-cell>
-					<fo:block font-size="7px" font-family="tahoma,arial,helvetica,sans-serif">
-						<xsl:value-of select="@token"/>='<xsl:value-of select="@value"/>'
-					</fo:block>
-				</fo:table-cell>
+					<fo:table-cell number-columns-spanned="4">
+						<fo:block font-size="7px"
+							font-family="tahoma,arial,helvetica,sans-serif">
+							<xsl:for-each select="invoice:xtra_service">
+										<xsl:value-of select="@token" />
+										='
+										<xsl:value-of select="@value" />
+										'
+							</xsl:for-each>
+						</fo:block>
+					</fo:table-cell>
 			</fo:table-row>
-		</xsl:for-each>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template name="reclaim_tp_summary_total">

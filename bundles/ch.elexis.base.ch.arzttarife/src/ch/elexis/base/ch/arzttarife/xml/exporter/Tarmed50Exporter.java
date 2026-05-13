@@ -38,6 +38,7 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterProcessing;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
+import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
@@ -877,6 +878,14 @@ public class Tarmed50Exporter {
 							serviceType.setXtraDrug(drugType);
 						}
 						if ("005".equals(billable.getCodeSystemCode())) {
+							String capitulum = getCapitulum(billable);
+							if (StringUtils.isNotBlank(capitulum)) {
+								XtraServiceType xtraServiceType = new XtraServiceType();
+								xtraServiceType.setToken("Capitulum");
+								xtraServiceType.setValue(capitulum);
+								serviceType.getXtraService().add(xtraServiceType);
+							}
+
 							List<IDiagnosisReference> diagnoses = billed.getEncounter().getDiagnoses();
 							List<IDiagnosisReference> icd10Diagnoses = diagnoses.stream()
 									.filter(d -> d.getCodeSystemName().toLowerCase().contains("icd")).toList();
@@ -977,6 +986,17 @@ public class Tarmed50Exporter {
 		}
 
 		return servicesType;
+	}
+
+	private String getCapitulum(IBillable billable) {
+		if (billable instanceof IAmbulatoryAllowance) {
+			String ret = ((IAmbulatoryAllowance) billable).getChapter();
+			if (ret.indexOf(" - ") != -1) {
+				ret = ret.substring(0, ret.indexOf(" - "));
+			}
+			return ret;
+		}
+		return null;
 	}
 
 	private List<IBilled> getFranchiseFree(List<IBilled> encounterBilled) {

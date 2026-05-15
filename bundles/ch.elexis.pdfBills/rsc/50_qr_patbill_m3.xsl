@@ -131,7 +131,7 @@
 											</fo:table-row>
 											<fo:table-row>
 												<fo:table-cell display-align="after">
-													<fo:block margin-top="25mm">
+													<fo:block margin-top="20mm">
 														<fo:block font-size="7px">
 															PatientIn
 														</fo:block>
@@ -184,7 +184,7 @@
 													</fo:block>
 												</fo:table-cell>
 												<fo:table-cell display-align="after">
-													<fo:block margin-top="25mm">
+													<fo:block margin-top="20mm">
 														<fo:block font-size="7px">
 															PatientIn
 														</fo:block>

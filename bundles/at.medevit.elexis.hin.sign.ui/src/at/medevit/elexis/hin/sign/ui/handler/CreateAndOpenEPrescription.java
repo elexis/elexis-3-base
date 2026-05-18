@@ -25,6 +25,7 @@ import at.medevit.elexis.emediplan.core.EMediplanService;
 import at.medevit.elexis.emediplan.core.EMediplanUtil;
 import at.medevit.elexis.hin.sign.core.IHinSignService;
 import at.medevit.elexis.hin.sign.ui.outputter.EPrescriptionOutputter;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.IDocument;
@@ -85,6 +86,7 @@ public class CreateAndOpenEPrescription extends AbstractHandler implements IHand
 							"Das Rezept konnte nicht angezeigt werden.");
 				}
 			}
+			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, selectedRecipe.get());
 		}
 		return null;
 	}

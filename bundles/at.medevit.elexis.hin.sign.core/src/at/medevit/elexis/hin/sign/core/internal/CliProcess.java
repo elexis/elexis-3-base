@@ -53,18 +53,30 @@ public class CliProcess {
 			ProcessBuilder processBuilder = new ProcessBuilder(command);
 			Process process = processBuilder.start();
 
-			output = readOutput(process.getInputStream());
-			errorOutput = readOutput(process.getErrorStream());
-			if (process.exitValue() == 0) {
-				return true;
-			}
-
-			if (process.waitFor( 30, TimeUnit.SECONDS)) {
-				return process.exitValue() == 0;
+			if (CoreUtil.isLinux() || CoreUtil.isMac()) {
+				if (process.waitFor(30, TimeUnit.SECONDS)) {
+					output = readOutput(process.getInputStream());
+					errorOutput = readOutput(process.getErrorStream());
+					return process.exitValue() == 0;
+				} else {
+					logger.error("Error executing print command [" + command + "] process terminated.");
+					process.destroy();
+					return false;
+				}
 			} else {
-				logger.error("Error executing print command [" + command + "] process terminated.");
-				process.destroy();
-				return false;
+				output = readOutput(process.getInputStream());
+				errorOutput = readOutput(process.getErrorStream());
+				if (process.exitValue() == 0) {
+					return true;
+				}
+
+				if (process.waitFor(30, TimeUnit.SECONDS)) {
+					return process.exitValue() == 0;
+				} else {
+					logger.error("Error executing print command [" + command + "] process terminated.");
+					process.destroy();
+					return false;
+				}
 			}
 		} catch (IOException | InterruptedException e) {
 			logger.error("Error executing print command", e);

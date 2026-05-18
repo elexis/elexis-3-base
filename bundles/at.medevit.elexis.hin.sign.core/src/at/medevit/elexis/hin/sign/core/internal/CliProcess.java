@@ -51,13 +51,15 @@ public class CliProcess {
 		try {
 			logger.info("Executing cli command [" + command + "]");
 			ProcessBuilder processBuilder = new ProcessBuilder(command);
-			processBuilder.environment().put("ENABLE_EPRESCRIPTION", "true");
-
 			Process process = processBuilder.start();
 
+			output = readOutput(process.getInputStream());
+			errorOutput = readOutput(process.getErrorStream());
+			if (process.exitValue() == 0) {
+				return true;
+			}
+
 			if (process.waitFor( 30, TimeUnit.SECONDS)) {
-				output = readOutput(process.getInputStream());
-				errorOutput = readOutput(process.getErrorStream());
 				return process.exitValue() == 0;
 			} else {
 				logger.error("Error executing print command [" + command + "] process terminated.");
@@ -105,7 +107,12 @@ public class CliProcess {
 	}
 
 	private String getHinApiParamter() {
-		return mode == Mode.TEST ? "https://oauth2.sign-test.hin.ch/api" : "https://oauth2.sign.hin.ch/api";
+		return mode == Mode.TEST ? "https://oauth2.authservice-int.hin.ch/api"
+				: "https://oauth2.authservice.hin.ch/api";
+	}
+
+	private String getEnvParameter() {
+		return mode == Mode.TEST ? "int" : "prod";
 	}
 
 	private static Optional<File> getCliLocation() {
@@ -134,7 +141,7 @@ public class CliProcess {
 		File[] certifactionFiles = cliDirectory.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.startsWith("certifaction");
+				return name.startsWith("erxproxy");
 			}
 		});
 		return getFilePath(certifactionFiles[0]);
@@ -167,21 +174,18 @@ public class CliProcess {
 				Path tmpFile = Files.createTempFile("eprescription", ".tmp");
 				Files.writeString(tmpFile, chmed);
 				CliProcess ret = new CliProcess();
+				ret.setMode(mode);
 				ret.command.add(getExecutableName());
-				ret.command.add("eprescription");
 				ret.command.add("create");
-				ret.command.add("--api");
-				ret.command.add(ret.getApiParamter());
-				ret.command.add("--hin-api");
-				ret.command.add(ret.getHinApiParamter());
+				ret.command.add("--env");
+				ret.command.add(ret.getEnvParameter());
 				ret.command.add("--token");
-				ret.command.add(epdHandle);
+				ret.command.add("oauth:" + epdHandle);
 				ret.command.add("-o");
 				ret.command.add("-");
 				ret.command.add("-f");
 				ret.command.add("data");
 				ret.command.add(getFilePath(tmpFile.toFile()));
-				ret.setMode(mode);
 				return ret;
 			} catch (Exception e) {
 				logger.error("Error creating chmed temp file", e);
@@ -194,15 +198,12 @@ public class CliProcess {
 	public static CliProcess verifyPrescription(String chmedUrl, Mode mode) {
 		if (isCliAvailable()) {
 			CliProcess ret = new CliProcess();
-			ret.command.add(getExecutableName());
-			ret.command.add("eprescription");
-			ret.command.add("verify");
-			ret.command.add("--api");
-			ret.command.add(ret.getApiParamter());
-			ret.command.add("--hin-api");
-			ret.command.add(ret.getHinApiParamter());
-			ret.command.add(chmedUrl);
 			ret.setMode(mode);
+			ret.command.add(getExecutableName());
+			ret.command.add("verify");
+			ret.command.add("--env");
+			ret.command.add(ret.getEnvParameter());
+			ret.command.add(chmedUrl);
 			return ret;
 		}
 		throw new IllegalStateException("No CLI available");
@@ -211,18 +212,14 @@ public class CliProcess {
 	public static CliProcess revokePrescription(String epdHandle, String chmedId, Mode mode) {
 		if (isCliAvailable()) {
 			CliProcess ret = new CliProcess();
-			ret.command.add(getExecutableName());
-			ret.command.add("eprescription");
-			ret.command.add("revoke");
-			ret.command.add("--api");
-			ret.command.add(ret.getApiParamter());
-			ret.command.add("--hin-api");
-			ret.command.add(ret.getHinApiParamter());
-			ret.command.add("--token");
-			ret.command.add(epdHandle);
-			ret.command.add("--epdg");
-			ret.command.add(chmedId);
 			ret.setMode(mode);
+			ret.command.add(getExecutableName());
+			ret.command.add("revoke");
+			ret.command.add(chmedId);
+			ret.command.add("--env");
+			ret.command.add(ret.getEnvParameter());
+			ret.command.add("--token");
+			ret.command.add("oauth:" + epdHandle);
 			return ret;
 		}
 		throw new IllegalStateException("No CLI available");
@@ -231,18 +228,13 @@ public class CliProcess {
 	public static CliProcess cancelPrescription(String epdHandle, String chmedId, Mode mode) {
 		if (isCliAvailable()) {
 			CliProcess ret = new CliProcess();
+			ret.setMode(mode);
 			ret.command.add(getExecutableName());
 			ret.command.add("eprescription");
 			ret.command.add("cancel");
-			ret.command.add("--api");
-			ret.command.add(ret.getApiParamter());
-			ret.command.add("--hin-api");
-			ret.command.add(ret.getHinApiParamter());
-			ret.command.add("--token");
-			ret.command.add(epdHandle);
-			ret.command.add("--epdg");
 			ret.command.add(chmedId);
-			ret.setMode(mode);
+			ret.command.add("--token");
+			ret.command.add("oauth:" + epdHandle);
 			return ret;
 		}
 		throw new IllegalStateException("No CLI available");

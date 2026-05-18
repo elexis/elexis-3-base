@@ -108,7 +108,7 @@ public class HINSignService implements IHinSignService {
 				CliProcess cliProcess = CliProcess.createPrescription(authHandle.get(), chmed, mode);
 				if (cliProcess.execute()) {
 					if (cliProcess.getOutput() != null && !cliProcess.getOutput().isEmpty()
-							&& cliProcess.getOutput().get(0).startsWith("https://eprescription.hin.ch")) {
+							&& cliProcess.getOutput().get(0).startsWith("https://eprescription")) {
 						return ObjectStatus.OK(cliProcess.getOutput().get(0));
 					}
 				} else {
@@ -134,8 +134,13 @@ public class HINSignService implements IHinSignService {
 				return ObjectStatus.OK(map);
 			}
 		} else {
-			logger.error(
-					"Error executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
+			if (cliProcess.getOutput() != null) {
+				logger.error("Error executing cli\n["
+						+ cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
+			} else {
+				logger.error("Error executing cli\n[no output]");
+
+			}
 			Map<?, ?> map = cliProcess.getOutputAsMap();
 			if (map != null) {
 				return ObjectStatus.ERROR(map);
@@ -231,7 +236,7 @@ public class HINSignService implements IHinSignService {
 				String body = IOUtils.toString(in, encoding);
 				@SuppressWarnings("rawtypes")
 				Map map = gson.fromJson(body, Map.class);
-				String epdAuthUrl = (String) map.get("epdAuthUrl");
+				String epdAuthUrl = (String) map.get("url");
 				logger.info("Got EPD auth url [" + epdAuthUrl + "]");
 				if (StringUtils.isNotBlank(epdAuthUrl)) {
 					Optional<String> epdAuthCode = getEpdAuthCode(epdAuthUrl, authUi);

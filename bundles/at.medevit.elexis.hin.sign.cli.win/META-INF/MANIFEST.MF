@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: certifaction cli win
+Bundle-Name: erxproxy cli win
 Bundle-SymbolicName: at.medevit.elexis.hin.sign.cli.win
-Bundle-Version: 1.6.1.qualifier
+Bundle-Version: 2.0.3.qualifier
 Eclipse-BundleShape: dir
 Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86_64))
 Bundle-Vendor: medevit.at

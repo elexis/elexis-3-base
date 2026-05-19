@@ -26,7 +26,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -50,6 +52,7 @@ public class ArzttarifDetailDialog extends Dialog {
 	private IBillable billable;
 	private Combo cSide;
 	private ComboViewer cBezug;
+	private Button bFranchiseFree;
 
 	public ArzttarifDetailDialog(Shell shell, IBilled tl) {
 		super(shell);
@@ -126,10 +129,10 @@ public class ArzttarifDetailDialog extends Dialog {
 			} else {
 				cSide.select(2);
 			}
+			cSide.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+
 			if (getServiceTypReflective(billable).equals("Z") || getServiceTypReflective(billable).equals("R")
 					|| getServiceTypReflective(billable).equals("B")) {
-				new Label(ret, SWT.NONE);
-				new Label(ret, SWT.NONE);
 				new Label(ret, SWT.NONE).setText("Bezug");
 
 				cBezug = new ComboViewer(ret, SWT.BORDER);
@@ -168,6 +171,14 @@ public class ArzttarifDetailDialog extends Dialog {
 					}
 				});
 			}
+
+			Label lFranchiseFree = new Label(ret, SWT.NONE);
+			lFranchiseFree.setText("Leistung franchise befreit");
+			lFranchiseFree.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+			bFranchiseFree = new Button(ret, SWT.CHECK);
+			bFranchiseFree
+					.setSelection(StringUtils.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_FRANCHISEFREE)));
+			bFranchiseFree.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		} else if (isPauschale(billable)) {
 			double tpAll = ((double) billed.getPoints()) / 100;
 			double tpw = billed.getFactor();
@@ -293,6 +304,11 @@ public class ArzttarifDetailDialog extends Dialog {
 				billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
 			} else {
 				billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
+			}
+			if (bFranchiseFree.getSelection()) {
+				billed.setExtInfo(Constants.FLD_EXT_FRANCHISEFREE, Boolean.TRUE.toString());
+			} else {
+				billed.setExtInfo(Constants.FLD_EXT_FRANCHISEFREE, null);
 			}
 			CoreModelServiceHolder.get().save(billed);
 		}

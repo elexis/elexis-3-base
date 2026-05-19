@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -165,10 +164,6 @@ public class Tarmed50Exporter {
 	private ICodingContribution sectionCodeContribution;
 
 	private boolean addTrustCenterInstructions = false;
-
-	private List<String> vaccineConsultationCodes = List.of("AA.00.0090", "CG.00.0010", "CG.00.0020", "CG.00.0030",
-			"CG.00.0040", "CG.00.0050", "CG.00.0060", "CG.00.0070", "CG.00.0080", "CG.00.0090", "CG.00.0100",
-			"CG.00.0110", "CG.00.0120", "CG.00.0130", "CG.00.0140", "CG.00.0150", "CG.00.0160", "CG.00.0170");
 
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall
@@ -749,7 +744,6 @@ public class Tarmed50Exporter {
 
 			boolean bRFE = false; // RFE already encoded
 
-			List<IBilled> franchiseFree = getFranchiseFree(encounterBilled);
 			try {
 				for (IBilled billed : encounterBilled) {
 					IBillable billable = billed.getBillable();
@@ -833,7 +827,7 @@ public class Tarmed50Exporter {
 
 						sectionCode.ifPresent(c -> serviceExType.setSectionCode(c));
 
-						if (!franchiseFree.isEmpty() && franchiseFree.contains(billed)) {
+						if (StringUtils.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_FRANCHISEFREE))) {
 							// Bit 2 (0x000002) franchiseFree
 							serviceExType.setServiceAttributes(serviceExType.getServiceAttributes() | 0x000002);
 						}
@@ -936,7 +930,7 @@ public class Tarmed50Exporter {
 							sectionCode.ifPresent(c -> serviceType.setSectionCode(c));
 						}
 
-						if (!franchiseFree.isEmpty() && franchiseFree.contains(billed)) {
+						if (StringUtils.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_FRANCHISEFREE))) {
 							// Bit 2 (0x000002) franchiseFree
 							serviceType.setServiceAttributes(serviceType.getServiceAttributes() | 0x000002);
 						}
@@ -998,24 +992,6 @@ public class Tarmed50Exporter {
 			return ret;
 		}
 		return null;
-	}
-
-	private List<IBilled> getFranchiseFree(List<IBilled> encounterBilled) {
-		List<IBilled> vaccinations = encounterBilled.stream()
-				.filter(billed -> billed.getBillable() instanceof IArticle
-						&& ((IArticle) billed.getBillable()).isVaccination()
-						&& StringUtils.isBlank((String) billed.getExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE)))
-				.toList();
-		if (!vaccinations.isEmpty()) {
-			Optional<IBilled> vaccineConsultationService = encounterBilled.stream()
-					.filter(b -> vaccineConsultationCodes.contains(b.getCode())).findFirst();
-			if (vaccineConsultationService.isPresent()) {
-				List<IBilled> ret = new ArrayList<IBilled>(vaccinations);
-				ret.add(vaccineConsultationService.get());
-				return ret;
-			}
-		}
-		return Collections.emptyList();
 	}
 
 	private Optional<String> getSectionCode(IMandator mandator) {

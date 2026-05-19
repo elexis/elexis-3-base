@@ -66,11 +66,11 @@ public class ArticleDetailDialog extends Dialog {
 
 		if (article.isVaccination()) {
 			Label lFranchiseFree = new Label(ret, SWT.NONE);
-			lFranchiseFree.setText("Impfung nicht franchise befreit");
+			lFranchiseFree.setText("Impfung franchise befreit");
 
 			bFranchiseFree = new Button(ret, SWT.CHECK);
 			bFranchiseFree.setSelection(
-					StringUtils.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE)));
+					StringUtils.isNotBlank((String) billed.getExtInfo(Constants.FLD_EXT_FRANCHISEFREE)));
 		}
 
 		Label lIndication = new Label(ret, SWT.NONE);
@@ -135,9 +135,9 @@ public class ArticleDetailDialog extends Dialog {
 	protected void okPressed() {
 		if (article.isVaccination()) {
 			if (bFranchiseFree.getSelection()) {
-				billed.setExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE, Boolean.TRUE.toString());
+				billed.setExtInfo(Constants.FLD_EXT_FRANCHISEFREE, Boolean.TRUE.toString());
 			} else {
-				billed.setExtInfo(Constants.FLD_EXT_NOFRANCHISEFREE, null);
+				billed.setExtInfo(Constants.FLD_EXT_FRANCHISEFREE, null);
 			}
 			CoreModelServiceHolder.get().save(billed);
 		}

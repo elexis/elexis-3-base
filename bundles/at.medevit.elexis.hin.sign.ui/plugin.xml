@@ -8,6 +8,11 @@
             id="at.medevit.elexis.hin.sign.ui.eprescription.createAndOpen"
             name="HIN eRezept erstellen">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.hin.sign.ui.handler.MedicationCreateAndOpenEPrescription"
+            id="at.medevit.elexis.hin.sign.ui.eprescription.medication.createAndOpen"
+            name="Medikation HIN eRezept erstellen">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -18,6 +23,16 @@
                commandId="at.medevit.elexis.hin.sign.ui.eprescription.createAndOpen"
                icon="rsc/hin_erezept_16x16.png"
                label="HIN eRezept erstellen"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.core.ui.medication.views.MedicationView">
+         <command
+               commandId="at.medevit.elexis.hin.sign.ui.eprescription.medication.createAndOpen"
+               icon="rsc/hin_erezept_16x16.png"
+               label="Medikation HIN eRezept erstellen"
                style="push">
          </command>
       </menuContribution>

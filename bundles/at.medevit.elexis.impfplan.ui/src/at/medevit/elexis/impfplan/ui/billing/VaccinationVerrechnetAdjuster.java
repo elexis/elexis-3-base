@@ -49,9 +49,10 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 								IPatient patient = coverage.getPatient();
 								if (patient != null) {
 									performVaccination(patient.getId(), (IArticle) billable);
-									if (isFranchsiseFree(encounter, billed)) {
-										billed.setExtInfo(Constants.FLD_EXT_FRANCHISEFREE, Boolean.TRUE.toString());
-										CoreModelServiceHolder.get().save(billed);
+									Optional<IBilled> vaccineConsultationCode = getVaccineConsultationCode(encounter);
+									if (vaccineConsultationCode.isPresent()) {
+										setFranchiseFree(billed);
+										setFranchiseFree(vaccineConsultationCode.get());
 									}
 								}
 							}
@@ -88,9 +89,12 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 		});
 	}
 
-	private boolean isFranchsiseFree(IEncounter encounter, IBilled billed) {
-		Optional<IBilled> vaccineConsultationService = encounter.getBilled().stream()
-				.filter(b -> vaccineConsultationCodes.contains(b.getCode())).findFirst();
-		return vaccineConsultationService.isPresent();
+	private void setFranchiseFree(IBilled billed) {
+		billed.setExtInfo(Constants.FLD_EXT_FRANCHISEFREE, Boolean.TRUE.toString());
+		CoreModelServiceHolder.get().save(billed);
+	}
+
+	private Optional<IBilled> getVaccineConsultationCode(IEncounter encounter) {
+		return encounter.getBilled().stream().filter(b -> vaccineConsultationCodes.contains(b.getCode())).findFirst();
 	}
 }

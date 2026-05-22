@@ -2,6 +2,7 @@ package ch.elexis.dialogs;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
@@ -574,6 +575,10 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 	}
 
 	private void updateModel() {
+		LocalTime startTime = LocalTime.of(dateTimeBegin.getHours(), dateTimeBegin.getMinutes());
+		LocalTime endTime = LocalTime.of(dateTimeEnd.getHours(), dateTimeEnd.getMinutes());
+		appointment.setSeriesStartTime(startTime);
+		appointment.setSeriesEndTime(endTime);
 		// set data to model
 		if (txtDataIsMatchingContact()) {
 			appointment.setSubjectOrPatient(((IContact) txtContactSearch.getData()).getId());

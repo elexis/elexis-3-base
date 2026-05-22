@@ -63,6 +63,7 @@ import ch.elexis.core.model.IAppointmentSeries;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.agenda.CollisionErrorLevel;
 import ch.elexis.core.model.builder.IAppointmentBuilder;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
@@ -361,6 +362,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				IStructuredSelection sel = (IStructuredSelection) cv.getViewerWidget().getSelection();
 				boolean isRecurring = false;
@@ -506,14 +508,14 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
 				hexFuture = ConfigServiceHolder.getGlobal(PreferenceConstants.TL_FUTURE_BG_COLOR,
 						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
-				hexRecurring = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SERIES_COLOR,
+				hexRecurring = ConfigServiceHolder.getGlobal(IAppointmentService.AG_SERIES_COLOR,
 						PreferenceConstants.TL_BG_COLOR_DEFAULT);
 			} else {
 				hexPast = ConfigServiceHolder.getUser(PreferenceConstants.TL_PAST_BG_COLOR,
 						PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT);
 				hexFuture = ConfigServiceHolder.getUser(PreferenceConstants.TL_FUTURE_BG_COLOR,
 						PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
-				hexRecurring = ConfigServiceHolder.getUser(PreferenceConstants.AG_SERIES_COLOR,
+				hexRecurring = ConfigServiceHolder.getUser(IAppointmentService.AG_SERIES_COLOR,
 						PreferenceConstants.TL_BG_COLOR_DEFAULT);
 			}
 

@@ -144,7 +144,7 @@ public final class Plannables {
 	public static Color getTypColor(IPlannable p) {
 
 		if (p instanceof IAppointment && ((IAppointment) p).isRecurring()) {
-			String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_SERIES_COLOR, "FFFFFF"); //$NON-NLS-1$
+			String coldesc = ConfigServiceHolder.getUserCached(IAppointmentService.AG_SERIES_COLOR, "FFFFFF"); //$NON-NLS-1$
 			return UiDesk.getColorFromRGB(coldesc);
 		}
 

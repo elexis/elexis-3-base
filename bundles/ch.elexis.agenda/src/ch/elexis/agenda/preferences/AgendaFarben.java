@@ -33,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
@@ -55,6 +56,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		setDescription(Messages.AgendaFarben_colorSettings);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 
@@ -164,7 +166,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		specialColors.setLayout(new GridLayout(2, false));
 
 		lblRecurringColorPreview = createColorRow(specialColors, Messages.AgendaFarben_RecurringAppointment, 
-				PreferenceConstants.AG_SERIES_COLOR, PreferenceConstants.TL_BG_COLOR_DEFAULT);
+				IAppointmentService.AG_SERIES_COLOR, PreferenceConstants.TL_BG_COLOR_DEFAULT);
 
 		updateAllColorPreviews();
 		return par;
@@ -225,7 +227,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT, isGlobal);
 		updateColorPreview(lblFutureColorPreview, PreferenceConstants.TL_FUTURE_BG_COLOR,
 				PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT, isGlobal);
-		updateColorPreview(lblRecurringColorPreview, PreferenceConstants.AG_SERIES_COLOR,
+		updateColorPreview(lblRecurringColorPreview, IAppointmentService.AG_SERIES_COLOR,
 				PreferenceConstants.TL_BG_COLOR_DEFAULT, isGlobal);
 	}
 }

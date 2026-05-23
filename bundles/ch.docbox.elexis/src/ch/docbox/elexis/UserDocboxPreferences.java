@@ -12,12 +12,9 @@ package ch.docbox.elexis;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +28,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -63,13 +59,13 @@ import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.docbox.ws.client.WsClientConfig;
 import ch.elexis.docbox.ws.client.WsClientUtil;
-import ch.swissmedicalsuite.HCardBrowser;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.MessageContext;
 
@@ -83,7 +79,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	private StringFieldEditor loginIdFieldEditor;
 	private StringFieldEditor passwordFieldEditor;
-	private DirectoryFieldEditor directoryFieldEditor;
+	private URIFieldEditor directoryFieldEditor;
 	private Button buttonAgendaSettingsPerUser;
 
 	private Combo agendaBereichCombo;
@@ -220,10 +216,11 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
 				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
-		directoryFieldEditor = new DirectoryFieldEditor(USR_DEFDOCBOXPATHFILES,
+		directoryFieldEditor = new URIFieldEditor(USR_DEFDOCBOXPATHFILES,
 				Messages.UserDocboxPreferences_PathFiles, getFieldEditorParent());
+		directoryFieldEditor.setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
+		directoryFieldEditor.setEmptyStringAllowed(true);
 		addField(directoryFieldEditor);
-		directoryFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
 
 		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
 				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
@@ -445,7 +442,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, loginIdFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
-
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
 		}

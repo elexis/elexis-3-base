@@ -45,6 +45,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.findings.ICondition;
+import ch.elexis.core.findings.ICondition.ConditionCategory;
 import ch.elexis.core.findings.IFindingsService;
 import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.core.findings.util.fhir.IFhirTransformer;
@@ -54,6 +55,7 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.ISickCertificate;
 import ch.elexis.core.model.IVaccination;
@@ -63,6 +65,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQueryCursor;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.fire.core.IFIREService;
 
@@ -90,7 +93,7 @@ public class FIREService implements IFIREService {
 
 	private IFhirTransformer<Encounter, IEncounter> encounterTransformer;
 
-	private IFhirTransformer<Practitioner, IMandator> mandatorTransformer;
+	private IFhirTransformer<Practitioner, IPerson> mandatorTransformer;
 
 	private IFhirTransformer<Observation, ILabResult> labTransformer;
 
@@ -119,9 +122,9 @@ public class FIREService implements IFIREService {
 		return encounterTransformer;
 	}
 
-	private IFhirTransformer<Practitioner, IMandator> getMandatorTransformer() {
+	private IFhirTransformer<Practitioner, IPerson> getMandatorTransformer() {
 		if(mandatorTransformer == null) {
-			mandatorTransformer = transformerRegistry.getTransformerFor(Practitioner.class, IMandator.class);
+			mandatorTransformer = transformerRegistry.getTransformerFor(Practitioner.class, IPerson.class);
 		}
 		return mandatorTransformer;
 	}
@@ -217,18 +220,22 @@ public class FIREService implements IFIREService {
 		List<IEncounter> encounters = patient.getCoverages().stream().flatMap(c -> c.getEncounters().stream())
 				.collect(Collectors.toList());
 		encounters.stream().forEach(ie -> {
-			Encounter fhirEncounter = getEncounterTransformer().getFhirObject(ie).orElse(null);
-			if (fhirEncounter != null) {
-				if (ie.getMandator() != null) {
-					addMandatorToBundle(ie.getMandator(), ret);
-					if (ie.getMandator().getBiller().isPerson() && ie.getMandator().getBiller().isMandator()
-							&& !ie.getMandator().equals(ie.getMandator().getBiller())) {
-						IContact biller = ie.getMandator().getBiller();
-						addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(), ret);
+			try {
+				Encounter fhirEncounter = getEncounterTransformer().getFhirObject(ie).orElse(null);
+				if (fhirEncounter != null) {
+					if (ie.getMandator() != null) {
+						addMandatorToBundle(ie.getMandator(), ret);
+						if (ie.getMandator().getBiller().isPerson() && ie.getMandator().getBiller().isMandator()
+								&& !ie.getMandator().equals(ie.getMandator().getBiller())) {
+							IContact biller = ie.getMandator().getBiller();
+							addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(), ret);
+						}
 					}
+					toFIRE(fhirEncounter);
+					patientBundle.addEntry().setResource(fhirEncounter);
 				}
-				toFIRE(fhirEncounter);
-				patientBundle.addEntry().setResource(fhirEncounter);
+			} catch (Exception e) {
+				LoggerFactory.getLogger(getClass()).error("Exception adding encounter", e);
 			}
 		});
 		
@@ -237,6 +244,14 @@ public class FIREService implements IFIREService {
 			Condition fhirCondition = (Condition) ModelUtil.getAsResource(c.getRawContent());
 			patientBundle.addEntry().setResource(fhirCondition);
 		});
+
+		if (isLegacyPatientCondition()) {
+			Optional<ICondition> legacyCondition = getLegacyPatientCondition(patient);
+			if (legacyCondition.isPresent()) {
+				Condition fhirCondition = (Condition) ModelUtil.getAsResource(legacyCondition.get().getRawContent());
+				patientBundle.addEntry().setResource(fhirCondition);
+			}
+		}
 
 		IQuery<ILabResult> resultQuery = coreModelService.getQuery(ILabResult.class);
 		resultQuery.and(ModelPackage.Literals.ILAB_RESULT__PATIENT, COMPARATOR.EQUALS, patient);
@@ -282,7 +297,7 @@ public class FIREService implements IFIREService {
 	private void addMandatorToBundle(IMandator mandator, Bundle ret) {
 		Optional<BundleEntryComponent> found = findBundleEntry(mandator.getId(), ret);
 		if (found.isEmpty()) {
-			Optional<Practitioner> fhirPractitioner = getMandatorTransformer().getFhirObject(mandator);
+			Optional<Practitioner> fhirPractitioner = getMandatorTransformer().getFhirObject(mandator.asIPerson());
 			fhirPractitioner.ifPresent(p -> ret.addEntry().setResource(toFIRE(p)));
 		}
 	}
@@ -404,6 +419,7 @@ public class FIREService implements IFIREService {
 
 	private BundleFile addIncrementalPatients(List<IPatient> changedPatients, BundleFile currentBundle, List<File> ret)
 			throws IOException {
+		boolean isLegacyPatientCondition = isLegacyPatientCondition();
 		for (IPatient iPatient : changedPatients) {
 			if (iPatient.getDateOfBirth() != null) {
 				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iPatient.getId()),
@@ -412,6 +428,14 @@ public class FIREService implements IFIREService {
 				if (fhirPatient.isPresent()) {
 					toFIRE(fhirPatient.get());
 					currentBundle.addResourceToBundle(patientBundle, fhirPatient.get());
+					if (isLegacyPatientCondition) {
+						Optional<ICondition> legacyCondition = getLegacyPatientCondition(iPatient);
+						if (legacyCondition.isPresent()) {
+							Condition fhirCondition = (Condition) ModelUtil
+									.getAsResource(legacyCondition.get().getRawContent());
+							currentBundle.addResourceToBundle(patientBundle, fhirCondition);
+						}
+					}
 				}
 				currentBundle = currentBundle.writeIfNecessary(ret);
 			}
@@ -499,7 +523,7 @@ public class FIREService implements IFIREService {
 
 	protected Bundle getPatientBundle(String firePatientId, Bundle exportBundle) {
 		for (BundleEntryComponent entry : exportBundle.getEntry()) {
-			if (entry.getResource() != null && firePatientId.equals(entry.getResource().getId())) {
+			if (entry.getResource() != null && firePatientId.equals(entry.getResource().getIdPart())) {
 				return (Bundle) entry.getResource();
 			}
 		}
@@ -640,6 +664,23 @@ public class FIREService implements IFIREService {
 		return "elexis_00" + getPracticeIdentifier() + "_"
 				+ StringUtils.leftPad(Integer.toString(getBundleCount()), 6, "0")
 				+ "_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+	}
+
+	private boolean isLegacyPatientCondition() {
+		boolean useStructured = ConfigServiceHolder.get().get("diagnose/settings/useStructured", false);
+		return !useStructured;
+	}
+
+	private Optional<ICondition> getLegacyPatientCondition(IPatient patient) {
+		String diagnosis = patient.getDiagnosen();
+		if (diagnosis != null && !diagnosis.isEmpty()) {
+			ICondition condition = findingsService.create(ICondition.class);
+			condition.setPatientId(patient.getId());
+			condition.setCategory(ConditionCategory.PROBLEMLISTITEM);
+			condition.setText(diagnosis);
+			return Optional.of(condition);
+		}
+		return Optional.empty();
 	}
 
 	@Override

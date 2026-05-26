@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.Condition;
 import org.hl7.fhir.r4.model.Encounter;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Observation;
@@ -23,6 +24,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import ch.elexis.core.findings.migration.IMigratorService;
 import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.core.model.ILabItem;
 import ch.elexis.core.model.ILabResult;
@@ -34,6 +36,7 @@ import ch.elexis.core.model.builder.IVaccinationBuilder;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
@@ -177,4 +180,64 @@ public class FIREServiceTest {
 //		assertNotNull(initialExport);
 //		assertTrue(fireService.uploadBundle(initialExport));
 //	}
+
+	@Test
+	public void e_exportLegacyCondition() {
+		ConfigServiceHolder.get().set(IMigratorService.DIAGNOSE_SETTINGS_USE_STRUCTURED, false);
+		// add legacy condition
+		TestDatabaseInitializer.getPatient().setDiagnosen("Legacy Diagnose");
+		CoreModelServiceHolder.get().save(TestDatabaseInitializer.getPatient());
+		
+		List<File> files = fireService.initialExport(new NullProgressMonitor());
+		initialExportFile = files.get(0);
+		initialExport = fireService.readBundle(files.get(0));
+		assertNotNull(initialExport);
+		
+		String bundleJson = ModelUtil.getFhirJson(initialExport);
+		assertNotNull(bundleJson);
+		System.out.println(bundleJson);
+
+		boolean conditionFound = false;
+		String firePatientId = ((FIREService) fireService)
+				.getFIREPatientId(TestDatabaseInitializer.getPatient().getId());
+		Bundle patientBundle = ((FIREService) fireService).getPatientBundle(firePatientId, initialExport);
+		assertNotNull(patientBundle);
+		for (BundleEntryComponent entry : patientBundle.getEntry()) {
+			if (entry.hasResource()) {
+				if (entry.getResource() instanceof Condition && ((Condition) entry.getResource()).hasText()
+						&& ((Condition) entry.getResource()).getText().hasDiv()
+						&& ((Condition) entry.getResource()).getText().getDivAsString().contains("Legacy")) {
+					conditionFound = true;
+				}
+			}
+		}
+		assertTrue(conditionFound);
+
+		// update condition
+		TestDatabaseInitializer.getPatient().setDiagnosen("Legacy Diagnose\nUpdated Legacy Diagnose");
+		CoreModelServiceHolder.get().save(TestDatabaseInitializer.getPatient());
+
+		files = fireService.incrementalExport(fireService.getInitialTimestamp(), new NullProgressMonitor());
+		incrementalExport = fireService.readBundle(files.get(0));
+		assertNotNull(incrementalExport);
+
+		bundleJson = ModelUtil.getFhirJson(incrementalExport);
+		assertNotNull(bundleJson);
+		System.out.println(bundleJson);
+
+		conditionFound = false;
+		firePatientId = ((FIREService) fireService).getFIREPatientId(TestDatabaseInitializer.getPatient().getId());
+		patientBundle = ((FIREService) fireService).getPatientBundle(firePatientId, incrementalExport);
+		assertNotNull(patientBundle);
+		for (BundleEntryComponent entry : patientBundle.getEntry()) {
+			if (entry.hasResource()) {
+				if (entry.getResource() instanceof Condition && ((Condition) entry.getResource()).hasText()
+						&& ((Condition) entry.getResource()).getText().hasDiv()
+						&& ((Condition) entry.getResource()).getText().getDivAsString().contains("Updated Legacy")) {
+					conditionFound = true;
+				}
+			}
+		}
+		assertTrue(conditionFound);
+	}
 }

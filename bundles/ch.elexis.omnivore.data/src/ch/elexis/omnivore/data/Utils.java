@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.mail.AttachmentsUtil;
-import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
@@ -424,23 +423,19 @@ public class Utils {
 	}
 
 	/**
-	 * Generates a standardised filename for export.
+	 * Generates a standardised filename for export. * @param dh The document handle
+	 * to generate the name for.
 	 * 
-	 * @param dh The document.
-	 * @param patient The associated patient (may be null).
-	 * @return The generated filename as a string.
+	 * @return The generated filename as a string, or an empty string if the handle
+	 *         is null.
 	 */
 	public static String generateExportFileName(IDocumentHandle dh) {
-		if (dh instanceof IDocument) {
-			return AttachmentsUtil.getFileName((IDocument) dh);
+		if (dh != null) {
+			return AttachmentsUtil.getFileName(dh);
 		}
 		
-		String title = dh.getTitle();
-		if (title == null || title.trim().isEmpty()) {
-			title = "Dokument";
-		}
-		String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));
-		return String.format("%s_%s.tmp", title, timestamp).replaceAll("[^a-züäöA-ZÜÄÖ0-9 _\\.\\-]", "");
+		log.warn("Provided IDocumentHandle is null. Returning empty string as fallback.");
+		return StringUtils.EMPTY;
 	}
 
 	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {

@@ -214,7 +214,7 @@ public class QrRnOutputter implements IRnOutputter {
 									PdfUtil.addCopyWatermark(pdfFile);
 								}
 							}
-							if (!noUi) {
+							if (!noUi && pdfOnly) {
 								for (File pdfFile : printed) {
 									if (pdfFile.exists()) {
 										Program.launch(pdfFile.getAbsolutePath());

@@ -136,4 +136,52 @@ public class AmbulantePauschalenBillingTest extends AbstractTardocTest {
 		status = billingService.bill(code_000020, encounter, 1);
 		assertFalse(status.getMessages().toString(), status.isOK());
 	}
+
+	@Test
+	public void multiTriggerOnePauschale() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor(coverage.getBillingSystem().getName(),
+				0.89, LocalDate.of(2000, 1, 1));
+
+		IDiagnosisReference diagnosis = CoreModelServiceHolder.get().create(IDiagnosisReference.class);
+		diagnosis.setCode("C43.9");
+		diagnosis.setReferredClass("ch.elexis.data.ICD10");
+		encounter.addDiagnosis(diagnosis);
+		CoreModelServiceHolder.get().save(encounter);
+
+		AmbulatoryAllowance trigger = AmbulatoryAllowance.getFromCode("C09.KF.0130", AmbulantePauschalenTyp.TRIGGER,
+				LocalDate.of(2026, 1, 1));
+		Result<IBilled> status = billingService.bill(trigger, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		billed = status.get();
+		assertNotNull(billed);
+		assertTrue(getEncounterBilled("C09.KF.0130") != null);
+		assertTrue(getEncounterBilled("C09.12D") != null);
+
+		trigger = AmbulatoryAllowance.getFromCode("C09.KF.0220", AmbulantePauschalenTyp.TRIGGER,
+				LocalDate.of(2026, 1, 1));
+		status = billingService.bill(trigger, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		billed = status.get();
+		assertNotNull(billed);
+		assertTrue(getEncounterBilled("C09.KF.0130") != null);
+		assertTrue(getEncounterBilled("C09.KF.0220") != null);
+		assertTrue(getEncounterBilled("C09.12C") != null);
+		assertTrue(getEncounterBilled("C09.12D") == null);
+
+		trigger = AmbulatoryAllowance.getFromCode("C09.AB.0070", AmbulantePauschalenTyp.TRIGGER,
+				LocalDate.of(2026, 1, 1));
+		status = billingService.bill(trigger, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		billed = status.get();
+		assertNotNull(billed);
+		assertTrue(getEncounterBilled("C09.KF.0130") != null);
+		assertTrue(getEncounterBilled("C09.KF.0220") != null);
+		assertTrue(getEncounterBilled("C09.AB.0070") != null);
+		assertTrue(getEncounterBilled("C09.49Z") != null);
+		assertTrue(getEncounterBilled("C09.12C") == null);
+		assertTrue(getEncounterBilled("C09.12D") == null);
+	}
 }

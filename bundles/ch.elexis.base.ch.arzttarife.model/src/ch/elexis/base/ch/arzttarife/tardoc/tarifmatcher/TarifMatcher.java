@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -96,13 +97,19 @@ public class TarifMatcher<T extends IBillable> {
 								patientCase.getEntryDate());
 						if (pauschale != null && !isSkipAmbulatoryAllowance(pauschale)
 								&& !isDuplicate(pauschale, encounter)) {
+							Optional<IBilled> existingPauschale = getExistingPauschale(encounter);
 							ret = optifier.add((T) pauschale, encounter, 1, false);
 							if (ret.isOK()) {
+								// remove everything but allowance
 								for (IBilled encounterBilled : encounter.getBilled()) {
 									if (!(encounterBilled.getBillable() instanceof IAmbulatoryAllowance)) {
 										optifier.remove(encounterBilled, encounter);
 									}
 								}
+								// remove previous existing allowance
+								existingPauschale.ifPresent(p -> {
+									optifier.remove(p, encounter);
+								});
 							}
 						}
 					} else {
@@ -127,6 +134,10 @@ public class TarifMatcher<T extends IBillable> {
 			}
 		}
 		return ret;
+	}
+
+	private Optional<IBilled> getExistingPauschale(IEncounter encounter) {
+		return encounter.getBilled().stream().filter(b -> b.getBillable() instanceof IAmbulatoryAllowance).findFirst();
 	}
 
 	private boolean isDuplicate(AmbulatoryAllowance pauschale, IEncounter encounter) {

@@ -163,6 +163,39 @@ public class PsychoBillingTest extends AbstractTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
+	public void limitDaysIncludingMulti() throws ParseException {
+		createEncounter();
+
+		// PK010 limit 180 min 90 days inkl PE040 and PK020
+
+		// create encounter 89 days ago
+		IEncounter pastInRangeEncounter = new IEncounterBuilder(coreModelService, coverage, mandator)
+				.date(LocalDateTime.now().minusDays(89)).buildAndSave();
+
+		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		IPsychoLeistung service = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PE040", null)
+				.get();
+		Result<IBilled> result = service.getOptifier().add(service, pastInRangeEncounter, 80);
+		assertTrue(result.isOK());
+		assertFalse(pastInRangeEncounter.getBilled().isEmpty());
+
+		service = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PK020", null).get();
+		result = service.getOptifier().add(service, pastInRangeEncounter, 80);
+		assertTrue(result.isOK());
+		assertFalse(pastInRangeEncounter.getBilled().isEmpty());
+
+		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PK010", null)
+				.get();
+		result = therapy.getOptifier().add(therapy, encounter, 20);
+		assertTrue(result.isOK());
+		assertFalse(encounter.getBilled().isEmpty());
+
+		result = therapy.getOptifier().add(therapy, encounter, 1);
+		assertFalse(result.isOK());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
 	public void limitDayPatient() throws ParseException {
 		createEncounter();
 

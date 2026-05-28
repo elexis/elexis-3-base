@@ -185,6 +185,13 @@ public class PsychoLimitation {
 		return Collections.emptyList();
 	}
 
+	public List<String> getIncludingCodes() {
+		if (StringUtils.isNotBlank(including)) {
+			return Arrays.asList(including.split(SEPARATOR));
+		}
+		return Collections.emptyList();
+	}
+
 	private Result<IBilled> testDays(IEncounter encounter, IBilled newBilled, IBilled newIncludingBilled) {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		List<IBilled> verrechnetByMandant = Collections.emptyList();
@@ -194,6 +201,12 @@ public class PsychoLimitation {
 		} else {
 			verrechnetByMandant = new ArrayList<>(getVerrechnetByPatientAndRechnungsstellerAndCodeDuringPeriod(
 					encounter, newBilled.getBillable().getCode()));
+			if (StringUtils.isNotBlank(including)) {
+				for (String includingCode : getIncludingCodes()) {
+					verrechnetByMandant.addAll(
+							getVerrechnetByPatientAndRechnungsstellerAndCodeDuringPeriod(encounter, includingCode));
+				}
+			}
 		}
 		// replace value from database with current
 		verrechnetByMandant.remove(newBilled);
@@ -482,7 +495,7 @@ public class PsychoLimitation {
 
 	public boolean isIncluding(String code) {
 		if (StringUtils.isNotBlank(including)) {
-			return including.equals(code);
+			return getIncludingCodes().contains(code);
 		}
 		return false;
 	}

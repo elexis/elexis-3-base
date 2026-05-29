@@ -76,7 +76,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		return new TimeTool(stichtag);
 	}
 
-	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX)
+	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX, index = 1)
 	public boolean getOnlyActiveMandator() {
 		return bOnlyActiveMandator;
 	}
@@ -86,7 +86,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		bOnlyActiveMandator = val;
 	}
 
-	@GetProperty(name = FIELD_AUSGANGSDATUM, widgetType = WidgetTypes.TEXT_DATE)
+	@GetProperty(name = FIELD_AUSGANGSDATUM, widgetType = WidgetTypes.TEXT_DATE, index = 2)
 	public String metaGetStarttag() {
 		return getStartTag().toString(TimeTool.DATE_SIMPLE);
 	}
@@ -97,7 +97,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		this.setStartTag(tt);
 	}
 
-	@GetProperty(name = FIELD_STICHTAG, widgetType = WidgetTypes.TEXT_DATE)
+	@GetProperty(name = FIELD_STICHTAG, widgetType = WidgetTypes.TEXT_DATE, index = 3)
 	public String metaGetStichtag() {
 		return getStichtag().toString(TimeTool.DATE_SIMPLE);
 	}

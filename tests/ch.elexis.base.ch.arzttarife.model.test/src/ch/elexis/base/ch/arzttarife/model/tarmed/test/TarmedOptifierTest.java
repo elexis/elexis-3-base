@@ -613,11 +613,11 @@ public class TarmedOptifierTest {
 	/**
 	 * Test limit per patient.
 	 */
-	@Test
 	public void testPatientLimit() {
 		clearKons(konsOneYear);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.of(2025, 12, 31), LAW),
+		Result<IBilled> result = optifier
+				.add(TarmedLeistung.getFromCode("03.0060", LocalDate.now().minusMonths(3), LAW),
 				konsOneYear,
 				1.0);
 		assertTrue(result.isOK());

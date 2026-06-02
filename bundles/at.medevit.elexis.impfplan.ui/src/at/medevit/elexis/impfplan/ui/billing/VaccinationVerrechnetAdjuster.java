@@ -21,6 +21,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IBilledAdjuster;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 

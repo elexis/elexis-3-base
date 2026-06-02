@@ -137,7 +137,10 @@ public class TarifMatcher<T extends IBillable> {
 	}
 
 	private Optional<IBilled> getExistingPauschale(IEncounter encounter) {
-		return encounter.getBilled().stream().filter(b -> b.getBillable() instanceof IAmbulatoryAllowance).findFirst();
+		return encounter.getBilled().stream()
+				.filter(b -> b.getBillable() instanceof IAmbulatoryAllowance
+						&& ((IAmbulatoryAllowance) b.getBillable()).getTyp() == AmbulantePauschalenTyp.PAUSCHALE)
+				.findFirst();
 	}
 
 	private boolean isDuplicate(AmbulatoryAllowance pauschale, IEncounter encounter) {

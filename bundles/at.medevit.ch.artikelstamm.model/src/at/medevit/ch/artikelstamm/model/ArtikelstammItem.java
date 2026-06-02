@@ -68,7 +68,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 						billed.setNetPrice(billable.getPurchasePrice());
 						Money sellingPrice = billable.getSellingPrice();
 						if (sellingPrice.isZero()) {
-							sellingPrice = MargePreference.calculateVKP(getPurchasePrice());
+							sellingPrice = MargePreference.calculateVKP(billable.getPurchasePrice());
 						}
 						int vkPreis = sellingPrice.getCents();
 						billed.setPoints(Math.round(vkPreis));

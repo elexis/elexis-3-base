@@ -126,7 +126,7 @@ public class TarmedOptifierTest {
 		resetKons(konsSter);
 
 		// Patient OneYear with case and consultation
-		LocalDate dob = LocalDate.now().minusYears(1).minusDays(1);
+		LocalDate dob = LocalDate.of(2025, 12, 31).minusYears(1).minusDays(1);
 		patOneYear = new IContactBuilder.PatientBuilder(coreModelService, "One", "Year", dob, Gender.MALE)
 				.buildAndSave();
 		ICoverage fallOneYear = new ICoverageBuilder(coreModelService, patOneYear, "Testfall One", "Krankheit", LAW)
@@ -138,7 +138,7 @@ public class TarmedOptifierTest {
 		resetKons(konsOneYear);
 
 		// Patient below75 with case and consultation
-		dob = LocalDate.now().minusYears(74).minusDays(350);
+		dob = LocalDate.of(2025, 12, 31).minusYears(74).minusDays(350);
 		patBelow75 = new IContactBuilder.PatientBuilder(coreModelService, "One", "Year", dob, Gender.MALE)
 				.buildAndSave();
 		ICoverage fallBelow75 = new ICoverageBuilder(coreModelService, patBelow75, "Testfall below 75", "Krankheit",

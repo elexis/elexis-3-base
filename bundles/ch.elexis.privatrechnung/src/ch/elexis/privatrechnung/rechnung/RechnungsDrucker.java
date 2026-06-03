@@ -37,7 +37,6 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -141,7 +140,7 @@ public class RechnungsDrucker implements IRnOutputter {
 								rn.setStatus(InvoiceState.fromState(status_vorher.getState() + 1));
 							}
 							rn.addTrace(Rechnung.OUTPUT,
-									getDescription() + ": " + RnStatus.getStatusText(rn.getStatus()));
+									getDescription() + ": " + rn.getInvoiceState().getLocaleText());
 						} catch (Exception ex) {
 							SWTHelper.showError("Fehler beim Drucken der Rechnung " + rn.getRnId(), ex.getMessage()); //$NON-NLS-1$
 							errors++;

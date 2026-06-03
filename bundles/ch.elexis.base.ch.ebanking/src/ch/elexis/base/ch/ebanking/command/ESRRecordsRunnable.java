@@ -12,11 +12,11 @@ import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.core.model.IAccountTransaction;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.elexis.data.Zahlung;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
@@ -60,7 +60,7 @@ public class ESRRecordsRunnable implements Runnable {
 					rec.setGebucht(null);
 				} else {
 					Rechnung rn = rec.getRechnung();
-					if (rn.getStatus() == RnStatus.BEZAHLT) {
+					if (rn.getStatus() == InvoiceState.PAID.getState()) {
 						if (skipPaidAll) {
 							continue;
 						}
@@ -80,7 +80,7 @@ public class ESRRecordsRunnable implements Runnable {
 							}
 						}
 					}
-					if (rn.getStatus() == RnStatus.IN_BETREIBUNG) {
+					if (rn.getStatus() == InvoiceState.IN_EXECUTION.getState()) {
 						if (SWTHelper.askYesNo(Messages.ESRView_compulsoryExecution, Messages.ESRView_rechnung
 								+ rn.getNr() + Messages.ESRView_isInCompulsoryExecution) == false) {
 							continue;

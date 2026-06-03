@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.data.Person;
-import ch.elexis.data.RnStatus;
 import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.utils.DatabaseHelper;
 
@@ -52,8 +52,10 @@ public class DashboardOverview extends Composite {
 	/**
 	 * Public constructor.
 	 *
-	 * @param parent Parent composite.
-	 * @param style  SWT control style.
+	 * @param parent
+	 *            Parent composite.
+	 * @param style
+	 *            SWT control style.
 	 */
 	public DashboardOverview(final Composite parent, final int style) {
 		super(parent, style);
@@ -89,11 +91,12 @@ public class DashboardOverview extends Composite {
 	// ////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Creates the description panel for this dashboard overview. This is the left
-	 * hand side of the overview, containing the buttons that control the chart
-	 * generation.
+	 * Creates the description panel for this dashboard overview. This is the
+	 * left hand side of the overview, containing the buttons that control the
+	 * chart generation.
 	 *
-	 * @param parent Parent composite.
+	 * @param parent
+	 *            Parent composite.
 	 * @return Composite containing the created controls.
 	 */
 	private Composite createDescriptionPanel(Composite parent) {
@@ -115,10 +118,12 @@ public class DashboardOverview extends Composite {
 	}
 
 	/**
-	 * Creates the statistics panel in this dashboard overview. This is the right
-	 * hand side of the overview, containing some statistical data about the system.
+	 * Creates the statistics panel in this dashboard overview. This is the
+	 * right hand side of the overview, containing some statistical data about
+	 * the system.
 	 *
-	 * @param parent Parent composite.
+	 * @param parent
+	 *            Parent composite.
 	 * @return Composite containing the created controls.
 	 */
 	private Composite createStatsPanel(Composite parent) {
@@ -155,9 +160,9 @@ public class DashboardOverview extends Composite {
 		int patientsFemale = DatabaseHelper.getNumberGenderPatients(Person.FEMALE);
 
 		int invoicesTotal = DatabaseHelper.getTotalNumberOfInvoices();
-		int invoicesPaid = DatabaseHelper.getNumberOfInvoices(RnStatus.BEZAHLT);
-		int invoicesOpen = DatabaseHelper.getNumberOfInvoices(RnStatus.OFFEN)
-				+ DatabaseHelper.getNumberOfInvoices(RnStatus.OFFEN_UND_GEDRUCKT);
+		int invoicesPaid = DatabaseHelper.getNumberOfInvoices(InvoiceState.PAID.getState());
+		int invoicesOpen = DatabaseHelper.getNumberOfInvoices(InvoiceState.OPEN.getState())
+				+ DatabaseHelper.getNumberOfInvoices(InvoiceState.OPEN_AND_PRINTED.getState());
 
 		int consultationsTotal = DatabaseHelper.getNumberOfConsultations();
 
@@ -177,8 +182,10 @@ public class DashboardOverview extends Composite {
 	/**
 	 * Calculates the percent value from two given amounts.
 	 *
-	 * @param givenAmount Amount given.
-	 * @param totalAmount Total amount.
+	 * @param givenAmount
+	 *            Amount given.
+	 * @param totalAmount
+	 *            Total amount.
 	 * @return float How much percent is givenAmount of totalAmount
 	 */
 	private float calculatePercent(final float givenAmount, final float totalAmount) {
@@ -191,8 +198,10 @@ public class DashboardOverview extends Composite {
 	/**
 	 * Writes the percent value from two given amounts.
 	 *
-	 * @param givenAmount Amount given.
-	 * @param totalAmount Total amount.
+	 * @param givenAmount
+	 *            Amount given.
+	 * @param totalAmount
+	 *            Total amount.
 	 * @return String How much percent is givenAmount of totalAmount, written as
 	 *         string containing the % sign.
 	 */

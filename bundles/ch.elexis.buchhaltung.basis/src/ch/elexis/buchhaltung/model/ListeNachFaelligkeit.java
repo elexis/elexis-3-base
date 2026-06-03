@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.Status;
 
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
@@ -91,7 +91,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		monitor.beginTask(NAME, totalwork);
 		monitor.subTask(DATENBANKABFRAGE);
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
-		qbe.add("RnStatus", "<>", Integer.toString(RnStatus.BEZAHLT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("RnStatus", "<>", Integer.toString(InvoiceState.PAID.getState())); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
 		int size = rnn.size();
@@ -111,7 +111,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 			if (bOnlyActiveMandator && (!actMnId.equals(rn.get("MandantID")))) { //$NON-NLS-1$
 				continue;
 			}
-			if (RnStatus.isActive(rn.getStatus()) && StringUtils.isNotBlank(rn.getNr())) {
+			if (rn.getInvoiceState().isActive() && StringUtils.isNotBlank(rn.getNr())) {
 				DateTool date = new DateTool(rn.getDatumRn());
 				date.addDays(dueAfter);
 				if (date.isBefore(stichTag)) {

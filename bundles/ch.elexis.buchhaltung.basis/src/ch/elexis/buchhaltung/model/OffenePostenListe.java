@@ -19,12 +19,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.elexis.data.Zahlung;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
@@ -143,7 +143,8 @@ public class OffenePostenListe extends AbstractDataProvider {
 
 				if ((pat != null) && (betrag != null) && (!betrag.isNeglectable())) {
 					int status = rn.getStatusAtDate(now);
-					if (RnStatus.isActive(status)) {
+					InvoiceState _state = InvoiceState.fromState(status);
+					if (_state.isActive()) {
 						Comparable[] row = new Comparable[this.getDataSet().getHeadings().size()];
 						row[0] = pif.format(pat.get("PatientNr")); //$NON-NLS-1$
 						row[1] = rn.getNr();
@@ -156,7 +157,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 							betrag.subtractMoney(z.getBetrag());
 						}
 						row[3] = Double.toString(betrag.getAmount());
-						row[2] = RnStatus.getStatusText(status);
+						row[2] = _state.getLocaleText();
 						result.add(row);
 					}
 

@@ -8,6 +8,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.RecurringAppointment;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.AppointmentState;
@@ -172,9 +173,12 @@ public class Event {
 					+ formattedStateHistory;
 			ret.borderColor = AppointmentServiceHolder.get().getContactConfiguredStateColor(userContact,
 					termin.getState());
+			String appointmentType = termin.isRecurring() ? IAppointmentService.AG_SERIES_COLOR : termin.getType();
 			ret.backgroundColor = AppointmentServiceHolder.get().getContactConfiguredTypeColor(userContact,
-					termin.getType());
-			ret.textColor = getTextColor(ret.backgroundColor.substring(1));
+					appointmentType);
+			String colorForText = ret.backgroundColor.startsWith("#") ? ret.backgroundColor.substring(1)
+					: ret.backgroundColor;
+			ret.textColor = getTextColor(colorForText);
 			if (ret.end == null) {
 				ret.allDay = true;
 			}

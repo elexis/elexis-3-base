@@ -77,7 +77,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			boolean updated = false;
 			for (IPeriod iPeriod : changedPeriods) {
 				if (eventsMap.containsKey(iPeriod.getId())) {
-					boolean deleted = ((IAppointment) iPeriod).isDeleted();
+					boolean deleted = iPeriod.isDeleted();
 					if (deleted || !timespan.contains(iPeriod)) {
 						// deleted or moved outside timespan
 						eventsMap.remove(iPeriod.getId());

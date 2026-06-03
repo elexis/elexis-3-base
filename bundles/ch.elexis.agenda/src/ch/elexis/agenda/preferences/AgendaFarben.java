@@ -33,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
@@ -47,6 +48,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 	private Button cbGlobalSettings;
 	private Label lblPastColorPreview;
 	private Label lblFutureColorPreview;
+	private Label lblRecurringColorPreview;
 
 	public AgendaFarben() {
 		prefs = new ConfigServicePreferenceStore(Scope.USER);
@@ -54,6 +56,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		setDescription(Messages.AgendaFarben_colorSettings);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 
@@ -135,7 +138,6 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		terminListeColors.setText(Messages.AgendaFarben_Terminliste);
 		terminListeColors.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		terminListeColors.setLayout(new GridLayout(2, false));
-
 		cbGlobalSettings = new Button(terminListeColors, SWT.CHECK);
 		cbGlobalSettings.setText(Messages.AgendaFarben_Preferences_GlobalSettings);
 		GridData gdCb = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1);
@@ -158,8 +160,15 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		lblFutureColorPreview = createColorRow(terminListeColors, Messages.AgendaFarben_FutureAppointments,
 				PreferenceConstants.TL_FUTURE_BG_COLOR, PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT);
 
-		updateAllColorPreviews();
+		Group specialColors = new Group(par, SWT.BORDER);
+		specialColors.setText(Messages.AgendaFarben_SpecialAppointments);
+		specialColors.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		specialColors.setLayout(new GridLayout(2, false));
 
+		lblRecurringColorPreview = createColorRow(specialColors, Messages.AgendaFarben_RecurringAppointment, 
+				IAppointmentService.AG_SERIES_COLOR, PreferenceConstants.TL_BG_COLOR_DEFAULT);
+
+		updateAllColorPreviews();
 		return par;
 	}
 
@@ -218,5 +227,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 				PreferenceConstants.TL_PAST_BG_COLOR_DEFAULT, isGlobal);
 		updateColorPreview(lblFutureColorPreview, PreferenceConstants.TL_FUTURE_BG_COLOR,
 				PreferenceConstants.TL_FUTURE_BG_COLOR_DEFAULT, isGlobal);
+		updateColorPreview(lblRecurringColorPreview, IAppointmentService.AG_SERIES_COLOR,
+				PreferenceConstants.TL_BG_COLOR_DEFAULT, isGlobal);
 	}
 }

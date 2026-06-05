@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +15,8 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
-import ch.elexis.core.data.interfaces.IPersistentObject;
-import ch.elexis.data.Xid;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 
 public abstract class AbstractCsvImportFile<T> {
@@ -36,14 +37,14 @@ public abstract class AbstractCsvImportFile<T> {
 	public T getExisting(String id) {
 		String domain = getXidDomain();
 		if (domain != null) {
-			Xid existingXid = Xid.findXID(domain, id);
-			if (existingXid != null) {
-				IPersistentObject ret = existingXid.getObject();
+			List<Identifiable> existingObjects = XidServiceHolder.get().findObjects(domain, id, Identifiable.class);
+			if (existingObjects != null && !existingObjects.isEmpty()) {
+				Identifiable ret = existingObjects.get(0);
 				if (getType().checkElexisClass(ret)) {
 					return (T) ret;
 				} else {
 					LoggerFactory.getLogger(getClass()).error("XID [" + domain + "] [" + id
-							+ "] referes to object of wrong type [" + ret.getClass() + "]");
+							+ "] refers to object of wrong type [" + ret.getClass() + "]");
 				}
 			}
 		}

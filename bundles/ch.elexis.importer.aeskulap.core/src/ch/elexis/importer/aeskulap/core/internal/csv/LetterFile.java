@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.SubMonitor;
@@ -12,12 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import com.opencsv.exceptions.CsvValidationException;
 
-import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
-import ch.elexis.core.model.Identifiable;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 import ch.elexis.importer.aeskulap.core.service.DocumentStoreServiceHolder;
@@ -81,15 +79,7 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 								DocumentStoreServiceHolder.get().saveDocument(letter, fin);
 							}
 							String xid = line[1];
-							Optional<Object> po = DocumentStoreServiceHolder.get().getPersistenceObject(letter);
-							if (po.isPresent()) {
-								if (po.get() instanceof IPersistentObject) {
-									((IPersistentObject) po.get()).addXid(getXidDomain(), xid, true);
-								} else if (po.get() instanceof Identifiable) {
-									((Identifiable) po.get()).addXid(getXidDomain(), xid, true);
-								}
-							}
-
+							XidServiceHolder.get().addXid(letter, getXidDomain(), xid, true);
 						}
 					}
 					monitor.worked(1);
@@ -125,7 +115,7 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 
 	@Override
 	public IDocument create(String[] line) {
-		Patient patient = (Patient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
+		IPatient patient = (IPatient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
 		if (patient != null) {
 			IDocument document = DocumentStoreServiceHolder.get().createDocument(patient.getId(), line[3],
 					importCategory.getName());

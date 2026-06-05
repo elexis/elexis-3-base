@@ -9,13 +9,14 @@ import java.util.Map;
 import org.eclipse.core.runtime.SubMonitor;
 
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.LabItem;
-import ch.elexis.data.LabResult;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Xid;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.holder.XidServiceHolder;
 
 public interface IAeskulapImportFile {
 
@@ -28,13 +29,13 @@ public interface IAeskulapImportFile {
 	public enum Type {
 
 		//@formatter:off
-		ADDRESSES(1, Kontakt.class),
-		MANDATOR(2, Mandant.class),
-		PATIENT(100, Patient.class),
-		COVERAGE(101, Fall.class),
-		LABORCONTACT(200, Kontakt.class), 
-		LABORITEM(210, LabItem.class), 
-		LABORRESULT(250, LabResult.class),
+		ADDRESSES(1, IContact.class),
+		MANDATOR(2, IMandator.class),
+		PATIENT(100, IPatient.class),
+		COVERAGE(101, ICoverage.class),
+		LABORCONTACT(200, IContact.class), 
+		LABORITEM(210, ILabItem.class), 
+		LABORRESULT(250, ILabResult.class),
 		DIAGDIRECTORY(300, File.class),
 		LETTER(1001, IOpaqueDocument.class), 
 		LETTERDIRECTORY(1000, File.class),
@@ -142,9 +143,10 @@ public interface IAeskulapImportFile {
 	 * @return
 	 */
 	public default Object getWithXid(String domain, String id) {
-		Xid existingXid = Xid.findXID(domain, id);
-		if (existingXid != null) {
-			return existingXid.getObject();
+		List<Identifiable> existingObjects = XidServiceHolder.get()
+				.findObjects(domain, id, ch.elexis.core.model.Identifiable.class);
+		if (existingObjects != null && !existingObjects.isEmpty()) {
+			return existingObjects.get(0);
 		}
 		return null;
 	}

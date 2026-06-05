@@ -12,14 +12,16 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.core.constants.XidConstants;
-import ch.elexis.data.Anschrift;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.types.Gender;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 import ch.rgw.tools.TimeTool;
 
-public class PatientFile extends AbstractCsvImportFile<Patient> implements IAeskulapImportFile {
+public class PatientFile extends AbstractCsvImportFile<IPatient> implements IAeskulapImportFile {
 
 	private File file;
 
@@ -55,7 +57,7 @@ public class PatientFile extends AbstractCsvImportFile<Patient> implements IAesk
 
 			String[] line = null;
 			while ((line = getNextLine()) != null) {
-				Patient patient = getExisting(line[0]);
+				IPatient patient = getExisting(line[0]);
 				if (patient == null) {
 					patient = create(line);
 				} else if (!overwrite) {
@@ -86,10 +88,18 @@ public class PatientFile extends AbstractCsvImportFile<Patient> implements IAesk
 	}
 
 	@Override
-	public Patient create(String[] line) {
+	public IPatient create(String[] line) {
 		TimeTool tt = new TimeTool(line[12]);
-		String gender = line[13].equals("1") ? "m" : "w";
-		Patient patient = new Patient(line[2], line[3], tt.toString(TimeTool.DATE_GER), gender);
+		Gender gender = line[13].equals("1") ? Gender.MALE : Gender.FEMALE;
+
+		IPatient patient = CoreModelServiceHolder.get().create(IPatient.class);
+		patient.setLastName(line[2]);
+		patient.setFirstName(line[3]);
+		patient.setDateOfBirth(tt.toLocalDateTime());
+		patient.setGender(gender);
+
+		CoreModelServiceHolder.get().save(patient);
+
 		if (Boolean.getBoolean(IAeskulapImporter.PROP_KEEPPATIENTNUMBER)) {
 			updatePatientNumber(patient, Integer.parseInt(line[0]));
 		}
@@ -97,45 +107,48 @@ public class PatientFile extends AbstractCsvImportFile<Patient> implements IAesk
 	}
 
 	@Override
-	public void setProperties(Patient patient, String[] line) {
-		Anschrift an = patient.getAnschrift();
-		an.setStrasse(line[5]);
-		an.setPlz(line[6]);
-		an.setOrt(line[7]);
-		patient.setAnschrift(an);
-		if (mandatorFile != null) {
-			patient.set(Patient.FLD_GROUP, (String) mandatorFile.getTransient(line[8]));
-		}
-		patient.set(Patient.FLD_PHONE1, line[18]);
-		patient.set(Patient.FLD_PHONE2, line[17]);
-		patient.set(Patient.FLD_MOBILEPHONE, line[19]);
-		patient.set(Patient.FLD_E_MAIL, line[20]);
+	public void setProperties(IPatient patient, String[] line) {
+		if (patient != null) {
+			patient.setStreet(line[5]);
+			patient.setZip(line[6]);
+			patient.setCity(line[7]);
 
-		// In elexis, we have a multi purpose comment field "Bemerkung".
-		// We'll collect several fields there
-		StringBuilder sb = new StringBuilder();
-		if (!StringUtils.isBlank(line[21])) {
-			sb.append("Verstorben: ").append(line[21]).append(StringUtils.LF);
-		}
-		if (!StringUtils.isBlank(line[14])) {
-			sb.append("Kommentar: ").append(line[14]).append(StringUtils.LF);
-		}
-		if (!StringUtils.isBlank(line[15])) {
-			sb.append("Warnung: ").append(line[15]).append(StringUtils.LF);
-		}
-		if (!StringUtils.isBlank(line[11])) {
-			sb.append("Beruf: ").append(line[11]).append(StringUtils.LF);
-		}
-		patient.setBemerkung(sb.toString());
+			if (mandatorFile != null) {
+				patient.setGroup((String) mandatorFile.getTransient(line[8]));
+			}
 
-		if (!StringUtils.isBlank(line[22])) {
-			patient.addXid(XidConstants.DOMAIN_AHV, line[22], true);
-		}
+			patient.setPhone1(line[18]);
+			patient.setPhone2(line[17]);
+			patient.setMobile(line[19]);
+			patient.setEmail(line[20]);
 
-		patient.addXid(getXidDomain(), line[0], true);
+			// In elexis, we have a multi purpose comment field "Bemerkung".
+			// We'll collect several fields there
+			StringBuilder sb = new StringBuilder();
+			if (!StringUtils.isBlank(line[21])) {
+				sb.append("Verstorben: ").append(line[21]).append(StringUtils.LF);
+			}
+			if (!StringUtils.isBlank(line[14])) {
+				sb.append("Kommentar: ").append(line[14]).append(StringUtils.LF);
+			}
+			if (!StringUtils.isBlank(line[15])) {
+				sb.append("Warnung: ").append(line[15]).append(StringUtils.LF);
+			}
+			if (!StringUtils.isBlank(line[11])) {
+				sb.append("Beruf: ").append(line[11]).append(StringUtils.LF);
+			}
+			patient.setComment(sb.toString());
+
+			if (!StringUtils.isBlank(line[22])) {
+				XidServiceHolder.get().addXid(patient, XidConstants.DOMAIN_AHV, line[22], true);
+			}
+			XidServiceHolder.get().addXid(patient, getXidDomain(), line[0], true);
+
+			CoreModelServiceHolder.get().save(patient);
+		}
 	}
 
-	private void updatePatientNumber(Patient patient, Integer patNr) {
+	private void updatePatientNumber(IPatient patient, Integer patNr) {
 		String lockid = PersistentObject.lock("PatNummer", true);
 		String pid = PersistentObject.getDefaultConnection()
 				.queryString("SELECT WERT FROM CONFIG WHERE PARAM='PatientNummer'");
@@ -151,6 +164,6 @@ public class PatientFile extends AbstractCsvImportFile<Patient> implements IAesk
 				+ Long.toString(System.currentTimeMillis()) + " where param='PatientNummer'");
 
 		PersistentObject.unlock("PatNummer", lockid);
-		patient.set(Patient.FLD_PATID, patNr.toString());
+		patient.setPatientNr(patNr.toString());
 	}
 }

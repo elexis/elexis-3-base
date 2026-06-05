@@ -10,14 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import com.opencsv.exceptions.CsvValidationException;
 
-import ch.elexis.data.Kontakt;
+import ch.elexis.core.model.IContact;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 
-public class CoverageGarant extends AbstractCsvImportFile<Kontakt> implements IAeskulapImportFile {
+public class CoverageGarant extends AbstractCsvImportFile<IContact> implements IAeskulapImportFile {
 
 	private File file;
-
-	private CoverageGarant garant;
 
 	private Map<String, String[]> garantKurzBezMap;
 
@@ -37,7 +35,7 @@ public class CoverageGarant extends AbstractCsvImportFile<Kontakt> implements IA
 	}
 
 	@Override
-	public Kontakt create(String[] line) {
+	public IContact create(String[] line) {
 		throw new IllegalStateException();
 	}
 
@@ -63,7 +61,7 @@ public class CoverageGarant extends AbstractCsvImportFile<Kontakt> implements IA
 	}
 
 	@Override
-	public void setProperties(Kontakt contact, String[] line) {
+	public void setProperties(IContact contact, String[] line) {
 		throw new IllegalStateException();
 	}
 

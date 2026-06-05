@@ -14,7 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
@@ -45,7 +45,7 @@ public class DiagDirectory implements IAeskulapImportFile {
 			File file = diagMap.get(key);
 			if (file != null && file.isFile() && file.exists()) {
 				readFile(file, Charset.forName("UTF-8")).ifPresent(content -> {
-					Patient patient = (Patient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, key);
+					IPatient patient = (IPatient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, key);
 					if (patient != null) {
 						patient.setDiagnosen(content);
 					}

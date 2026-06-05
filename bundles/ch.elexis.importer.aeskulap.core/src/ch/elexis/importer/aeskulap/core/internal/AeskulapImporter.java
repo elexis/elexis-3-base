@@ -6,7 +6,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +19,6 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.CSVWriter;
 
 import ch.elexis.core.constants.XidConstants;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.ILabResult;
@@ -32,10 +29,10 @@ import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IXidService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
-import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
@@ -197,27 +194,30 @@ public class AeskulapImporter implements IAeskulapImporter {
 	}
 
 	public void registerXids() {
-		// make sure Xids are available
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_ADDRESS, "Alte Adress-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABCONTACT, "Alte Labor Kontakt-ID",
+		IXidService xidService = XidServiceHolder.get();
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_ADDRESS, "Alte Adress-ID",
 				XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABITEM, "Alte Labor Typ-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABRESULT, "Alte Labor Resultat-ID",
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABCONTACT, "Alte Labor Kontakt-ID",
 				XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_PATIENT, "Alte KG-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_GARANT, "Alte Garant-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LETTER, "Alte Brief-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_DOCUMENT, "Alte Dokument-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_FILE, "Alte Datei-ID", XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABITEM, "Alte Labor Typ-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABRESULT, "Alte Labor Resultat-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_PATIENT, "Alte KG-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_GARANT, "Alte Garant-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_LETTER, "Alte Brief-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_DOCUMENT, "Alte Dokument-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XID_IMPORT_FILE, "Alte Datei-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
 	}
 
 	@Override
 	public List<IAeskulapImportFile> importFiles(List<IAeskulapImportFile> files, boolean overwrite,
 			SubMonitor monitor) {
-		// deactivate all events
-		ElexisEventDispatcher.getInstance().setBlockEventTypes(
-				Arrays.asList(ElexisEvent.EVENT_CREATE, ElexisEvent.EVENT_DELETE, ElexisEvent.EVENT_SELECTED,
-						ElexisEvent.EVENT_DESELECTED, ElexisEvent.EVENT_RELOAD, ElexisEvent.EVENT_UPDATE));
 		// create a new map
 		transientFiles = new HashMap<>();
 
@@ -237,8 +237,7 @@ public class AeskulapImporter implements IAeskulapImporter {
 				}
 			}
 		}
-		// reactivate inbox element creation
-		ElexisEventDispatcher.getInstance().setBlockEventTypes(null);
+		
 		return ret;
 	}
 

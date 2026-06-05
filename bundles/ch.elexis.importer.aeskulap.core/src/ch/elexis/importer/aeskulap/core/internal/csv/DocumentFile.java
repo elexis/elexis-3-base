@@ -14,8 +14,8 @@ import com.opencsv.exceptions.CsvValidationException;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
-import ch.elexis.core.model.Identifiable;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 import ch.elexis.importer.aeskulap.core.service.DocumentStoreServiceHolder;
@@ -79,9 +79,7 @@ public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IA
 								DocumentStoreServiceHolder.get().saveDocument(document, fin);
 							}
 							String xid = line[1];
-							if (document instanceof Identifiable) {
-								document.addXid(getXidDomain(), xid, true);
-							}
+							XidServiceHolder.get().addXid(document, getXidDomain(), xid, true);
 						}
 					}
 					monitor.worked(1);
@@ -96,7 +94,7 @@ public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IA
 				monitor.done();
 			}
 		} else {
-			LoggerFactory.getLogger(getClass()).error("No letter directories found");
+			LoggerFactory.getLogger(getClass()).error("No document directories found");
 		}
 		return false;
 	}
@@ -117,7 +115,7 @@ public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IA
 
 	@Override
 	public IDocument create(String[] line) {
-		Patient patient = (Patient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
+		IPatient patient = (IPatient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
 		if (patient != null) {
 			IDocument document = DocumentStoreServiceHolder.get().createDocument(patient.getId(), line[3],
 					importCategory.getName());

@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
@@ -53,6 +54,8 @@ public class ArzttarifDetailDialog extends Dialog {
 	private Combo cSide;
 	private ComboViewer cBezug;
 	private Button bFranchiseFree;
+
+	private BezugComboItem selectedBezug;
 
 	public ArzttarifDetailDialog(Shell shell, IBilled tl) {
 		super(shell);
@@ -117,19 +120,21 @@ public class ArzttarifDetailDialog extends Dialog {
 			new Label(ret, SWT.NONE).setText("Zeit:");
 			new Label(ret, SWT.NONE).setText(mins + " min.");
 
-			new Label(ret, SWT.NONE).setText("Seite");
-			cSide = new Combo(ret, SWT.SINGLE);
-			cSide.setItems(new String[] { "egal", "links", "rechts" });
+			if (requiresSide(billed.getBillable())) {
+				new Label(ret, SWT.NONE).setText("Seite");
+				cSide = new Combo(ret, SWT.SINGLE);
+				cSide.setItems(new String[] { "egal", "links", "rechts" });
 
-			String side = (String) billed.getExtInfo(Constants.FLD_EXT_SIDE);
-			if (side == null) {
-				cSide.select(0);
-			} else if (side.equalsIgnoreCase("l")) {
-				cSide.select(1);
-			} else {
-				cSide.select(2);
+				String side = (String) billed.getExtInfo(Constants.FLD_EXT_SIDE);
+				if (side == null) {
+					cSide.select(0);
+				} else if (side.equalsIgnoreCase("l")) {
+					cSide.select(1);
+				} else {
+					cSide.select(2);
+				}
+				cSide.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			}
-			cSide.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
 			if (getServiceTypReflective(billable).equals("Z") || getServiceTypReflective(billable).equals("R")
 					|| getServiceTypReflective(billable).equals("B")) {
@@ -142,30 +147,46 @@ public class ArzttarifDetailDialog extends Dialog {
 				input.add(BezugComboItem.noBezug());
 				for (IBilled kVerr : billed.getEncounter().getBilled()) {
 					if (!kVerr.getCode().equals(billable.getCode())) {
-						input.add(BezugComboItem.of(kVerr.getCode()));
+						BezugComboItem item = BezugComboItem.of(kVerr);
+						input.add(item);
 					}
 				}
 				cBezug.setInput(input);
-				String bezug = (String) billed.getExtInfo("Bezug");
+				String bezug = (String) billed.getExtInfo(Constants.FLD_EXT_REALTION);
+				String id = (String) billed.getExtInfo(Constants.FLD_EXT_REALTION_ID);
 				if (bezug != null) {
-					if (!input.contains(BezugComboItem.of(bezug))) {
-						input.add(BezugComboItem.of(bezug));
-						cBezug.setInput(input);
+					if (id != null) {
+						IBilled relatedBilled = CoreModelServiceHolder.get().load(id, IBilled.class).orElse(null);
+						if (relatedBilled != null) {
+							selectedBezug = BezugComboItem.of(relatedBilled);
+						}
+					} else {
+						selectedBezug = input.stream().filter(b -> b.getCode().equals(bezug)).findFirst().orElse(null);
 					}
-					cBezug.setSelection(new StructuredSelection(BezugComboItem.of(bezug)), true);
 				} else {
-					cBezug.setSelection(new StructuredSelection(BezugComboItem.noBezug()), true);
+					selectedBezug = BezugComboItem.noBezug();
+
 				}
+				cBezug.setSelection(new StructuredSelection(selectedBezug), true);
 				cBezug.addSelectionChangedListener(new ISelectionChangedListener() {
 					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						StructuredSelection selection = (StructuredSelection) cBezug.getSelection();
 						if (selection != null && !selection.isEmpty()) {
-							BezugComboItem selected = (BezugComboItem) selection.getFirstElement();
-							if (selected.isNoBezug) {
-								billed.setExtInfo("Bezug", StringUtils.EMPTY);
-							} else {
-								billed.setExtInfo("Bezug", selected.getCode());
+							selectedBezug = (BezugComboItem) selection.getFirstElement();
+							if (requiresSide(billed.getBillable())) {
+								IBilled relatedBilled = CoreModelServiceHolder.get()
+										.load(selectedBezug.getId(), IBilled.class).orElse(null);
+								if (relatedBilled != null) {
+									String relatedSide = (String) relatedBilled.getExtInfo(Constants.FLD_EXT_SIDE);
+									if (relatedSide == null) {
+										cSide.select(0);
+									} else if (relatedSide.equalsIgnoreCase("l")) {
+										cSide.select(1);
+									} else {
+										cSide.select(2);
+									}
+								}
 							}
 						}
 					}
@@ -197,6 +218,24 @@ public class ArzttarifDetailDialog extends Dialog {
 		return ret;
 	}
 
+	private boolean requiresSide(IBillable billable) {
+		if (billable != null) {
+			try {
+				Method getterMethod = billable.getClass().getMethod("requiresSide", (Class[]) null);
+				Object typ = getterMethod.invoke(billable, (Object[]) null);
+				if (typ instanceof Boolean) {
+					return (Boolean) typ;
+				}
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				LoggerFactory.getLogger(getClass()).warn("Could not get service typ of [" + billable + "]",
+						e.getMessage());
+			}
+		}
+
+		return false;
+	}
+
 	private String getServiceTypReflective(IBillable billable) {
 		try {
 			Method getterMethod = billable.getClass().getMethod("getServiceTyp", (Class[]) null);
@@ -226,13 +265,25 @@ public class ArzttarifDetailDialog extends Dialog {
 	}
 
 	private static class BezugComboItem {
+		private String id;
 		private String code;
+		private String side;
 		private boolean isNoBezug;
 
-		public static BezugComboItem of(String code) {
+		public static BezugComboItem of(IBilled billed) {
 			BezugComboItem ret = new BezugComboItem();
-			ret.setCode(code);
+			ret.setId(billed.getId());
+			ret.setCode(billed.getCode());
+			ret.setSide((String) billed.getExtInfo(Constants.FLD_EXT_SIDE));
 			return ret;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		private void setId(String id) {
+			this.id = id;
 		}
 
 		public static BezugComboItem noBezug() {
@@ -250,22 +301,23 @@ public class ArzttarifDetailDialog extends Dialog {
 			this.code = code;
 		}
 
+		private void setSide(String side) {
+			this.side = StringUtils.upperCase(side);
+
+		}
+
 		public String getCode() {
 			return this.code;
 		}
 
 		@Override
 		public String toString() {
-			return getCode();
+			return getCode() + (StringUtils.isNotBlank(side) ? StringUtils.SPACE + side : StringUtils.EMPTY);
 		}
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((code == null) ? 0 : code.hashCode());
-			result = prime * result + (isNoBezug ? 1231 : 1237);
-			return result;
+			return Objects.hash(code, id, isNoBezug);
 		}
 
 		@Override
@@ -277,14 +329,7 @@ public class ArzttarifDetailDialog extends Dialog {
 			if (getClass() != obj.getClass())
 				return false;
 			BezugComboItem other = (BezugComboItem) obj;
-			if (code == null) {
-				if (other.code != null)
-					return false;
-			} else if (!code.equals(other.code))
-				return false;
-			if (isNoBezug != other.isNoBezug)
-				return false;
-			return true;
+			return Objects.equals(code, other.code) && Objects.equals(id, other.id) && isNoBezug == other.isNoBezug;
 		}
 	}
 
@@ -305,6 +350,13 @@ public class ArzttarifDetailDialog extends Dialog {
 			} else {
 				billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
 			}
+			if (selectedBezug.isNoBezug) {
+				billed.setExtInfo(Constants.FLD_EXT_REALTION, StringUtils.EMPTY);
+			} else {
+				billed.setExtInfo(Constants.FLD_EXT_REALTION, selectedBezug.getCode());
+				billed.setExtInfo(Constants.FLD_EXT_REALTION_ID, selectedBezug.getId());
+			}
+
 			if (bFranchiseFree.getSelection()) {
 				billed.setExtInfo(Constants.FLD_EXT_FRANCHISEFREE, Boolean.TRUE.toString());
 			} else {

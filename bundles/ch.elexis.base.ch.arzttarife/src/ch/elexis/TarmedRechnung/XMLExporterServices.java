@@ -38,6 +38,7 @@ import ch.elexis.core.model.ICustomService;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.ch.BillingLaw;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.data.Verrechnet;
@@ -338,9 +339,9 @@ public class XMLExporterServices {
 						el = new Element(ELEMENT_RECORD_TARMED, XMLExporter.nsinvoice); // 22000
 						el.setAttribute(ATTR_TREATMENT, "ambulatory"); // 22050 //$NON-NLS-1$
 						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "001"); // 22060 //$NON-NLS-1$
-						String bezug = (String) tl.getExtension().getExtInfo("Bezug");// 22360 //$NON-NLS-1$
+						String bezug = (String) tl.getExtension().getExtInfo(Constants.FLD_EXT_REALTION);
 						if (StringTool.isNothing(bezug)) {
-							bezug = (String) billed.getExtInfo("Bezug");
+							bezug = (String) billed.getExtInfo(Constants.FLD_EXT_REALTION);
 						}
 						if (!StringTool.isNothing(bezug)) {
 							el.setAttribute("ref_code", bezug); //$NON-NLS-1$
@@ -424,7 +425,7 @@ public class XMLExporterServices {
 						double mult = billed.getFactor();
 						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(billed.getPrice()));
 						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
-						if ("true".equals((String) billed.getExtInfo(Verrechnet.INDICATED))) {
+						if ("true".equals(billed.getExtInfo(Verrechnet.INDICATED))) {
 							el.setAttribute("name", billed.getText() + " (medizinisch indiziert: 207)");
 						}
 						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, billable.getCodeSystemCode());

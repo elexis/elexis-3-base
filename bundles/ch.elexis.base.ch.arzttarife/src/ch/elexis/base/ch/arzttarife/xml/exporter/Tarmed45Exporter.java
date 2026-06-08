@@ -679,9 +679,10 @@ public class Tarmed45Exporter {
 						ServiceExType serviceExType = new ServiceExType();
 
 						serviceExType.setTreatment("ambulatory");
-						String bezug = (String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+						String bezug = (String) ((ITarmedLeistung) billable).getExtension()
+								.getExtInfo(Constants.FLD_EXT_REALTION); // $NON-NLS-1$
 						if (StringTool.isNothing(bezug)) {
-							bezug = (String) billed.getExtInfo("Bezug"); //$NON-NLS-1$
+							bezug = (String) billed.getExtInfo(Constants.FLD_EXT_REALTION); // $NON-NLS-1$
 						}
 						if (!StringTool.isNothing(bezug)) {
 							serviceExType.setRefCode(bezug);

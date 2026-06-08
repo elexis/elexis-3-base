@@ -759,7 +759,7 @@ public class Tarmed50Exporter {
 
 						String bezug = getBezug(billable);
 						if (StringTool.isNothing(bezug)) {
-							bezug = (String) billed.getExtInfo("Bezug"); //$NON-NLS-1$
+							bezug = (String) billed.getExtInfo(Constants.FLD_EXT_REALTION); // $NON-NLS-1$
 						}
 						if (!StringTool.isNothing(bezug)) {
 							serviceExType.setRefCode(bezug);
@@ -1040,9 +1040,9 @@ public class Tarmed50Exporter {
 
 	private String getBezug(IBillable billable) {
 		if (billable instanceof ITarmedLeistung) {
-			return (String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+			return (String) ((ITarmedLeistung) billable).getExtension().getExtInfo(Constants.FLD_EXT_REALTION); // $NON-NLS-1$
 		} else if (billable instanceof ITardocLeistung) {
-			return (String) ((ITardocLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
+			return (String) ((ITardocLeistung) billable).getExtension().getExtInfo(Constants.FLD_EXT_REALTION); // $NON-NLS-1$
 		}
 		return StringUtils.EMPTY;
 	}

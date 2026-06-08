@@ -145,6 +145,13 @@ public class TardocBillingTest extends AbstractTardocTest {
 		String side = (String) status.get().getExtInfo(Constants.FLD_EXT_SIDE);
 		assertNotNull(side);
 
+		status = billingService.bill(code_RG050010, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		side = (String) status.get().getExtInfo(Constants.FLD_EXT_SIDE);
+		assertNotNull(side);
+
 		// auto side left
 		status = billingService.bill(code_RG000040, encounter, 1);
 		billed = status.get();
@@ -168,7 +175,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		billed = status.get();
 		assertFalse(status.getMessages().toString(), status.isOK());
 
-		assertEquals(3, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+		assertEquals(4, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
 	}
 
 	@Test

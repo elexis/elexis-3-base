@@ -561,7 +561,6 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			if (v.getBillable() instanceof TardocLeistung) {
 				TardocLeistung tl = (TardocLeistung) v.getBillable();
 				if (tl.getHierarchy(konsDate).contains(slave.getCode())) { // $NON-NLS-1$
-					if (slave.requiresSide())
 					ret.add(v);
 				}
 			}

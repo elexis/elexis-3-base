@@ -16,29 +16,50 @@ import org.eclipse.swt.widgets.TableItem;
 
 import ch.elexis.mednet.webapi.ui.util.UIStyleTableHelper;
 
+/**
+ * Helper class for populating, sorting, and filtering SWT Tables.
+ */
 public class TableHelper {
 
 	private static boolean ascending = true;
 
+	private static final String UNKNOWN_DATE = "Unknown Date"; //$NON-NLS-1$
+	private static final String UNKNOWN_BIRTHDATE = "Unknown Birthdate"; //$NON-NLS-1$
+	private static final String INVALID_DATE = "Invalid Date"; //$NON-NLS-1$
+
+	/**
+	 * Fills a table with data from a list of maps. * @param table the table to fill
+	 * 
+	 * @param list          the data source
+	 * @param display       the display to use for styling
+	 * @param keys          the keys to extract from the maps
+	 * @param defaultValues the default values if a key is missing or null
+	 */
+	@SuppressWarnings("unchecked")
 	public static void fillTableFromList(Table table, List<Map<String, Object>> list, Display display, String[] keys,
 			String[] defaultValues) {
 		for (Map<String, Object> map : list) {
 			String[] values = new String[keys.length];
 
 			for (int j = 0; j < keys.length; j++) {
-				Object value = map.getOrDefault(keys[j], defaultValues[j]);
+				Object value = map.get(keys[j]);
+				if (value == null) {
+					value = defaultValues[j];
+				}
+
 				if (keys[j].contains(".")) { //$NON-NLS-1$
 					String[] keyParts = keys[j].split("\\."); //$NON-NLS-1$
 					Map<String, Object> nestedObject = (Map<String, Object>) map.get(keyParts[0]);
 					if (nestedObject != null) {
-						values[j] = convertToString(nestedObject.getOrDefault(keyParts[1], defaultValues[j]));
+						Object nestedValue = nestedObject.get(keyParts[1]);
+						values[j] = convertToString(nestedValue != null ? nestedValue : defaultValues[j]);
 					} else {
 						values[j] = defaultValues[j];
 					}
 				} else if (keys[j].equals("downloadUrl")) { //$NON-NLS-1$
 					if (map.containsKey("files")) { //$NON-NLS-1$
 						List<Map<String, Object>> files = (List<Map<String, Object>>) map.get("files"); //$NON-NLS-1$
-						if (files.size() > 0) {
+						if (files != null && !files.isEmpty()) {
 							String downloadUrl = (String) files.get(0).get("downloadUrl"); //$NON-NLS-1$
 							values[j] = (downloadUrl != null) ? extractDateFromUrl(downloadUrl) : defaultValues[j];
 						} else {
@@ -48,25 +69,24 @@ public class TableHelper {
 						values[j] = defaultValues[j];
 					}
 				} else if (keys[j].equals("patientDateOfBirth")) { //$NON-NLS-1$
-					String birthDate = convertToString(map.getOrDefault(keys[j], defaultValues[j]));
+					String birthDate = convertToString(value);
 					values[j] = formatBirthDate(birthDate);
 				} else if (keys[j].equals("patientLastName")) { //$NON-NLS-1$
-					String firstName = convertToString(map.getOrDefault("patientFirstName", defaultValues[j])); //$NON-NLS-1$
-					String lastName = convertToString(map.getOrDefault(keys[j], defaultValues[j]));
+					Object firstNameObj = map.get("patientFirstName"); //$NON-NLS-1$
+					String firstName = convertToString(firstNameObj != null ? firstNameObj : defaultValues[j]);
+					String lastName = convertToString(value);
 					values[j] = lastName + " " + firstName; //$NON-NLS-1$
-
 				} else {
 					values[j] = convertToString(value);
 				}
 			}
-
 
 			TableItem item = new TableItem(table, 0);
 			item.setText(values);
 
 			if (map.containsKey("files")) { //$NON-NLS-1$
 				List<Map<String, Object>> files = (List<Map<String, Object>>) map.get("files"); //$NON-NLS-1$
-				if (files.size() > 0) {
+				if (files != null && !files.isEmpty()) {
 					Map<String, Object> fileObject = files.get(0);
 					String downloadUrl = (String) fileObject.get("downloadUrl"); //$NON-NLS-1$
 					if (downloadUrl != null) {
@@ -80,9 +100,9 @@ public class TableHelper {
 					}
 				}
 			}
-			if (map.containsKey("packageId")) {
-				String packageId = (String) map.get("packageId");
-				item.setData("packageId", packageId); // Speichere die packageId im TableItem
+			if (map.containsKey("packageId")) { //$NON-NLS-1$
+				String packageId = (String) map.get("packageId"); //$NON-NLS-1$
+				item.setData("packageId", packageId);
 			}
 
 			UIStyleTableHelper.styleTableRows(item, table.indexOf(item), display);
@@ -90,16 +110,31 @@ public class TableHelper {
 		UIStyleTableHelper.addTableLines(table);
 	}
 
+	/**
+	 * Safely converts an object to a string representation, handling nulls
+	 * correctly. * @param value the object to convert
+	 * 
+	 * @return the string representation, or an empty string if null
+	 */
 	private static String convertToString(Object value) {
-		if (value instanceof Double) {
-	
-			return String.valueOf(((Double) value).longValue());
-		} else {
-			return value.toString();
+		if (value == null) {
+			return ""; //$NON-NLS-1$
 		}
+		if (value instanceof Double) {
+			return String.valueOf(((Double) value).longValue());
+		}
+		return value.toString();
 	}
 
+	/**
+	 * Extracts the date from a download URL. * @param url the download URL
+	 * 
+	 * @return the formatted date string
+	 */
 	private static String extractDateFromUrl(String url) {
+		if (url == null) {
+			return UNKNOWN_DATE;
+		}
 		String pattern = "(\\d{14})"; //$NON-NLS-1$
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(url);
@@ -114,13 +149,19 @@ public class TableHelper {
 
 			return day + "." + month + "." + year + " " + hour + ":" + minute; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		} else {
-			return "Unknown Date"; //$NON-NLS-1$
+			return UNKNOWN_DATE;
 		}
 	}
 
+	/**
+	 * Formats a birth date string into a standard format. * @param birthDate the
+	 * raw birth date string
+	 * 
+	 * @return the formatted birth date string
+	 */
 	private static String formatBirthDate(String birthDate) {
-		if (birthDate == null || birthDate.isEmpty() || birthDate.equals("Unknown Birthdate")) { //$NON-NLS-1$
-			return "Unknown Birthdate"; //$NON-NLS-1$
+		if (birthDate == null || birthDate.isEmpty() || birthDate.equals(UNKNOWN_BIRTHDATE)) {
+			return UNKNOWN_BIRTHDATE;
 		}
 		try {
 			if (birthDate.contains("T")) { //$NON-NLS-1$
@@ -131,12 +172,15 @@ public class TableHelper {
 			DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); //$NON-NLS-1$
 			return date.format(outputFormatter);
 		} catch (Exception e) {
-			return "Invalid Date"; //$NON-NLS-1$
+			return INVALID_DATE;
 		}
 	}
 
 	/**
-	 * Sorts the table by the values in the specified column index.
+	 * Sorts the table by the values in the specified column index. * @param table
+	 * the table to sort
+	 * 
+	 * @param columnIndex the index of the column to sort by
 	 */
 	public static void sortTable(Table table, int columnIndex) {
 		if (table.isDisposed()) {
@@ -173,10 +217,13 @@ public class TableHelper {
 	}
 
 	/**
-	 * Filters the table items based on the search text.
+	 * Filters the table items based on the search text. * @param table the table to
+	 * filter
+	 * 
+	 * @param searchText the text to search for
 	 */
 	public static void filterTable(Table table, String searchText) {
-		if (table.getData("originalData") == null) {
+		if (table.getData("originalData") == null) { //$NON-NLS-1$
 			List<String[]> originalData = new ArrayList<>();
 			for (TableItem item : table.getItems()) {
 				String[] rowData = new String[table.getColumnCount()];
@@ -185,12 +232,12 @@ public class TableHelper {
 				}
 				originalData.add(rowData);
 			}
-			table.setData("originalData", originalData);
+			table.setData("originalData", originalData); //$NON-NLS-1$
 		}
 
 		table.removeAll();
 		@SuppressWarnings("unchecked")
-		List<String[]> originalData = (List<String[]>) table.getData("originalData");
+		List<String[]> originalData = (List<String[]>) table.getData("originalData"); //$NON-NLS-1$
 
 		Display display = table.getDisplay();
 		int rowIndex = 0;
@@ -199,11 +246,10 @@ public class TableHelper {
 			if (name.contains(searchText)) {
 				TableItem newItem = new TableItem(table, SWT.NONE);
 				newItem.setText(rowData);
-				newItem.setData("rowData", rowData);
+				newItem.setData("rowData", rowData); //$NON-NLS-1$
 				UIStyleTableHelper.styleTableRows(newItem, rowIndex, display);
 				rowIndex++;
 			}
 		}
 	}
-
 }

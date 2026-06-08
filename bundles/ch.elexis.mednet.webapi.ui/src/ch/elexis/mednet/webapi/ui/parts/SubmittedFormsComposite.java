@@ -1,6 +1,5 @@
 package ch.elexis.mednet.webapi.ui.parts;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -27,16 +26,17 @@ import ch.elexis.mednet.webapi.ui.handler.ImportOmnivore;
 import ch.elexis.mednet.webapi.ui.util.UIStyleTableHelper;
 
 public class SubmittedFormsComposite {
-    private static final Logger logger = LoggerFactory.getLogger(SubmittedFormsComposite.class);
 
-    private Composite parent;
-    private CCombo customerCombo;
-    private Label noFormsLabel;
-    private Table submittedFormsTable;
+	private static final Logger log = LoggerFactory.getLogger(SubmittedFormsComposite.class);
 
-    public SubmittedFormsComposite(Composite parent) {
-        this.parent = parent;
-    }
+	private Composite parent;
+	private CCombo customerCombo;
+	private Label noFormsLabel;
+	private Table submittedFormsTable;
+
+	public SubmittedFormsComposite(Composite parent) {
+		this.parent = parent;
+	}
 
 	public void showSubmittedForms() {
 		parent.setLayout(new GridLayout(1, false));
@@ -46,62 +46,67 @@ public class SubmittedFormsComposite {
 		labelComposite.setLayoutData(labelCompositeData);
 
 		noFormsLabel = new Label(labelComposite, SWT.NONE);
-        noFormsLabel.setText(Messages.SubmittedFormsComposite_noErrorForms);
-        noFormsLabel.setBackground(UiDesk.getColor(UiDesk.COL_GREEN));
+		noFormsLabel.setText(Messages.SubmittedFormsComposite_noErrorForms);
+		noFormsLabel.setBackground(UiDesk.getColor(UiDesk.COL_GREEN));
 		noFormsLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        noFormsLabel.setVisible(false);
+		noFormsLabel.setVisible(false);
 
 		Button refreshButton = new Button(labelComposite, SWT.PUSH);
-		refreshButton.setText("Refresh");
+		refreshButton.setText("Refresh"); //$NON-NLS-1$
 		refreshButton.setImage(Images.IMG_REFRESH.getImage());
-        refreshButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-		refreshButton.addListener(SWT.Selection, e -> refreshTableData());
+		refreshButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		refreshButton.addListener(SWT.Selection, event -> refreshTableData());
 
-        customerCombo = UIStyleTableHelper.createStyledCCombo(parent);
+		customerCombo = UIStyleTableHelper.createStyledCCombo(parent);
 		DataHandler.loadCustomersFromApi(customerCombo);
 		customerCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        submittedFormsTable = UIStyleTableHelper.createStyledTable(parent);
+		submittedFormsTable = UIStyleTableHelper.createStyledTable(parent);
 		String[] columnHeaders = { Messages.ColumnHeaders_OrderNo, Messages.ColumnHeaders_Date,
 				Messages.ColumnHeaders_PatientNo, Messages.ColumnHeaders_PatientName, Messages.ColumnHeaders_Birthdate,
 				Messages.ColumnHeaders_Type, Messages.ColumnHeaders_ExportsAndAttachments,
 				Messages.ColumnHeaders_Sender, Messages.ColumnHeaders_Receiver };
-        int[] columnWidths = {80, 120, 90, 120, 100, 50, 120, 100, 100};
-        UIStyleTableHelper.addTableColumns(submittedFormsTable, columnHeaders, columnWidths);
+		int[] columnWidths = { 80, 120, 90, 120, 100, 50, 120, 100, 100 };
+		UIStyleTableHelper.addTableColumns(submittedFormsTable, columnHeaders, columnWidths);
 		submittedFormsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		loadSubmittedFormsCombo();
-        customerCombo.addListener(SWT.Selection, event -> {
-            int selectedIndex = customerCombo.getSelectionIndex();
-            if (selectedIndex >= 0) {
-                String selectedCustomer = customerCombo.getItem(selectedIndex);
+
+		customerCombo.addListener(SWT.Selection, event -> {
+			int selectedIndex = customerCombo.getSelectionIndex();
+			if (selectedIndex >= 0) {
+				String selectedCustomer = customerCombo.getItem(selectedIndex);
 				Integer customerId = extractCustomerId(selectedCustomer);
 				if (customerId != null) {
 					loadSubmittedFormsData(customerId);
 				}
-            }
-        });
+			}
+		});
+
 		submittedFormsTable.addListener(SWT.MouseDoubleClick, event -> handleTableDoubleClick());
-        submittedFormsTable.addListener(SWT.Resize, event -> adjustTableColumnWidths());
-    }
+		submittedFormsTable.addListener(SWT.Resize, event -> adjustTableColumnWidths());
+	}
 
 	private Integer extractCustomerId(String selectedCustomer) {
+		if (selectedCustomer == null || selectedCustomer.isBlank()) {
+			return null;
+		}
 		try {
-			String[] parts = selectedCustomer.split("-");
+			String[] parts = selectedCustomer.split("-"); //$NON-NLS-1$
 			if (parts.length > 0) {
 				String idPart = parts[0].trim();
 				return Integer.parseInt(idPart);
 			}
-		} catch (NumberFormatException ex) {
-			logger.error("Error parsing customer ID from selected customer: {}", selectedCustomer, ex);
+		} catch (NumberFormatException exception) {
+			log.error("Error parsing customer ID from selected customer: [{}]", selectedCustomer, exception);
 		}
 		return null;
 	}
 
-    private void loadSubmittedFormsData(Integer customerId) {
+	private void loadSubmittedFormsData(Integer customerId) {
 		submittedFormsTable.removeAll();
-        boolean hasData = DataHandler.loadSubmittedFormsData(submittedFormsTable, customerId);
-        noFormsLabel.setVisible(!hasData);
-    }
+		boolean hasData = DataHandler.loadSubmittedFormsData(submittedFormsTable, customerId);
+		noFormsLabel.setVisible(!hasData);
+	}
 
 	private void loadSubmittedFormsCombo() {
 		int selectedIndex = customerCombo.getSelectionIndex();
@@ -119,24 +124,26 @@ public class SubmittedFormsComposite {
 		TableItem[] selection = submittedFormsTable.getSelection();
 		if (selection.length > 0) {
 			TableItem selectedItem = selection[0];
-			String downloadUrl = (String) selectedItem.getData("downloadUrl");
-			String packageId = (String) selectedItem.getData("packageId");
-			String objectId = extractObjectIdFromDownloadUrl(downloadUrl);
+
+			String downloadUrl = (String) selectedItem.getData("downloadUrl"); //$NON-NLS-1$
+			String packageId = (String) selectedItem.getData("packageId"); //$NON-NLS-1$
+
 			String createDate = selectedItem.getText(1);
 			String patientNr = selectedItem.getText(2);
 			String patientName = selectedItem.getText(3);
 			String exportType = selectedItem.getText(6);
-			String receiver = selectedItem.getText(8);
 			String sender = selectedItem.getText(7);
+			String receiver = selectedItem.getText(8);
+
 			@SuppressWarnings("unchecked")
 			List<Map<String, String>> downloadHeadersList = (List<Map<String, String>>) selectedItem
-					.getData("downloadHeaders");
-			if (downloadUrl != null && objectId != null) {
+					.getData("downloadHeaders"); //$NON-NLS-1$
+			if (downloadUrl != null && packageId != null) {
 				SingleFileDownloaderHandler singleDownloader = new SingleFileDownloaderHandler();
 				singleDownloader.downloadSingleFile(downloadUrl, patientNr, patientName, exportType, receiver, sender,
 						downloadHeadersList, packageId, createDate);
 			} else {
-				logger.warn("Download URL or Object ID is missing.");
+				log.warn("Download URL or Package ID is missing. Cannot initiate file download.");
 			}
 
 			try {
@@ -145,49 +152,29 @@ public class SubmittedFormsComposite {
 					throw new TaskException(TaskException.EXECUTION_ERROR,
 							"Import failed with status: " + status.getMessage());
 				}
-			} catch (Exception ex) {
-				logger.error("Error executing import task: {}", ex.getMessage(), ex);
+			} catch (Exception exception) {
+				log.error("Error executing import task.", exception);
 			}
 			refreshTableData();
 		}
 	}
 
-    private void adjustTableColumnWidths() {
-        int tableWidth = submittedFormsTable.getClientArea().width;
-        int totalWidth = 0;
-        for (int i = 0; i < submittedFormsTable.getColumnCount() - 1; i++) {
-            totalWidth += submittedFormsTable.getColumn(i).getWidth();
-        }
+	private void adjustTableColumnWidths() {
+		int tableWidth = submittedFormsTable.getClientArea().width;
+		int totalWidth = 0;
+		for (int i = 0; i < submittedFormsTable.getColumnCount() - 1; i++) {
+			totalWidth += submittedFormsTable.getColumn(i).getWidth();
+		}
 
-        if (submittedFormsTable.getColumnCount() > 0) {
-            submittedFormsTable.getColumn(submittedFormsTable.getColumnCount() - 1)
-                    .setWidth(Math.max(100, tableWidth - totalWidth));
-        }
-    }
-
-    private String extractObjectIdFromDownloadUrl(String downloadUrl) {
-        if (downloadUrl == null) return null;
-        try {
-            String path = URI.create(downloadUrl).getPath();
-            String[] segments = path.split("/");
-            if (segments.length >= 4) {
-                String objectIdWithExtension = segments[4];
-                int dotIndex = objectIdWithExtension.lastIndexOf('.');
-                if (dotIndex > 0) {
-                    return objectIdWithExtension.substring(0, dotIndex);
-                } else {
-                    return objectIdWithExtension;
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("Error extracting objectId: {}", ex.getMessage(), ex);
-        }
-        return null;
-    }
+		if (submittedFormsTable.getColumnCount() > 0) {
+			submittedFormsTable.getColumn(submittedFormsTable.getColumnCount() - 1)
+					.setWidth(Math.max(100, tableWidth - totalWidth));
+		}
+	}
 
 	public void refreshTableData() {
 		if (customerCombo == null || customerCombo.isDisposed()) {
-			logger.warn("customerCombo ist disposed oder null. refreshTableData wird abgebrochen.");
+			log.warn("CustomerCombo is disposed or null. refreshTableData aborted.");
 			return;
 		}
 		int selectedIndex = customerCombo.getSelectionIndex();

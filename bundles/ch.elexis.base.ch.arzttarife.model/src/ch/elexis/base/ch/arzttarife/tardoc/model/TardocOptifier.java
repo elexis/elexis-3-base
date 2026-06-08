@@ -131,7 +131,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				return resultAddBezug;
 			}
 		}
-		
+
 		// Referenzleistung
 		if (isReferenzleistung(code)) {
 			Result<IBilled> resultBezug = addKumulationBezug(newBilled, encounter);
@@ -256,7 +256,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 								&& b.getCode().equals(iTardocKumulation.getMasterCode()))
 						.findAny();
 				if (masterBilled.isPresent()) {
-					newBilled.setExtInfo("Bezug", masterBilled.get().getCode());
+					setRelationIncludingSide(newBilled, masterBilled.get());
 					return new Result<IBilled>(newBilled);
 				}
 			}
@@ -306,6 +306,17 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		return new Result<IBilled>(newBilled);
 	}
 
+	private void setRelationIncludingSide(IBilled newBilled, IBilled masterBilled) {
+		newBilled.setExtInfo(Constants.FLD_EXT_REALTION, masterBilled.getCode());
+		newBilled.setExtInfo(Constants.FLD_EXT_REALTION_ID, masterBilled.getId());
+		if (newBilled.getBillable() instanceof ITardocLeistung
+				&& ((ITardocLeistung) newBilled.getBillable()).requiresSide()) {
+			if (StringUtils.isNotBlank((String) masterBilled.getExtInfo(Constants.FLD_EXT_SIDE))) {
+				newBilled.setExtInfo(Constants.FLD_EXT_SIDE, masterBilled.getExtInfo(Constants.FLD_EXT_SIDE));
+			}
+		}
+	}
+
 	private List<IBilled> getAdditionalReferenceMasters(IBilled newBilled, List<IBilled> foundMasters,
 			Map<String, Integer> masterReferenceCountMap) {
 		List<String> additionalReferenceMasters = additionalSlaveToMastersReferences.get(newBilled.getCode());
@@ -325,7 +336,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			Map<String, Integer> ret = new HashMap<String, Integer>();
 			for (IBilled billed : encounter.getBilled()) {
 				if (billed.getBillable() instanceof ITardocLeistung) {
-					String reference = (String) billed.getExtInfo("Bezug");
+					String reference = (String) billed.getExtInfo(Constants.FLD_EXT_REALTION);
 					if (StringUtils.isNotBlank(reference)) {
 						Integer count = ret.get(reference);
 						if (count == null) {
@@ -347,10 +358,11 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			IBilled master = masters.get(i);
 			ret = testBezugLimitOk(newBilled, encounter);
 			if(ret.isOK()) {
-				newBilled.setExtInfo("Bezug", master.getCode());
+				newBilled.setExtInfo(Constants.FLD_EXT_REALTION, master.getCode());
+				newBilled.setExtInfo(Constants.FLD_EXT_REALTION_ID, master.getId());
 				return ret;
 			} else if (trySeparate) {
-				String existingBezugCode = (String) newBilled.getExtInfo("Bezug");
+				String existingBezugCode = (String) newBilled.getExtInfo(Constants.FLD_EXT_REALTION);
 				// if there is already a bezug, but not to provided master, try master
 				if (StringUtils.isNotBlank(existingBezugCode) && !existingBezugCode.equals(master.getCode())) {
 					newBilled = initializeBilled((TardocLeistung) newBilled.getBillable(), encounter, false);
@@ -474,7 +486,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 
 
 	private Result<IBilled> addBezug(IBilled newBilled, IEncounter encounter) {
-		if (StringUtils.isBlank((String) newBilled.getExtInfo("Bezug"))) {
+		if (StringUtils.isBlank((String) newBilled.getExtInfo(Constants.FLD_EXT_REALTION))) {
 			// lookup available masters
 			List<IBilled> masters = getPossibleMasters(newBilled, encounter.getBilled());
 			if (masters.isEmpty()) {
@@ -484,10 +496,9 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 						null, false);
 			}
 			if (!masters.isEmpty()) {
-				String bezug = (String) newBilled.getExtInfo("Bezug");
+				String bezug = (String) newBilled.getExtInfo(Constants.FLD_EXT_REALTION);
 				if (bezug == null) {
-					// set bezug to first available master
-					newBilled.setExtInfo("Bezug", masters.get(0).getCode());
+					setRelationIncludingSide(newBilled, masters.get(0));
 				} else {
 					boolean found = false;
 					// lookup matching, or create new Verrechnet
@@ -511,11 +522,16 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 	}
 
 	private List<IBilled> getPossibleMasters(IBilled newSlave, List<IBilled> lst) {
-		TardocLeistung slaveTarmed = (TardocLeistung) newSlave.getBillable();
+		TardocLeistung slaveTardoc = (TardocLeistung) newSlave.getBillable();
 		// lookup available masters
-		List<IBilled> masters = getAvailableMasters(slaveTarmed, lst);
+		List<IBilled> masters = getAvailableMasters(slaveTardoc, lst);
+		if (slaveTardoc.requiresSide()
+				&& StringUtils.isNotBlank((String) newSlave.getExtInfo(Constants.FLD_EXT_SIDE))) {
+			masters = masters.stream().filter(m -> ((String) newSlave.getExtInfo(Constants.FLD_EXT_SIDE))
+					.equals(m.getExtInfo(Constants.FLD_EXT_SIDE))).toList();
+		}
 		// check which masters are left to be referenced
-		int maxPerMaster = getMaxPerMaster(slaveTarmed);
+		int maxPerMaster = getMaxPerMaster(slaveTardoc);
 		if (maxPerMaster > 0) {
 			Map<IBilled, List<IBilled>> masterSlavesMap = getMasterToSlavesMap(newSlave, lst);
 			for (IBilled master : masterSlavesMap.keySet()) {
@@ -545,6 +561,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			if (v.getBillable() instanceof TardocLeistung) {
 				TardocLeistung tl = (TardocLeistung) v.getBillable();
 				if (tl.getHierarchy(konsDate).contains(slave.getCode())) { // $NON-NLS-1$
+					if (slave.requiresSide())
 					ret.add(v);
 				}
 			}
@@ -584,7 +601,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		List<IBilled> slaves = getVerrechnetMatchingCode(lst, newSlave.getCode());
 		// add slaves to separate master list
 		for (IBilled slave : slaves) {
-			String bezug = (String) slave.getExtInfo("Bezug");
+			String bezug = (String) slave.getExtInfo(Constants.FLD_EXT_REALTION);
 			if (bezug != null && !bezug.isEmpty()) {
 				for (IBilled master : ret.keySet()) {
 					if (master.getCode().equals(bezug)) {
@@ -649,7 +666,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		List<IBilled> ret = new ArrayList<IBilled>();
 		for (IBilled v : lst) {
 			if (v.getBillable() instanceof TardocLeistung) {
-				if (code.equals(v.getExtInfo("Bezug"))) { //$NON-NLS-1$
+				if (code.equals(v.getExtInfo(Constants.FLD_EXT_REALTION))) { //$NON-NLS-1$
 					ret.add(v);
 				}
 			}

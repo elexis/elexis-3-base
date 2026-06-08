@@ -15,7 +15,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
 import ch.elexis.core.model.IArticle;
+import ch.rgw.tools.Money;
 
 public final class ArticleData {
 	private IArticle article;
@@ -29,7 +31,23 @@ public final class ArticleData {
 	}
 
 	public String getPrice() {
-		return article.getSellingPrice().toString();
+		try {
+			Money sellingPrice = article.getSellingPrice();
+			if (sellingPrice == null || sellingPrice.isZero()) {
+				Money exFactoryPrice = article.getPurchasePrice();
+				if (exFactoryPrice == null || exFactoryPrice.isZero()) {
+					return "0.00";
+				}
+				Money calculatedPrice = MargePreference.calculateVKP(exFactoryPrice);
+				if (calculatedPrice != null && !calculatedPrice.isZero()) {
+					return calculatedPrice.getAmountAsString();
+				}
+				return exFactoryPrice.getAmountAsString();
+			}
+			return sellingPrice.getAmountAsString();
+		} catch (Exception e) {
+			return "0.00";
+		}
 	}
 
 	public String getDeliveryDate() {

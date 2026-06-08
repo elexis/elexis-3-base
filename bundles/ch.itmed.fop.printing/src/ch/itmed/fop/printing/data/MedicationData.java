@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -24,6 +25,7 @@ import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.preferences.Setting;
 import ch.itmed.fop.printing.resources.Messages;
+import ch.rgw.tools.Money;
 
 public final class MedicationData {
 	private IPrescription prescription;
@@ -44,7 +46,23 @@ public final class MedicationData {
 	}
 
 	public String getArticlePrice() {
-		return prescription.getArticle().getSellingPrice().toString();
+		try {
+			Money sellingPrice = prescription.getArticle().getSellingPrice();
+			if (sellingPrice == null || sellingPrice.isZero()) {
+				Money exFactoryPrice = prescription.getArticle().getPurchasePrice();
+				if (exFactoryPrice == null || exFactoryPrice.isZero()) {
+					return "0.00";
+				}
+				Money calculatedPrice = MargePreference.calculateVKP(exFactoryPrice);
+				if (calculatedPrice != null && !calculatedPrice.isZero()) {
+					return calculatedPrice.getAmountAsString();
+				}
+				return exFactoryPrice.getAmountAsString();
+			}
+			return sellingPrice.getAmountAsString();
+		} catch (Exception e) {
+			return "0.00";
+		}
 	}
 
 	public String getStopDate() {

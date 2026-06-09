@@ -4,6 +4,8 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
+import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.pdfBills.test.AllTests;
 
 public class ElexisPDFGeneratorTest {
@@ -94,7 +96,7 @@ public class ElexisPDFGeneratorTest {
 		assertNotNull(billXmlFile);
 		AllTests.setOutputDir("output");
 		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "450_qr_tg_mvg");
-		generator.printQrBill(AllTests.pluginRsc);
+		generator.printQrBill(TYPE.ORIG, InvoiceState.OPEN, AllTests.pluginRsc);
 	}
 
 	@Test
@@ -103,7 +105,7 @@ public class ElexisPDFGeneratorTest {
 		assertNotNull(billXmlFile);
 		AllTests.setOutputDir("output");
 		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "500_qr_tg_vvg");
-		generator.printQrBill(AllTests.pluginRsc);
+		generator.printQrBill(TYPE.ORIG, InvoiceState.OPEN, AllTests.pluginRsc);
 	}
 
 	@Test
@@ -112,7 +114,7 @@ public class ElexisPDFGeneratorTest {
 		assertNotNull(billXmlFile);
 		AllTests.setOutputDir("output");
 		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "500_qr_tp_kvg");
-		generator.printQrBill(AllTests.pluginRsc);
+		generator.printQrBill(TYPE.ORIG, InvoiceState.OPEN, AllTests.pluginRsc);
 	}
 
 	@Test
@@ -121,6 +123,6 @@ public class ElexisPDFGeneratorTest {
 		assertNotNull(billXmlFile);
 		AllTests.setOutputDir("output");
 		ElexisPDFGenerator generator = new ElexisPDFGenerator(billXmlFile, "500_12qr_tp_kvg");
-		generator.printQrBill(AllTests.pluginRsc);
+		generator.printQrBill(TYPE.ORIG, InvoiceState.OPEN, AllTests.pluginRsc);
 	}
 }

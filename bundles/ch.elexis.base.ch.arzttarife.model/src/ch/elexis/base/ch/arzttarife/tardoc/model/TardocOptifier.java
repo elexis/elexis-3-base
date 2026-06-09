@@ -153,6 +153,10 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				} else {
 					// reset possible modifications
 					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					// remove if not persisted yet
+					if (newBilled.getLastupdate() == 0) {
+						remove(newBilled, encounter);
+					}
 					return limitationsResult;
 				}
 			}
@@ -167,6 +171,10 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				} else {
 					// reset possible modifications
 					CoreModelServiceHolder.get().refresh(newBilled, true, true);
+					// remove if not persisted yet
+					if (newBilled.getLastupdate() == 0) {
+						remove(newBilled, encounter);
+					}
 					return digniResult;
 				}
 			}

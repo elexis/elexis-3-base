@@ -1,5 +1,6 @@
 package ch.elexis.global_inbox.core.strategies;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -8,27 +9,25 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.cdi.PortableServiceLoader;
-import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
-import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
 public class HierarchyStrategy implements IImportStrategy {
 
 	private final Pattern PATIENT_DIR_PATTERN = Pattern.compile("([0-9]+)(?:_[^0-9].*)?");
-
 	private final String deviceName;
+	private final ImportOmnivoreInboxUtil inboxUtil;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	public HierarchyStrategy(String deviceName) {
+	public HierarchyStrategy(ImportOmnivoreInboxUtil inboxUtil, String deviceName) {
+		this.inboxUtil = inboxUtil;
 		this.deviceName = deviceName;
 	}
 
 	@Override
 	public boolean importFile(IVirtualFilesystemHandle file) {
 		try {
-			IVirtualFilesystemHandle current = file.getParent();
+			IVirtualFilesystemHandle current = getSafeParent(file);
 			if (current == null) {
 				return false;
 			}
@@ -39,15 +38,15 @@ public class HierarchyStrategy implements IImportStrategy {
 
 			while (current != null) {
 				String name = current.getName();
-				Matcher m = PATIENT_DIR_PATTERN.matcher(name);
-				if (m.matches()) {
-					String patientCandidate = m.group(1);
-					String documentName = buildDocumentName(baseFileName, segmentNames);
-					String importedId = ImportOmnivoreInboxUtil.tryImportForPatient(file, patientCandidate,
-							documentName);
+				Matcher matcher = PATIENT_DIR_PATTERN.matcher(name);
 
-					if (importedId != null) {
-						log.info("Auto imported (HIERARCHY) file [{}], document id is [{}]", file, importedId);
+				if (matcher.matches()) {
+					String patientCandidate = matcher.group(1);
+					String documentName = buildDocumentName(baseFileName, segmentNames);
+					String documentId = inboxUtil.tryImportForPatient(file, patientCandidate, documentName);
+
+					if (documentId != null) {
+						log.info("Auto imported (HIERARCHY) file [{}], document id is [{}]", file, documentId);
 						return true;
 					}
 				}
@@ -56,7 +55,7 @@ public class HierarchyStrategy implements IImportStrategy {
 					segmentNames.add(name);
 				}
 
-				current = current.getParent();
+				current = getSafeParent(current);
 			}
 
 		} catch (Exception e) {
@@ -64,6 +63,24 @@ public class HierarchyStrategy implements IImportStrategy {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Safely retrieves the parent of a virtual filesystem handle. Acts as a
+	 * workaround for the underlying framework throwing a NullPointerException when
+	 * reaching the root directory.
+	 */
+	private IVirtualFilesystemHandle getSafeParent(IVirtualFilesystemHandle handle) {
+		try {
+			return handle.getParent();
+		} catch (NullPointerException e) {
+			log.debug("Reached filesystem root or encountered NPE while resolving parent for [{}]. Stopping traversal.",
+					handle.getName());
+			return null;
+		} catch (IOException e) {
+			log.warn("Failed to retrieve parent directory for [{}] due to an IO error.", handle.getName(), e);
+			return null;
+		}
 	}
 
 	private String buildDocumentName(String baseFileName, List<String> segments) {
@@ -79,18 +96,6 @@ public class HierarchyStrategy implements IImportStrategy {
 			}
 		}
 
-		boolean useSuffix = PortableServiceLoader.get(IConfigService.class)
-				.getGlobal(Constants.PREF_SUFFIX_MODE_PREFIX + deviceName, false);
-
-		int lastDotIndex = baseFileName.lastIndexOf('.');
-		String nameWithoutExt = lastDotIndex > 0 ? baseFileName.substring(0, lastDotIndex) : baseFileName;
-		String extension = lastDotIndex > 0 ? baseFileName.substring(lastDotIndex) : "";
-
-		if (useSuffix) {
-			return middlePart.toString() + nameWithoutExt + "_" + deviceName + extension;
-		} else {
-
-			return middlePart.toString() + baseFileName;
-		}
+		return inboxUtil.formatDocumentName(middlePart.toString() + baseFileName, deviceName);
 	}
 }

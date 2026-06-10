@@ -18,4 +18,9 @@ public class StubImportOmnivoreInboxUtil extends ImportOmnivoreInboxUtil {
 		this.capturedDocumentName = fileName;
 		return "test-document-id";
 	}
+
+	@Override
+	public String formatDocumentName(String originalFileName, String deviceName) {
+		return deviceName + "_" + originalFileName;
+	}
 }

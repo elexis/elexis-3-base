@@ -13,9 +13,11 @@ import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 public class PatientFolderStrategy implements IImportStrategy {
 	private final Pattern PATIENT_DIR_PATTERN = Pattern.compile("([0-9]+)(?:_[^0-9].*)?");
 	private final String deviceName;
+	private final ImportOmnivoreInboxUtil inboxUtil;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	public PatientFolderStrategy(String deviceName) {
+	public PatientFolderStrategy(ImportOmnivoreInboxUtil inboxUtil, String deviceName) {
+		this.inboxUtil = inboxUtil;
 		this.deviceName = deviceName;
 	}
 
@@ -23,23 +25,25 @@ public class PatientFolderStrategy implements IImportStrategy {
 	public boolean importFile(IVirtualFilesystemHandle file) {
 		try {
 			IVirtualFilesystemHandle parent = file.getParent();
-			if (parent == null)
+			if (parent == null) {
 				return false;
+			}
 
-			Matcher m = PATIENT_DIR_PATTERN.matcher(parent.getName());
-			if (!m.matches())
+			Matcher matcher = PATIENT_DIR_PATTERN.matcher(parent.getName());
+			if (!matcher.matches()) {
 				return false;
+			}
 
-			String patientNo = m.group(1);
-			String documentName = ImportOmnivoreInboxUtil.formatDocumentName(file.getName(), deviceName);
+			String patientNo = matcher.group(1);
+			String documentName = inboxUtil.formatDocumentName(file.getName(), deviceName);
 
-			String tryImportForPatient = ImportOmnivoreInboxUtil.tryImportForPatient(file, patientNo, documentName);
-			if (tryImportForPatient != null) {
-				log.info("Auto imported (FOLDER_WITH_NAME) file [{}], document id is [{}]", file, tryImportForPatient);
+			String documentId = inboxUtil.tryImportForPatient(file, patientNo, documentName);
+			if (documentId != null) {
+				log.info("Auto imported (FOLDER_WITH_NAME) file [{}], document id is [{}]", file, documentId);
 				return true;
 			}
 		} catch (IOException e) {
-			log.error("Error accessing parent folder", e);
+			log.error("Error accessing parent folder for file [{}]", file.getAbsolutePath(), e);
 		}
 		return false;
 	}

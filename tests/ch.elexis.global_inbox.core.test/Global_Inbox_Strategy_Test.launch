@@ -36,12 +36,14 @@
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Delexis.test.mode=true"/>
     <stringAttribute key="pde.version" value="3.3"/>
     <stringAttribute key="product" value="org.eclipse.platform.ide"/>
-    <booleanAttribute key="run_in_ui_thread" value="true"/>
+    <booleanAttribute key="run_in_ui_thread" value="false"/>
     <setAttribute key="selected_target_bundles">
         <setEntry value="angus-activation@default:default"/>
         <setEntry value="bcpg@default:default"/>
         <setEntry value="bcprov@default:default"/>
         <setEntry value="bcutil@default:default"/>
+        <setEntry value="com.equo.chromium.cef.win32.win32.x86_64@default:false"/>
+        <setEntry value="com.equo.chromium@default:default"/>
         <setEntry value="com.github.virtuald.curvesapi@default:default"/>
         <setEntry value="com.google.gson*2.12.1@default:default"/>
         <setEntry value="com.google.guava.failureaccess@default:default"/>
@@ -57,6 +59,7 @@
         <setEntry value="com.sun.jna@default:default"/>
         <setEntry value="com.sun.xml.bind.jaxb-osgi@default:default"/>
         <setEntry value="com.zaxxer.SparseBitSet@default:default"/>
+        <setEntry value="info.elexis.target.hapi.fhir@default:default"/>
         <setEntry value="io.curity.oauth-filter@default:default"/>
         <setEntry value="jakarta.activation-api@default:default"/>
         <setEntry value="jakarta.annotation-api@default:default"/>
@@ -89,6 +92,7 @@
         <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
         <setEntry value="org.apache.commons.commons-io*2.18.0@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
+        <setEntry value="org.apache.commons.jexl@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
         <setEntry value="org.apache.commons.math3@default:default"/>
         <setEntry value="org.apache.commons.text@default:default"/>
@@ -112,10 +116,12 @@
         <setEntry value="org.apache.xmlgraphics@default:default"/>
         <setEntry value="org.eclipse.angus.jakarta.mail@default:default"/>
         <setEntry value="org.eclipse.ant.core@default:default"/>
+        <setEntry value="org.eclipse.collections@default:default"/>
         <setEntry value="org.eclipse.compare.core@default:default"/>
         <setEntry value="org.eclipse.compare@default:default"/>
         <setEntry value="org.eclipse.core.commands@default:default"/>
         <setEntry value="org.eclipse.core.contenttype@default:default"/>
+        <setEntry value="org.eclipse.core.databinding.beans@default:default"/>
         <setEntry value="org.eclipse.core.databinding.observable@default:default"/>
         <setEntry value="org.eclipse.core.databinding.property@default:default"/>
         <setEntry value="org.eclipse.core.databinding@default:default"/>
@@ -192,6 +198,12 @@
         <setEntry value="org.eclipse.jface@default:default"/>
         <setEntry value="org.eclipse.ltk.core.refactoring@default:default"/>
         <setEntry value="org.eclipse.ltk.ui.refactoring@default:default"/>
+        <setEntry value="org.eclipse.nebula.cwt@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.cdatetime@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.nattable.core@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.nattable.extension.nebula@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.richtext@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.tablecombo@default:default"/>
         <setEntry value="org.eclipse.orbit.xml-apis-ext@default:default"/>
         <setEntry value="org.eclipse.osgi.compatibility.state@default:false"/>
         <setEntry value="org.eclipse.osgi@1:true"/>
@@ -205,6 +217,7 @@
         <setEntry value="org.eclipse.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.swt.win32.win32.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
+        <setEntry value="org.eclipse.swtchart@default:default"/>
         <setEntry value="org.eclipse.team.core@default:default"/>
         <setEntry value="org.eclipse.team.ui@default:default"/>
         <setEntry value="org.eclipse.text@default:default"/>
@@ -236,8 +249,13 @@
         <setEntry value="org.glassfish.jersey.core.jersey-server@default:default"/>
         <setEntry value="org.glassfish.jersey.ext.jersey-proxy-client@default:default"/>
         <setEntry value="org.glassfish.jersey.media.jersey-media-multipart@default:default"/>
+        <setEntry value="org.hamcrest.library@default:default"/>
         <setEntry value="org.hamcrest@default:default"/>
         <setEntry value="org.jdom.2@default:default"/>
+        <setEntry value="org.jfree.chart-swt@default:default"/>
+        <setEntry value="org.jfree.chart@default:default"/>
+        <setEntry value="org.jfree.jcommon@default:default"/>
+        <setEntry value="org.jsoup@default:default"/>
         <setEntry value="org.junit@default:default"/>
         <setEntry value="org.jvnet.mimepull@default:default"/>
         <setEntry value="org.objectweb.asm*9.7.1@default:default"/>
@@ -245,6 +263,11 @@
         <setEntry value="org.objectweb.asm.tree*9.7.1@default:default"/>
         <setEntry value="org.objectweb.asm.tree.analysis@default:default"/>
         <setEntry value="org.objectweb.asm.util@default:default"/>
+        <setEntry value="org.opencv.cocoa.macosx.aarch64@default:false"/>
+        <setEntry value="org.opencv.cocoa.macosx.x86_64@default:false"/>
+        <setEntry value="org.opencv.gtk.linux.x86_64@default:false"/>
+        <setEntry value="org.opencv.win32.win32.x86_64@default:false"/>
+        <setEntry value="org.opencv@default:default"/>
         <setEntry value="org.osgi.service.cm@default:default"/>
         <setEntry value="org.osgi.service.component.annotations@default:default"/>
         <setEntry value="org.osgi.service.component@default:default"/>
@@ -260,8 +283,15 @@
         <setEntry value="slf4j.osgi@default:default"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
+        <setEntry value="at.medevit.elexis.inbox.ui@default:default"/>
+        <setEntry value="at.medevit.elexis.inbox@default:default"/>
+        <setEntry value="ch.elexis.core.application@default:default"/>
+        <setEntry value="ch.elexis.core.cdi@default:default"/>
         <setEntry value="ch.elexis.core.data.tests@default:false"/>
         <setEntry value="ch.elexis.core.data@default:default"/>
+        <setEntry value="ch.elexis.core.documents@default:default"/>
+        <setEntry value="ch.elexis.core.findings.util@default:default"/>
+        <setEntry value="ch.elexis.core.findings@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x.tests@default:false"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.importer.div@default:default"/>
@@ -274,19 +304,41 @@
         <setEntry value="ch.elexis.core.jpa.test@default:false"/>
         <setEntry value="ch.elexis.core.jpa@:default"/>
         <setEntry value="ch.elexis.core.l10n@default:default"/>
+        <setEntry value="ch.elexis.core.mail@default:default"/>
         <setEntry value="ch.elexis.core.model@default:default"/>
+        <setEntry value="ch.elexis.core.rcp@default:default"/>
+        <setEntry value="ch.elexis.core.serial@default:default"/>
+        <setEntry value="ch.elexis.core.services.rcp@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
+        <setEntry value="ch.elexis.core.tasks.model@default:default"/>
         <setEntry value="ch.elexis.core.tasks.test@default:false"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.test.context@default:default"/>
+        <setEntry value="ch.elexis.core.ui.contacts@default:default"/>
+        <setEntry value="ch.elexis.core.ui.dbcheck@default:default"/>
+        <setEntry value="ch.elexis.core.ui.documents@default:default"/>
+        <setEntry value="ch.elexis.core.ui.e4@default:default"/>
+        <setEntry value="ch.elexis.core.ui.icons@default:default"/>
+        <setEntry value="ch.elexis.core.ui.laboratory@default:default"/>
+        <setEntry value="ch.elexis.core.ui.medication@default:default"/>
+        <setEntry value="ch.elexis.core.ui@default:default"/>
         <setEntry value="ch.elexis.core.webdav@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.elexis.global_inbox.core.test@default:false"/>
         <setEntry value="ch.elexis.global_inbox.core@default:default"/>
+        <setEntry value="ch.elexis.global_inbox@default:default"/>
+        <setEntry value="ch.elexis.omnivore.data.tests@default:false"/>
+        <setEntry value="ch.elexis.omnivore.data@default:default"/>
+        <setEntry value="ch.elexis.omnivore.model@default:default"/>
+        <setEntry value="ch.elexis.omnivore.ui@default:default"/>
+        <setEntry value="ch.elexis.omnivore@default:default"/>
+        <setEntry value="ch.medelexis.medication.ui@default:false"/>
         <setEntry value="ch.ngiger.utilities.comm@default:default"/>
+        <setEntry value="ch.rgw.utility.legacy@default:default"/>
         <setEntry value="ch.rgw.utility.tests@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
         <setEntry value="es.gogo.shell@default:false"/>
+        <setEntry value="org.iatrix.help.wiki@default:default"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>

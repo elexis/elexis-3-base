@@ -22,17 +22,17 @@ import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
 public class ImportOmnivore {
 
-	private Logger log;
-
-	private String deviceName;
+	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final String deviceName;
+	private final ImportOmnivoreInboxUtil inboxUtil;
 
 	public ImportOmnivore(String deviceName) {
-		log = LoggerFactory.getLogger(getClass());
 		this.deviceName = deviceName;
+		this.inboxUtil = new ImportOmnivoreInboxUtil();
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-		String filepath = ImportOmnivoreInboxUtil.getDirectory(Constants.PREF_DIR_DEFAULT, deviceName);
+		String filepath = inboxUtil.getDirectory(Constants.PREF_DIR_DEFAULT, deviceName);
 		IVirtualFilesystemHandle dir = null;
 		if (filepath == null) {
 			filepath = Constants.PREF_DIR_DEFAULT;
@@ -57,14 +57,15 @@ public class ImportOmnivore {
 	private IImportStrategy getStrategy(int code) {
 		switch (code) {
 		case 0:
-			return new FilePrefixStrategy(deviceName);
+			return new FilePrefixStrategy(inboxUtil, deviceName);
 		case 1:
-			return new PatientFolderStrategy(deviceName);
+			return new PatientFolderStrategy(inboxUtil, deviceName);
 		case 2:
-			return new HierarchyStrategy(deviceName);
+			return new HierarchyStrategy(inboxUtil, deviceName);
 		case 3:
 		default:
-			return new FallbackStrategy(new FilePrefixStrategy(deviceName), new HierarchyStrategy(deviceName));
+			return new FallbackStrategy(new FilePrefixStrategy(inboxUtil, deviceName),
+					new HierarchyStrategy(inboxUtil, deviceName));
 		}
 	}
 
@@ -86,7 +87,7 @@ public class ImportOmnivore {
 				boolean imported = strategy.importFile(file);
 
 				if (!imported) {
-					log.debug("No import rule matched for file [{}] using strategy [{}]", file,
+					log.debug("No import rule matched for file [{}] using strategy [{}]", file.getAbsolutePath(),
 							strategy.getClass().getSimpleName());
 				}
 			}
@@ -100,11 +101,11 @@ public class ImportOmnivore {
 			boolean hasRealChildren = false;
 
 			if (remaining != null) {
-				for (IVirtualFilesystemHandle h : remaining) {
-					if (!h.exists()) {
+				for (IVirtualFilesystemHandle handle : remaining) {
+					if (!handle.exists()) {
 						continue;
 					}
-					if (!h.getName().startsWith(".")) {
+					if (!handle.getName().startsWith(".")) {
 						hasRealChildren = true;
 						break;
 					}
@@ -114,9 +115,9 @@ public class ImportOmnivore {
 			if (!hasRealChildren) {
 				try {
 					dir.delete();
-					log.info("Deleted empty import folder [{}]", dir);
+					log.info("Deleted empty import folder [{}]", dir.getAbsolutePath());
 				} catch (IOException e) {
-					log.warn("Could not delete folder [{}]", dir, e);
+					log.warn("Could not delete folder [{}]", dir.getAbsolutePath(), e);
 				}
 			}
 		}

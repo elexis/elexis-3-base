@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
@@ -39,7 +40,7 @@ import ch.rgw.tools.Money;
 
 public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ArtikelstammItem>
 		implements Identifiable, IArtikelstammItem {
-
+	private static final Logger log = LoggerFactory.getLogger(ArtikelstammItem.class);
 	private static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE"; //$NON-NLS-1$
 	private static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE = "PPUB_OVERRIDE_STORE"; //$NON-NLS-1$
 	private static final String EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE = "PKG_SIZE_OVERRIDE_STORE"; //$NON-NLS-1$
@@ -238,9 +239,17 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 		if (StringUtils.isNotBlank(priceString)) {
 			try {
 				Money value = new Money(priceString);
-				return (isUserDefinedPrice()) ? value.negate() : value;
+				if (!value.isZero()) {
+					return isUserDefinedPrice() ? value.negate() : value;
+				}
 			} catch (ParseException e) {
+				log.error("Failed to parse public price string, falling back to margin calculation. Input: {}",
+						priceString, e);
 			}
+		}
+		Money purchasePrice = getPurchasePrice();
+		if (purchasePrice != null && !purchasePrice.isZero()) {
+			return MargePreference.calculateVKP(purchasePrice);
 		}
 		return new Money();
 	}

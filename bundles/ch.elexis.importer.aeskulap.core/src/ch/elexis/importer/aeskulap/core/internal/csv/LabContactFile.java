@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.core.model.IContact;
-import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
@@ -79,10 +80,8 @@ public class LabContactFile extends AbstractCsvImportFile<IContact> implements I
 
 	@Override
 	public IContact create(String[] line) {
-		IOrganization ret = CoreModelServiceHolder.get().create(IOrganization.class);
-		ret.setLaboratory(true);
+		ILaboratory ret = new IContactBuilder.LaboratoryBuilder(CoreModelServiceHolder.get(), line[2]).build();
 		ret.setCode(line[1]);
-		ret.setDescription1(line[2]);
 
 		CoreModelServiceHolder.get().save(ret);
 

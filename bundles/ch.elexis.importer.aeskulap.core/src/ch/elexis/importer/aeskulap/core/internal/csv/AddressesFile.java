@@ -15,6 +15,7 @@ import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrganization;
 import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.Country;
@@ -58,19 +59,14 @@ public class AddressesFile extends AbstractCsvImportFile<IContact> implements IA
 			}
 			bez += lastname;
 			
-			IOrganization org = CoreModelServiceHolder.get().create(IOrganization.class);
-			org.setDescription1(bez);
+			IOrganization org = new IContactBuilder.OrganizationBuilder(CoreModelServiceHolder.get(), bez).build();
 			org.setDescription2(department);
-			
+
 			CoreModelServiceHolder.get().save(org);
 			return org;
 		} else {
-			IPerson person = CoreModelServiceHolder.get().create(IPerson.class);
-			person.setLastName(lastname);
-			person.setFirstName(firstname);
-			person.setGender(Gender.UNKNOWN);
-			
-			CoreModelServiceHolder.get().save(person);
+			IPerson person = new IContactBuilder.PersonBuilder(CoreModelServiceHolder.get(), firstname, lastname,
+					Gender.UNKNOWN).buildAndSave();
 			return person;
 		}
 	}

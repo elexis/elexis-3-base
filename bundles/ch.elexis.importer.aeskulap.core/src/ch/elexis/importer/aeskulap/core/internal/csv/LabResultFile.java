@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +19,7 @@ import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.LabOrderState;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.LabServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.types.PathologicDescription;
@@ -114,7 +114,7 @@ public class LabResultFile extends AbstractCsvImportFile<ILabResult> implements 
 		ILabOrder previousOrder = importOrderMap.get(patient);
 
 		if (previousOrder == null) {
-			orderId = UUID.randomUUID().toString();
+			orderId = LabServiceHolder.get().getNextOrderId();
 		} else {
 			orderId = previousOrder.getOrderId();
 		}

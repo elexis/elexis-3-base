@@ -13,6 +13,7 @@ import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.Gender;
@@ -92,13 +93,8 @@ public class PatientFile extends AbstractCsvImportFile<IPatient> implements IAes
 		TimeTool tt = new TimeTool(line[12]);
 		Gender gender = line[13].equals("1") ? Gender.MALE : Gender.FEMALE;
 
-		IPatient patient = CoreModelServiceHolder.get().create(IPatient.class);
-		patient.setLastName(line[2]);
-		patient.setFirstName(line[3]);
-		patient.setDateOfBirth(tt.toLocalDateTime());
-		patient.setGender(gender);
-
-		CoreModelServiceHolder.get().save(patient);
+		IPatient patient = new IContactBuilder.PatientBuilder(CoreModelServiceHolder.get(), line[3], line[2],
+				tt.toLocalDateTime().toLocalDate(), gender).buildAndSave();
 
 		if (Boolean.getBoolean(IAeskulapImporter.PROP_KEEPPATIENTNUMBER)) {
 			updatePatientNumber(patient, Integer.parseInt(line[0]));

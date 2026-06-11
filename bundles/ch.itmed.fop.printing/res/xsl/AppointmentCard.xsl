@@ -80,8 +80,13 @@
 					<fo:leader />
 				</fo:block>
 				<fo:block>
-					Termin bei:
-					<xsl:value-of select="AgendaArea" />
+					<xsl:choose>
+						<xsl:when test="count(AgendaArea) &gt; 1">Termine bei: </xsl:when>
+						<xsl:otherwise>Termin bei: </xsl:otherwise>
+					</xsl:choose>
+					<xsl:for-each select="AgendaArea">
+						<xsl:value-of select="." /><xsl:if test="position() != last()">, </xsl:if>
+					</xsl:for-each>
 				</fo:block>
 			</xsl:if>
 		</fo:block-container>
@@ -108,8 +113,17 @@
 		</fo:block>
 	</xsl:template>
 	<xsl:template match="Appointments">
-		<fo:block font-weight="bold">
-			<xsl:value-of select="Appointment" />
-		</fo:block>
+		<xsl:variable name="area" select="preceding-sibling::AgendaArea[1]" />
+		<xsl:variable name="multipleAreas" select="count(/Page/AppointmentsInformation/AgendaArea) &gt; 1" />
+		<xsl:for-each select="Appointment">
+			<fo:block font-weight="bold">
+				<xsl:value-of select="." />
+			</fo:block>
+			<xsl:if test="$multipleAreas">
+				<fo:block font-weight="normal">
+					<xsl:value-of select="$area" />
+				</fo:block>
+			</xsl:if>
+		</xsl:for-each>
 	</xsl:template>
 </xsl:stylesheet>

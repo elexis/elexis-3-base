@@ -50,7 +50,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.preferences.PreferenceConstants;
@@ -94,6 +97,11 @@ import jakarta.inject.Inject;
 
 public class TerminListeView extends ViewPart implements IRefreshable {
 	public static final String ID = "ch.elexis.agenda.Terminliste";
+	private static final String FOP_PLUGIN_ID = "ch.itmed.fop.printing.ui";
+	private static final String CMD_PRINT_RECURRING = "ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint";
+	private static final String CMD_PRINT_SELECTED = "ch.itmed.fop.printing.command.SelectedAppointmentCardPrint";
+	private static final String ICON_APPOINTMENTS_PRINT = "res/icons/appointmentsPrint.png";
+	private static final String ICON_APPOINTMENT_PRINT = "res/icons/appointmentPrint.png";
 	ScrolledForm form;
 	CommonViewer cv = new CommonViewer();
 	LockRequestingRestrictedAction<IAppointment> terminAendernAction;
@@ -264,6 +272,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		makeActions();
 
 		getSite().getPage().addPartListener(udpateOnVisible);
+		getSite().setSelectionProvider(cv.getViewerWidget());
 	}
 
 	private void makeActions() {
@@ -384,14 +393,20 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					manager.add(AgendaActions.getTerminStatusAction());
 				}
 
-				manager.add(printAction);
-
-				if (isRecurring) {
-					manager.add(printSeriesAction);
-				}
-
 				manager.add(new Separator());
 				manager.add(delAction);
+				if (count > 0) {
+					boolean showSeries = isRecurring && count == 1;
+					String commandId = showSeries ? CMD_PRINT_RECURRING : CMD_PRINT_SELECTED;
+					String iconPath = showSeries ? ICON_APPOINTMENTS_PRINT : ICON_APPOINTMENT_PRINT;
+					CommandContributionItemParameter param = new CommandContributionItemParameter(
+							getSite(), null, commandId, CommandContributionItem.STYLE_PUSH);
+					param.icon = AbstractUIPlugin.imageDescriptorFromPlugin(FOP_PLUGIN_ID, iconPath);
+					if (!showSeries && count > 1) {
+						param.label = Messages.TerminListeView_PrintSelected;
+					}
+					manager.add(new CommandContributionItem(param));
+				}
 				AgendaActions.updateActions();
 			}
 		});
@@ -402,10 +417,6 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		toolBarManager.add(newTerminAction);
-		IMenuManager viewMenu = actionBars.getMenuManager();
-		viewMenu.add(printAction);
-		viewMenu.add(printSeriesAction);
-
 		actionBars.updateActionBars();
 	}
 

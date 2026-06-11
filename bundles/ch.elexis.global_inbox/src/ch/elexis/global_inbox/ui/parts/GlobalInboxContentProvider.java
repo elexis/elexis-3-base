@@ -84,13 +84,11 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 			LocalLock lock = new LocalLock(LOCAL_LOCK_INBOXIMPORT);
 			if (lock.tryLock()) {
 				String filepath = GlobalInboxUtil.getDirectory(null, null);
-				File dir = null;
 				if (filepath == null) {
-					filepath = Preferences.PREF_DIR_DEFAULT;
 					ConfigServiceHolder.get().setLocal(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT);
 				}
-				dir = new File(filepath);
-				if (!dir.isDirectory()) {
+				File dir = GlobalInboxUtil.getDirectoryFile();
+				if (dir == null || !dir.isDirectory()) {
 					if (view != null) {
 						return Status.CANCEL_STATUS;
 					} else {

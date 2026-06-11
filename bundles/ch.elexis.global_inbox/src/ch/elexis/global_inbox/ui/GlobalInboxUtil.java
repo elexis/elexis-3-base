@@ -19,6 +19,8 @@ import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
@@ -111,8 +113,32 @@ public class GlobalInboxUtil {
 		return GlobalInboxUtil.configService.getLocal(Preferences.PREF_DIR, defaultValue);
 	}
 
+	/**
+	 * Resolve the configured inbox directory as local {@link File}. The
+	 * configured value may be a filesystem URI or a legacy plain path; both are
+	 * resolved using the {@link ch.elexis.core.services.IVirtualFilesystemService}.
+	 *
+	 * @return the local directory, or <code>null</code> if not configured or not
+	 *         resolvable to a local file
+	 */
+	public static @Nullable File getDirectoryFile() {
+		String dir = getDirectory(null, null);
+		if (StringUtils.isBlank(dir)) {
+			return null;
+		}
+		try {
+			IVirtualFilesystemHandle dirHandle = VirtualFilesystemServiceHolder.get().of(dir);
+			return dirHandle.toFile().orElse(null);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(GlobalInboxUtil.class).error("Could not resolve inbox directory [{}]", dir, e);
+			return null;
+		}
+	}
+
 	public static String getCategory(File file) {
-		String dir = getDirectory(Preferences.PREF_DIR_DEFAULT, null);
+		File dirFile = getDirectoryFile();
+		String dir = dirFile != null ? dirFile.getAbsolutePath()
+				: getDirectory(Preferences.PREF_DIR_DEFAULT, null);
 		File parent = file.getParentFile();
 		if (parent == null) {
 			return Messages.Activator_noInbox;

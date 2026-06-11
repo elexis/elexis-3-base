@@ -2,7 +2,6 @@ package ch.elexis.global_inbox;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
@@ -10,6 +9,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
@@ -28,7 +28,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	private IPreferenceStore fsSettingsStore;
 
 	private BooleanFieldEditor bStoreFSGlobal;
-	private DirectoryFieldEditor dirFieldEditor;
+	private URIFieldEditor dirFieldEditor;
 
 	public Preferences() {
 		super(GRID);
@@ -48,7 +48,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		};
 		addField(bStoreFSGlobal);
 
-		dirFieldEditor = new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory, getFieldEditorParent());
+		dirFieldEditor = new URIFieldEditor(PREF_DIR, Messages.Preferences_directory, getFieldEditorParent());
 
 		BooleanFieldEditor bAutomaticBilling = new BooleanFieldEditor(PREF_AUTOBILLING,
 				"Automatische Verrechnung bei import", getFieldEditorParent());

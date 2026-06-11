@@ -198,7 +198,8 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 
 					@Override
 					public String getDefault8402value() {
-						return parent.getDefault8402value();
+						return StringUtils.defaultString(
+								fileCommPartner.getSettings().getString(fileCommPartner.getGuvkDefault()));
 					}
 
 					@Override

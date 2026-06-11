@@ -140,6 +140,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 							cp.getOutgoingDefaultCharset() + StringUtils.EMPTY);
 
 				default8402value = cp.getDefault8402value();
+				txtGuVK.setText(default8402value);
 				supported8402values = cp.getSupported8402values();
 				supported8402valuesDescription = cp.getSupported8402valuesDescription();
 				if (supported8402values != null && supported8402valuesDescription != null) {

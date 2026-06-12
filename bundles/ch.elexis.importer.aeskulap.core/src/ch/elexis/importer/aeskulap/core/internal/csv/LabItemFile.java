@@ -11,14 +11,16 @@ import org.slf4j.LoggerFactory;
 
 import com.opencsv.exceptions.CsvValidationException;
 
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
-import ch.elexis.data.LabItem;
 import ch.elexis.data.LabMapping;
-import ch.elexis.data.Labor;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
-public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAeskulapImportFile {
+public class LabItemFile extends AbstractCsvImportFile<ILabItem> implements IAeskulapImportFile {
 
 	private File file;
 
@@ -48,7 +50,7 @@ public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAesk
 		try {
 			String[] line = null;
 			while ((line = getNextLine()) != null) {
-				LabItem labItem = getExisting(line[0]);
+				ILabItem labItem = getExisting(line[0]);
 				if (labItem == null) {
 					labItem = create(line);
 				} else if (!overwrite) {
@@ -78,14 +80,21 @@ public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAesk
 	}
 
 	@Override
-	public LabItem create(String[] line) {
+	public ILabItem create(String[] line) {
 		String sequence = "?";
 		if (!StringUtils.isBlank(line[6].trim())) {
 			sequence = line[6].trim().substring(0, 1);
 		}
-		Labor laboratory = (Labor) getWithXid(IAeskulapImporter.XID_IMPORT_LABCONTACT, line[3]);
-		LabItem labItem = new LabItem(line[7], line[6].trim(), laboratory, null, null, line[4], LabItemTyp.TEXT,
-				"Import", sequence);
+		IContact laboratory = (IContact) getWithXid(IAeskulapImporter.XID_IMPORT_LABCONTACT, line[3]);
+		ILabItem labItem = CoreModelServiceHolder.get().create(ILabItem.class);
+		labItem.setCode(line[7]);
+		labItem.setName(line[6].trim());
+		labItem.setUnit(line[4]);
+		labItem.setTyp(LabItemTyp.TEXT);
+		labItem.setGroup("Import");
+		labItem.setPriority(sequence);
+
+		CoreModelServiceHolder.get().save(labItem);
 		if (laboratory != null) {
 			String labCode = StringUtils.EMPTY;
 			if (!StringUtils.isBlank(line[5])) {
@@ -97,12 +106,12 @@ public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAesk
 				new LabMapping(laboratory.getId(), labCode, labItem.getId(), false);
 			}
 		}
-		labItem.addXid(getXidDomain(), line[0], true);
+		XidServiceHolder.get().addXid(labItem, getXidDomain(), line[0], true);
 		return labItem;
 	}
 
 	@Override
-	public void setProperties(LabItem contact, String[] line) {
+	public void setProperties(ILabItem contact, String[] line) {
 		// no more properties
 	}
 }

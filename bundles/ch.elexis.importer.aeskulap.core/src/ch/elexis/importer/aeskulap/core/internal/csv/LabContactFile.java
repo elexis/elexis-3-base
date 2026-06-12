@@ -10,11 +10,15 @@ import org.slf4j.LoggerFactory;
 
 import com.opencsv.exceptions.CsvValidationException;
 
-import ch.elexis.data.Labor;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.builder.IContactBuilder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
-public class LabContactFile extends AbstractCsvImportFile<Labor> implements IAeskulapImportFile {
+public class LabContactFile extends AbstractCsvImportFile<IContact> implements IAeskulapImportFile {
 
 	private File file;
 
@@ -44,7 +48,7 @@ public class LabContactFile extends AbstractCsvImportFile<Labor> implements IAes
 		try {
 			String[] line = null;
 			while ((line = getNextLine()) != null) {
-				Labor laboratory = getExisting(line[0]);
+				IContact laboratory = getExisting(line[0]);
 				if (laboratory == null) {
 					laboratory = create(line);
 				} else if (!overwrite) {
@@ -75,14 +79,18 @@ public class LabContactFile extends AbstractCsvImportFile<Labor> implements IAes
 	}
 
 	@Override
-	public Labor create(String[] line) {
-		Labor ret = new Labor(line[1], line[2]);
-		ret.addXid(getXidDomain(), line[0], true);
+	public IContact create(String[] line) {
+		ILaboratory ret = new IContactBuilder.LaboratoryBuilder(CoreModelServiceHolder.get(), line[2]).build();
+		ret.setCode(line[1]);
+
+		CoreModelServiceHolder.get().save(ret);
+
+		XidServiceHolder.get().addXid(ret, getXidDomain(), line[0], true);
 		return ret;
 	}
 
 	@Override
-	public void setProperties(Labor contact, String[] line) {
+	public void setProperties(IContact contact, String[] line) {
 		// no more properties
 	}
 }

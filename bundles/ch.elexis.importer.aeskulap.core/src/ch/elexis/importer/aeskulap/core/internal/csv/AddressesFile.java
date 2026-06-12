@@ -12,15 +12,18 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.core.constants.XidConstants;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.builder.IContactBuilder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.types.Country;
 import ch.elexis.core.types.Gender;
-import ch.elexis.data.Anschrift;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Organisation;
-import ch.elexis.data.Person;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
-public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAeskulapImportFile {
+public class AddressesFile extends AbstractCsvImportFile<IContact> implements IAeskulapImportFile {
 
 	private File file;
 
@@ -45,7 +48,7 @@ public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAe
 	}
 
 	@Override
-	public Kontakt create(String[] line) {
+	public IContact create(String[] line) {
 		String firstname = line[1];
 		String lastname = line[2];
 		String department = line[3];
@@ -55,32 +58,51 @@ public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAe
 				bez += StringUtils.SPACE;
 			}
 			bez += lastname;
-			return new Organisation(bez, department);
+			
+			IOrganization org = new IContactBuilder.OrganizationBuilder(CoreModelServiceHolder.get(), bez).build();
+			org.setDescription2(department);
+
+			CoreModelServiceHolder.get().save(org);
+			return org;
 		} else {
-			return new Person(lastname, firstname, StringUtils.EMPTY, Gender.UNKNOWN.value());
+			IPerson person = new IContactBuilder.PersonBuilder(CoreModelServiceHolder.get(), firstname, lastname,
+					Gender.UNKNOWN).buildAndSave();
+			return person;
 		}
 	}
 
 	@Override
-	public void setProperties(Kontakt contact, String[] line) {
-		String street = StringUtils.isBlank(line[5]) ? line[4] : line[4] + ", " + line[5];
-		Anschrift an = contact.getAnschrift();
-		an.setStrasse(street);
-		an.setPlz(line[6]);
-		an.setOrt(line[7]);
-		an.setLand(line[8]);
-		contact.setAnschrift(an);
-		contact.set(Kontakt.FLD_SHORT_LABEL, line[9]);
-		contact.set(Kontakt.FLD_PHONE1, line[16]);
-		contact.set(Kontakt.FLD_PHONE2, line[15]);
-		contact.set(Kontakt.FLD_MOBILEPHONE, line[14]);
-		contact.set(Kontakt.FLD_FAX, line[17]);
-		contact.set(Kontakt.FLD_E_MAIL, line[18]);
-		String ean = line[19];
-		if (!StringUtils.isBlank(ean)) {
-			contact.addXid(XidConstants.DOMAIN_EAN, ean, false);
+	public void setProperties(IContact contact, String[] line) {
+		if (contact != null) {
+			String street = StringUtils.isBlank(line[5]) ? line[4] : line[4] + ", " + line[5];
+			
+			contact.setStreet(street);
+			contact.setZip(line[6]);
+			contact.setCity(line[7]);
+			
+			if (StringUtils.isNotBlank(line[8])) {
+				try {
+					contact.setCountry(Country.valueOf(line[8].toUpperCase()));
+				} catch (IllegalArgumentException e) {
+					// Ignoriere Fehler, falls der String im CSV nicht dem Country-Enum entspricht
+				}
+			}
+			
+			contact.setCode(line[9]);
+			contact.setPhone1(line[16]);
+			contact.setPhone2(line[15]);
+			contact.setMobile(line[14]);
+			contact.setFax(line[17]);
+			contact.setEmail(line[18]);
+			
+			String ean = line[19];
+			if (StringUtils.isNotBlank(ean)) {
+				XidServiceHolder.get().addXid(contact, XidConstants.DOMAIN_EAN, ean, false);
+			}
+			XidServiceHolder.get().addXid(contact, getXidDomain(), line[0], true);
+			
+			CoreModelServiceHolder.get().save(contact);
 		}
-		contact.addXid(getXidDomain(), line[0], true);
 	}
 
 	@Override
@@ -89,7 +111,7 @@ public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAe
 		try {
 			String[] line = null;
 			while ((line = getNextLine()) != null) {
-				Kontakt contact = getExisting(line[0]);
+				IContact contact = getExisting(line[0]);
 				if (contact == null) {
 					contact = create(line);
 				} else if (!overwrite) {

@@ -18,18 +18,17 @@ import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.model.IBillingSystem;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.services.holder.BillingSystemServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Patient;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 import ch.rgw.tools.TimeTool;
 
-public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskulapImportFile {
+public class CoverageFile extends AbstractCsvImportFile<ICoverage> implements IAeskulapImportFile {
 
 	private File file;
 
@@ -68,22 +67,22 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 	}
 
 	@Override
-	public Fall create(String[] line) {
-		Patient patient = (Patient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
+	public ICoverage create(String[] line) {
+		IPatient patient = (IPatient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
 		if (patient == null) {
 			LoggerFactory.getLogger(getClass()).error("Could not find patient_no (Patient) [" + line[0]
 						+ "]");
 			return null;
 		}
 		ICoverage coverage = new ICoverageBuilder(CoreModelServiceHolder.get(), ConfigServiceHolder.get(),
-				BillingSystemServiceHolder.get(), patient.toIPatient()).build();
+				BillingSystemServiceHolder.get(), patient).build();
 		Optional<IOrganization> guarantor = getGuarantor(line[1]);
 		if (guarantor.isPresent()) {
 			coverage.setGuarantor(guarantor.get());
 			coverage.setCostBearer(guarantor.get());
 		}
 		CoreModelServiceHolder.get().save(coverage);
-		return Fall.load(coverage.getId());
+		return coverage;
 	}
 
 	private Optional<IBillingSystem> getBillingSystem(String string) {
@@ -154,10 +153,8 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 	}
 
 	@Override
-	public void setProperties(Fall fall, String[] line) {
-		if (fall != null) {
-			ICoverage coverage = CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class)
-					.orElseThrow(() -> new IllegalStateException("Could not convert coverage [" + fall.getId() + "]"));
+	public void setProperties(ICoverage coverage, String[] line) {
+		if (coverage != null) {
 			TimeTool insertedTime = new TimeTool(line[5]);
 
 			getBillingSystem(line[4]).ifPresent(bs -> coverage.setBillingSystem(bs));
@@ -172,7 +169,7 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 			}
 
 			// PAT_GAR_NO
-			fall.addXid(getXidDomain(), line[2], true);
+			XidServiceHolder.get().addXid(coverage, getXidDomain(), line[2], true);
 			CoreModelServiceHolder.get().save(coverage);
 		}
 	}
@@ -184,14 +181,14 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 			String[] line = null;
 			while ((line = getNextLine()) != null) {
 				// PAT_GAR_NO
-				Fall fall = getExisting(line[2]);
-				if (fall == null) {
-					fall = create(line);
+				ICoverage coverage = getExisting(line[2]);
+				if (coverage == null) {
+					coverage = create(line);
 				} else if (!overwrite) {
 					// skip if overwrite is not set
 					continue;
 				}
-				setProperties(fall, line);
+				setProperties(coverage, line);
 				monitor.worked(1);
 			}
 			return true;

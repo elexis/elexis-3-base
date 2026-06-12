@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.elexis.core.constants.XidConstants;
-import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IMandator;
@@ -41,8 +40,6 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.Country;
 import ch.elexis.core.types.Gender;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
@@ -143,7 +140,8 @@ public class AeskulapImporterTest {
 		IPatient existingMatchAhv = new IContactBuilder.PatientBuilder(CoreModelServiceHolder.get(), "Martina",
 				"Test Doppelname",
 				LocalDate.of(1980, 8, 29), Gender.FEMALE).buildAndSave();
-		existingMatchAhv.addXid(XidConstants.DOMAIN_AHV, "7561234567897", true);
+		// NOPO XID Setting
+		XidServiceHolder.get().addXid(existingMatchAhv, XidConstants.DOMAIN_AHV, "7561234567897", true);
 
 		IPatient existingMatchWithData = new IContactBuilder.PatientBuilder(CoreModelServiceHolder.get(), "Nathalie",
 				"Test", LocalDate.of(1984, 3, 28), Gender.FEMALE).buildAndSave();
@@ -174,12 +172,13 @@ public class AeskulapImporterTest {
 		assertEquals(1, queryPatients(null, null, "7561234567897", false).size());
 		assertEquals(1, queryPatients("Nathalie", "Test", null, false).size());
 
-		Xid foundXid = Xid.findXID(IAeskulapImporter.XID_IMPORT_PATIENT, importXid.getDomainId());
-		assertNotNull(foundXid);
-		IPersistentObject foundPatient = foundXid.getObject();
-		assertTrue(foundPatient instanceof Patient);
+		// NOPO: Verifizierung über Service und Interfaces
+		Optional<IPatient> foundPatient = XidServiceHolder.get().findObject(IAeskulapImporter.XID_IMPORT_PATIENT,
+				importXid.getDomainId(), IPatient.class);
+		assertTrue(foundPatient.isPresent());
+
 		// the existing patient is now marked with the import xid
-		assertEquals(existingMatchAhv.getId(), foundPatient.getId());
+		assertEquals(existingMatchAhv.getId(), foundPatient.get().getId());
 
 		assertEquals(documentsSize, getDocuments(existingMatchWithData).size());
 	}

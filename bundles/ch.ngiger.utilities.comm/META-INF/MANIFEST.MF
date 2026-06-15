@@ -6,21 +6,9 @@ Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: Niklaus Giger
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0"
-Bundle-ClassPath: lib/commons-net-1.4.1.jar,
- .
-Import-Package: org.eclipse.swt.program
+Bundle-ClassPath: .
+Import-Package: org.apache.commons.net.ftp;version="[3.13.0,4.0.0)",
+ org.eclipse.swt.program
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.ngiger.comm.ftp,
- ch.ngiger.comm.vpn,
- org.apache.commons.net,
- org.apache.commons.net.bsd,
- org.apache.commons.net.ftp,
- org.apache.commons.net.ftp.parser,
- org.apache.commons.net.io,
- org.apache.commons.net.nntp,
- org.apache.commons.net.ntp,
- org.apache.commons.net.pop3,
- org.apache.commons.net.smtp,
- org.apache.commons.net.telnet,
- org.apache.commons.net.tftp,
- org.apache.commons.net.util
+ ch.ngiger.comm.vpn

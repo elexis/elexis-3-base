@@ -202,4 +202,8 @@ public class FtpServer extends FTPClient {
 					String.format("Unable to delete semaphore %s on %s", name, serverAddress));
 		}
 	}
+
+	public boolean isConnected() {
+		return isConnected();
+	}
 }

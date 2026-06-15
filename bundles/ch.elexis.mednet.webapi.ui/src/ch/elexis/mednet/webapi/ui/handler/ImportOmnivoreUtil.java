@@ -2,27 +2,27 @@ package ch.elexis.mednet.webapi.ui.handler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.MimeType;
+import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IDocumentStore;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
 import ch.elexis.mednet.webapi.core.config.MedNetConfig;
 import ch.elexis.mednet.webapi.core.vfs.MedNetVfsHandler;
+import jakarta.inject.Inject;
 
 /**
  * Utility class to handle the import of documents into the Omnivore document
@@ -40,37 +40,14 @@ public class ImportOmnivoreUtil {
 
 	private static IDocumentStore omnivoreDocumentStore;
 
-	/**
-	 * Injects the Omnivore document store service.
-	 *
-	 * @param documentStore the document store to set
-	 */
+	@Inject
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
 	public void setDocumentStore(IDocumentStore documentStore) {
 		ImportOmnivoreUtil.omnivoreDocumentStore = documentStore;
 	}
 
-	/**
-	 * Safe getter for the document store. If not injected by OSGi, it tries to
-	 * fetch it dynamically.
-	 */
 	private IDocumentStore getDocumentStore() {
-		if (omnivoreDocumentStore != null) {
-			return omnivoreDocumentStore;
-		}
-		try {
-			BundleContext context = FrameworkUtil.getBundle(ImportOmnivoreUtil.class).getBundleContext();
-			if (context != null) {
-				Collection<ServiceReference<IDocumentStore>> refs = context.getServiceReferences(IDocumentStore.class,
-						"(storeid=ch.elexis.data.store.omnivore)");
-				if (refs != null && !refs.isEmpty()) {
-					omnivoreDocumentStore = context.getService(refs.iterator().next());
-				}
-			}
-		} catch (Exception exception) {
-			log.error("Failed to retrieve Omnivore IDocumentStore dynamically.", exception);
-		}
-		return omnivoreDocumentStore;
+		return ImportOmnivoreUtil.omnivoreDocumentStore;
 	}
 
 	/**
@@ -90,11 +67,13 @@ public class ImportOmnivoreUtil {
 			return null;
 		}
 
-		List<Patient> patients = new Query(Patient.class, Patient.FLD_PATID, patientNo).execute();
+		IQuery<IPatient> query = CoreModelServiceHolder.get().getQuery(IPatient.class);
+		query.and(ModelPackage.Literals.ICONTACT__CODE, COMPARATOR.EQUALS, patientNo);
+		List<IPatient> patients = query.execute();
 
 		if (patients.size() == 1) {
 			if (!MedNetVfsHandler.isFileLocked(fileHandle)) {
-				Patient patient = patients.get(0);
+				IPatient patient = patients.get(0);
 				String category = getCategory(fileHandle);
 
 				if (category != null && !category.equals(CATEGORY_NONE) && !category.equals(CATEGORY_UNKNOWN)) {

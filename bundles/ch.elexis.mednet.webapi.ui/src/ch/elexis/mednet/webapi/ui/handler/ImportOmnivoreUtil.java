@@ -22,7 +22,6 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.mednet.webapi.core.config.MedNetConfig;
 import ch.elexis.mednet.webapi.core.vfs.MedNetVfsHandler;
-import jakarta.inject.Inject;
 
 /**
  * Utility class to handle the import of documents into the Omnivore document
@@ -40,7 +39,6 @@ public class ImportOmnivoreUtil {
 
 	private static IDocumentStore omnivoreDocumentStore;
 
-	@Inject
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
 	public void setDocumentStore(IDocumentStore documentStore) {
 		ImportOmnivoreUtil.omnivoreDocumentStore = documentStore;

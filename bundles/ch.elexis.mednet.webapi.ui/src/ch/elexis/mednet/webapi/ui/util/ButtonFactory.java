@@ -10,31 +10,53 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.services.IConfigService;
-import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
+import ch.elexis.mednet.webapi.core.config.MedNetConfig;
 import ch.elexis.mednet.webapi.core.messages.Messages;
 import ch.elexis.mednet.webapi.ui.Activator;
 
+/**
+ * Factory class for creating standardized buttons and toggle buttons for the
+ * MedNet UI.
+ */
 public class ButtonFactory {
 
+	private static final Logger log = LoggerFactory.getLogger(ButtonFactory.class);
+
+	private static final int ICON_SIZE = 32;
+	private static final int BUTTON_HEIGHT = 80;
+
+	/**
+	 * Creates a toggle button composite that switches between an active and
+	 * inactive state.
+	 *
+	 * @param parent          the parent composite
+	 * @param iconPathDefault the path to the default icon
+	 * @param iconPathActive  the path to the active icon
+	 * @param buttonText      the text displayed on the button
+	 * @param customBlue      the background color of the button
+	 * @return the created toggle button composite
+	 */
 	public static Composite createToggleButtonComposite(Composite parent, String iconPathDefault, String iconPathActive,
 			String buttonText, Color customBlue) {
+
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		buttonComposite.setBackground(customBlue);
 		buttonComposite.setLayout(new GridLayout(1, false));
+
 		GridData gridData = new GridData(SWT.FILL, SWT.TOP, true, false);
-		gridData.heightHint = 80;
+		gridData.heightHint = BUTTON_HEIGHT;
 		buttonComposite.setLayoutData(gridData);
 
 		Label iconLabel = new Label(buttonComposite, SWT.NONE);
-		Image defaultIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathDefault, 32, 32, iconLabel);
-		Image activeIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathActive, 32, 32, iconLabel);
+		Image defaultIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathDefault, ICON_SIZE, ICON_SIZE,
+				iconLabel);
+		Image activeIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathActive, ICON_SIZE, ICON_SIZE,
+				iconLabel);
+
 		iconLabel.setImage(defaultIcon);
 		iconLabel.setBackground(customBlue);
 		iconLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
@@ -52,11 +74,13 @@ public class ButtonFactory {
 
 		MouseAdapter clickListener = new MouseAdapter() {
 			@Override
-			public void mouseUp(MouseEvent e) {
+			public void mouseUp(MouseEvent event) {
 				isConnected[0] = !isConnected[0];
 				if (isConnected[0]) {
-					String downloadPath = getDownloadStore();
-					if (downloadPath == null || downloadPath.trim().isEmpty()) {
+					MedNetConfig config = MedNetConfig.load();
+					String downloadPath = config.getDownloadPath();
+
+					if (StringUtils.isBlank(downloadPath)) {
 						iconLabel.setImage(defaultIcon);
 						textLabel.setText(buttonText);
 						MessageDialog.openWarning(buttonComposite.getShell(),
@@ -65,12 +89,14 @@ public class ButtonFactory {
 						isConnected[0] = false;
 						return;
 					}
+
 					iconLabel.setImage(activeIcon);
 					textLabel.setText(Messages.MedNetMainComposite_deactivateImport);
 					textLabel.setToolTipText(Messages.MedNetMainComposite_connectedTooltip);
+
 					Activator.getInstance().startScheduler();
 					Activator.getInstance().setOnSchedulerError(() -> {
-						Display.getDefault().asyncExec(() -> {
+						parent.getDisplay().asyncExec(() -> {
 							iconLabel.setImage(defaultIcon);
 							textLabel.setText(buttonText);
 							textLabel.setToolTipText(Messages.MedNetMainComposite_schedulerErrorMessage);
@@ -90,6 +116,8 @@ public class ButtonFactory {
 		iconLabel.addMouseListener(clickListener);
 		textLabel.addMouseListener(clickListener);
 
+		// General fallback error handler for scheduler issues outside of the click
+		// event
 		Activator.getInstance().setOnSchedulerError(() -> parent.getDisplay().asyncExec(() -> {
 			isConnected[0] = false;
 			iconLabel.setImage(defaultIcon);
@@ -99,7 +127,7 @@ public class ButtonFactory {
 					Messages.MedNetMainComposite_schedulerErrorMessage);
 		}));
 
-		buttonComposite.addDisposeListener(e -> {
+		buttonComposite.addDisposeListener(event -> {
 			if (defaultIcon != null && !defaultIcon.isDisposed()) {
 				defaultIcon.dispose();
 			}
@@ -111,30 +139,49 @@ public class ButtonFactory {
 		return buttonComposite;
 	}
 
+	/**
+	 * Creates a standard clickable button composite with hover effects.
+	 *
+	 * @param parent          the parent composite
+	 * @param iconPathDefault the path to the default icon
+	 * @param iconPathHover   the path to the icon displayed on hover
+	 * @param buttonText      the text displayed on the button
+	 * @param customBlue      the background color of the button
+	 * @param onClickAction   the action to execute when the button is clicked
+	 * @return the created button composite
+	 */
 	public static Composite createButtonComposite(Composite parent, String iconPathDefault, String iconPathHover,
 			String buttonText, Color customBlue, Runnable onClickAction) {
+
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		buttonComposite.setBackground(customBlue);
 		buttonComposite.setLayout(new GridLayout(1, false));
+
 		GridData gridData = new GridData(SWT.FILL, SWT.TOP, true, false);
-		gridData.heightHint = 80;
+		gridData.heightHint = BUTTON_HEIGHT;
 		buttonComposite.setLayoutData(gridData);
+
 		Label iconLabel = new Label(buttonComposite, SWT.NONE);
-		Image defaultIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathDefault, 32, 32, iconLabel);
-		Image hoverIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathHover, 32, 32, iconLabel);
+		Image defaultIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathDefault, ICON_SIZE, ICON_SIZE,
+				iconLabel);
+		Image hoverIcon = ImageUtil.getScaledImage(parent.getDisplay(), iconPathHover, ICON_SIZE, ICON_SIZE, iconLabel);
+
 		iconLabel.setImage(defaultIcon);
 		iconLabel.setBackground(customBlue);
 		iconLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
 		Label textLabel = new Label(buttonComposite, SWT.CENTER | SWT.WRAP);
 		textLabel.setText(buttonText);
 		textLabel.setBackground(customBlue);
 		textLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		textLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
 		CompositeEffectHandler.addHoverEffect(buttonComposite, iconLabel, textLabel, defaultIcon, hoverIcon,
 				customBlue);
 		CompositeEffectHandler.addPressReleaseEffect(buttonComposite, iconLabel, textLabel, hoverIcon, onClickAction,
 				customBlue);
-		buttonComposite.addDisposeListener(e -> {
+
+		buttonComposite.addDisposeListener(event -> {
 			if (defaultIcon != null && !defaultIcon.isDisposed()) {
 				defaultIcon.dispose();
 			}
@@ -142,27 +189,7 @@ public class ButtonFactory {
 				hoverIcon.dispose();
 			}
 		});
-		return buttonComposite;
-	}
 
-	private static String getDownloadStore() {
-		String downloadPath = StringUtils.EMPTY;
-		try {
-			BundleContext context = FrameworkUtil.getBundle(ButtonFactory.class).getBundleContext();
-			if (context != null) {
-				ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
-				if (serviceReference != null) {
-					IConfigService configService = context.getService(serviceReference);
-					if (configService != null) {
-						downloadPath = configService.getActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
-								StringUtils.EMPTY);
-						return downloadPath;
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return downloadPath;
+		return buttonComposite;
 	}
 }

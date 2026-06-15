@@ -1,30 +1,27 @@
 package ch.elexis.mednet.webapi.core.handler;
 
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.mednet.webapi.core.IMednetAuthService;
 import ch.elexis.mednet.webapi.core.constants.ApiConstants;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
+import ch.elexis.mednet.webapi.core.vfs.MedNetVfsHandler;
 
 public class SingleFileDownloaderHandler {
 
@@ -33,38 +30,32 @@ public class SingleFileDownloaderHandler {
 	private String token;
 
 	/**
-	 * Lädt eine einzelne Datei herunter und speichert sie im konfigurierten
-	 * Download-Pfad.
+	 * Downloads a single file and saves it to the configured download path (local,
+	 * SMB or DAV). * @param downloadUrl The URL for downloading the file.
 	 * 
-	 * @param downloadUrl         Die URL zum Herunterladen der Datei.
-	 * @param objectId            Die Object-ID der Datei (für den Dateinamen).
-	 * @param downloadHeadersList Die Liste der Download-Header.
-	 * @param patientNr
-	 * @param packageId
-	 * @param createDate
+	 * @param patientNr           The patient number.
+	 * @param patientName         The patient's name.
+	 * @param exportType          The type of export.
+	 * @param receiver            The recipient.
+	 * @param sender              The sender.
+	 * @param downloadHeadersList The list of download headers.
+	 * @param packageId           The package ID for confirmation.
+	 * @param createDate          The creation date.
 	 */
 	public void downloadSingleFile(String downloadUrl, String patientNr, String patientName, String exportType,
 			String receiver, String sender, List<Map<String, String>> downloadHeadersList, String packageId,
 			String createDate) {
 		try {
-
-			String downloadPath = getDownloadStore();
-
-			if (downloadPath == null || downloadPath.trim().isEmpty()) {
-				logger.error(
-						"Download path is not set. Please configure the download path in the settings.");
+			if (!retrieveToken()) {
+				logger.error("Download aborted: No authentication token available.");
 				return;
 			}
+			IVirtualFilesystemHandle dirHandle = MedNetVfsHandler.getDownloadDirectory();
 
-			Path downloadDir = Paths.get(downloadPath);
-			if (!Files.exists(downloadDir)) {
-				try {
-					Files.createDirectories(downloadDir);
-					logger.info("Download directory created: {}", downloadDir.toAbsolutePath());
-				} catch (IOException e) {
-					logger.error("Error creating the download directory: {}", e.getMessage());
-					return;
-				}
+			if (dirHandle == null) {
+				logger.error(
+						"Download path is not set or invalid. Please configure the download path in the settings.");
+				return;
 			}
 
 			HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).GET();
@@ -81,118 +72,83 @@ public class SingleFileDownloaderHandler {
 
 			HttpRequest request = requestBuilder.build();
 			String sanitizedCreateDate = createDate.replaceAll("[\\\\/:*?\"<>|]", "_");
-			Path filePath = downloadDir
-			        .resolve(patientNr + "_" + patientName + "_" + exportType + "_" + sender + "_" + receiver + "_"
-			                + sanitizedCreateDate + ".pdf");
+			String fileName = patientNr + "_" + patientName + "_" + exportType + "_" + sender + "_" + receiver + "_"
+					+ sanitizedCreateDate + ".pdf";
 
 			HttpClient client = HttpClient.newHttpClient();
-			HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(filePath));
+
+			HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
 			if (response.statusCode() == 200) {
-				logger.info("File downloaded successfully: {}", filePath.toAbsolutePath());
+				IVirtualFilesystemHandle fileHandle = dirHandle.subFile(fileName);
+
+				try (InputStream in = response.body(); OutputStream out = fileHandle.openOutputStream()) {
+					in.transferTo(out);
+				}
+
+				logger.info("File downloaded successfully: {}", fileHandle.getAbsolutePath());
 				acknowledgeDownloadSuccess(packageId);
 			} else {
 				logger.error("Error downloading the file. Status code: {}", response.statusCode());
-				if (Files.exists(filePath)) {
-					String responseBody = new String(Files.readAllBytes(filePath));
+
+				try (InputStream in = response.body()) {
+					String responseBody = new String(in.readAllBytes());
 					logger.error("Incorrect response body: {}", responseBody);
-				} else {
-					logger.error("The file was not created.");
 				}
 			}
-		} catch (IOException | InterruptedException ex) {
-			logger.error("An error occurred while downloading: {}", ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("An error occurred while downloading: {}", ex.getMessage(), ex);
 		}
 	}
 
-	/**
-	 * Hilfsmethode zum Abrufen des Preference Stores.
-	 * 
-	 * @return Der konfigurierte Preference Store.
-	 */
-	private String getDownloadStore() {
+	private boolean retrieveToken() {
 		try {
-			// Überprüfen, ob der IConfigService verfügbar ist
 			BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
-			ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
+			ServiceReference<IMednetAuthService> serviceReference = context
+					.getServiceReference(IMednetAuthService.class);
 
 			if (serviceReference != null) {
-				IConfigService configService = context.getService(serviceReference);
-				if (configService != null) {
-					// Download-Pfad aus IConfigService abrufen
-					String downloadPath = configService.getActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
-							"");
-
-					if (downloadPath == null || downloadPath.trim().isEmpty()) {
-						logger.warn("No download path found in preferences.");
-					} else {
-						logger.info("Download path retrieved: {}", downloadPath);
-					}
-
-					return downloadPath;
-				}
-			}
-
-			String pluginId = PreferenceConstants.MEDNET_PLUGIN_STRING;
-			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
-			String downloadPath = node.get(PreferenceConstants.MEDNET_DOWNLOAD_PATH, "");
-
-			if (downloadPath == null || downloadPath.trim().isEmpty()) {
-				logger.warn("No download path found in preferences.");
-			} else {
-				logger.info("Download path retrieved: {}", downloadPath);
-			}
-
-			return downloadPath;
-
-		} catch (Exception e) {
-			logger.error("Error when retrieving the download path from the preferences: {}", e.getMessage(), e);
-			return "";
-		}
-	}
-
-
-	private void acknowledgeDownloadSuccess(String packageId) {
-		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
-		ServiceReference<IMednetAuthService> serviceReference = context.getServiceReference(IMednetAuthService.class);
-		if (serviceReference != null) {
-			authService = context.getService(serviceReference);
-			try {
+				authService = context.getService(serviceReference);
 				Map<String, Object> parameters = new HashMap<>();
 				parameters.put(PreferenceConstants.TOKEN_GROUP, PreferenceConstants.TOKEN_GROUP_KEY);
 				Optional<String> authToken = authService.getToken(parameters);
+
 				if (authToken.isPresent()) {
-					token = authToken.get();
-					try {
-						String successUrl = ApiConstants.getBaseApiUrl() + "/" + packageId
-								+ "/download-success?objectType=Form";
-
-						HttpRequest request = HttpRequest.newBuilder().uri(URI.create(successUrl))
-								.header("Authorization", "Bearer " + token)
-								.method("PATCH", HttpRequest.BodyPublishers.noBody()).build();
-
-						HttpClient client = HttpClient.newHttpClient();
-						HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-						if (response.statusCode() == 200) {
-							logger.info("Download successfully confirmed for package ID: " + packageId);
-						}
-					} catch (Exception ex) {
-						logger.error("An error occurred while confirming the download: " + ex.getMessage());
-						ex.printStackTrace();
-					}
-				} else {
-					logger.error("No authentication token received.");
+					this.token = authToken.get();
+					context.ungetService(serviceReference);
+					return true;
 				}
-			} catch (Exception ex) {
-				logger.error("An error occurred while retrieving the forms: {}", ex.getMessage());
-			} finally {
 				context.ungetService(serviceReference);
 			}
-		} else {
-			logger.error("ServiceReference for IMednetAuthService is null.");
+		} catch (Exception e) {
+			logger.error("Failed to retrieve auth token.", e);
 		}
-
-
+		return false;
 	}
 
+	private void acknowledgeDownloadSuccess(String packageId) {
+		if (this.token == null) {
+			logger.error("Cannot acknowledge download: Token is null.");
+			return;
+		}
+
+		try {
+			String successUrl = ApiConstants.getBaseApiUrl() + "/" + packageId + "/download-success?objectType=Form";
+
+			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(successUrl))
+					.header("Authorization", "Bearer " + token).method("PATCH", HttpRequest.BodyPublishers.noBody())
+					.build();
+
+			HttpClient client = HttpClient.newHttpClient();
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+			if (response.statusCode() == 200 || response.statusCode() == 204) {
+				logger.info("Download successfully confirmed for package ID: {}", packageId);
+			} else {
+				logger.warn("Failed to confirm download. Status code: {}", response.statusCode());
+			}
+		} catch (Exception ex) {
+			logger.error("An error occurred while confirming the download: {}", ex.getMessage(), ex);
+		}
+	}
 }

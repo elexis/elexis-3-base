@@ -6,12 +6,14 @@ Bundle-Vendor: elexis.ch
 Bundle-Version: 1.0.0.qualifier
 Export-Package: ch.elexis.mednet.webapi.core,
  ch.elexis.mednet.webapi.core.auth,
+ ch.elexis.mednet.webapi.core.config,
  ch.elexis.mednet.webapi.core.constants,
  ch.elexis.mednet.webapi.core.fhir.resources,
  ch.elexis.mednet.webapi.core.fhir.resources.util,
  ch.elexis.mednet.webapi.core.handler,
  ch.elexis.mednet.webapi.core.messages,
- ch.elexis.mednet.webapi.core.service
+ ch.elexis.mednet.webapi.core.service,
+ ch.elexis.mednet.webapi.core.vfs
 Require-Bundle: ch.elexis.core;bundle-version="3.12.0",
  ch.elexis.core.services,
  info.elexis.target.hapi.fhir,

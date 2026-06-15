@@ -5,10 +5,10 @@ Bundle-SymbolicName: ch.ngiger.utilities.comm;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: Niklaus Giger
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0"
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ org.apache.commons.commons-net;bundle-version="3.13.0"
 Bundle-ClassPath: .
-Import-Package: org.apache.commons.net.ftp;version="[3.13.0,4.0.0)",
- org.eclipse.swt.program
+Import-Package: org.eclipse.swt.program
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.ngiger.comm.ftp,
  ch.ngiger.comm.vpn

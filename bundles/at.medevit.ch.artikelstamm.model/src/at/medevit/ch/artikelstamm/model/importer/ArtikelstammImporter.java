@@ -265,6 +265,12 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		products = importStamm.getPRODUCTS().getPRODUCT().stream()
 				.collect(Collectors.toMap(p -> p.getPRODNO(), p -> p));
 		limitations = importStamm.getLIMITATIONS().getLIMITATION().stream()
+				.map(l -> {
+					// remove all tags
+					l.setDSCR(Jsoup.parse(l.getDSCR()).text());
+					l.setDSCRF(Jsoup.parse(l.getDSCRF()).text());
+					return l;
+				})
 				.collect(Collectors.toMap(l -> l.getLIMNAMEBAG(), l -> l));
 	}
 
@@ -502,8 +508,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			limitation = limitations.get(limnamebag);
 			if (limitation != null) {
 				limitationPts = limitation.getLIMITATIONPTS();
-				// remove html tags
-				limitationDscr = Jsoup.parse(limitation.getDSCR()).text();
+				limitationDscr = limitation.getDSCR();
 			}
 		}
 		ai.setLimitation(limitation != null ? true : false);

@@ -34,6 +34,8 @@ public final class AppointmentData {
 			if (appointment == null) {
 				throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
 			}
+			appointment = CoreModelServiceHolder.get().load(appointment.getId(), IAppointment.class)
+					.orElse(appointment);
 		} else {
 			appointment = appointments.get(0);
 		}

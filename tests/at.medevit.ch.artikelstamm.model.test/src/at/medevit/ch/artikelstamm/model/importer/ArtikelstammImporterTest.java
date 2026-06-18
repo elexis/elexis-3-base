@@ -33,21 +33,27 @@ import ch.rgw.tools.Money;
 
 public class ArtikelstammImporterTest {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporterTest.class);
-	private static final String gtinNonPharmaInactiveInSecond = "5011091105012";
-	private static final String gtinPharmaOnlyInFirst = "7680667450023";
-	private static final String gtinOnlyInSecond = "7611800080487";
-	private static final String pharWithPriceOverridden = "6571270";
-	private static final String gtinWithPriceOverridden = "7680651600014";
-	private static final String gtinWithPkgSizeOverride = "7680651600014";
-	private static final String gtinWithPkgSizeOverrideNull = "7612929028176";
-	private static final String pharWithLeadingZero = "0098878";
+	private static final String gtinNonPharmaInactiveInSecond = "00040565124599";
+	private static final String gtinPharmaOnlyInFirst = "7680543780251";
+
+	private static final String gtinOnlyInSecond = "7680569220014";
+
 	private static final String gtinUserPrice = "7680273040281";
+	private static final String gtinWithPriceOverridden = "7680546130596";
+	private static final String gtinWithPkgSizeOverride = "7680546130596";
+	private static final String pharWithPriceOverridden = "2919090";
+	private static final String gtinWithPkgSizeOverrideNull = "7640173590484";
+	private static final String pharWithLeadingZero = "0098878";
+
+	private static final int OLD_PKG_SIZE = 1;
+	private static final int NEW_PKG_SIZE = 100;
+
+	private static final String[] slEntries = new String[] { "7680569220038", "7680569220014" };
+
+	// oddb test constants
 	private static final String gtin14chars = "68711428066649";
 	private static final String gtinPriorix = "7680581580011";
 	private static final String gtinNonPharma = "68711428066649";
-	private static final String[] slEntries = new String[] { "7680273040281", "7680651600014" };
-	private static final int OLD_PKG_SIZE = 448;
-	private static final int NEW_PKG_SIZE = 100;
 	private static boolean isMedindex = false;
 
 	private static ArtikelstammImporter importer;
@@ -59,13 +65,14 @@ public class ArtikelstammImporterTest {
 	@BeforeClass
 	public static void beforeClass() {
 		importer = (ArtikelstammImporter) OsgiServiceUtil.getService(IReferenceDataImporter.class,
-				"(" + IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v5)").get();
+				"(" + IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v6)").get();
 		artikelstammModelService = OsgiServiceUtil.getService(IModelService.class,
 				"(" + IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model)").get();
 		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
 		artikelstammCodeElements = codeElementService.getContribution(CodeElementTyp.ARTICLE, "Artikelstamm").get();
 	}
 
+	@Test
 	public void testImportMedindex() throws IOException, ParseException {
 		isMedindex = true;
 		runImport("/rsc/medindex");
@@ -73,7 +80,6 @@ public class ArtikelstammImporterTest {
 
 	// At the moment I can only activate one of the two tests or I will get errors
 	// about the incompatilibity between medindex and oddb2xml
-	@Test
 	public void testImportOddb2xml() {
 		isMedindex = false;
 		runImport("/rsc/artikelstamm");
@@ -81,7 +87,6 @@ public class ArtikelstammImporterTest {
 
 	// At the moment I can only activate one of the two tests or I will get errors
 	// about the incompatilibity between medindex and oddb2xml
-	@Test
 	public void testImportOddb2xmlFrench() {
 		isMedindex = false;
 		String filename = "/rsc/artikelstamm_second_v5.xml";
@@ -119,10 +124,9 @@ public class ArtikelstammImporterTest {
 
 		assertFalse(nonPharma.isPresent());
 		IStatus success = importer.performImport(new NullProgressMonitor(),
-				ArtikelstammImporterTest.class.getResourceAsStream(baseName + "_first_v5.xml"), true, false, null);
+				ArtikelstammImporterTest.class.getResourceAsStream(baseName + "_first_v6.xml"), true, false, null);
 		if (!success.isOK()) {
-			String msg = String.format("Import of artikelstamm_first_v5 failed");
-			fail(msg);
+			fail(success.toString());
 		}
 		if (!isMedindex) {
 			// I would have loved to add a test that priorix has only one product
@@ -135,9 +139,9 @@ public class ArtikelstammImporterTest {
 			assertFalse(nonPharma.isPresent());
 		}
 		success = importer.performImport(new NullProgressMonitor(),
-				ArtikelstammImporterTest.class.getResourceAsStream(baseName + "_first_v5.xml"), true, true, null);
+				ArtikelstammImporterTest.class.getResourceAsStream(baseName + "_first_v6.xml"), true, true, null);
 		if (!success.isOK()) {
-			String msg = String.format("Import of artikelstamm_first_v5 failed");
+			String msg = String.format("Import of artikelstamm_first_v6 failed");
 			fail(msg);
 		}
 		log.debug("testImportAlreadyOkay first done");
@@ -193,11 +197,9 @@ public class ArtikelstammImporterTest {
 		setPkgOverride(gtinWithPkgSizeOverrideNull);
 
 		success = importer.performImport(new NullProgressMonitor(),
-				ArtikelstammImporterTest.class.getResourceAsStream(baseName + "_second_v5.xml"), true, true, null);
+				ArtikelstammImporterTest.class.getResourceAsStream(baseName + "_second_v6.xml"), true, true, null);
 		if (!success.isOK()) {
-			String msg = String.format("Import of artikelstamm_second_v5.xml failed %s code %s file was {} ",
-					success.getMessage(), success.getCode());
-			fail(msg);
+			fail(success.toString());
 		}
 		log.debug("testImportAlreadyOkay second done");
 
@@ -221,13 +223,13 @@ public class ArtikelstammImporterTest {
 		assertFalse(((IArtikelstammItem) overridden.get()).isBlackBoxed());
 
 		checkResettingVerpackungsEinheit(gtinWithPkgSizeOverride, OLD_PKG_SIZE);
-		checkResettingVerpackungsEinheit(gtinWithPkgSizeOverrideNull, 0);
+		checkResettingVerpackungsEinheit(gtinWithPkgSizeOverrideNull, 15);
 
 		// Check an article no long present
 		Optional<ICodeElement> pharmaOnlyInFirst = artikelstammCodeElements.loadFromCode(gtinPharmaOnlyInFirst);
 		if (pharmaOnlyInFirst.isPresent()) {
 			log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ",
-					((IArtikelstammItem) pharmaOnlyInFirst.get()).getText(),
+					pharmaOnlyInFirst.get().getText(),
 					((IArtikelstammItem) pharmaOnlyInFirst.get()).getPHAR(),
 					((IArtikelstammItem) pharmaOnlyInFirst.get()).isBlackBoxed(),
 					((IArtikelstammItem) pharmaOnlyInFirst.get()).isDeleted());
@@ -239,7 +241,7 @@ public class ArtikelstammImporterTest {
 		if (isMedindex) {
 			if (nonPharmaOnlyInFirst.isPresent()) {
 				log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ",
-						((IArtikelstammItem) nonPharmaOnlyInFirst.get()).getText(),
+						nonPharmaOnlyInFirst.get().getText(),
 						((IArtikelstammItem) nonPharmaOnlyInFirst.get()).getPHAR(),
 						((IArtikelstammItem) nonPharmaOnlyInFirst.get()).isBlackBoxed(),
 						((IArtikelstammItem) nonPharmaOnlyInFirst.get()).isDeleted());
@@ -255,7 +257,7 @@ public class ArtikelstammImporterTest {
 		Optional<ICodeElement> withPkgOverride = artikelstammCodeElements.loadFromCode(gtinWithPkgSizeOverride);
 		assertTrue(withPkgOverride.isPresent());
 		log.debug("withPkgOverride {} {} isBlackBoxed {} isDeleted {}  ",
-				((IArtikelstammItem) withPkgOverride.get()).getText(),
+				withPkgOverride.get().getText(),
 				((IArtikelstammItem) withPkgOverride.get()).getPHAR(),
 				((IArtikelstammItem) withPkgOverride.get()).isBlackBoxed(),
 				((IArtikelstammItem) withPkgOverride.get()).isDeleted());

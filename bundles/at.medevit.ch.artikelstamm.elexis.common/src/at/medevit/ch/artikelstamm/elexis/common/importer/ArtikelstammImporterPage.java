@@ -112,7 +112,7 @@ public class ArtikelstammImporterPage extends ImporterPage {
 
 	private IReferenceDataImporter getImporter() {
 		// default importer
-		return importerService.getImporter("artikelstamm_v5") //$NON-NLS-1$
+		return importerService.getImporter("artikelstamm_v6") //$NON-NLS-1$
 				.orElseThrow(() -> new IllegalStateException("No ReferenceDataImporter available")); //$NON-NLS-1$
 	}
 

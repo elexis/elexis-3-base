@@ -29,12 +29,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.jsoup.Jsoup;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM;
@@ -47,6 +51,7 @@ import at.medevit.ch.artikelstamm.BlackBoxReason;
 import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.SALECDType;
+import at.medevit.ch.artikelstamm.extinfo.ArticleIndicationInfo;
 import at.medevit.ch.artikelstamm.model.service.ModelServiceHolder;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
@@ -62,7 +67,7 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
-@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v5")
+@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v6")
 public class ArtikelstammImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
 
@@ -75,9 +80,14 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 	private VersionUtil versionUtil;
 
+	private static Gson gson;
+
 	@Activate
 	public void activate() {
 		versionUtil = new VersionUtil(elexisEntityManager);
+		if (ArtikelstammImporter.gson == null) {
+			gson = new GsonBuilder().create();
+		}
 	}
 
 	@Override
@@ -101,6 +111,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 	 *                will be simply increased by one
 	 * @return
 	 */
+	@Override
 	public IStatus performImport(IProgressMonitor monitor, InputStream input, @Nullable Integer newVersion) {
 		return performImport(monitor, input, true, true, newVersion);
 	}
@@ -258,8 +269,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 				String lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d");
 				if (lang.equalsIgnoreCase("f") && product.getDSCRF() != null) {
 					trimmedDscr = trimDSCR(product.getDSCRF(), product.getPRODNO());
-				} else if (lang.equalsIgnoreCase("i") && product.getDSCRI() != null) {
-					trimmedDscr = trimDSCR(product.getDSCRI(), product.getPRODNO());
+				} else if (lang.equalsIgnoreCase("i") && product.getDSCR() != null) {
+					trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
 				}
 				foundProduct = new ArtikelstammItem();
 				foundProduct.setId(product.getPRODNO());
@@ -303,8 +314,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		String lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d");
 		if (lang.equalsIgnoreCase("f") && product.getDSCRF() != null) {
 			trimmedDscr = trimDSCR(product.getDSCRF(), product.getPRODNO());
-		} else if (lang.equalsIgnoreCase("i") && product.getDSCRI() != null) {
-			trimmedDscr = trimDSCR(product.getDSCRI(), product.getPRODNO());
+		} else if (lang.equalsIgnoreCase("i") && product.getDSCR() != null) {
+			trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
 		}
 		ai.setDscr(trimmedDscr);
 	}
@@ -467,7 +478,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			limitation = limitations.get(limnamebag);
 			if (limitation != null) {
 				limitationPts = limitation.getLIMITATIONPTS();
-				limitationDscr = limitation.getDSCR();
+				// remove html tags
+				limitationDscr = Jsoup.parse(limitation.getDSCR()).text();
 			}
 		}
 		ai.setLimitation(limitation != null ? true : false);
@@ -495,6 +507,12 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		ai.setSl_entry((item.isSLENTRY() != null && item.isSLENTRY()) ? true : false);
 		ai.setDeductible((item.getDEDUCTIBLE() != null) ? item.getDEDUCTIBLE().toString() : null);
+		if (item.getARTSL() != null && item.getARTSL().isPM() && item.getARTSL().getARTLIMS() != null
+				&& !item.getARTSL().getARTLIMS().getARTLIM().isEmpty()) {
+			ai.setPm(true);
+			ArticleIndicationInfo info = ArticleIndicationInfo.of(item.getARTSL().getARTLIMS(), limitations);
+			setExtInfo(ArtikelstammItem.EXTINFO_VAL_INDICATIONS, gson.toJson(info), ai);
+		}
 		ai.setGeneric_type(item.getGENERICTYPE());
 		ai.setIkscat(item.getIKSCAT());
 		ai.setNarcotic_cas(

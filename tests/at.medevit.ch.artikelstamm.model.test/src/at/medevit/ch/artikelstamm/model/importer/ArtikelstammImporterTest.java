@@ -267,6 +267,9 @@ public class ArtikelstammImporterTest {
 			assertTrue(ai.isPresent());
 			assertFalse(((IArtikelstammItem) ai.get()).isBlackBoxed());
 			assertTrue(((IArtikelstammItem) ai.get()).isInSLList());
+			
+			assertTrue(((IArtikelstammItem) ai.get()).isPm());
+			assertTrue(((IArtikelstammItem) ai.get()).getIndicationInfo().isPresent());
 		}
 	}
 

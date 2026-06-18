@@ -9,9 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.extinfo.ArticleIndicationInfo;
 import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
 import at.medevit.ch.artikelstamm.model.service.ArtikelstammModelServiceHolder;
 import at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder;
@@ -47,6 +51,8 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 
 	private static IBillableOptifier<ArtikelstammItem> optifier;
 	private IBillableVerifier verifier;
+
+	private static Gson gson;
 
 	public ArtikelstammItem(ch.elexis.core.jpa.entities.ArtikelstammItem entity) {
 		super(entity);
@@ -614,4 +620,31 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	public void setPackageSizeString(String value) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public boolean isPm() {
+		return getEntity().isPm();
+	}
+
+	@Override
+	public Optional<ArticleIndicationInfo> getIndicationInfo() {
+		Object indicationsJson = getExtInfo(ArtikelstammConstants.EXTINFO_VAL_INDICATIONS);
+		if (indicationsJson instanceof String && StringUtils.isNotBlank((String) indicationsJson)) {
+			try {
+				ArticleIndicationInfo ret = getGson().fromJson((String) indicationsJson, ArticleIndicationInfo.class);
+				return Optional.of(ret);
+			} catch (Exception e) {
+				LoggerFactory.getLogger(getClass()).error("Invalid JSON", e);
+			}
+		}
+		return Optional.empty();
+	}
+
+	private Gson getGson() {
+		if (gson == null) {
+			gson = new GsonBuilder().create();
+		}
+		return gson;
+	}
+
 }

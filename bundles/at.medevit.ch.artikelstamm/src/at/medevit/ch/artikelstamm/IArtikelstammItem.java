@@ -10,7 +10,10 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm;
 
+import java.util.Optional;
+
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
+import at.medevit.ch.artikelstamm.extinfo.ArticleIndicationInfo;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.types.VatInfo;
@@ -44,6 +47,7 @@ public interface IArtikelstammItem extends IArticle {
 	/**
 	 * @return human readable label
 	 */
+	@Override
 	public String getLabel();
 
 	/**
@@ -205,4 +209,18 @@ public interface IArtikelstammItem extends IArticle {
 	 * @return
 	 */
 	public boolean isOverrideVatInfo();
+
+	/**
+	 * Test if the item is marked as price model.
+	 * 
+	 * @return
+	 */
+	public boolean isPm();
+
+	/**
+	 * Get the {@link ArticleIndicationInfo} for the item.
+	 * 
+	 * @return
+	 */
+	public Optional<ArticleIndicationInfo> getIndicationInfo();
 }

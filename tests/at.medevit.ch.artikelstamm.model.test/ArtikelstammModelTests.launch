@@ -229,6 +229,8 @@
         <setEntry value="at.medevit.ch.artikelstamm.model.test@default:false"/>
         <setEntry value="at.medevit.ch.artikelstamm.model@default:true"/>
         <setEntry value="at.medevit.ch.artikelstamm@default:default"/>
+        <setEntry value="ch.elexis.core.cdi@default:default"/>
+        <setEntry value="ch.elexis.core.data@default:default"/>
         <setEntry value="ch.elexis.core.jcifs@default:default"/>
         <setEntry value="ch.elexis.core.jpa.datasource@3:true"/>
         <setEntry value="ch.elexis.core.jpa.entities@3:true"/>
@@ -238,6 +240,7 @@
         <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
         <setEntry value="ch.elexis.core.model@default:default"/>
         <setEntry value="ch.elexis.core.rcp@default:default"/>
+        <setEntry value="ch.elexis.core.services.rcp@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.test.context@default:false"/>
         <setEntry value="ch.elexis.core.test.logging@default:false"/>
@@ -246,8 +249,8 @@
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.rgw.utility.legacy@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="es.gogo.shell@default:default"/>
-        <setEntry value="info.elexis.server.core.logging@default:default"/>
+        <setEntry value="es.gogo.shell@default:false"/>
+        <setEntry value="info.elexis.server.core.logging@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>

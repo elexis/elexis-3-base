@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ARTIKELSTAMM xmlns="http://elexis.ch/Elexis_Artikelstamm_v6" CREATION_DATETIME="2026-06-17T10:22:37.116+02:00" BUILD_DATETIME="2026-06-17T13:21:25.120Z" DATA_SOURCE="medindex">
+    <PRODUCTS>
+        <PRODUCT>
+            <PRODNO>1977</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>HALDOL Tabl 1 mg</DSCR>
+            <DSCRF>HALDOL cpr 1 mg</DSCRF>
+            <ATC>N05AD01</ATC>
+            <SUBSTANCE>Haloperidol</SUBSTANCE>
+            <SUBSTANCEF>Halopéridol</SUBSTANCEF>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>58398</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>MABTHERA Inf Konz 500 mg/50ml</DSCR>
+            <DSCRF>MABTHERA conc perf 500 mg/50ml</DSCRF>
+            <ATC>L01FA01</ATC>
+            <LIMNAMEBAG>MABTHERA.01</LIMNAMEBAG>
+            <SUBSTANCE>Rituximab</SUBSTANCE>
+            <SUBSTANCEF>Rituximab</SUBSTANCEF>
+        </PRODUCT>        
+        <PRODUCT>
+            <PRODNO>1123868</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT FLEX 7 Wundverband 15x15cm</DSCR>
+            <DSCRF>ACTICOAT FLEX 7 pansement vulné 15x15cm</DSCRF>
+        </PRODUCT>
+    </PRODUCTS>
+    <LIMITATIONS>
+        <LIMITATION>
+            <LIMNAMEBAG>LYNPARZA</LIMNAMEBAG>
+            <DSCR>Zur Erhaltungstherapie (Monotherapie) bei erwachsenen Patientinnen mit rezidiviertem, fortgeschrittenem Ovarialkarzinom mit BRCA Mutation im Anschluss an eine platinhaltige Chemotherapie bei Vorliegen einer kompletten oder partiellen Remission.&lt;br&gt; Der behandelnde Arzt ist verpflichtet, die erforderlichen Daten laufend im vorgegebenen Internettool des Registers, abrufbar auf http://www.olaparib-registry.ch, zu erfassen. Eine schriftliche Einwilligung der Patientin muss vorliegen. Es sind folgende Daten zu erfassen:&lt;br&gt; 1)	Geburtsjahr, sowie Vortherapien für das OC&lt;br&gt; 2)	Datum Therapiestart, Dosierung, Dosisanpassungen, Datum Therapieende. </DSCR>
+            <DSCRF>Pour le traitement d'entretien (en monothérapie) chez les patientes adultes atteintes d’un cancer de l'ovaire avancé, récidivant, avec une mutation du gène BRCA, chez les patientes en rémission complète ou partielle suite à une chimiothérapie à base de platine.&lt;br&gt; Le médecin traitant est tenu de saisir en continu les données requises dans l'outil internet accessible sur http://www.olaparib-registry.ch. Le consentement écrit de la patiente doit être obtenu. Les données à saisir sont les suivantes:&lt;br&gt; 1)     Année de naissance, ainsi que les traitements antérieurs pour le CO&lt;br&gt; 2)     Date du début de traitement, posologie, ajustements posologiques, date de fin de traitement. </DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>MABTHERA.01</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Hämatologie:&lt;/b&gt;&lt;br&gt; Die Behandlung von vorgängig unbehandelten symptomatischen Patienten mit CD20 positivem follikulärem Non-Hodgkin-Lymphom (Stadien III-IV) mit hohem Tumorload in Kombination mit CVP (Cyclophosphamid, Vincristin, Prednison) oder CHOP (Cyclophosphamid, Doxorubicin, Vincristin, Prednison). Bei Ansprechen auf die Therapie kann eine Erhaltungstherapie mit Rituximab Monotherapie über 2 Jahre verabreicht werden.&lt;br&gt; Behandlung von Patienten mit CD20 positivem follikulärem Non-Hodgkin-Lymphom (Stadium III-IV), bei Rezidiv nach oder Nichtansprechen auf Chemotherapie.&lt;br&gt; Erhaltungstherapie von Patienten mit CD20 positivem rezidiviertem oder refraktärem follikulärem Non-Hodgkin-Lymphom (Stadien III-IV), die auf eine Induktionstherapie mit CHOP oder R-CHOP angesprochen haben.&lt;br&gt; Behandlung von Patienten mit CD20 positivem aggressivem B-Zell Non-Hodgkin-Lymphom (Typ: DLBCL) in Kombination mit einer CHOP ähnlichen Standard-Chemotherapie.&lt;br&gt; Behandlung von Patienten mit therapiebedürftiger chronischer lymphatischer Leukämie (CLL) in Kombination mit Fludarabin und Cyclophosphamid (R-FC). Patienten mit Vortherapie von Fludarabin sollten über eine Dauer von mindestens 6 Monaten angesprochen haben.&lt;br&gt; Folgender Indikationscode ist zu übermitteln: 17079.01&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Hématologie:&lt;/b&gt;&lt;br&gt; Traitement de patients symptomatiques non prétraités avec lymphome non hodgkinien folliculaire CD20-positif (stades III-IV) et charge tumorale élevée, en association avec un protocole CVP (cyclophosphamide, vincristine, prednisone) ou CHOP (cyclophosphamide, doxorubicine, vincristine, prednisone). En cas de réponse au traitement, un traitement d’entretien par le rituximab en monothérapie peut être administré pendant 2 ans.&lt;br&gt; Traitement de patients avec lymphome non hodgkinien folliculaire CD20- positif (stades III-IV), en cas de récidive ou de chimiorésistance.&lt;br&gt; Traitement d'entretien de patients avec lymphome non hodgkinien folliculaire CD20-positif récidivant ou réfractaire (stades III-IV) ayant répondu à un traitement d'induction par un protocole CHOP ou R-CHOP.&lt;br&gt; Traitement de patients avec lymphome non hodgkinien agressif à grandes cellules B, CD20-positif, (DLBCL) en association avec une chimiothérapie standard analogue au protocole CHOP.&lt;br&gt; Traitement de patients avec leucémie lymphatique chronique (CLL) nécessitant un traitement en association avec fludarabine et cyclophosphamide (R-FC). Les patients prétraités par fludarabine doivent avoir répondu au traitement pendant 6 mois au moins.&lt;br&gt; Le code de l’indication suivant doit être transmis: 17079.01&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>MABTHERA.02</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Autoimmunerkrankungen:&lt;/b&gt;&lt;br&gt; Zur Behandlung erwachsener Patienten mit schwerer rheumatoider Arthritis, in Kombination mit Methotrexat (MTX), nach Versagen einer oder mehrerer Therapien mit Tumornekrosefaktor-(TNF-) Hemmern. Die Behandlung bedarf der Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation des Vertrauensarztes.&lt;br&gt; Zur Behandlung von Patienten mit schwerer aktiver ANCA-assoziierter Vaskulitis (Granulomatose mit Polyangiitis (auch bekannt als Morbus Wegener) und mikroskopische Polyangiitis) in Kombination mit Kortikosteroiden, wenn folg. Kriterien erfüllt sind:&lt;br&gt; - Nach Rezidiv unter Cyclophosphamid oder Cyclophosphamid-Versagen;&lt;br&gt; - Bei Cyclophosphamid-Unverträglichkeit oder Cyclophosphamid-Überempfindlichkeit oder falls Cyclophosphamid kontraindiziert ist;&lt;br&gt; - Bei nicht abgeschlossener Familienplanung (Infertilitätsrisiko).&lt;br&gt; Folgender Indikationscode ist zu übermitteln: 17079.02&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Maladies auto-immunes:&lt;/b&gt;&lt;br&gt; Traitement de patients adultes atteints de polyarthrite rhumatoïde sévère, en association avec le méthotrexate (MTX), après échec d'un ou plusieurs traitements par des inhibiteurs du facteur de nécrose tumorale (anti-TNF). Les coûts ne sont pris en charge que si l'assureur maladie a accordé une garantie de prise en charge après consultation préalable du médecin-conseil.&lt;br&gt; Pour le traitement de patients présentant une vascularite associée aux ANCA sévère active (granulomatose avec polyangéite (aussi appelée maladie de Wegener) et polyangéite microscopique) en combinaison avec des corticostéroïdes, lorsque les critères suivants sont remplis:&lt;br&gt; - après une récidive sous cyclophosphamide ou après l’échec du cyclophosphamide;&lt;br&gt; - en cas d’intolérance ou d’hypersensibilité au cyclophosphamide ou si le cyclophosphamide est contre-indiqué;&lt;br&gt; - lorsque le patient souhaite encore avoir un ou des enfants (risque d’infertilité).&lt;br&gt; Le code de l’indication suivant doit être transmis: 17079.02&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>MABTHERA.04</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Kombination MABTHERA mit POLIVY und Bendamustin bei rezidiviertem oder refraktärem diffusem grosszelligem B-Zell-Lymphom (DLBCL)&lt;/b&gt;&lt;br&gt; (mit Preismodell)&lt;br&gt; &lt;br&gt; Nach vorgängiger Kostengutsprache durch den Krankenversicherer nach vorheriger Konsultation des Vertrauensarztes.&lt;br&gt; MABTHERA wird in Kombination mit POLIVY und Bendamustin zur Behandlung erwachsener Patienten mit rezidiviertem oder refraktärem diffusem grosszelligem B-Zell-Lymphom (Diffuse Large B-Cell Lymphoma, DLBCL), die nicht für eine hämatopoetische Stammzelltransplantation infrage kommen, vergütet.&lt;br&gt; Die Behandlung wird vergütet bis eine Krankheitsprogression oder inakzeptable Toxizität auftritt.&lt;br&gt; &lt;br&gt; Es gelten die entsprechenden Vergütungskriterien gemäss der Limitation für POLIVY und bezüglich der Rückerstattung für MABTHERA in dieser Kombination gilt zusätzlich folgende Limitation:&lt;br&gt; Die Zulassungsinhaberin erstattet dem Krankenversicherer, bei dem die versicherte Person zum Zeitpunkt des Bezugs versichert war, auf dessen erste Aufforderung hin für jede bezogene Packung MABTHERA in Kombination mit POLIVY und Bendamustin einen Prozentsatz von 9.09% auf den Fabrikabgabepreis jeder MABTHERA Packung zurück. Die Mehrwertsteuer kann nicht zusätzlich zu diesem Anteil des Fabrikabgabepreises zurückgefordert werden. Die Aufforderung zur Rückerstattung soll ab dem Zeitpunkt der Verabreichung erfolgen.&lt;br&gt; Folgender Indikationscode ist zu übermitteln: 17079.03&lt;br&gt; &lt;br&gt; </DSCR>
+            <DSCRF>&lt;b&gt;Association de MABTHERA avec POLIVY et la bendamustine en cas de lymphome diffus à grandes cellules B (LDGCB) en rechute ou réfractaire&lt;/b&gt;&lt;br&gt; (avec modèle de prix)&lt;br&gt; &lt;br&gt; Après accord préalable sur la prise en charge des frais par l’assureur-maladie après consultation du médecin-conseil.&lt;br&gt; MABTHERA est remboursé en association avec POLIVY et la bendamustine pour le traitement des patients adultes présentant un lymphome diffus à grandes cellules B (LDGCB) en rechute ou réfractaire, qui ne sont pas admissibles à une greffe de cellules souches hématopoïétiques.&lt;br&gt; Le traitement est remboursé jusqu'à la progression de la maladie ou la survenue d'une toxicité inacceptable.&lt;br&gt; &lt;br&gt; Les critères de remboursement correspondants s’appliquent conformément à la limitation de POLIVY. En ce qui concerne le remboursement de MABTHERA dans cette association, respecter également la limitation suivante:&lt;br&gt; Le titulaire de l’autorisation rembourse à l’assureur-maladie auprès duquel la personne était assurée au moment de la remise du médicament, dès la première demande de l’assureur, un pourcentage de 9.09% du prix de fabrique pour chaque emballage remis de MABTHERA en association avec POLIVY et la bendamustine. La taxe sur la valeur ajoutée ne peut pas être exigée en sus de cette part du prix de fabrique. La demande de remboursement doit intervenir à partir du moment de l’administration.&lt;br&gt; Le code de l’indication suivant doit être transmis: 17079.03&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTIN.01</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Kolorektalkarzinom&lt;/b&gt;&lt;br&gt; Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes zur Erstlinientherapie bei Patienten mit metastasiertem Karzinom des Kolons oder Rektums in Kombination mit 5-Fluorouracil/Folinsäure, 5-Fluorouracil/Folinsäure/Irinotecan oder Capecitabine/Oxaliplatin (XELOX). Avastin wird bei entsprechender ärztlicher Verordnung bis zur Progression der Krankheit vergütet. Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes zur Zweitlinientherapie in Kombination mit einem Irinotecan- oder Oxaliplatin-haltigen Chemotherapieschema bei Patienten mit metastasiertem Kolon- oder Rektumkarzinom mit vorheriger Oxaliplatin- oder Irinotecan-basierter Chemotherapie mit oder ohne Bevacizumab. Avastin wird bei entsprechender ärztlicher Verordnung bis zur Progression der Krankheit vergütet.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.01.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Carcinome colorectal&lt;/b&gt;&lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, pour le traitement de première ligne des patients atteints d’un carcinome colorectal métastatique, en association avec 5-fluorouracile/acide folinique, 5-fluorouracile/acide folinique/irinotécan ou capécitabine/oxaliplatine (XELOX). En cas de prescription médicale appropriée, Avastin est remboursé jusqu’à progression de la maladie.&lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, pour le traitement de deuxième ligne des patients atteints d’un carcinome colorectal métastatique en association à un schéma de chimiothérapie à base d’irinotécan ou d’oxaliplatine et qui ont été traités antérieurement par une chimiothérapie à base d’oxaliplatine ou d’irinotécan avec ou sans bévacizumab. En cas de prescription médicale appropriée, Avastin est remboursé jusqu’à progression de la maladie.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.01.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTIN.02</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Lungenkarzinom&lt;/b&gt;&lt;br&gt; Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes zur Erstlinientherapie von Patienten bei nicht-resezierbarem, fortgeschrittenem, metastasiertem oder rezidivierendem, nicht-plattenepithelartigem, nicht-kleinzelligem Lungenkarzinom (NSCLC). Die Dosierung von Avastin beträgt 7.5 mg/kg Körpergewicht (KGW) alle 3 Wochen. Die Dosierung von 15 mg/ kg KGW alle 3 Wochen ist nicht kassenzulässig. Nach bis zu 6 Behandlungszyklen in Kombination mit einer Cisplatin- und Gemcitabin-haltigen Chemotherapie wird Avastin bis zur Progression der Krankheit vergütet.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.02.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Carcinome pulmonaire&lt;/b&gt;&lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, pour le traitement de première ligne des patients atteints d’un carcinome pulmonaire non à petites cellules (NSCLC), non épithélioïde, non opérable, avancé, métastatique ou récidivant. La dose d’Avastin est de 7,5 mg/kg de poids corporel (PC) toutes les 3 semaines. La dose de 15 mg/ kg de PC toutes les 3 semaines n’est pas admise par les caisses-maladie. Après jusqu’à 6 cycles de traitement en association avec une chimiothérapie à base de cisplatine et de gemcitabine, Avastin est remboursé jusqu’à progression de la maladie.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.02.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTIN.05</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Ovarialkarzinom&lt;/b&gt;&lt;br&gt; Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes für die Therapie nicht vorbehandelter Patienten mit Ovarialkarzinom (FIGO Stadium III und IV), bei welchen der Tumor nicht vollständig reseziert werden konnte und welche von einer im Anschluss an die Chemotherapie durchzuführenden weiteren Operation (Second look mit interval debulking) nicht potenziell profitieren. Avastin wird nach 6 Zyklen in Kombination mit Carboplatin und Paclitaxel während 15 Monaten oder, falls diese eher eintritt, bis zur Progression der Krankheit vergütet.&lt;br&gt; &lt;br&gt; Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes in Kombination mit Carboplatin und Gemcitabin oder in Kombination mit Carboplatin und Paclitaxel zur Behandlung von Patienten mit rezidivierendem, platinsensitivem epithelialem Ovarialkarzinom, Eileiterkarzinom oder primärem Peritonealkarzinom (mit einem platinfreien Intervall von mindestens 6 Monaten). Nach 6 bis 10 Zyklen in Kombination mit Carboplatin und Gemcitabin oder in Kombination mit Carboplatin und Paclitaxel über eine Dauer von 6-8 Behandlungszyklen wird Avastin bis zur Progression der Krankheit vergütet.&lt;br&gt; &lt;br&gt; Avastin ist indiziert in Kombination mit Paclitaxel, Topotecan oder pegyliertem liposomalem Doxorubicin zur Behandlung von Patienten mit rezidivierendem, platin-resistentem epithelialem Ovarialkarzinom, Eileiterkarzinom oder primärem Peritonealkarzinom, die mit bis zu zwei vorgängigen Chemotherapieregimen behandelt wurden, und nicht vorbehandelt wurden mit Bevacizumab oder anderen VEGF-Inhibitoren. Nach ca. 6 Zyklen in Kombination mit Paclitaxel, Topotecan oder pegyliertem liposomalen Doxorubicin wird Avastin bei entsprechender ärztlicher Verordnung bis zur Progression der Krankheit vergütet.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.05.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Carcinome Ovarien&lt;/b&gt;&lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, pour le traitement des patientes atteintes d’un carcinome ovarien (stades FIGO III et IV) non prétraitées, chez lesquelles la tumeur n’a pas pu être complètement réséquée et qui seraient susceptibles de ne pas profiter d’une nouvelle opération après la chimiothérapie (second look avec interval debulking). Après 6 cycles en association avec le carboplatine et le paclitaxel, Avastin est remboursé pendant 15 mois, ou jusqu’à progression de la maladie selon ce qui survient en premier.&lt;br&gt; &lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, pour le traitement des patientes atteintes d’un carcinome ovarien épithélial, d’un carcinome de la trompe ou d’un carcinome péritonéal primaire, récidivant, sensible au platine (avec un intervalle libre sans platine d’au moins 6 mois), en association avec le carboplatine et la gemcitabine ou en association avec le carboplatine et le paclitaxel. Après 6 à 10 cycles en association avec le carboplatine et la gemcitabine ou en association avec le carboplatine et le paclitaxel pendant 6 à 8 cycles de traitement, Avastin est remboursé jusqu’à progression de la maladie.&lt;br&gt; &lt;br&gt; Avastin est indiqué en combinaison avec le paclitaxel, le topotécan ou la doxorubicine liposomale pégylée dans le traitement des patientes atteintes d’un carcinome ovarien épithélial, d’un carcinome de la trompe ou d’un carcinome péritonéal primaire, récidivant et résistant au platine, qui n’ont pas reçu plus de deux schémas chimiothérapeutiques antérieurs et qui n’ont pas été préalablement traitées par le bévacizumab ou d’autres anti-VEGF.&lt;br&gt; En cas de prescription médicale appropriée, après environ 6 cycles en combinaison avec le paclitaxel, le topotécan ou la doxorubicine liposomale pégylée, Avastin est remboursé jusqu’à progression de la maladie.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.05.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTIN.06</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Zervixkarzinom&lt;/b&gt;&lt;br&gt; Avastin ist in Kombination mit Chemotherapie für die Behandlung von Patienten mit persistierendem, rezidivierendem oder metastasiertem Zervixkarzinom indiziert. Nach ca. 7 Zyklen in Kombination mit Chemotherapie wird Avastin bei entsprechender ärztlicher Verordnung bis zur Progression der Krankheit vergütet.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.06.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Cancer du col utérin&lt;/b&gt;&lt;br&gt; Avastin est indiqué en combinaison avec la chimiothérapie dans le traitement des patientes atteintes d’un cancer du col utérin persistant, récidivant ou métastatique. En cas de prescription médicale appropriée, après environ 7 cycles en combinaison avec la chimiothérapie, Avastin est remboursé jusqu’à progression de la maladie.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.06.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTIN.09</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Ovarialkarzinom nach Erstlinienchemotherapie&lt;/b&gt;&lt;br&gt; &lt;b&gt;Kombinationstherapie mit Lynparza (Olaparib)&lt;/b&gt;&lt;br&gt; Nur nach Verordnung durch einen Facharzt der Gynäkologie oder Onkologie und nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation des Vertrauensarztes.&lt;br&gt; Zur Erhaltungstherapie in Kombination mit Lynparza (Olaparib) bei Patientinnen mit fortgeschrittenem (FIGO Stadium III und IV) high-grade serösem Ovarialkarzinom mit einer BRCA-Mutation oder einer anderen homologen Rekombinationsdefizienz (HRD) mit genomischer Instabilität (Myriad myChoice CDx Test mit einem Score für genomische Instabilität (GIS) ≥42 oder ein anderer validierter Test mit vergleichbarem Cutoff) im Anschluss an eine mit Bevacizumab kombinierte Platin-Taxan-haltige Erstlinien-Chemotherapie bei Vorliegen einer kompletten oder partiellen Remission.&lt;br&gt; Unter folgenden Voraussetzungen:&lt;br&gt; - keine klinische Evidenz einer Progression oder steigender CA-125 Werte nach dem Abschluss der Chemotherapie.&lt;br&gt; - Mindestens 6 Behandlungszyklen bis maximal 9 Zyklen einer Platin-Taxan-haltigen Chemotherapie (mind. 4 Behandlungszyklen im Falle von nichthämatologischer Toxizität aufgrund von Platin).&lt;br&gt; - mindestens drei Zyklen Bevacizumab in Kombination mit den drei letzten Zyklen der platinbasierten Chemotherapie. Im Falle einer zytoreduktiven Intervalloperation dürfen die Patienten nur zwei Zyklen Bevacizumab in Kombination mit den letzten drei Zyklen einer platinbasierten Chemotherapie erhalten haben.&lt;br&gt; - Die Behandlung mit Bevacizumab erfolgt für maximal 15 Monate (inkl. den Zyklen verabreicht in Kombination mit der Chemotherapie).&lt;br&gt; &lt;br&gt; Auf die Kombination von AVASTIN mit Lynparza (Olaparib) ist dem Krankenversicherer für jede bezogene Packung AVASTIN und für jede bezogene Packung Lynparza je ein festgelegter Anteil des Fabrikabgabepreises zurückzuerstatten.&lt;br&gt; Die Zulassungsinhaberin von AVASTIN erstattet dem Krankenversicherer, bei dem die versicherte Person zum Zeitpunkt des Bezugs versichert war, auf dessen erste Aufforderung hin für jede bezogene Packung AVASTIN eingesetzt in Kombination mit Lynparza einen festgelegten Anteil des Fabrikabgabepreises zurück. Die Zulassungsinhaberin gibt dem Krankenversicherer die Höhe der Rückerstattung bekannt. Die Mehrwertsteuer kann nicht zusätzlich zu diesem Anteil des Fabrikabgabepreises zurückgefordert werden. Die Aufforderung zur Rückerstattung soll ab dem Zeitpunkt der Verabreichung erfolgen.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.09&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Cancer de l’ovaire après chimiothérapie de première ligne&lt;/b&gt;&lt;br&gt; &lt;b&gt;Traitement en association avec Lynparza (olaparib)&lt;/b&gt;&lt;br&gt; Uniquement sur prescription par un médecin spécialiste en gynécologie ou en oncologie et après garantie de prise en charge des coûts par l’assureur maladie après consultation préalable du médecin-conseil.&lt;br&gt; Pour le traitement d’entretien en association avec le Lynparza (olaparib) dans le cancer séreux de haut grade de l’ovaire de stade avancé (stades FIGO III et IV) avec une mutation du gène BRCA ou une autre déficience de recombinaison homologue (HRD) associée à une instabilité génomique (test Myriad myChoice CDx avec un score d’instabilité génomique [GIS] ≥ 42 ou un autre test validé avec un seuil équivalent) chez les patientes en rémission complète ou partielle suite à une première ligne de chimiothérapie à base de platine et de taxane associée au bévacizumab.&lt;br&gt; Dans les conditions suivantes:&lt;br&gt; - Pas de preuve clinique de progression ou taux de CA-125 en augmentation après la fin de la chimiothérapie.&lt;br&gt; - Au moins 6 cycles et jusqu’à maximum 9 cycles de chimiothérapie à base de platine et de taxane (au moins 4 cycles en cas de toxicité non hématologique due au platine).&lt;br&gt; - Au moins 3 cycles de bévacizumab en association avec les trois derniers cycles de chimiothérapie à base de platine. En cas de chirurgie cytoréductrice d’intervalle, les patientes ne peuvent recevoir que deux cycles de bévacizumab en association avec les trois derniers cycles de chimiothérapie à base de platine.&lt;br&gt; - Le traitement par bévacizumab peut être administré pendant une durée totale maximale de 15 mois (incluant la période d'administration avec la chimiothérapie).&lt;br&gt; &lt;br&gt; Pour l’association de AVASTIN avec Lynparza (olaparib), une part fixe du prix départ usine doit être remboursée à l’assurance-maladie pour chaque emballage de AVASTIN acheté et chaque emballage de Lynparza acheté.&lt;br&gt; À la première demande de l’assurance-maladie auprès de laquelle la personne concernée est assurée au moment de l’achat, le titulaire de l’autorisation de AVASTIN rembourse à cette caisse une part fixe du prix départ usine pour tout emballage de AVASTIN acheté et utilisé en association avec Lynparza . Le titulaire de l’autorisation communique le montant du remboursement à l’assurance-maladie. La taxe sur la valeur ajoutée ne peut pas être exigée en sus de ce montant. La demande de remboursement doit être effectuée à partir du début de l’administration.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.09&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTIN3.03</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Nierenzellkarzinom&lt;/b&gt;&lt;br&gt; Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes zur Erstlinientherapie bei nephrektomierten Patienten mit fortgeschrittenem und/oder metastasiertem Nierenzellkarzinom in Kombination mit Interferon alfa-2a. Die Firma Roche Pharma (Schweiz) AG vergütet in dieser Indikation für die Behandlung auf Aufforderung desjenigen Krankenversicherers, bei dem die versicherte Person zum jeweiligen Bezugspunkt versichert war, Fr. 0.50 pro mg Avastin zurück. Avastin wird bei entsprechender ärztlicher Verordnung bis zur Progression der Krankheit vergütet. Die Mehrwertsteuer kann nicht zusätzlich zu diesem Betrag zurückgefordert werden. Die Aufforderung zur Rückvergütung soll in der Regel innerhalb von 3 Monaten nach Verabreichung erfolgen.&lt;br&gt; &lt;br&gt; Abwicklung der Rückvergütung:&lt;br&gt; a.) Der Leistungserbringer holt beim Krankenversicherer eine Kostengutsprache nach vorheriger Konsultation des Vertrauensarztes ein. Dem Vertrauensarzt werden Diagnose, Gewicht des Patienten und die Dosierung bekanntgegeben.&lt;br&gt; b.) Der Krankenversicherer bestätigt dem Leistungserbringer die Kostengutsprache.&lt;br&gt; c.) Der Leistungserbringer stellt dem Krankversicherer die Rechnungen während der ganzen Therapiedauer über die vollen Medikamentenkosten.&lt;br&gt; d.) Der Krankenversicherer bezahlt dem Leistungserbringer den vollen Rechnungsbetrag. Im tiers garant vergütet der Krankenversicherer dem Versicherten dementsprechend die vollen Medikamentenkosten. Der Krankenversicherer erhebt eine allfällige Kostenbeteiligung einzig auf dem Betrag nach Rückvergütung. Der versicherten Person entstehen keine weiteren Kosten.&lt;br&gt; e.) Den Rückvergütungsbetrag pro mg stellt der Versicherer der Firma Roche Pharma (Schweiz) AG in Rechnung.&lt;br&gt; f.) Kommt es im Verlaufe einer Avastin-Behandlung zum Wechsel des behandelnden Leistungserbringers, so hat der jeweils nachbehandelnde Leistungserbringer eine erneute Kostengutsprache einzufordern.&lt;br&gt; g.) Wechselt der Versicherungsnehmer den Versicherer, kann der vertrauensärztliche Dienst die Daten zur laufenden Behandlung beim vormaligen Versicherer nachfragen.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.03.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Carcinome rénal&lt;/b&gt;&lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, pour le traitement de première ligne des patients atteints d’un carcinome rénal avancé et/ou métastatique et ayant subi une néphrectomie, en association avec l’interféron alpha-2a. Dans cette indication, sur demande de l’assureur-maladie chez qui la personne était assurée au moment de l’achat, Roche Pharma (Suisse) SA rembourse pour le traitement Fr. 0.50 par mg d’Avastin. En cas de prescription médicale appropriée, Avastin est remboursé jusqu’à progression de la maladie. La taxe sur la valeur ajoutée ne peut pas être exigée en sus de ce montant. La demande de remboursement doit intervenir en règle générale dans les 3 mois qui suivent l’administration.&lt;br&gt; &lt;br&gt; Déroulement du remboursement:&lt;br&gt; a.) Le fournisseur de prestations demande la prise en charge des coûts auprès de l’assureur-maladie après consultation du médecin-conseil à qui on communique le diagnostic, le poids du patient et la posologie.&lt;br&gt; b.) L’assureur-maladie confirme la prise en charge des frais au fournisseur de prestations.&lt;br&gt; c.) Pendant toute la durée du traitement, le fournisseur de prestations facture l’intégralité des coûts liés au médicament à l’assureur-maladie.&lt;br&gt; d.) L’assureur-maladie règle l’intégralité du montant facturé au fournisseur de prestations. Dans le cadre du système «tiers garant», l’assureur-maladie rembourse à l’assuré l’intégralité des coûts liés au médicament. L’assureur-maladie prélève une éventuelle participation aux coûts uniquement sur le montant après remboursement. Il ne résultera aucun coût additionnel pour la personne assurée.&lt;br&gt; e.) L’assureur facture à Roche Pharma (Suisse) SA le montant du remboursement par mg.&lt;br&gt; f.) Si un changement de fournisseur de prestations assurant le traitement intervient au cours d’un traitement par Avastin, le nouveau fournisseur de prestations doit effectuer une nouvelle demande de prise en charge.&lt;br&gt; g.) Si l’assuré change d’assureur, le service de médecine-conseil peut demander les données relatives au traitement en cours auprès de l’assureur précédent.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.03.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTIN3.04</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Mammakarzinom&lt;/b&gt;&lt;br&gt; Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes zur Erstlinientherapie von Patientinnen mit HER2-negativem, lokal rezidivierendem oder metastasiertem Mammakarzinom in Kombination mit Paclitaxel. Die Firma Roche Pharma (Schweiz) AG vergütet in dieser Indikation für die Behandlung auf Aufforderung desjenigen Krankenversicherers, bei dem die versicherte Person zum jeweiligen Bezugspunkt versichert war, Fr. 0.38 pro mg Avastin zurück. Avastin wird bei entsprechender ärztlicher Verordnung bis zur Progression der Krankheit vergütet. Die Mehrwertsteuer kann nicht zusätzlich zu diesem Betrag zurückgefordert werden. Die Aufforderung zur Rückvergütung soll in der Regel innerhalb von 3 Monaten nach Verabreichung erfolgen.&lt;br&gt; &lt;br&gt; Abwicklung der Rückvergütung:&lt;br&gt; a.) Der Leistungserbringer holt beim Krankenversicherer eine Kostengutsprache nach vorheriger Konsultation des Vertrauensarztes ein. Dem Vertrauensarzt werden Diagnose, Gewicht des Patienten und die Dosierung bekanntgegeben.&lt;br&gt; b.) Der Krankenversicherer bestätigt dem Leistungserbringer die Kostengutsprache.&lt;br&gt; c.) Der Leistungserbringer stellt dem Krankversicherer die Rechnungen während der ganzen Therapiedauer über die vollen Medikamentenkosten.&lt;br&gt; d.) Der Krankenversicherer bezahlt dem Leistungserbringer den vollen Rechnungsbetrag. Im tiers garant vergütet der Krankenversicherer dem Versicherten dementsprechend die vollen Medikamentenkosten. Der Krankenversicherer erhebt eine allfällige Kostenbeteiligung einzig auf dem Betrag nach Rückvergütung. Der versicherten Person entstehen keine weiteren Kosten.&lt;br&gt; e.) Den Rückvergütungsbetrag pro mg stellt der Versicherer der Firma Roche Pharma (Schweiz) AG in Rechnung.&lt;br&gt; f.) Kommt es im Verlaufe einer Avastin-Behandlung zum Wechsel des behandelnden Leistungserbringers, so hat der jeweils nachbehandelnde Leistungserbringer eine erneute Kostengutsprache einzufordern.&lt;br&gt; g.) Wechselt der Versicherungsnehmer den Versicherer, kann der vertrauensärztliche Dienst die Daten zur laufenden Behandlung beim vormaligen Versicherer nachfragen.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.04.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Carcinome mammaire&lt;/b&gt;&lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, pour le traitement de première ligne des patientes atteintes d’un carcinome mammaire HER2-négatif, localement récidivant ou métastatique, en association avec le paclitaxel. Dans cette indication, sur demande de l’assureur-maladie chez qui la personne était assurée au moment de l’achat, Roche Pharma (Suisse) SA rembourse pour le traitement Fr. 0.38 par mg d’Avastin. En cas de prescription médicale appropriée, Avastin est remboursé jusqu’à progression de la maladie. La taxe sur la valeur ajoutée ne peut pas être exigée en sus de ce montant. La demande de remboursement doit intervenir en règle générale dans les 3 mois qui suivent l’administration.&lt;br&gt; &lt;br&gt; Déroulement du remboursement:&lt;br&gt; a.) Le fournisseur de prestations demande la prise en charge des coûts auprès de l’assureur-maladie après consultation du médecin-conseil à qui on communique le diagnostic, le poids du patient et la posologie.&lt;br&gt; b.) L’assureur-maladie confirme la prise en charge des coûts au fournisseur de prestations.&lt;br&gt; c.) Pendant toute la durée du traitement, le fournisseur de prestations facture l’intégralité des coûts liés au médicament à l’assureur-maladie.&lt;br&gt; d.) L’assureur-maladie règle l’intégralité du montant facturé au fournisseur de prestations. Dans le cadre du système «tiers garant», l’assureur-maladie rembourse à l’assuré l’intégralité des coûts liés au médicament. L’assureur-maladie prélève une éventuelle participation aux coûts uniquement sur le montant après remboursement. Il ne résultera aucun coût additionnel pour la personne assurée.&lt;br&gt; e.) L’assureur facture à Roche Pharma (Suisse) SA le montant du remboursement par mg.&lt;br&gt; f.) Si un changement de fournisseur de prestations assurant le traitement intervient au cours d’un traitement par Avastin, le nouveau fournisseur de prestations doit effectuer une nouvelle demande de prise en charge.&lt;br&gt; g.) Si l’assuré change d’assureur, le service de médecine-conseil peut demander les données relatives au traitement en cours auprès de l’assureur précédent.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.04.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTINGLIO</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;Glioblastom&lt;/b&gt;&lt;br&gt; Nach Kostengutsprache durch den Krankenversicherer nach vorgängiger Konsultation und Genehmigung des Vertrauensarztes zur Zweitlinien-Monotherapie bei Patienten mit rezidivierendem Glioblastom (WHO Grad IV) nach Vortherapie mit Temozolimid. Avastin wird bei entsprechender ärztlicher Verordnung bis zur Progression der Krankheit vergütet.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.07.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;Glioblastome&lt;/b&gt;&lt;br&gt; Après accord sur la prise en charge des frais par l’assureur-maladie après consultation préalable et accord du médecin-conseil, en monothérapie pour le traitement de deuxième ligne des patients avec récidive de glioblastome (grade IV selon l’OMS) après un traitement préalable par le témozolimide. En cas de prescription médicale appropriée, Avastin est remboursé jusqu’à progression de la maladie.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.07.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>AVASTINHCC</LIMNAMEBAG>
+            <DSCR>&lt;b&gt;AVASTIN in Kombination mit Atezolizumab (TECENTRIQ) zur Behandlung des inoperablen oder metastasierten hepatozellulären Karzinoms (HCC)&lt;/b&gt;&lt;br&gt; Es gelten die entsprechenden Vergütungskriterien gemäss der Limitation für Atezolizumab (siehe Limitation TECENTRIQ) und bezüglich der Rückerstattung für AVASTIN in dieser Indikation gilt &lt;b&gt;zusätzlich&lt;/b&gt; folgende Limitation:&lt;br&gt; Die Zulassungsinhaberin erstattet dem Krankenversicherer, bei dem die versicherte Person zum Zeitpunkt des Bezugs versichert war, auf dessen erste Aufforderung hin, für jede für die Indikation HCC Behandlung bezogene Packung AVASTIN in Kombination mit Atezolizumab (TECENTRIQ) einen festgelegten Anteil des Fabrikabgabepreises zurück. Die Roche Pharma (Schweiz) AG gibt dem Krankenversicherer die wirtschaftlichen Preise für Bevacizumab bekannt. Die Anteile der Rückerstattung entsprechen der Differenz der publizierten und der wirtschaftlichen Preise. Die Mehrwertsteuer kann nicht zusätzlich zu diesem Anteil des Fabrikabgabepreises zurückgefordert werden. Die Aufforderung zur Rückerstattung soll ab dem Zeitpunkt der Verabreichung erfolgen.&lt;br&gt; Folgender Indikationscode ist an den Krankenversicherer zu übermitteln: 18082.08.&lt;br&gt; &lt;br&gt;</DSCR>
+            <DSCRF>&lt;b&gt;AVASTIN en association avec l’atezolizumab (TECENTRIQ) pour le traitement du carcinome hépatocellulaire inopérable ou métastatique (CHC)&lt;/b&gt;&lt;br&gt; Les critères de remboursement correspondants s’appliquent conformément à la limitation de l'atézolizumab (voir limitation TECENTRIQ). En ce qui concerne le remboursement d’AVASTIN dans cette indication &lt;b&gt;respecter également&lt;/b&gt; la limitation suivante:&lt;br&gt; Le titulaire de l’autorisation rembourse à l’assureur-maladie auprès duquel était assurée la personne au moment de l’achat, et sur première demande de celui-ci, une part définie du prix départ usine pour chaque boîte d'AVASTIN en association avec de l'atézolizumab (TECENTRIQ) acquise pour l’indication du traitement du CHC. Roche Pharma (Suisse) SA indique à l’assureur-maladie les prix économiques du bévacizumab. Les parts de remboursement correspondent à la différence entre les prix publiés et les prix économiques. La taxe sur la valeur ajoutée ne peut pas être exigée en plus de cette part du prix départ usine. La demande de remboursement doit intervenir à compter de la date d’administration du traitement.&lt;br&gt; Le code d'indication suivant doit être transmis à l’assureur-maladie: 18082.08.&lt;br&gt; &lt;br&gt;</DSCRF>
+        </LIMITATION>        
+      </LIMITATIONS>
+      <ITEMS>
+        <ITEM PHARMATYPE="N">
+            <GTIN>00040565124599</GTIN>
+            <PHAR>4236946</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT FLEX 7 Wundverband 15x15cm 5 Stk</DSCR>
+            <DSCRF>ACTICOAT FLEX 7 pansement vulné 15x15cm 5 pce</DSCRF>
+            <PKG_SIZE>5</PKG_SIZE>
+            <MEASURE>Stk</MEASURE>
+            <MEASUREF>pce</MEASUREF>
+            <DOSAGE_FORM>5.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>5.0</DOSAGE_FORMF>
+            <PRODNO>1123868</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680273040281</GTIN>
+            <PHAR>98878</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HALDOL Tabl 1 mg 50 Stk</DSCR>
+            <DSCRF>HALDOL cpr 1 mg 50 pce</DSCRF>
+            <PEXF>2.2</PEXF>
+            <PPUB>11.65</PPUB>
+            <PKG_SIZE>50</PKG_SIZE>
+            <MEASURE>Stk</MEASURE>
+            <MEASUREF>pce</MEASUREF>
+            <DOSAGE_FORM>Blist 50.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>blist 50.0</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>B</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
+            <PRODNO>1977</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680546130596</GTIN>
+            <PHAR>2919090</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>NASIVIN Pur Dosierspray 0.05 % 10 ml</DSCR>
+            <DSCRF>NASIVINE pur spray doseur 0.05 % 10 ml</DSCRF>
+            <PEXF>4.05</PEXF>
+            <PPUB>7.5</PPUB>
+            <PKG_SIZE>1</PKG_SIZE>
+            <MEASURE>ml</MEASURE>
+            <MEASUREF>ml</MEASUREF>
+            <DOSAGE_FORM>Nasenspr 10.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>spr nasal 10.0</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>D</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
+            <PRODNO>69707</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>7640173590484</GTIN>
+            <PHAR>1021933</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>COLLAMIN Natur'Active Collagen 15 Btl 10 g</DSCR>
+            <DSCRF>COLLAMIN Natur'Active Collagen 15 sach 10 g</DSCRF>
+            <PEXF>16.9</PEXF>
+            <PKG_SIZE>15</PKG_SIZE>
+            <MEASURE>g</MEASURE>
+            <MEASUREF>g</MEASUREF>
+            <DOSAGE_FORM>Btl 10.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>sach 10.0</DOSAGE_FORMF>
+            <PRODNO>1535698</PRODNO>
+        </ITEM>         
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680543780251</GTIN>
+            <PHAR>1930592</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>MABTHERA Inf Konz 500 mg/50ml Amp 50 ml</DSCR>
+            <DSCRF>MABTHERA conc perf 500 mg/50ml amp 50 ml</DSCRF>
+            <PEXF>1156.45</PEXF>
+            <PPUB>1267.65</PPUB>
+            <PKG_SIZE>1</PKG_SIZE>
+            <MEASURE>ml</MEASURE>
+            <MEASUREF>ml</MEASUREF>
+            <DOSAGE_FORM>Amp 50.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>amp 50.0</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>A</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
+            <PRODNO>58398</PRODNO>
+            <ARTSL>
+                <PM>true</PM>
+                <ARTLIMS>
+                    <ARTLIM>
+                        <LIMCD>MABTHERA.01</LIMCD>
+                        <INDCD>17079.01</INDCD>
+                        <VDAT>2023-05-01T00:00:00+02:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>MABTHERA.02</LIMCD>
+                        <INDCD>17079.02</INDCD>
+                        <VDAT>2023-05-01T00:00:00+02:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>MABTHERA.04</LIMCD>
+                        <INDCD>17079.03</INDCD>
+                        <VDAT>2026-05-01T00:00:00+02:00</VDAT>
+                        <VTDAT>2026-06-30T00:00:00+02:00</VTDAT>
+                    </ARTLIM>
+                </ARTLIMS>
+            </ARTSL>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680569220038</GTIN>
+            <PHAR>2918914</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>AVASTIN Inf Konz 400 mg/16ml Vial 16 ml</DSCR>
+            <DSCRF>AVASTIN conc perf 400 mg/16ml vial 16 ml</DSCRF>
+            <PEXF>1059.11</PEXF>
+            <PPUB>1162.35</PPUB>
+            <PKG_SIZE>1</PKG_SIZE>
+            <MEASURE>ml</MEASURE>
+            <MEASUREF>ml</MEASUREF>
+            <DOSAGE_FORM>Vial 16.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>vial 16.0</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>A</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
+            <PRODNO>1012435</PRODNO>
+            <ARTSL>
+                <PM>true</PM>
+                <ARTLIMS>
+                    <ARTLIM>
+                        <LIMCD>AVASTIN.01</LIMCD>
+                        <INDCD>18082.01</INDCD>
+                        <VDAT>2022-02-01T00:00:00+01:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTIN.02</LIMCD>
+                        <INDCD>18082.02</INDCD>
+                        <VDAT>2022-02-01T00:00:00+01:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTIN.05</LIMCD>
+                        <INDCD>18082.05</INDCD>
+                        <VDAT>2022-02-01T00:00:00+01:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTIN.06</LIMCD>
+                        <INDCD>18082.06</INDCD>
+                        <VDAT>2022-02-01T00:00:00+01:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTIN.09</LIMCD>
+                        <INDCD>18082.09</INDCD>
+                        <VDAT>2026-05-01T00:00:00+02:00</VDAT>
+                        <VTDAT>2026-06-30T00:00:00+02:00</VTDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTIN3.03</LIMCD>
+                        <INDCD>18082.03</INDCD>
+                        <VDAT>2024-01-01T00:00:00+01:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTIN3.04</LIMCD>
+                        <INDCD>18082.04</INDCD>
+                        <VDAT>2024-01-01T00:00:00+01:00</VDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTINGLIO</LIMCD>
+                        <INDCD>18082.07</INDCD>
+                        <VDAT>2023-07-01T00:00:00+02:00</VDAT>
+                        <VTDAT>2026-06-30T00:00:00+02:00</VTDAT>
+                    </ARTLIM>
+                    <ARTLIM>
+                        <LIMCD>AVASTINHCC</LIMCD>
+                        <INDCD>18082.08</INDCD>
+                        <VDAT>2025-10-01T00:00:00+02:00</VDAT>
+                        <VTDAT>2028-09-30T00:00:00+02:00</VTDAT>
+                    </ARTLIM>
+                </ARTLIMS>
+            </ARTSL>
+        </ITEM>
+    </ITEMS>
+</ARTIKELSTAMM>

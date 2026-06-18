@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2016 MEDEVIT. All rights reserved. This program and the
-	accompanying materials are made available under the terms of the Eclipse
-	Public License v1.0 which accompanies this distribution, and is available
-	at http://www.eclipse.org/legal/epl-v10.html v002 - Ergänzung K Komplementärprodukt
-	bei generic type, Consider ATC code of length 8 (on vet.med. articles) Relax
-	ADDSCR occurence to 0 .. 1 v003 - PRODNO hinzugefügt LIMNAMEBAG zur formal-kennzeichnung
-	von identen limitations v4 - Major refactoring, see https://redmine.medelexis.ch/issues/4405
+<!-- Copyright (c) 2026 MEDEVIT. All rights reserved. This program and the 
+	accompanying materials are made available under the terms of the Eclipse 
+	Public License v1.0 which accompanies this distribution, and is available 
+	at http://www.eclipse.org/legal/epl-v10.html v002 
 	Contributors: MEDEVIT <office@medevit.at> - initial API and implementation -->
-<xs:schema targetNamespace="http://elexis.ch/Elexis_Artikelstamm_v5"
+<xs:schema targetNamespace="http://elexis.ch/Elexis_Artikelstamm_v6"
 	elementFormDefault="qualified" attributeFormDefault="unqualified"
-	version="5" id="Elexis_Artikelstamm_v003" xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	version="6" id="Elexis_Artikelstamm_v006" xmlns="http://elexis.ch/Elexis_Artikelstamm_v6" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:element name="ARTIKELSTAMM">
 		<xs:annotation>
-			<xs:documentation xml:lang="EN">Information on
-				medicaments
+			<xs:documentation xml:lang="EN">Information on medicaments
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -35,10 +31,7 @@
 											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
 										<xs:element name="DSCRF"
-											type="DSCRType" minOccurs="0" maxOccurs="1">
-										</xs:element>
-										<xs:element name="DSCRI"
-											type="DSCRType" minOccurs="0" maxOccurs="1">
+											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
                                         <xs:element name="ATC"
 											nillable="false" maxOccurs="1" minOccurs="0">
@@ -96,10 +89,7 @@
 											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
 										<xs:element name="DSCRF"
-											type="DSCRType" minOccurs="0" maxOccurs="1">
-										</xs:element>
-										<xs:element name="DSCRI"
-											type="DSCRType" minOccurs="0" maxOccurs="1">
+											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
 										<xs:element
 											name="LIMITATION_PTS" type="xs:int" maxOccurs="1"
@@ -141,10 +131,6 @@
 													Reference number
 													(GTIN = Global trade
 													item number)
-													GTIN may be  8, 12, 13 or 14 chars long (https://en.wikipedia.org/wiki/Global_Trade_Item_Number)
-													The EAN-8 code is an eight-digit barcode used usually for very small articles, such as battery for hearing aid, where fitting a larger code onto the item would be difficult
-													you may test GTIN via the  GS1 information GEPIR, eg www.gepir.ch or globally http://gepir.gs1.org/
-													Drugs registered in Switzerland have GTINs starting with 7680 (which is reserved by Swissmedic)
 												</xs:documentation>
 											</xs:annotation>
 											<xs:simpleType>
@@ -187,10 +173,7 @@
 											</xs:annotation>
 										</xs:element>
 										<xs:element name="DSCRF"
-											type="xs:string" minOccurs="0" maxOccurs="1">
-										</xs:element>
-										<xs:element name="DSCRI"
-											type="xs:string" minOccurs="0" maxOccurs="1">
+											type="xs:string" minOccurs="1" maxOccurs="1">
 										</xs:element>
 										<xs:element name="COMP"
 											minOccurs="0">
@@ -289,12 +272,6 @@
 										</xs:documentation>
                                             </xs:annotation>
 										</xs:element>
-                                        <xs:element name="DOSAGE_FORMI" type="xs:string" minOccurs="0" maxOccurs="1">
-                                            <xs:annotation>
-											<xs:documentation>Die Darreichungsform dieses Items. zB Tablette(n) oder Spritze(n) in italienischer Sprache
-											</xs:documentation>
-                                            </xs:annotation>
-										</xs:element>
                                         <xs:element name="SL_ENTRY"
 											type="xs:boolean" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
@@ -354,6 +331,7 @@
 										</xs:element>
 										<xs:element name="GENERIC_TYPE"
 											maxOccurs="1" minOccurs="0">
+
 											<xs:simpleType>
 												<xs:annotation>
 													<xs:documentation>
@@ -372,9 +350,6 @@
 													</xs:enumeration>
 													<xs:enumeration
 														value="K">
-													</xs:enumeration>
-													<xs:enumeration
-                            value="C"> <!-- BAG 9.6.2020: BDer Buchstabe C bei «Original Generika Code» steht für Co-Marketing Arzneimittel -->
 													</xs:enumeration>
 												</xs:restriction>
 											</xs:simpleType>
@@ -436,7 +411,6 @@
 											</xs:annotation>
 										</xs:element>
 
-
 										<xs:element name="PRODNO"
 											minOccurs="0" maxOccurs="1" type="PRODNOType">
 											<xs:annotation>
@@ -446,15 +420,41 @@
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
+										
+										<xs:element name="ARTSL" minOccurs="0" maxOccurs="1">
+											<xs:annotation>
+												<xs:documentation>
+													Daten aus der BAG Spezialitätenliste (SL)
+												</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+											        <xs:element name="PM" type="xs:boolean"/>
+											        <xs:element name="ARTLIMS" minOccurs="1" maxOccurs="1">
+											        	<xs:complexType>
+															<xs:sequence>
+																<xs:element name="ARTLIM" minOccurs="0"
+																		maxOccurs="unbounded">
+																		<xs:complexType>
+																			<xs:sequence>
+																				<xs:element name="LIMCD" type="xs:string"/>
+																				<xs:element name="INDCD" type="xs:string"/>
+																				<xs:element name="VDAT" type="xs:dateTime" minOccurs="0"/>
+																				<xs:element name="VTDAT" type="xs:dateTime" minOccurs="0"/>
+																			</xs:sequence>
+																		</xs:complexType>
+																</xs:element>
+															</xs:sequence>			
+														</xs:complexType>
+											        </xs:element>
+											    </xs:sequence>
+											</xs:complexType>
+										</xs:element>										
 									</xs:sequence>
-
-
 
 									<xs:attribute name="PHARMATYPE">
 										<xs:annotation>
-											<xs:documentation>
-												If a PRODNO is defined,
-												the PharmaType is P
+											<xs:documentation>P Pharma, N Non-Pharma
 											</xs:documentation>
 										</xs:annotation>
 										<xs:simpleType>
@@ -483,13 +483,13 @@
 				</xs:annotation>
 			</xs:attribute>
 
-			<xs:attribute name="BUILD_DATETIME" type="xs:dateTime" use="required">
+			<xs:attribute name="BUILD_DATETIME" type="xs:dateTime">
 				<xs:annotation>
 					<xs:documentation>Der Zeitpunkt zu dem dieser Datensatz erstellt wurde.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name="DATA_SOURCE" type="DATASOURCEType" use="required">
+			<xs:attribute name="DATA_SOURCE" type="DATASOURCEType">
 				<xs:annotation>
 					<xs:documentation></xs:documentation>
 				</xs:annotation></xs:attribute>

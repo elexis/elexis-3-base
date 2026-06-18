@@ -1,8 +1,8 @@
 //
-// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert
-// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
-// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren.
-// Generiert: 2022.08.13 um 05:37:12 PM CEST
+// Diese Datei wurde mit der Eclipse Implementation of JAXB, v3.0.0 generiert 
+// Siehe https://eclipse-ee4j.github.io/jaxb-ri 
+// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+// Generiert: 2026.06.17 um 03:18:08 PM CEST 
 //
 
 
@@ -15,18 +15,17 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java-Klasse für DATASOURCEType.
- *
+ * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * <p>
  * <pre>
- * &lt;simpleType name="DATASOURCEType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="oddb2xml"/>
- *     &lt;enumeration value="medindex"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="DATASOURCEType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="oddb2xml"/&gt;
+ *     &lt;enumeration value="medindex"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
- *
+ * 
  */
 @XmlType(name = "DATASOURCEType")
 @XmlEnum

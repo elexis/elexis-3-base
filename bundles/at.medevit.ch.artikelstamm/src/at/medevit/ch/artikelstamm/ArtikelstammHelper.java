@@ -41,7 +41,7 @@ import jakarta.xml.bind.Unmarshaller;
 public class ArtikelstammHelper {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammHelper.class);
 
-	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v5.xsd"; //$NON-NLS-1$
+	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v6.xsd"; //$NON-NLS-1$
 	private static URL schemaLocationUrl = null;
 
 	private static SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

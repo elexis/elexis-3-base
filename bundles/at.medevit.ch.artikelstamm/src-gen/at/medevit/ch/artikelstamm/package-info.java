@@ -1,9 +1,9 @@
 //
-// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert
-// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
-// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren.
-// Generiert: 2022.08.13 um 05:37:12 PM CEST
+// Diese Datei wurde mit der Eclipse Implementation of JAXB, v3.0.0 generiert 
+// Siehe https://eclipse-ee4j.github.io/jaxb-ri 
+// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+// Generiert: 2026.06.17 um 03:18:08 PM CEST 
 //
 
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://elexis.ch/Elexis_Artikelstamm_v5", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://elexis.ch/Elexis_Artikelstamm_v6", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package at.medevit.ch.artikelstamm;

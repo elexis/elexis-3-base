@@ -17,7 +17,3 @@ The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinis
 
 Version 3.3.0
 
-### Generating java files under src-gen based on the Elexis_Artikelstamm_v5.xsd
-
-Call `xjc -nv -disableXmlSecurity -d src-gen -p at.medevit.ch.artikelstamm ./lib/Elexis_Artikelstamm_v5.xsd`
-

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -98,7 +99,12 @@ public class ArtikelstammImporterPage extends ImporterPage {
 
 			LoggerFactory.getLogger(getClass()).info("ArtikelstammImporterPage.doImport " + results[0]); //$NON-NLS-1$
 			IReferenceDataImporter refImporter = getImporter();
-			IStatus status = refImporter.performImport(monitor, new FileInputStream(results[0]), null);
+			IStatus status = null;
+			if (isZip(results[0])) {
+				status = refImporter.performImport(monitor, new GZIPInputStream(new FileInputStream(results[0])), null);
+			} else {
+				status = refImporter.performImport(monitor, new FileInputStream(results[0]), null);
+			}
 			if (!status.isOK()) {
 				StatusManager.getManager().handle(status, StatusManager.SHOW);
 			} else {
@@ -108,6 +114,10 @@ public class ArtikelstammImporterPage extends ImporterPage {
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	private boolean isZip(String string) {
+		return string.endsWith(".gz");
 	}
 
 	private IReferenceDataImporter getImporter() {

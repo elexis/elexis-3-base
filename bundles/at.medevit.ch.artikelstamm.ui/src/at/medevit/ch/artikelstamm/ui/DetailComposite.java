@@ -12,6 +12,7 @@ package at.medevit.ch.artikelstamm.ui;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -45,6 +46,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.extinfo.ArticleIndicationInfo;
 import at.medevit.ch.artikelstamm.ui.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.ui.internal.DatabindingTextResizeConverter;
 import at.medevit.ch.artikelstamm.ui.internal.IntToStringConverterSelbstbehalt;
@@ -90,6 +92,12 @@ public class DetailComposite extends ScrolledComposite {
 	private Group grpDefaultSignature;
 	private ArticleDefaultSignatureComposite adsc;
 	private Composite mainComposite;
+
+	private Button btnlPresimodell;
+
+	private Label lblIndikationstext;
+
+	private Text txtINDIKATIONTEXT;
 
 	public DetailComposite(Composite parent, int style, String atcCodeLanguage) {
 		super(parent, style);
@@ -285,6 +293,21 @@ public class DetailComposite extends ScrolledComposite {
 		txtLIMITATIONTEXT.setLayoutData(gd);
 		txtLIMITATIONTEXT.setBackground(grpLimitations.getBackground());
 
+		btnlPresimodell = new Button(grpLimitations, SWT.CHECK);
+		btnlPresimodell.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		btnlPresimodell.setText("Preismodell");
+
+		lblIndikationstext = new Label(grpLimitations, SWT.NONE);
+		lblIndikationstext.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+		lblIndikationstext.setText("Indikationstext");
+
+		gd = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd.widthHint = 450;
+		gd.minimumWidth = 450;
+		txtINDIKATIONTEXT = new Text(grpLimitations, SWT.WRAP | SWT.MULTI);
+		txtINDIKATIONTEXT.setLayoutData(gd);
+		txtINDIKATIONTEXT.setBackground(grpLimitations.getBackground());
+
 		Group grpHersteller = new Group(mainComposite, SWT.NONE);
 		grpHersteller.setLayout(new GridLayout(1, false));
 		grpHersteller.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -331,6 +354,17 @@ public class DetailComposite extends ScrolledComposite {
 
 		String atcCode = obj.getAtcCode();
 		adsc.setArticleToBind(obj);
+
+		if (obj != null && obj.isPm()) {
+			Optional<ArticleIndicationInfo> indicationInfo = obj.getIndicationInfo();
+			if (indicationInfo.isPresent()) {
+				txtINDIKATIONTEXT.setText(indicationInfo.get().getLabel());
+			} else {
+				txtINDIKATIONTEXT.setText(StringUtils.EMPTY);
+			}
+		} else {
+			txtINDIKATIONTEXT.setText(StringUtils.EMPTY);
+		}
 
 		if (obj != null && "O".equals(obj.getGenericType())) {
 			GridData layoutData = (GridData) btnOriginalNoSubstitute.getLayoutData();
@@ -532,6 +566,13 @@ public class DetailComposite extends ScrolledComposite {
 		IObservableValue itemUserDefinedPriceObserveDetailValue = PojoProperties
 				.value(IArtikelstammItem.class, "userDefinedPrice", Boolean.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeEditableTxtPUBLICPRICEObserveWidget, itemUserDefinedPriceObserveDetailValue,
+				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
+
+		IObservableValue observeSelectionBtnlPresimodellObserveWidget = WidgetProperties.buttonSelection()
+				.observe(btnlPresimodell);
+		IObservableValue itemPresimodellObserveDetailValue = PojoProperties
+				.value(IArtikelstammItem.class, "pm", Boolean.class).observeDetail(item); //$NON-NLS-1$
+		bindingContext.bindValue(observeSelectionBtnlPresimodellObserveWidget, itemPresimodellObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
 		return bindingContext;

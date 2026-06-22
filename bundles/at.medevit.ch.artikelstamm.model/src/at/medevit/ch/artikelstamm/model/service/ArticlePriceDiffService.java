@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,9 @@ import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQueryCursor;
 import ch.rgw.tools.Money;
 
 /**
@@ -33,8 +35,8 @@ public class ArticlePriceDiffService {
 
 	private static final Logger log = LoggerFactory.getLogger(ArticlePriceDiffService.class);
 	public static final String PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS = "rdus.autoAdjustOpenEncounters"; //$NON-NLS-1$
-	private Map<String, BigDecimal> oldPrices = new HashMap<>();
-	private Map<String, BigDecimal> newPrices = new HashMap<>();
+	private Map<String, BigDecimal> oldPrices;
+	private Map<String, BigDecimal> newPrices;
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model)")
 	private IModelService artikelstammModelService;
@@ -63,16 +65,27 @@ public class ArticlePriceDiffService {
 	}
 
 	public void captureOldPrices() {
-		List<IArtikelstammItem> allArticles = artikelstammModelService.findAll(IArtikelstammItem.class);
-		oldPrices = allArticles.stream().filter(article -> !"VERSION".equals(article.getId())).collect( //$NON-NLS-1$
-				Collectors.toMap(IArtikelstammItem::getId, a -> toBigDecimal(a.getSellingPrice()), (a, b) -> a));
+		oldPrices = new HashMap<String, BigDecimal>();
+		IQuery<IArtikelstammItem> query = artikelstammModelService.getQuery(IArtikelstammItem.class).and("id", COMPARATOR.NOT_EQUALS, "VERSION");
+		try (IQueryCursor<IArtikelstammItem> cursor = query.executeAsCursor()) {
+			while (cursor.hasNext()) {
+				IArtikelstammItem article = cursor.next();
+				oldPrices.put(article.getId(), toBigDecimal(article.getSellingPrice()));
+			}
+		}
 		log.info("Cached old article master data ({} items).", oldPrices.size()); //$NON-NLS-1$
 	}
 
 	public void captureNewPrices() {
-		List<IArtikelstammItem> allArticles = artikelstammModelService.findAll(IArtikelstammItem.class);
-		newPrices = allArticles.stream().filter(article -> !"VERSION".equals(article.getId())).collect( //$NON-NLS-1$
-				Collectors.toMap(IArtikelstammItem::getId, a -> toBigDecimal(a.getSellingPrice()), (a, b) -> a));
+		newPrices = new HashMap<String, BigDecimal>();
+		IQuery<IArtikelstammItem> query = artikelstammModelService.getQuery(IArtikelstammItem.class).and("id",
+				COMPARATOR.NOT_EQUALS, "VERSION");
+		try (IQueryCursor<IArtikelstammItem> cursor = query.executeAsCursor()) {
+			while (cursor.hasNext()) {
+				IArtikelstammItem article = cursor.next();
+				newPrices.put(article.getId(), toBigDecimal(article.getSellingPrice()));
+			}
+		}
 		log.info("Loaded new article master data ({} items).", newPrices.size()); //$NON-NLS-1$
 	}
 
@@ -97,6 +110,9 @@ public class ArticlePriceDiffService {
 				}
 			}
 		}
+		// release prices maps
+		oldPrices = null;
+		newPrices = null;
 		log.info("Found {} price changes.", diffs.size()); //$NON-NLS-1$
 		return diffs;
 	}
@@ -125,18 +141,20 @@ public class ArticlePriceDiffService {
 		LocalDate firstDayOfMonth = currentMonth.atDay(1);
 		LocalDate lastDayOfMonth = currentMonth.atEndOfMonth();
 
-		List<IEncounter> openEncounters = coreModelService.getQuery(IEncounter.class)
+		IQuery<IEncounter> query = coreModelService.getQuery(IEncounter.class)
 				.and(ModelPackage.Literals.IENCOUNTER__INVOICE, ch.elexis.core.services.IQuery.COMPARATOR.EQUALS, null)
 				.and(ModelPackage.Literals.IENCOUNTER__DATE, ch.elexis.core.services.IQuery.COMPARATOR.GREATER_OR_EQUAL,
 						firstDayOfMonth)
 				.and(ModelPackage.Literals.IENCOUNTER__DATE, ch.elexis.core.services.IQuery.COMPARATOR.LESS_OR_EQUAL,
-						lastDayOfMonth)
-				.execute();
-
-		stats.totalEncounters = openEncounters.size();
-		for (IEncounter encounter : openEncounters) {
-			updateEncounterPrices(encounter, changeMap, stats);
+						lastDayOfMonth);
+		try (IQueryCursor<IEncounter> cursor = query.executeAsCursor()) {
+			stats.totalEncounters = cursor.size();
+			while (cursor.hasNext()) {
+				IEncounter encounter = cursor.next();
+				updateEncounterPrices(encounter, changeMap, stats);
+			}
 		}
+
 
 		contextService.postEvent(ElexisEventTopics.EVENT_RELOAD, IEncounter.class);
 		return stats;

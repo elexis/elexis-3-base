@@ -6,6 +6,8 @@ import java.util.Map;
 
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM.ARTSL.ARTLIMS;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.LIMITATIONS.LIMITATION;
+import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ArticleIndicationInfo {
 
@@ -20,5 +22,26 @@ public class ArticleIndicationInfo {
 
 	public List<ArticleIndication> getIndications() {
 		return indications;
+	}
+
+	/**
+	 * Get a text representation of this {@link ArticleIndicationInfo} for
+	 * presenting to the user.
+	 * 
+	 * @return
+	 */
+	public String getLabel() {
+		String lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d");
+		StringBuilder sb = new StringBuilder();
+		for (ArticleIndication articleIndication : indications) {
+			sb.append(articleIndication.getCode()).append(":\n");
+			if ("d".equals(lang)) {
+				sb.append(articleIndication.getLimText());
+			} else {
+				sb.append(articleIndication.getLimTextF());
+			}
+			sb.append("\n\n");
+		}
+		return sb.toString();
 	}
 }

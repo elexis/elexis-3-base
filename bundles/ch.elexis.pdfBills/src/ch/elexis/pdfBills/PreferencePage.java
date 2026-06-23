@@ -105,7 +105,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		t44Settings = new TabItem(tabFolder, SWT.NONE);
-		t44Settings.setText("Tarmed 4.4 / 4.5"); //$NON-NLS-1$
+		t44Settings.setText("Tardoc 5.0"); //$NON-NLS-1$
 		createSettings(t44Settings, "4.4"); //$NON-NLS-1$
 		getSettings(t44Settings);
 

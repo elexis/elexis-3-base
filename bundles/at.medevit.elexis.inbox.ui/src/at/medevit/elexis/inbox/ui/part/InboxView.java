@@ -315,6 +315,11 @@ public class InboxView extends ViewPart {
 						IInboxElement element = (IInboxElement) currentSelection.getFirstElement();
 						setInboxElementState(element, element.getState() != State.SEEN);
 					}
+				} else if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'a' || e.keyCode == 'A')) {
+					viewer.getTable().selectAll();
+					viewer.setSelection(viewer.getSelection());
+				} else if (e.keyCode == SWT.ESC) {
+					viewer.setSelection(StructuredSelection.EMPTY);
 				}
 			}
 		});

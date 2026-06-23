@@ -7,6 +7,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM.ARTSL.ARTLIMS.ARTLIM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.LIMITATIONS.LIMITATION;
+import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ArticleIndication {
 
@@ -56,5 +58,17 @@ public class ArticleIndication {
 
 	public String getLimTextF() {
 		return limTextF;
+	}
+
+	public String getLabel() {
+		String lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d");
+		StringBuilder sb = new StringBuilder();
+		sb.append(getCode()).append(":\n");
+		if ("d".equals(lang)) {
+			sb.append(getLimText());
+		} else {
+			sb.append(getLimTextF());
+		}
+		return sb.toString();
 	}
 }

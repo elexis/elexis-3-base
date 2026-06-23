@@ -314,12 +314,12 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("ESR 1ste Zeile");
+		label.setText("1ste Zeile");
 		headerLine1Text = new Text(composite, SWT.BORDER);
 		headerLine1Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		headerLine1Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_HEADER_1, StringUtils.EMPTY));
 		label = new Label(composite, SWT.NONE);
-		label.setText("ESR 2te Zeile");
+		label.setText("2te Zeile");
 		headerLine2Text = new Text(composite, SWT.BORDER);
 		headerLine2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		headerLine2Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_HEADER_2, StringUtils.EMPTY));
@@ -362,7 +362,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		});
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("ESR 1ste Zeile");
+		label.setText("1ste Zeile");
 		mandantHeaderLine1Text = new Text(composite, SWT.BORDER);
 		mandantHeaderLine1Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		mandantHeaderLine1Text.addModifyListener(new ModifyListener() {
@@ -376,7 +376,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			}
 		});
 		label = new Label(composite, SWT.NONE);
-		label.setText("ESR 2te Zeile");
+		label.setText("2te Zeile");
 		mandantHeaderLine2Text = new Text(composite, SWT.BORDER);
 		mandantHeaderLine2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		mandantHeaderLine2Text.addModifyListener(new ModifyListener() {

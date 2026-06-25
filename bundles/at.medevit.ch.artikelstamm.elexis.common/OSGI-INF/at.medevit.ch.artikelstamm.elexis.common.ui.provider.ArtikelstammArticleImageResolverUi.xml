@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.ch.artikelstamm.elexis.common.ui.provider.ArtikelstammArticleImageResolverUi">
+   <service>
+      <provide interface="ch.elexis.core.ui.medication.IArticleImageResolverUi"/>
+   </service>
+   <implementation class="at.medevit.ch.artikelstamm.elexis.common.ui.provider.ArtikelstammArticleImageResolverUi"/>
+</scr:component>

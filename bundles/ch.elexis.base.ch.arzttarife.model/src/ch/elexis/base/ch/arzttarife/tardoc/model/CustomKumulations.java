@@ -5,9 +5,11 @@ import java.io.StringReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 
 import ch.elexis.base.ch.arzttarife.tardoc.ITardocKumulation;
+import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationArt;
 import ch.elexis.base.ch.arzttarife.tardoc.TardocKumulationTyp;
 import ch.elexis.core.model.IBilled;
@@ -48,8 +51,50 @@ public class CustomKumulations {
 			List<ITardocKumulation> matchingMasterAndSlaveCode = matchingMasterCode.stream()
 					.filter(ck -> possibleSlaves.contains(ck.getSlaveCode())).toList();
 			return matchingMasterAndSlaveCode;
+		} else {
+			List<ITardocKumulation> matchingMasterAndSlaveCode = getChapterKumulations(newBilled);
+			if (!matchingMasterAndSlaveCode.isEmpty()) {
+				return matchingMasterAndSlaveCode;
+			}
 		}
 		return Collections.emptyList();
+	}
+
+	/**
+	 * Lookup custom {@link ITardocKumulation}s with provided {@link IBilled}
+	 * matching chapters of the {@link IBilled} as master, and other {@link IBilled}
+	 * of the linked {@link IEncounter} as slave.
+	 * 
+	 * @param newBilled
+	 * @return
+	 */
+	private static List<ITardocKumulation> getChapterKumulations(IBilled newBilled) {
+		List<String> groups = getChapters((ITardocLeistung) newBilled.getBillable());
+
+		Optional<List<ITardocKumulation>> foundGroupKumulation = groups.stream().map(g -> customKumulations.get(g))
+				.filter(gk -> gk != null).findFirst();
+		if (foundGroupKumulation.isPresent()) {
+			Set<String> possibleTardocSlaveGroups = new HashSet<>();
+			for (IBilled possibleSlave : newBilled.getEncounter().getBilled()) {
+				if (possibleSlave.getBillable() instanceof ITardocLeistung possibleTardocSlave) {
+					possibleTardocSlaveGroups.addAll(getChapters(possibleTardocSlave));
+				}
+			}
+			List<ITardocKumulation> matchingMasterAndSlaveCode = foundGroupKumulation.get().stream()
+					.filter(gk -> possibleTardocSlaveGroups.contains(gk.getSlaveCode())).toList();
+			return matchingMasterAndSlaveCode;
+		}
+		return Collections.emptyList();
+	}
+
+	private static List<String> getChapters(ITardocLeistung tardoc) {
+		List<String> ret = new ArrayList<>();
+		ITardocLeistung parent = tardoc.getParent();
+		while (parent != null) {
+			ret.add(parent.getCode());
+			parent = parent.getParent();
+		}
+		return ret;
 	}
 
 	private static synchronized void init() {

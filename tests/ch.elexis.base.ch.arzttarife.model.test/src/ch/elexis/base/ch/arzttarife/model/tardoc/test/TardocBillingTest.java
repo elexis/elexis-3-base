@@ -310,6 +310,27 @@ public class TardocBillingTest extends AbstractTardocTest {
 	}
 
 	@Test
+	public void customKumulationsTardocGroup() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("AM.05.0010", LocalDate.of(2026, 1, 1), null), encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// do not allow combination of groups AM.05 and AK
+		status = billingService.bill(TardocLeistung.getFromCode("AK.00.0050", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+		// allow AA.00.0010
+		status = billingService.bill(TardocLeistung.getFromCode("AA.00.0010", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+	}
+
+	@Test
 	public void selberTagLimitTardocPosition() {
 		encounter.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter);

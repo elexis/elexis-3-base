@@ -12,12 +12,14 @@
 
 package at.medevit.ch.artikelstamm.ui.internal;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -26,7 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.ui.ArtikelstammLabelProvider;
@@ -40,7 +41,7 @@ public class ArticleDetailDialog extends Dialog {
 
 	private ArtikelstammLabelProvider labelProvider;
 	private Button bFranchiseFree;
-	private Text tIndication;
+	private Button bIndication;
 
 	public ArticleDetailDialog(Shell shell, IBilled tl) {
 		super(shell);
@@ -76,45 +77,29 @@ public class ArticleDetailDialog extends Dialog {
 		Label lIndication = new Label(ret, SWT.NONE);
 		lIndication.setText("Inkationscode");
 
-		tIndication = new Text(ret, SWT.BORDER);
-		tIndication.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		tIndication.setText(StringUtils.defaultString((String) billed.getExtInfo(Constants.FLD_EXT_INDICATIONCODE)));
-		tIndication.setEnabled(article.isInSLList());
-		tIndication.setTextLimit(8);
-		ControlDecoration deco = new ControlDecoration(tIndication, SWT.TOP | SWT.LEFT);
-		Image infoImage = FieldDecorationRegistry.getDefault()
-				.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION)
-				.getImage();
-		Image errorImage = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
-				.getImage();
-		// set description and image
-		deco.setDescriptionText("Indikaitonscode xxxxx.xx");
-		deco.setImage(infoImage);
-		deco.setShowOnlyOnFocus(true);
+		bIndication = new Button(ret, SWT.PUSH);
+		bIndication.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		bIndication.setText(Objects.toString(billed.getExtInfo(Constants.FLD_EXT_INDICATIONCODE), "..."));
 		if (!article.isInSLList()) {
-			tIndication.setMessage("Indikaitonscode nur bei SL");
+			bIndication.setText("Indikaitonscode nur bei SL");
+			bIndication.setEnabled(false);
+		} else if (!article.isPm()) {
+			bIndication.setText("Indikaitonscode nur bei Preismodell");
+			bIndication.setEnabled(false);
+		} else {
+			bIndication.setEnabled(true);
 		}
-
-		tIndication.addModifyListener(e -> {
-			Text source = (Text) e.getSource();
-			String prevText = (String) source.getData("prevText");
-			if (!source.getText().isEmpty()) {
-				if (isValidIndicationCode(source.getText())) {
-					deco.hide();
-				} else {
-					deco.setDescriptionText("Indikaitonscode nich im Format xxxxx.xx");
-					deco.setImage(errorImage);
-					deco.show();
+		bIndication.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IndicationCodeSelectionDialog dialog = new IndicationCodeSelectionDialog(article, getShell());
+				dialog.setSelectedCode(bIndication.getText());
+				if (dialog.open() == Window.OK) {
+					if (dialog.getSelectedCode() instanceof String selectedCode) {
+						bIndication.setText(selectedCode);
+					}
 				}
-			} else {
-				deco.setDescriptionText("Indikaitonscode Format xxxxx.xx");
-				deco.setImage(infoImage);
-				deco.show();
 			}
-			if (source.getText().matches("[0-9]{5}") && prevText.matches("[0-9]{4}")) {
-				source.append(".");
-			}
-			source.setData("prevText", source.getText());
 		});
 
 		ret.pack();
@@ -122,7 +107,7 @@ public class ArticleDetailDialog extends Dialog {
 	}
 
 	private boolean isValidIndicationCode(String text) {
-		return text != null && text.matches("[0-9]{5}.[0-9]{2}");
+		return text != null && text.matches("[0-9]{5}.[0-9X]{2}");
 	}
 
 	@Override
@@ -141,10 +126,10 @@ public class ArticleDetailDialog extends Dialog {
 			}
 			CoreModelServiceHolder.get().save(billed);
 		}
-		if (article.isInSLList()) {
-			if (isValidIndicationCode(tIndication.getText())) {
-				billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, tIndication.getText());
-			} else if (StringUtils.isEmpty(tIndication.getText())) {
+		if (bIndication.isEnabled()) {
+			if (isValidIndicationCode(bIndication.getText())) {
+				billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, bIndication.getText());
+			} else if (StringUtils.isEmpty(bIndication.getText())) {
 				billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, null);
 			}
 			CoreModelServiceHolder.get().save(billed);

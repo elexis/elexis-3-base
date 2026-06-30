@@ -73,18 +73,19 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	private void processBilledItem(IBilled iBilled, List<IPrescription> medications) throws Exception {
 		IArticle article = (IArticle) iBilled.getBillable();
 		Optional<IPrescription> prescriptionOpt = findPrescriptionByBilledId(iBilled.getId().toString(), medications);
-		int amount = (int) iBilled.getAmount();
+		double doubleAmount = iBilled.getAmount();
+		int intAmount = (int) Math.ceil(doubleAmount);
 		if (prescriptionOpt.isPresent()) {
 			IPrescription prescription = prescriptionOpt.get();
 			String dosageInstruction = prescription.getDosageInstruction();
 			String remark = prescription.getRemark();
 			if (StringUtils.isNotBlank(dosageInstruction) || StringUtils.isNotBlank(remark)) {
-				printMedicationLabels(prescription, amount);
+				printMedicationLabels(prescription, intAmount);
 			} else {
-				handleAlternativePrescriptionOrDefault(article, medications, amount);
+				handleAlternativePrescriptionOrDefault(article, medications, intAmount);
 			}
 		} else {
-			handleAlternativePrescriptionOrDefault(article, medications, amount);
+			handleAlternativePrescriptionOrDefault(article, medications, intAmount);
 		}
 	}
 

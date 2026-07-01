@@ -36,7 +36,17 @@
 					<fo:region-before extent="3cm" />
 					<fo:region-after extent="10.8cm" />
 				</fo:simple-page-master>
-				<fo:simple-page-master master-name="Overview"
+				
+				<fo:simple-page-master master-name="Overview-NoFooter"
+					page-height="29.7cm" page-width="21cm" margin-top="{$topMargin}"
+					margin-bottom="0mm" margin-left="{$leftMargin}"
+					margin-right="{$rightMargin}">
+					<fo:region-body margin-top="1.5cm"
+						margin-bottom="2cm" />
+					<fo:region-before extent="3cm" />
+				</fo:simple-page-master>
+				
+				<fo:simple-page-master master-name="Overview-WithFooter"
 					page-height="29.7cm" page-width="21cm" margin-top="{$topMargin}"
 					margin-bottom="0mm" margin-left="{$leftMargin}"
 					margin-right="{$rightMargin}">
@@ -46,6 +56,20 @@
 					<fo:region-after region-name="last-footer" extent="2cm"
 						display-align="after" />
 				</fo:simple-page-master>
+				
+				<fo:page-sequence-master
+					master-name="Overview-Pages">
+					<fo:repeatable-page-master-alternatives>
+						<fo:conditional-page-master-reference
+							page-position="only" master-reference="Overview-WithFooter" />
+						<fo:conditional-page-master-reference
+							page-position="first" master-reference="Overview-NoFooter" />
+						<fo:conditional-page-master-reference
+							page-position="rest" master-reference="Overview-NoFooter" />
+						<fo:conditional-page-master-reference
+							page-position="last" master-reference="Overview-WithFooter" />
+					</fo:repeatable-page-master-alternatives>
+				</fo:page-sequence-master>
 			</fo:layout-master-set>
 			<fo:page-sequence master-reference="LD2-S">
 				<fo:static-content flow-name="xsl-region-before">
@@ -264,7 +288,7 @@
 			</fo:page-sequence>
 			<xsl:if
 				test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
-				<fo:page-sequence master-reference="Overview">
+				<fo:page-sequence master-reference="Overview-Pages">
 					<fo:static-content flow-name="xsl-region-before">
 						<xsl:call-template name="billheader2D">
 							<xsl:with-param name="Type" select="'GSR'">
@@ -282,7 +306,7 @@
 						</fo:block-container>
 					</fo:static-content>
 					<fo:flow flow-name="xsl-region-body">
-						<fo:block-container height="20mm">
+						<fo:block-container>
 							<fo:block>
 							<xsl:call-template name="overview_body">
 							</xsl:call-template>

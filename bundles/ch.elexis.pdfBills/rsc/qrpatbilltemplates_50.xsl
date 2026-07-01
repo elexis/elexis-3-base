@@ -1092,7 +1092,7 @@
 	</xsl:template>
 
 	<xsl:template name="overview_records">
-		<fo:table-row keep-with-next.within-page="always">
+		<fo:table-row>
 			<fo:table-cell>
 				<fo:block font-size="9px" font-family="tahoma,arial,helvetica,sans-serif">
 					<xsl:call-template name="FormatDate">

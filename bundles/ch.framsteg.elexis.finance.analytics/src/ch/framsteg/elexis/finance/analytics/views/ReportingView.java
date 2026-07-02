@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.core.ui.views.DeprecatedViewInfo;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.PersistentObject;
 
@@ -45,8 +46,11 @@ public class ReportingView extends ViewPart implements IRefreshable {
 	private int insertMark = -1;
 	private TabFolder tabFolder;
 
+	private DeprecatedViewInfo deprecatedInfo;
+
 	public ReportingView() {
 		super();
+		deprecatedInfo = new DeprecatedViewInfo("Archie Statisitk");
 	}
 
 	private void loadProperties() {
@@ -116,6 +120,7 @@ public class ReportingView extends ViewPart implements IRefreshable {
 
 	@Override
 	public void setFocus() {
+		deprecatedInfo.showInfo(getTitle());
 	}
 
 	public Properties getApplicationProperties() {

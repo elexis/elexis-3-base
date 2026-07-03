@@ -189,6 +189,9 @@ public class RegiomedSender implements IDataSender {
 			if (!regiomedSupplier.equals(item.getProvider())) {
 				continue;
 			}
+			if (item.getState() != OrderEntryState.OPEN) {
+				continue;
+			}
 			validateAndAddEntry(item);
 		}
 		if (counter == 0) {

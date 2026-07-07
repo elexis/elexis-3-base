@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Statistics Plug-in
 Bundle-SymbolicName: waelti.statistics;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Activator: waelti.statistics.Activator
 Bundle-Vendor: Waelti Michael
 Bundle-RequiredExecutionEnvironment: JavaSE-21

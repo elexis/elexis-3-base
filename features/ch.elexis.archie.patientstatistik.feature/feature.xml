@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.archie.patientstatistik.feature"
       label="Patientenstatistik für Archie"
-      version="3.13.0.qualifier"
+      version="3.14.0.qualifier"
       provider-name="elexis.info">
 
    <description>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Labororder Lg1 via medicalvalues
 Bundle-SymbolicName: ch.elexis.labororder.lg1_medicalvalues;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: medicalvalues.de
 Automatic-Module-Name: ch.elexis.labororder.lg1_medicalvalues
 Bundle-RequiredExecutionEnvironment: JavaSE-21

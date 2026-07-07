@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cst
 Bundle-SymbolicName: ch.gpb.elexis.cst;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Activator: ch.gpb.elexis.cst.Activator
 Bundle-Vendor: LUDIN
 Require-Bundle: ch.elexis.core.l10n,
- ch.elexis.core.data;bundle-version="3.13.0",
- ch.elexis.core.ui;bundle-version="3.13.0",
+ ch.elexis.core.data;bundle-version="3.14.0",
+ ch.elexis.core.ui;bundle-version="3.14.0",
  ch.elexis.base.befunde;bundle-version="3.9.0",
  ch.elexis.omnivore.data;bundle-version="3.9.0",
  ch.elexis.omnivore.model;bundle-version="3.9.0"

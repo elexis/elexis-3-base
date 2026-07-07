@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.connect.sysmex.feature"
       label="Sysmex Laborgeräteanbindung"
-      version="3.13.0.qualifier"
+      version="3.14.0.qualifier"
       provider-name="elexis.info">
 
    <description>

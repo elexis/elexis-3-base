@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Patientenstatistik für Archie
 Bundle-SymbolicName: ch.elexis.archie.patientstatistik;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
- ch.elexis.core.ui;bundle-version="3.13.0",
+Require-Bundle: ch.elexis.core.data;bundle-version="3.14.0",
+ ch.elexis.core.ui;bundle-version="3.14.0",
  ch.unibe.iam.scg.archie;bundle-version="3.13.0"

@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Solr Search Platform Integration Ui
 Bundle-SymbolicName: ch.elexis.base.solr.ui
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: elexis.info
 Automatic-Module-Name: ch.elexis.base.solr.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core;bundle-version="3.13.0",
- ch.elexis.core.ui.e4;bundle-version="3.13.0",
- ch.elexis.core.services;bundle-version="3.13.0",
+Require-Bundle: ch.elexis.core;bundle-version="3.14.0",
+ ch.elexis.core.ui.e4;bundle-version="3.14.0",
+ ch.elexis.core.services;bundle-version="3.14.0",
  ch.elexis.core.spotlight;bundle-version="3.13.0",
  ch.elexis.core.spotlight.ui;bundle-version="3.13.0"
 Service-Component: OSGI-INF/ch.elexis.base.solr.ui.spotlight.ui.EncounterSpotlightResultEntryDetailCompositeContributor.xml,

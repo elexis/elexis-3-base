@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Aeskulap Importer Core
 Bundle-SymbolicName: ch.elexis.importer.aeskulap.core
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.importer.aeskulap.core
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: ch.elexis.importer.aeskulap.core
-Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0"
+Require-Bundle: ch.elexis.core.data;bundle-version="3.14.0"
 Service-Component: OSGI-INF/ch.elexis.importer.aeskulap.core.service.DocumentStoreServiceHolder.xml,
  OSGI-INF/ch.elexis.importer.aeskulap.core.internal.AeskulapImporter.xml
 Bundle-ActivationPolicy: lazy

@@ -2,7 +2,7 @@
 <feature
       id="ch.netzkonzept.elexis.medidata.feature"
       label="Abrechnungsplugin für medidata"
-      version="3.13.0.qualifier"
+      version="3.14.0.qualifier"
       provider-name="ch.netzkonzept">
 
    <description>

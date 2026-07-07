@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Analytics
 Bundle-SymbolicName: ch.framsteg.elexis.finance.analytics;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: framsteg.ch
 Automatic-Module-Name: ch.framsteg.elexis.finance.analytics
 Bundle-RequiredExecutionEnvironment: JavaSE-21

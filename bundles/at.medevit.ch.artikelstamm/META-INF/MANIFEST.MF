@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Artikelstamm Format
 Bundle-SymbolicName: at.medevit.ch.artikelstamm
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Export-Package: at.medevit.ch.artikelstamm,
  at.medevit.ch.artikelstamm.extinfo,
  at.medevit.ch.artikelstamm.marge
@@ -12,7 +12,7 @@ Bundle-ClassPath: lib/,
  .
 Bundle-ActivationPolicy: lazy
 Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
- ch.elexis.core;bundle-version="3.13.0"
+ ch.elexis.core;bundle-version="3.14.0"
 Import-Package: ch.elexis.core.services.holder,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation

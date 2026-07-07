@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Plugin für ICPC 2
 Bundle-SymbolicName: ch.elexis.icpc;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: elexis.ch
 Eclipse-ExtensibleAPI: true
 Bundle-Localization: plugin
@@ -13,8 +13,8 @@ Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: org.apache.commons.lang3;version="3.12.0"
 Bundle-ActivationPolicy: lazy
-Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
- ch.elexis.core.ui;bundle-version="3.13.0",
+Require-Bundle: ch.elexis.core.data;bundle-version="3.14.0",
+ ch.elexis.core.ui;bundle-version="3.14.0",
  ch.elexis.icpc.model;bundle-version="3.9.0",
  ch.elexis.core.findings;bundle-version="3.9.0",
  ch.elexis.core.findings.util;bundle-version="3.9.0",

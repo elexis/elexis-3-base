@@ -2,7 +2,7 @@
 <feature
       id="ch.medshare.connect.abacusjunior.feature"
       label="Abacus Junior Laborgerätanbindung"
-      version="3.13.0.qualifier"
+      version="3.14.0.qualifier"
       provider-name="medshare.ch">
 
    <description>

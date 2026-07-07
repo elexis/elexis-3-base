@@ -7,9 +7,9 @@ Bundle-Vendor: framsteg.ch
 Automatic-Module-Name: ch.framsteg.elexis.labor.teamw
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.rgw.utility;bundle-version="3.13.0",
- ch.elexis.core;bundle-version="3.13.0",
- ch.elexis.core.ui;bundle-version="3.13.0",
- ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.14.0",
+ ch.elexis.core.ui;bundle-version="3.14.0",
+ ch.elexis.core.data;bundle-version="3.14.0",
  ch.elexis.core.ui.contacts;bundle-version="3.9.0",
  ch.elexis.core.ui.laboratory;bundle-version="3.9.0",
  ch.elexis.core.ui.medication;bundle-version="3.9.0",

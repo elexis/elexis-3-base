@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: ch.elexis.icpc.model;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -14,8 +14,8 @@ Export-Package: ch.elexis.icpc.model.icpc,
 Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.jpa.entities;bundle-version="3.13.0",
  ch.elexis.core.jpa;bundle-version="3.13.0",
- ch.elexis.core;bundle-version="3.13.0";visibility:=reexport,
- ch.elexis.core.services;bundle-version="3.13.0"
+ ch.elexis.core;bundle-version="3.14.0";visibility:=reexport,
+ ch.elexis.core.services;bundle-version="3.14.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.icpc.model.internal.service.IcpcModelService.xml,
  OSGI-INF/ch.elexis.icpc.model.internal.importer.IcpcReferenceDataImporter.xml,

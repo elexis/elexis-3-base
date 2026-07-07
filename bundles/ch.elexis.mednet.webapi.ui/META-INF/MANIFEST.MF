@@ -3,10 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Webapi
 Bundle-SymbolicName: ch.elexis.mednet.webapi.ui;singleton:=true
 Bundle-Vendor: elexis.ch
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Require-Bundle: ch.elexis.core.data,
- ch.elexis.core.ui;bundle-version="3.13.0",
- ch.elexis.core.ui.e4;bundle-version="3.13.0",
+ ch.elexis.core.ui;bundle-version="3.14.0",
+ ch.elexis.core.ui.e4;bundle-version="3.14.0",
  ch.elexis.mednet.webapi.core;bundle-version="3.13.0",
  ch.elexis.core.findings.util;bundle-version="3.13.0",
  ch.elexis.core.findings,

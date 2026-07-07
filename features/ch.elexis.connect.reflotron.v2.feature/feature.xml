@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.connect.reflotron.v2.feature"
       label="Roche Reflotron Laborgeräteanbindung V2"
-      version="3.13.0.qualifier"
+      version="3.14.0.qualifier"
       provider-name="elexis.info">
 
    <description>

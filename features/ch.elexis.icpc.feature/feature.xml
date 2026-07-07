@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.icpc.feature"
       label="Unterstützt ICPC-2 (ohne Daten)"
-      version="3.13.0.qualifier"
+      version="3.14.0.qualifier"
       provider-name="ch.elexis">
 
    <description>

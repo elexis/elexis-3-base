@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rezeptübermittlung
 Bundle-SymbolicName: ch.pharmed.phmprescriber;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: ch.pharmed
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
- ch.elexis.core.ui;bundle-version="3.13.0"
+Require-Bundle: ch.elexis.core.data;bundle-version="3.14.0",
+ ch.elexis.core.ui;bundle-version="3.14.0"
 Export-Package: ch.pharmed.phmprescriber
 Automatic-Module-Name: ch.pharmed.phmprescriber
 Import-Package: com.google.zxing;version="3.4.1",

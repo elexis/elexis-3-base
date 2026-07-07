@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.iatrix.bestellung.rose_test
 Bundle-SymbolicName: org.iatrix.bestellung.rose_test
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: info@elexis.ch
 Fragment-Host: org.iatrix.bestellung.rose;bundle-version="3.13.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-21

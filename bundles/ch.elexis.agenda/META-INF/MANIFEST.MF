@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agenda Plugin für Elexis
 Bundle-SymbolicName: ch.elexis.agenda;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-ClassPath: .,
  lib/cache-api-1.1.1.jar,
  lib/ical4j-3.0.29.jar

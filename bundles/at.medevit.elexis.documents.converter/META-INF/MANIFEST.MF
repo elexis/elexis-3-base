@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Documents Converter
 Bundle-SymbolicName: at.medevit.elexis.documents.converter
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.documents.converter
 Bundle-RequiredExecutionEnvironment: JavaSE-21

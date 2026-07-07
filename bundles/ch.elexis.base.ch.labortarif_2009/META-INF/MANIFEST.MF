@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Labortarif CH ab 1.7.2009
 Bundle-SymbolicName: ch.elexis.base.ch.labortarif_2009;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-localization: plugin
 Bundle-Vendor: medelexis AG
 Require-Bundle: ch.elexis.core.l10n,
- ch.elexis.core.data;bundle-version="3.13.0",
+ ch.elexis.core.data;bundle-version="3.14.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0",
  ch.elexis.core.ui.dbcheck;bundle-version="3.9.0",

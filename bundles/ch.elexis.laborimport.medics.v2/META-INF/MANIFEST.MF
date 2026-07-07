@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis - Medics Connector Plugin V2
 Bundle-SymbolicName: ch.elexis.laborimport.medics.v2;singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
@@ -14,8 +14,8 @@ Import-Package: com.google.gson;version="2.9.1",
  org.apache.commons.lang3,
  org.glassfish.jersey,
  org.glassfish.jersey.client
-Require-Bundle: ch.elexis.core.data;bundle-version="3.13.0",
- ch.elexis.core.ui;bundle-version="3.13.0",
+Require-Bundle: ch.elexis.core.data;bundle-version="3.14.0",
+ ch.elexis.core.ui;bundle-version="3.14.0",
  ch.elexis.core.hl7.v2x;bundle-version="3.9.0",
  ch.elexis.core.importer.div;bundle-version="3.9.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0",

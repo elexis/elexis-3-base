@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Omnivore
 Bundle-SymbolicName: ch.elexis.omnivore; singleton:=true
-Bundle-Version: 3.13.0.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-Vendor: elexis.ch, jsigle.com
@@ -12,6 +12,6 @@ Export-Package: ch.elexis.omnivore,
  ch.elexis.omnivore.model,
  ch.elexis.omnivore.util
 Require-Bundle: ch.elexis.core.l10n;bundle-version="3.13.0",
- ch.elexis.core;bundle-version="3.13.0",
+ ch.elexis.core;bundle-version="3.14.0",
  ch.elexis.core.cdi;bundle-version="3.13.0"
 

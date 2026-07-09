@@ -523,7 +523,7 @@ public class FIREService implements IFIREService {
 
 	protected Bundle getPatientBundle(String firePatientId, Bundle exportBundle) {
 		for (BundleEntryComponent entry : exportBundle.getEntry()) {
-			if (entry.getResource() != null && firePatientId.equals(entry.getResource().getIdPart())) {
+			if (entry.getResource() != null && firePatientId.equals(entry.getResource().getId())) {
 				return (Bundle) entry.getResource();
 			}
 		}

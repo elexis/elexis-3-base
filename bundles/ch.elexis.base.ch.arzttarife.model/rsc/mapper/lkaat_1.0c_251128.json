@@ -1,7 +1,4 @@
 {
-  "version": "V1.0c",
-  "application_year": "2026",
-  "min_tarifmatcher_version": "1.1.0",
   "entries": [
     {
       "code": "AA.00.0010",
@@ -1077,7 +1074,7 @@
     },
     {
       "code": "C00.YY.0030",
-      "type": "P"
+      "type": "N"
     },
     {
       "code": "C00.YY.0040",
@@ -3193,6 +3190,10 @@
     },
     {
       "code": "C05.KG.0160",
+      "type": "P"
+    },
+    {
+      "code": "C05.KG.0170",
       "type": "P"
     },
     {

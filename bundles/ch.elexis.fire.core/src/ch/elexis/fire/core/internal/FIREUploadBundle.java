@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class FIREUploadBundle implements Supplier<Boolean> {
 
-	private static final String UPLOAD_URL = "https://fire.ihamz.uzh.ch";
+	private static final String UPLOAD_URL = "https://36990.hostserv.eu";
 
 	private File file;
 

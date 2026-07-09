@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.mail.AttachmentsUtil;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
@@ -419,6 +420,22 @@ public class Utils {
 					ios.getMessage());
 			return false;
 		}
+	}
+
+	/**
+	 * Generates a standardised filename for export. * @param dh The document handle
+	 * to generate the name for.
+	 * 
+	 * @return The generated filename as a string, or an empty string if the handle
+	 *         is null.
+	 */
+	public static String generateExportFileName(IDocumentHandle dh) {
+		if (dh != null) {
+			return AttachmentsUtil.getFileName(dh);
+		}
+		
+		log.warn("Provided IDocumentHandle is null. Returning empty string as fallback.");
+		return StringUtils.EMPTY;
 	}
 
 	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {

@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.commons.io.FilenameUtils;
@@ -449,6 +450,8 @@ public class Tarmed50Exporter {
 			insuredAddressType.setBirthdate(XMLExporterUtil.makeXMLDateTime(dateOfBirth));
 
 		}
+		// remove timezone info
+		insuredAddressType.getBirthdate().setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		insuredAddressType.setPerson(getPerson(patient, false));
 		if (StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("VEKANr"))) {
 			insuredAddressType.setCardId((String) invoice.getCoverage().getExtInfo("VEKANr"));
@@ -472,8 +475,9 @@ public class Tarmed50Exporter {
 			patientAddressType.setBirthdate(XMLExporterUtil.makeXMLDateTime(LocalDateTime.of(1, 1, 1, 0, 0)));
 		} else {
 			patientAddressType.setBirthdate(XMLExporterUtil.makeXMLDateTime(dateOfBirth));
-
 		}
+		// remove timezone info
+		patientAddressType.getBirthdate().setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		patientAddressType.setPerson(getPerson(patient, false));
 		patientAddressType.setSsn(getSSN(invoice));
 		return patientAddressType;

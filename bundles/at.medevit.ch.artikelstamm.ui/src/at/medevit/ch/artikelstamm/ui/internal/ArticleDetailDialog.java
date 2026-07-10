@@ -75,7 +75,7 @@ public class ArticleDetailDialog extends Dialog {
 		}
 
 		Label lIndication = new Label(ret, SWT.NONE);
-		lIndication.setText("Inkationscode");
+		lIndication.setText("Indikaitonscode");
 
 		bIndication = new Button(ret, SWT.PUSH);
 		bIndication.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));

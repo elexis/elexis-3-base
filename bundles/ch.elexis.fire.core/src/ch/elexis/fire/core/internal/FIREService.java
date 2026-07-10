@@ -365,42 +365,42 @@ public class FIREService implements IFIREService {
 			clearExportDirectory();
 			BundleFile currentBundle = getBundleFile(false);
 
-			List<IPatient> changedPatients = getChanged(lastExportTimestamp, IPatient.class);
+			IQueryCursor<IPatient> changedPatients = getChanged(lastExportTimestamp, IPatient.class);
 			currentBundle = addIncrementalPatients(changedPatients, currentBundle, ret);
 			if (progressMonitor.isCanceled()) {
 				LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
 				return Collections.emptyList();
 			}
 
-			List<IEncounter> changedEncounters = getChanged(lastExportTimestamp, IEncounter.class);
+			IQueryCursor<IEncounter> changedEncounters = getChanged(lastExportTimestamp, IEncounter.class);
 			currentBundle = addIncrementalEncounters(changedEncounters, currentBundle, ret);
 			if (progressMonitor.isCanceled()) {
 				LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
 				return Collections.emptyList();
 			}
 
-			List<ICondition> changedConditions = getChangedFindings(lastExportTimestamp, ICondition.class);
+			IQueryCursor<ICondition> changedConditions = getChangedFindings(lastExportTimestamp, ICondition.class);
 			currentBundle = addIncrementalConditions(changedConditions, currentBundle, ret);
 			if (progressMonitor.isCanceled()) {
 				LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
 				return Collections.emptyList();
 			}
 
-			List<IPrescription> changedPrescriptions = getChanged(lastExportTimestamp, IPrescription.class);
+			IQueryCursor<IPrescription> changedPrescriptions = getChanged(lastExportTimestamp, IPrescription.class);
 			currentBundle = addIncrementalPrescriptions(changedPrescriptions, currentBundle, ret);
 			if (progressMonitor.isCanceled()) {
 				LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
 				return Collections.emptyList();
 			}
 
-			List<ILabResult> changedLabResults = getChanged(lastExportTimestamp, ILabResult.class);
+			IQueryCursor<ILabResult> changedLabResults = getChanged(lastExportTimestamp, ILabResult.class);
 			currentBundle = addIncrementalLabResult(changedLabResults, currentBundle, ret);
 			if (progressMonitor.isCanceled()) {
 				LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
 				return Collections.emptyList();
 			}
 
-			List<IVaccination> changedVaccinations = getChanged(lastExportTimestamp, IVaccination.class);
+			IQueryCursor<IVaccination> changedVaccinations = getChanged(lastExportTimestamp, IVaccination.class);
 			currentBundle = addIncrementalVaccination(changedVaccinations, currentBundle, ret);
 			if (progressMonitor.isCanceled()) {
 				LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
@@ -417,10 +417,11 @@ public class FIREService implements IFIREService {
 		return ret;
 	}
 
-	private BundleFile addIncrementalPatients(List<IPatient> changedPatients, BundleFile currentBundle, List<File> ret)
-			throws IOException {
+	private BundleFile addIncrementalPatients(IQueryCursor<IPatient> changedPatients, BundleFile currentBundle,
+			List<File> ret) throws IOException {
 		boolean isLegacyPatientCondition = isLegacyPatientCondition();
-		for (IPatient iPatient : changedPatients) {
+		while (changedPatients.hasNext()) {
+			IPatient iPatient = changedPatients.next();
 			if (iPatient.getDateOfBirth() != null) {
 				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iPatient.getId()),
 						currentBundle.getBundle());
@@ -443,9 +444,10 @@ public class FIREService implements IFIREService {
 		return currentBundle;
 	}
 
-	private BundleFile addIncrementalEncounters(List<IEncounter> changedEncounters, BundleFile currentBundle,
+	private BundleFile addIncrementalEncounters(IQueryCursor<IEncounter> changedEncounters, BundleFile currentBundle,
 			List<File> ret) throws IOException {
-		for (IEncounter en : changedEncounters) {
+		while (changedEncounters.hasNext()) {
+			IEncounter en = changedEncounters.next();
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(en.getPatient().getId()),
 					currentBundle.getBundle());
 			Optional<Encounter> fhirEncounter = getEncounterTransformer().getFhirObject(en);
@@ -467,9 +469,10 @@ public class FIREService implements IFIREService {
 		return currentBundle;
 	}
 
-	private BundleFile addIncrementalConditions(List<ICondition> changedConditions, BundleFile currentBundle,
+	private BundleFile addIncrementalConditions(IQueryCursor<ICondition> changedConditions, BundleFile currentBundle,
 			List<File> ret) throws IOException {
-		for (ICondition co : changedConditions) {
+		while (changedConditions.hasNext()) {
+			ICondition co = changedConditions.next();
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(co.getPatientId()),
 					currentBundle.getBundle());
 			Condition fhirCondition = (Condition) ModelUtil.getAsResource(co.getRawContent());
@@ -479,9 +482,10 @@ public class FIREService implements IFIREService {
 		return currentBundle;
 	}
 
-	private BundleFile addIncrementalPrescriptions(List<IPrescription> changedPrescriptions, BundleFile currentBundle,
-			List<File> ret) throws IOException {
-		for (IPrescription pr : changedPrescriptions) {
+	private BundleFile addIncrementalPrescriptions(IQueryCursor<IPrescription> changedPrescriptions,
+			BundleFile currentBundle, List<File> ret) throws IOException {
+		while (changedPrescriptions.hasNext()) {
+			IPrescription pr = changedPrescriptions.next();
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(pr.getPatient().getId()),
 					currentBundle.getBundle());
 			Optional<MedicationRequest> mr = getPrescriptionTransformer().getFhirObject(pr);
@@ -493,9 +497,10 @@ public class FIREService implements IFIREService {
 		return currentBundle;
 	}
 
-	private BundleFile addIncrementalLabResult(List<ILabResult> changedLabResults, BundleFile currentBundle,
+	private BundleFile addIncrementalLabResult(IQueryCursor<ILabResult> changedLabResults, BundleFile currentBundle,
 			List<File> ret) throws IOException {
-		for (ILabResult lr : changedLabResults) {
+		while (changedLabResults.hasNext()) {
+			ILabResult lr = changedLabResults.next();
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(lr.getPatient().getId()),
 					currentBundle.getBundle());
 			Optional<Observation> ob = getLabTransformer().getFhirObject(lr);
@@ -507,9 +512,11 @@ public class FIREService implements IFIREService {
 		return currentBundle;
 	}
 
-	private BundleFile addIncrementalVaccination(List<IVaccination> changedVaccinations, BundleFile currentBundle,
+	private BundleFile addIncrementalVaccination(IQueryCursor<IVaccination> changedVaccinations,
+			BundleFile currentBundle,
 			List<File> ret) throws IOException {
-		for (IVaccination va : changedVaccinations) {
+		while (changedVaccinations.hasNext()) {
+			IVaccination va = changedVaccinations.next();
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(va.getPatient().getId()),
 					currentBundle.getBundle());
 			Optional<Immunization> im = getVaccinationTransformer().getFhirObject(va);
@@ -542,17 +549,17 @@ public class FIREService implements IFIREService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> List<T> getChanged(Long lastExportTimestamp, Class<T> clazz) {
+	private <T> IQueryCursor<T> getChanged(Long lastExportTimestamp, Class<T> clazz) {
 		IQuery<T> query = coreModelService.getQuery(clazz);
 		query.and("lastupdate", COMPARATOR.GREATER, Long.valueOf(lastExportTimestamp)); //$NON-NLS-1$
-		return (List<T>) (List<?>) query.execute();
+		return query.executeAsCursor();
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> List<T> getChangedFindings(Long lastExportTimestamp, Class<T> clazz) {
+	private <T> IQueryCursor<T> getChangedFindings(Long lastExportTimestamp, Class<T> clazz) {
 		IQuery<T> query = findingsModelService.getQuery(clazz);
 		query.and("lastupdate", COMPARATOR.GREATER, Long.valueOf(lastExportTimestamp)); //$NON-NLS-1$
-		return (List<T>) (List<?>) query.execute();
+		return query.executeAsCursor();
 	}
 
 	private BundleFile getBundleFile(boolean initial) throws UnsupportedEncodingException {

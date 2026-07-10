@@ -448,23 +448,25 @@ public class FIREService implements IFIREService {
 			List<File> ret) throws IOException {
 		while (changedEncounters.hasNext()) {
 			IEncounter en = changedEncounters.next();
-			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(en.getPatient().getId()),
-					currentBundle.getBundle());
-			Optional<Encounter> fhirEncounter = getEncounterTransformer().getFhirObject(en);
-			if (fhirEncounter.isPresent()) {
-				if (en.getMandator() != null) {
-					addMandatorToBundle(en.getMandator(), currentBundle.getBundle());
-					if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
-							&& !en.getMandator().equals(en.getMandator().getBiller())) {
-						IContact biller = en.getMandator().getBiller();
-						addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(),
-								currentBundle.getBundle());
+			if (en.getPatient() != null) {
+				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(en.getPatient().getId()),
+						currentBundle.getBundle());
+				Optional<Encounter> fhirEncounter = getEncounterTransformer().getFhirObject(en);
+				if (fhirEncounter.isPresent()) {
+					if (en.getMandator() != null) {
+						addMandatorToBundle(en.getMandator(), currentBundle.getBundle());
+						if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
+								&& !en.getMandator().equals(en.getMandator().getBiller())) {
+							IContact biller = en.getMandator().getBiller();
+							addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(),
+									currentBundle.getBundle());
+						}
 					}
+					toFIRE(fhirEncounter.get());
+					currentBundle.addResourceToBundle(patientBundle, fhirEncounter.get());
 				}
-				toFIRE(fhirEncounter.get());
-				currentBundle.addResourceToBundle(patientBundle, fhirEncounter.get());
+				currentBundle = currentBundle.writeIfNecessary(ret);
 			}
-			currentBundle = currentBundle.writeIfNecessary(ret);
 		}
 		return currentBundle;
 	}
@@ -473,11 +475,13 @@ public class FIREService implements IFIREService {
 			List<File> ret) throws IOException {
 		while (changedConditions.hasNext()) {
 			ICondition co = changedConditions.next();
-			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(co.getPatientId()),
-					currentBundle.getBundle());
-			Condition fhirCondition = (Condition) ModelUtil.getAsResource(co.getRawContent());
-			currentBundle.addResourceToBundle(patientBundle, fhirCondition);
-			currentBundle = currentBundle.writeIfNecessary(ret);
+			if (StringUtils.isNotBlank(co.getPatientId())) {
+				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(co.getPatientId()),
+						currentBundle.getBundle());
+				Condition fhirCondition = (Condition) ModelUtil.getAsResource(co.getRawContent());
+				currentBundle.addResourceToBundle(patientBundle, fhirCondition);
+				currentBundle = currentBundle.writeIfNecessary(ret);
+			}
 		}
 		return currentBundle;
 	}
@@ -486,12 +490,14 @@ public class FIREService implements IFIREService {
 			BundleFile currentBundle, List<File> ret) throws IOException {
 		while (changedPrescriptions.hasNext()) {
 			IPrescription pr = changedPrescriptions.next();
-			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(pr.getPatient().getId()),
-					currentBundle.getBundle());
-			Optional<MedicationRequest> mr = getPrescriptionTransformer().getFhirObject(pr);
-			if (mr.isPresent()) {
-				currentBundle.addResourceToBundle(patientBundle, mr.get());
-				currentBundle = currentBundle.writeIfNecessary(ret);
+			if (pr.getPatient() != null) {
+				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(pr.getPatient().getId()),
+						currentBundle.getBundle());
+				Optional<MedicationRequest> mr = getPrescriptionTransformer().getFhirObject(pr);
+				if (mr.isPresent()) {
+					currentBundle.addResourceToBundle(patientBundle, mr.get());
+					currentBundle = currentBundle.writeIfNecessary(ret);
+				}
 			}
 		}
 		return currentBundle;
@@ -501,12 +507,14 @@ public class FIREService implements IFIREService {
 			List<File> ret) throws IOException {
 		while (changedLabResults.hasNext()) {
 			ILabResult lr = changedLabResults.next();
-			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(lr.getPatient().getId()),
-					currentBundle.getBundle());
-			Optional<Observation> ob = getLabTransformer().getFhirObject(lr);
-			if (ob.isPresent()) {
-				currentBundle.addResourceToBundle(patientBundle, ob.get());
-				currentBundle = currentBundle.writeIfNecessary(ret);
+			if (lr.getPatient() != null) {
+				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(lr.getPatient().getId()),
+						currentBundle.getBundle());
+				Optional<Observation> ob = getLabTransformer().getFhirObject(lr);
+				if (ob.isPresent()) {
+					currentBundle.addResourceToBundle(patientBundle, ob.get());
+					currentBundle = currentBundle.writeIfNecessary(ret);
+				}
 			}
 		}
 		return currentBundle;
@@ -517,12 +525,14 @@ public class FIREService implements IFIREService {
 			List<File> ret) throws IOException {
 		while (changedVaccinations.hasNext()) {
 			IVaccination va = changedVaccinations.next();
-			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(va.getPatient().getId()),
-					currentBundle.getBundle());
-			Optional<Immunization> im = getVaccinationTransformer().getFhirObject(va);
-			if (im.isPresent()) {
-				currentBundle.addResourceToBundle(patientBundle, im.get());
-				currentBundle = currentBundle.writeIfNecessary(ret);
+			if (va.getPatient() != null) {
+				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(va.getPatient().getId()),
+						currentBundle.getBundle());
+				Optional<Immunization> im = getVaccinationTransformer().getFhirObject(va);
+				if (im.isPresent()) {
+					currentBundle.addResourceToBundle(patientBundle, im.get());
+					currentBundle = currentBundle.writeIfNecessary(ret);
+				}
 			}
 		}
 		return currentBundle;

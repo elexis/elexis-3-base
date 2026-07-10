@@ -90,7 +90,7 @@
         <setEntry value="org.apache.commons.commons-collections4@default:default"/>
         <setEntry value="org.apache.commons.commons-compress*1.27.1@default:default"/>
         <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
-        <setEntry value="org.apache.commons.commons-io*2.18.0@default:default"/>
+        <setEntry value="org.apache.commons.commons-io*2.22.0@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
         <setEntry value="org.apache.commons.logging@default:default"/>
@@ -279,7 +279,6 @@
         <setEntry value="ch.elexis.fire.core.test@default:false"/>
         <setEntry value="ch.elexis.fire.core.upload@default:false"/>
         <setEntry value="ch.elexis.fire.core@default:default"/>
-        <setEntry value="ch.ngiger.utilities.comm@default:default"/>
         <setEntry value="ch.rgw.utility.legacy@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
         <setEntry value="es.gogo.shell@default:false"/>

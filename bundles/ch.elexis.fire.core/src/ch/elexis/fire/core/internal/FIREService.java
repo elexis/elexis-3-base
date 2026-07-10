@@ -93,7 +93,7 @@ public class FIREService implements IFIREService {
 
 	private IFhirTransformer<Encounter, IEncounter> encounterTransformer;
 
-	private IFhirTransformer<Practitioner, IPerson> mandatorTransformer;
+	private IFhirTransformer<Practitioner, IMandator> mandatorTransformer;
 
 	private IFhirTransformer<Observation, ILabResult> labTransformer;
 
@@ -122,9 +122,9 @@ public class FIREService implements IFIREService {
 		return encounterTransformer;
 	}
 
-	private IFhirTransformer<Practitioner, IPerson> getMandatorTransformer() {
+	private IFhirTransformer<Practitioner, IMandator> getMandatorTransformer() {
 		if(mandatorTransformer == null) {
-			mandatorTransformer = transformerRegistry.getTransformerFor(Practitioner.class, IPerson.class);
+			mandatorTransformer = transformerRegistry.getTransformerFor(Practitioner.class, IMandator.class);
 		}
 		return mandatorTransformer;
 	}
@@ -297,7 +297,7 @@ public class FIREService implements IFIREService {
 	private void addMandatorToBundle(IMandator mandator, Bundle ret) {
 		Optional<BundleEntryComponent> found = findBundleEntry(mandator.getId(), ret);
 		if (found.isEmpty()) {
-			Optional<Practitioner> fhirPractitioner = getMandatorTransformer().getFhirObject(mandator.asIPerson());
+			Optional<Practitioner> fhirPractitioner = getMandatorTransformer().getFhirObject(mandator);
 			fhirPractitioner.ifPresent(p -> ret.addEntry().setResource(toFIRE(p)));
 		}
 	}

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Hex;
@@ -155,6 +156,14 @@ public class FIREService implements IFIREService {
 			vaccinationTransformer = transformerRegistry.getTransformerFor(Immunization.class, IVaccination.class);
 		}
 		return vaccinationTransformer;
+	}
+
+	private void traverseAllResources(Bundle bundle, Consumer<Resource> consumer) {
+		for (BundleEntryComponent entry : bundle.getEntry()) {
+			if (entry.hasResource()) {
+				consumer.accept(entry.getResource());
+			}
+		}
 	}
 
 	@Override
@@ -339,6 +348,7 @@ public class FIREService implements IFIREService {
 		fhirPatient.getName().clear();
 		fhirPatient.getTelecom().clear();
 		fhirPatient.getAddress().clear();
+		fhirPatient.setContact(null);
 		fhirPatient.setText(null);
 		fhirPatient.setExtension(Collections.emptyList());
 
@@ -673,6 +683,7 @@ public class FIREService implements IFIREService {
 	}
 
 	private void writeBundle(Bundle bundle, File currentFile) throws IOException {
+//		traverseAllResources(bundle, new FindNonAnonResource());
 		FileUtils.writeStringToFile(currentFile, getBundleText(bundle), Charset.forName("UTF-8"));
 		increaseBundleCount();
 	}

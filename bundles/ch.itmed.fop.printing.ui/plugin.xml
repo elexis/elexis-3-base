@@ -96,7 +96,7 @@
         <command
               defaultHandler="ch.itmed.fop.printing.handlers.SelectedAppointmentCardHandler"
               id="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
-              name="Selektierten Termin drucken">
+              name="Termin drucken">
         </command>
            <command
               defaultHandler="ch.itmed.fop.printing.handlers.RowaArticleMedicationLabelHandler"

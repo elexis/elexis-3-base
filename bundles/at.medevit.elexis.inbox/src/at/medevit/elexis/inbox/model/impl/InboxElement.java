@@ -66,6 +66,11 @@ public class InboxElement extends AbstractIdDeleteModelAdapter<ch.elexis.core.jp
 	}
 
 	@Override
+	public void setResolvedObject(Identifiable object) {
+		this.object = object;
+	}
+
+	@Override
 	public IPatient getPatient() {
 		return ModelUtil.loadCoreModel(getEntity().getPatient(), IPatient.class);
 	}

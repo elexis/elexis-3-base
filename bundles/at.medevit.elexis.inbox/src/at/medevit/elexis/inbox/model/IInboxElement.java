@@ -14,6 +14,9 @@ public interface IInboxElement extends Identifiable, Deleteable {
 
 	public Object getObject();
 
+	public default void setResolvedObject(Identifiable object) {
+	}
+
 	public IPatient getPatient();
 
 	public void setPatient(IPatient patient);

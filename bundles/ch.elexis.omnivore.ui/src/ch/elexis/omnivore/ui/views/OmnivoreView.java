@@ -20,6 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -149,6 +151,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private OmnivoreViewerComparator ovComparator;
 
 	private IPatient actPatient;
+	private boolean refreshScheduled;
 
 	@Inject
 	private IEventBroker eventBroker;
@@ -177,8 +180,26 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	void activePatient(@Optional IPatient patient) {
 		Display.getDefault().asyncExec(() -> {
 			if (isActiveControl(table)) {
-				viewer.refresh();
 				actPatient = patient;
+				scheduleRefresh();
+			}
+		});
+	}
+
+	private synchronized void scheduleRefresh() {
+		if (refreshScheduled) {
+			return;
+		}
+		refreshScheduled = true;
+		Display.getDefault().timerExec(100, () -> {
+			try {
+				if (isActiveControl(table)) {
+					viewer.refresh();
+				}
+			} finally {
+				synchronized (OmnivoreView.this) {
+					refreshScheduled = false;
+				}
 			}
 		});
 	}
@@ -199,25 +220,28 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	@Inject
 	void updateDocHandle(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IDocumentHandle dochandle) {
 		if (isActiveControl(table)) {
-			viewer.refresh();
+			scheduleRefresh();
 		}
 	}
 
 	@Inject
 	void createDocHandle(@Optional @UIEventTopic(ElexisEventTopics.EVENT_CREATE) IDocumentHandle dochandle) {
 		if (isActiveControl(table)) {
-			viewer.refresh();
+			scheduleRefresh();
 		}
 	}
 
 	@Inject
 	void deleteDocHandle(@Optional @UIEventTopic(ElexisEventTopics.EVENT_DELETE) IDocumentHandle dochandle) {
 		if (isActiveControl(table)) {
-			viewer.refresh();
+			scheduleRefresh();
 		}
 	}
 
 	class ViewContentProvider implements ITreeContentProvider {
+		private final Map<String, List<IDocumentHandle>> documentsByCategory = new TreeMap<>(
+				String.CASE_INSENSITIVE_ORDER);
+
 		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -237,54 +261,33 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			}
 		}
 
-		private boolean filterMatches(String[] kws, IDocumentHandle h) {
-			if (!h.getTitle().toLowerCase().contains(searchTitle.toLowerCase()))
-				return false;
-			String dkw = h.getKeywords().toLowerCase();
-			for (String kw : kws) {
-				if (!dkw.contains(kw)) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-		/** Filter a list of DocHandles */
-		private List<IDocumentHandle> filterList(List<IDocumentHandle> list) {
-			List<IDocumentHandle> result = new LinkedList<IDocumentHandle>();
-			String[] kws = searchKW.toLowerCase().split(StringUtils.SPACE);
-			for (IDocumentHandle dh : list) {
-				if (filterMatches(kws, dh))
-					result.add(dh);
-			}
-			return result;
-		}
-
 		@Override
 		public Object[] getElements(Object parent) {
 			List<IDocumentHandle> ret = new LinkedList<IDocumentHandle>();
 			IPatient pat = ContextServiceHolder.get().getActivePatient().orElse(null);
-			if (!bFlat && pat != null) {
-				List<IDocumentHandle> cats = CategoryUtil.getCategories();
-				for (IDocumentHandle dh : cats) {
-					if (filterList(Utils.getMembers(dh, pat)).size() > 0) {
-						ret.add(dh);
+			if (pat != null) {
+				IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
+				qbe.and("kontakt", COMPARATOR.EQUALS, pat); //$NON-NLS-1$
+				addFilters(qbe);
+				List<IDocumentHandle> documents = qbe.execute();
+				documentsByCategory.clear();
+				for (IDocumentHandle document : documents) {
+					if (!document.isCategory()) {
+						documentsByCategory.computeIfAbsent(document.getCategory().getName(), key -> new LinkedList<>())
+								.add(document);
 					}
 				}
-				IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-				qbe.and("kontakt", COMPARATOR.EQUALS, pat); //$NON-NLS-1$
-				addFilters(qbe);
-				List<IDocumentHandle> root = qbe.execute().parallelStream().filter(d -> d.isCategory())
-						.collect(Collectors.toList());
-				ret.addAll(root);
-			} else if (pat != null) {
-				// Flat view -> all documents that
-				IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-				qbe.and("kontakt", COMPARATOR.EQUALS, pat); //$NON-NLS-1$
-				addFilters(qbe);
-				List<IDocumentHandle> docs = qbe.execute().parallelStream().filter(d -> !d.isCategory())
-						.collect(Collectors.toList());
-				ret.addAll(docs);
+
+				if (!bFlat) {
+					for (IDocumentHandle category : CategoryUtil.getCategories()) {
+						if (documentsByCategory.containsKey(category.getTitle())) {
+							ret.add(category);
+						}
+					}
+					ret.addAll(documents.stream().filter(IDocumentHandle::isCategory).collect(Collectors.toList()));
+				} else {
+					ret.addAll(documents.stream().filter(document -> !document.isCategory()).collect(Collectors.toList()));
+				}
 			}
 			return ret.toArray();
 		}
@@ -294,7 +297,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			IPatient pat = ContextServiceHolder.get().getActivePatient().orElse(null);
 			if (!bFlat && pat != null && (parentElement instanceof IDocumentHandle)) {
 				IDocumentHandle dhParent = (IDocumentHandle) parentElement;
-				return filterList(Utils.getMembers(dhParent, pat)).toArray();
+				return documentsByCategory.getOrDefault(dhParent.getTitle(), new LinkedList<>()).toArray();
 			} else {
 				return new Object[0];
 			}

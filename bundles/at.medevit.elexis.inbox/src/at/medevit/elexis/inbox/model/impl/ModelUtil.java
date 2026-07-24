@@ -31,7 +31,7 @@ public class ModelUtil {
 			}
 			T loaded = modelService.load(entity.getId(), clazz).orElse(null);
 			if (loaded != null) {
-				modelCache.put(key, new WeakReference<>(loaded));
+				modelCache.put(key, loaded);
 			}
 			return loaded;
 		}

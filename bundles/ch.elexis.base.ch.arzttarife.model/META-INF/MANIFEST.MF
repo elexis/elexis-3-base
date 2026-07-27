@@ -59,6 +59,7 @@ Require-Bundle: ch.elexis.core.l10n,
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.codes,
+ ch.elexis.core.findings.model,
  ch.elexis.core.findings.util.model,
  com.healthmarketscience.jackcess;version="4.0.0",
  com.opencsv;version="3.10.0",

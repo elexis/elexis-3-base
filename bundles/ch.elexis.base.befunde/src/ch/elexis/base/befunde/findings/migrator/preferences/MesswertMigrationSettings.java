@@ -42,7 +42,7 @@ import ch.elexis.befunde.Messwert;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.IObservation;
 import ch.elexis.core.findings.codes.CodingSystem;
-import ch.elexis.core.findings.codes.TransientCoding;
+import ch.elexis.core.findings.model.TransientCoding;
 import ch.elexis.core.findings.templates.model.FindingsTemplate;
 import ch.elexis.core.findings.templates.model.FindingsTemplates;
 import ch.elexis.core.findings.templates.model.InputDataGroupComponent;

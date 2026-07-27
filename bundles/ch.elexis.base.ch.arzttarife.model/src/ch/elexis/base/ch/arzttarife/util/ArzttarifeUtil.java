@@ -13,7 +13,7 @@ import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.core.findings.ICoding;
-import ch.elexis.core.findings.codes.TransientCoding;
+import ch.elexis.core.findings.model.TransientCoding;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;

@@ -14,4 +14,5 @@ Bundle-Activator: com.hilotec.elexis.kgview.Activator
 Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.codes,
  ch.elexis.core.findings.migration,
+ ch.elexis.core.findings.model,
  ch.elexis.core.findings.util.model

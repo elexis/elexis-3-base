@@ -28,7 +28,7 @@ import ch.elexis.core.findings.IObservation.ObservationType;
 import ch.elexis.core.findings.ObservationComponent;
 import ch.elexis.core.findings.UriType;
 import ch.elexis.core.findings.codes.CodingSystem;
-import ch.elexis.core.findings.codes.TransientCoding;
+import ch.elexis.core.findings.model.TransientCoding;
 import ch.elexis.core.findings.templates.model.FindingsTemplate;
 import ch.elexis.core.findings.templates.model.FindingsTemplates;
 import ch.elexis.core.findings.templates.service.IFindingsTemplateService;

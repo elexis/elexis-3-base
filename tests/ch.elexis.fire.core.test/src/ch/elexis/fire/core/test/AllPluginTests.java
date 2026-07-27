@@ -21,7 +21,7 @@ import ch.elexis.core.findings.ICondition.ConditionCategory;
 import ch.elexis.core.findings.IFindingsService;
 import ch.elexis.core.findings.codes.CodingSystem;
 import ch.elexis.core.findings.migration.IMigratorService;
-import ch.elexis.core.findings.util.model.TransientLocalCoding;
+import ch.elexis.core.findings.model.TransientLocalCoding;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IConfigService;

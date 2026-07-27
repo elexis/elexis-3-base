@@ -13,6 +13,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.codes,
+ ch.elexis.core.findings.model,
  ch.elexis.core.findings.templates.model,
  ch.elexis.core.findings.templates.service,
  ch.elexis.core.findings.util,

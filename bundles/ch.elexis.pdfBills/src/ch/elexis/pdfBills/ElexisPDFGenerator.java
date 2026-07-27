@@ -955,50 +955,43 @@ public class ElexisPDFGenerator {
 							personOrCompany = partnerCompanies.get(0);
 						}
 						if(personOrCompany != null) {
-							StringJoiner addressBuilder = new StringJoiner(" "); //$NON-NLS-1$
-							if (StringUtils.isNotBlank(personOrCompany.getAttribute("salutation"))) { //$NON-NLS-1$
-								addressBuilder.add(personOrCompany.getAttribute("salutation")); //$NON-NLS-1$
-							}
-							if (StringUtils.isNotBlank(personOrCompany.getAttribute("title"))) { //$NON-NLS-1$
-								addressBuilder.add(personOrCompany.getAttribute("title")); //$NON-NLS-1$
-							}
-
-							List<Element> familyElements = getChildElements(personOrCompany, "invoice:familyname"); //$NON-NLS-1$
-							if (!familyElements.isEmpty()) {
-								addressBuilder.add(familyElements.get(0).getTextContent()); // $NON-NLS-1$
-							}
-							List<Element> givenElements = getChildElements(personOrCompany, "invoice:givenname"); //$NON-NLS-1$
-							if (!givenElements.isEmpty()) {
-								addressBuilder.add(givenElements.get(0).getTextContent());
-							}
-							List<Element> namesElements = getChildElements(personOrCompany, "invoice:companyname"); //$NON-NLS-1$
-							if (!namesElements.isEmpty()) {
-								addressBuilder.add(namesElements.get(0).getTextContent());
-							}
-							List<Element> postalElements = getChildElements(personOrCompany, "invoice:postal"); //$NON-NLS-1$
-							if (!postalElements.isEmpty()) {
-								addressBuilder.add("·"); //$NON-NLS-1$
-//                                <invoice:street street_name="Referrerstrasse" house_no="11">Referrerstrasse 11</invoice:street>
-//                                <invoice:zip state_code="AG">5000</invoice:zip>
-//                                <invoice:city>Aarau</invoice:city>
-								List<Element> streetElements = getChildElements(postalElements.get(0),
-										"invoice:street"); //$NON-NLS-1$
-								if (!streetElements.isEmpty()) {
-									addressBuilder.add(streetElements.get(0).getTextContent());
-								}
-								List<Element> zipElements = getChildElements(postalElements.get(0), "invoice:zip"); //$NON-NLS-1$
-								if (!zipElements.isEmpty()) {
-									addressBuilder.add(zipElements.get(0).getTextContent());
-								}
-								List<Element> cityElements = getChildElements(postalElements.get(0), "invoice:city"); //$NON-NLS-1$
-								if (!cityElements.isEmpty()) {
-									addressBuilder.add(cityElements.get(0).getTextContent());
-								}
-							}
-							eanToAdressMap.put(gln, addressBuilder.toString());
+							eanToAdressMap.put(gln, getAddressFromXmlElement(personOrCompany));
 						}
 					}
 				}
+
+				xPath = XPathFactory.newInstance().newXPath();
+				// Lookup providers from tiers_garant and add addresses
+				expr = xPath.compile("/request/payload/body/tiers_garant/providers/provider_gln");
+				result = expr.evaluate(domDocument, XPathConstants.NODESET);
+				NodeList providerElements = (NodeList) result;
+				if (providerElements.getLength() == 0) {
+					expr = xPath.compile("/request/payload/body/tiers_payant/providers/provider_gln");
+					result = expr.evaluate(domDocument, XPathConstants.NODESET);
+					providerElements = (NodeList) result;
+				}
+				for (int i = 0; i < providerElements.getLength(); i++) {
+					Element providerElement = (Element) providerElements.item(i);
+					String gln = providerElement.getAttribute("gln");
+					if (StringUtils.isNotBlank(gln)) {
+						// Extract address from company or person child
+						Element personOrCompany = null;
+						List<Element> persons = getChildElements(providerElement, "invoice:person");
+						if (!persons.isEmpty()) {
+							personOrCompany = persons.get(0);
+						} else {
+							List<Element> companies = getChildElements(providerElement, "invoice:company");
+							if (!companies.isEmpty()) {
+								personOrCompany = companies.get(0);
+							}
+						}
+						String address = getAddressFromXmlElement(personOrCompany);
+						if (StringUtils.isNotBlank(address)) {
+							eanToAdressMap.put(gln, address);
+						}
+					}
+				}
+
 				// lookup service providers and responsibles
 				xPath = XPathFactory.newInstance().newXPath();
 				expr = xPath.compile("/request/payload/body/services"); //$NON-NLS-1$
@@ -1037,14 +1030,15 @@ public class ElexisPDFGenerator {
 					return eanToIndexTypeMap.get(l).compareTo(eanToIndexTypeMap.get(r));
 				});
 				for (String ean : eans) {
+					String eanOnly = getEanOnly(ean);
 					StringJoiner eanInfo = new StringJoiner("\n"); //$NON-NLS-1$
 					String indexType = eanToIndexTypeMap.get(ean);
 					Integer index = Integer.valueOf(indexType.split(" - ")[0]); //$NON-NLS-1$
 					eanList.add(index + "/" + ean); //$NON-NLS-1$
 					eanInfo.add(eanToIndexTypeMap.get(ean));
 					eanInfo.add(ean);
-					if (eanToAdressMap.containsKey(ean)) {
-						eanInfo.add(eanToAdressMap.get(ean));
+					if (eanToAdressMap.containsKey(eanOnly)) {
+						eanInfo.add(eanToAdressMap.get(eanOnly));
 					} else {
 						eanInfo.add(StringUtils.EMPTY);
 					}
@@ -1057,6 +1051,70 @@ public class ElexisPDFGenerator {
 			}
 		}
 		return StringUtils.EMPTY;
+	}
+
+	/**
+	 * Remove possible section_code from the ean String.
+	 * 
+	 * @param ean
+	 * @return
+	 */
+	private String getEanOnly(String ean) {
+		if (ean.indexOf("/") > -1) {
+			return ean.substring(0, ean.indexOf("/"));
+		}
+		return ean;
+	}
+
+	/**
+	 * Extracts a formatted address string from an invoice:person or invoice:company
+	 * XML element. The format is: "Salutation Title Givenname Familyname · Street
+	 * ZIP City" or for companies: "Companyname · Street ZIP City"
+	 *
+	 * @param personOrCompany the XML element (invoice:person or invoice:company)
+	 * @return formatted address string, or empty string if element is null
+	 */
+	private String getAddressFromXmlElement(Element personOrCompany) {
+		StringJoiner addressBuilder = new StringJoiner(" "); //$NON-NLS-1$
+		if (StringUtils.isNotBlank(personOrCompany.getAttribute("salutation"))) { //$NON-NLS-1$
+			addressBuilder.add(personOrCompany.getAttribute("salutation")); //$NON-NLS-1$
+		}
+		if (StringUtils.isNotBlank(personOrCompany.getAttribute("title"))) { //$NON-NLS-1$
+			addressBuilder.add(personOrCompany.getAttribute("title")); //$NON-NLS-1$
+		}
+
+		List<Element> familyElements = getChildElements(personOrCompany, "invoice:familyname"); //$NON-NLS-1$
+		if (!familyElements.isEmpty()) {
+			addressBuilder.add(familyElements.get(0).getTextContent()); // $NON-NLS-1$
+		}
+		List<Element> givenElements = getChildElements(personOrCompany, "invoice:givenname"); //$NON-NLS-1$
+		if (!givenElements.isEmpty()) {
+			addressBuilder.add(givenElements.get(0).getTextContent());
+		}
+		List<Element> namesElements = getChildElements(personOrCompany, "invoice:companyname"); //$NON-NLS-1$
+		if (!namesElements.isEmpty()) {
+			addressBuilder.add(namesElements.get(0).getTextContent());
+		}
+		List<Element> postalElements = getChildElements(personOrCompany, "invoice:postal"); //$NON-NLS-1$
+		if (!postalElements.isEmpty()) {
+			addressBuilder.add("·"); //$NON-NLS-1$
+//            <invoice:street street_name="Referrerstrasse" house_no="11">Referrerstrasse 11</invoice:street>
+//            <invoice:zip state_code="AG">5000</invoice:zip>
+//            <invoice:city>Aarau</invoice:city>
+			List<Element> streetElements = getChildElements(postalElements.get(0), "invoice:street"); //$NON-NLS-1$
+			if (!streetElements.isEmpty()) {
+				addressBuilder.add(streetElements.get(0).getTextContent());
+			}
+			List<Element> zipElements = getChildElements(postalElements.get(0), "invoice:zip"); //$NON-NLS-1$
+			if (!zipElements.isEmpty()) {
+				addressBuilder.add(zipElements.get(0).getTextContent());
+			}
+			List<Element> cityElements = getChildElements(postalElements.get(0), "invoice:city"); //$NON-NLS-1$
+			if (!cityElements.isEmpty()) {
+				addressBuilder.add(cityElements.get(0).getTextContent());
+			}
+		}
+		return addressBuilder.toString();
 	}
 
 	private String getLocalizedType(String type) {

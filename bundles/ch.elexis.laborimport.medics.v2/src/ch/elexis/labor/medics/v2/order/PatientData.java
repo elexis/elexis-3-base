@@ -15,6 +15,7 @@ import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
+import ch.elexis.core.types.Country;
 
 public class PatientData {
 
@@ -71,7 +72,7 @@ public class PatientData {
 		if (StringUtils.isNotBlank(patient.getZip())) {
 			ret.postalCode = patient.getZip();
 		}
-		if (patient.getCountry() != null) {
+		if (patient.getCountry() != null && patient.getCountry() != Country.NDF) {
 			ret.country = patient.getCountry().name();
 		}
 		StringJoiner sj = new StringJoiner(", ");

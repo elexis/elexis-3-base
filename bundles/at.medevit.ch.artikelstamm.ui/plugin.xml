@@ -41,5 +41,12 @@
             name="Article Detail">
       </command>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.ViewContribution">
+      <detailComposite
+            class="at.medevit.ch.artikelstamm.ui.contribution.MedicationIndicationContribution"
+            viewId="ch.elexis.core.ui.medication.views.MedicationComposite">
+      </detailComposite>
+   </extension>
 
 </plugin>

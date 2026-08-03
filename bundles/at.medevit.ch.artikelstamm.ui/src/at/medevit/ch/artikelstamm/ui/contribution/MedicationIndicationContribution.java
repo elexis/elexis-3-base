@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
@@ -20,11 +21,14 @@ import at.medevit.ch.artikelstamm.ui.internal.IndicationCodeUtil;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.Constants;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.views.contribution.IViewContribution;
 
 public class MedicationIndicationContribution implements IViewContribution {
 
 	private IPrescription detailObject;
+
+	private Label indicationIcon;
 
 	private Link indicationLink;
 
@@ -44,9 +48,12 @@ public class MedicationIndicationContribution implements IViewContribution {
 	@Override
 	public Composite initComposite(Composite parent) {
 		contributionComposite = new Composite(parent, SWT.NONE);
-		contributionComposite.setLayout(new GridLayout());
+		contributionComposite.setLayout(new GridLayout(2, false));
 
-		indicationLink = new Link(contributionComposite, 0);
+		indicationIcon = new Label(contributionComposite, SWT.NONE);
+		indicationIcon.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+
+		indicationLink = new Link(contributionComposite, SWT.NONE);
 		indicationLink.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		// Event handling when users click on links.
@@ -93,9 +100,11 @@ public class MedicationIndicationContribution implements IViewContribution {
 					contributionComposite.setEnabled(true);
 					String indicationCode = (String) this.detailObject.getExtInfo(Constants.FLD_EXT_INDICATIONCODE);
 					if (StringUtils.isNotBlank(indicationCode)) {
+						indicationIcon.setImage(Images.IMG_TICK.getImage());
 						indicationLink.setText("<a>" + getLocalizedTitle() + " " + indicationCode + "</a>");
 						return;
 					}
+					indicationIcon.setImage(Images.IMG_ACHTUNG.getImage());
 					indicationLink.setText("<a>" + getLocalizedTitle() + "</a>");
 					return;
 				}

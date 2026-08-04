@@ -1,12 +1,13 @@
 package ch.elexis.global_inbox.ui.parts;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.data.util.LocalLock;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.viewers.CommonContentProviderAdapter;
 import ch.elexis.global_inbox.Preferences;
@@ -32,6 +34,7 @@ import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 
 	private static final String LOCAL_LOCK_INBOXIMPORT = "GlobalInboxImport"; //$NON-NLS-1$
+	private static final String CATEGORY_SEPARATOR_PATTERN = "[\\\\/]"; //$NON-NLS-1$
 	private final Pattern PATIENT_MATCH_PATTERN = Pattern.compile("([0-9]+)_(.+)"); //$NON-NLS-1$
 
 	private Logger log;
@@ -87,8 +90,8 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 				if (filepath == null) {
 					ConfigServiceHolder.get().setLocal(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT);
 				}
-				File dir = GlobalInboxUtil.getDirectoryFile();
-				if (dir == null || !dir.isDirectory()) {
+				IVirtualFilesystemHandle dir = GlobalInboxUtil.getDirectoryHandle().orElse(null);
+				if (dir == null || !isDirectory(dir)) {
 					if (view != null) {
 						return Status.CANCEL_STATUS;
 					} else {
@@ -105,16 +108,13 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 
 				if (cats != null) {
 					for (String cat : cats) {
-						File subdir = new File(dir, cat);
-						if (!subdir.exists()) {
-							subdir.mkdirs();
-						}
+						createCategoryDir(dir, cat);
 					}
 				}
 
 //				entries.clear();
 				loadJobList.clear();
-				addFilesInDirRecursive(dir);
+				addFilesInDirRecursive(dir, GlobalInboxUtil.CATEGORY_INBOX_ROOT);
 				filterAndPopulate();
 				if (view != null) {
 					view.reload();
@@ -149,63 +149,116 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 			}
 		}
 
-		private void addFilesInDirRecursive(File dir) {
-			List<String> allFilesInDirRecursive = new ArrayList<>();
+		private boolean isDirectory(IVirtualFilesystemHandle handle) {
+			try {
+				return handle.isDirectory();
+			} catch (IOException e) {
+				log.warn("Could not determine directory state of [{}]", GlobalInboxUtil.toLogString(handle), e); //$NON-NLS-1$
+				return false;
+			}
+		}
 
-			File[] files = dir.listFiles();
-			if (files == null)
+		private void createCategoryDir(IVirtualFilesystemHandle dir, String category) {
+			try {
+				IVirtualFilesystemHandle subdir = dir;
+				for (String segment : category.split(CATEGORY_SEPARATOR_PATTERN)) {
+					if (segment.isEmpty()) {
+						continue;
+					}
+					subdir = subdir.subDir(segment);
+					if (!subdir.exists()) {
+						subdir.mkdir();
+					}
+				}
+			} catch (IOException e) {
+				log.warn("Could not create category directory [{}] in [{}]", category, //$NON-NLS-1$
+						GlobalInboxUtil.toLogString(dir), e);
+			}
+		}
+
+		/**
+		 * @param dir      directory to scan
+		 * @param category the category <code>dir</code> represents, see
+		 *                 {@link GlobalInboxUtil#CATEGORY_INBOX_ROOT}
+		 */
+		private void addFilesInDirRecursive(IVirtualFilesystemHandle dir, String category) {
+			IVirtualFilesystemHandle[] handles;
+			try {
+				handles = dir.listHandles();
+			} catch (IOException e) {
+				log.warn("Could not list [{}]", GlobalInboxUtil.toLogString(dir), e); //$NON-NLS-1$
 				return;
+			}
 
-			for (File file : files) {
-				if (file.isHidden() || file.getName().startsWith(".")) {
+			List<IVirtualFilesystemHandle> filesInDir = new ArrayList<>();
+
+			for (IVirtualFilesystemHandle handle : handles) {
+				String name = handle.getName();
+				if (name.startsWith(".") || isHidden(handle)) { //$NON-NLS-1$
 					continue;
 				}
 
-				if (file.isDirectory()) {
-					addFilesInDirRecursive(file);
-				} else {
-
-					allFilesInDirRecursive.add(file.getAbsolutePath());
+				if (isDirectory(handle)) {
+					addFilesInDirRecursive(handle, subCategory(category, name));
+					continue;
 				}
-				if (file.isDirectory()) {
-					addFilesInDirRecursive(file);
-				} else {
-					// match patient prefix auto import pattern
-					Matcher matcher = PATIENT_MATCH_PATTERN.matcher(file.getName());
-					if (matcher.matches()) {
-						String patientNo = matcher.group(1);
-						String fileName = matcher.group(2);
-						String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, fileName);
-						if (tryImportForPatient != null) {
-							// TODO does this match the up-until-now behavior?
-							log.info("Auto imported file [{}], document id is [{}]", file, tryImportForPatient); //$NON-NLS-1$
-							continue;
-						}
+
+				// match patient prefix auto import pattern
+				Matcher matcher = PATIENT_MATCH_PATTERN.matcher(name);
+				if (matcher.matches()) {
+					String patientNo = matcher.group(1);
+					String fileName = matcher.group(2);
+					String tryImportForPatient = giutil.tryImportForPatient(handle, patientNo, fileName, category);
+					if (tryImportForPatient != null) {
+						// TODO does this match the up-until-now behavior?
+						log.info("Auto imported file [{}], document id is [{}]", //$NON-NLS-1$
+								GlobalInboxUtil.toLogString(handle), tryImportForPatient);
+						continue;
 					}
-
-					allFilesInDirRecursive.add(file.getAbsolutePath());
 				}
+
+				filesInDir.add(handle);
 			}
 
 			// extension file names are always longer than the orig filenames
 			// so in order to identify them beforehand we sort the filenames by length
-			allFilesInDirRecursive.sort(Comparator.comparingInt(String::length));
+			filesInDir.sort(Comparator.comparingInt((IVirtualFilesystemHandle handle) -> handle.getName().length()));
 
-			List<File> extensionFiles = new ArrayList<File>();
-			for (String string : allFilesInDirRecursive) {
-				File file = new File(string);
-				if (extensionFiles.contains(file)) {
+			List<String> extensionFileNames = new ArrayList<>();
+			for (IVirtualFilesystemHandle handle : filesInDir) {
+				String name = handle.getName();
+				if (extensionFileNames.contains(name)) {
 					continue;
 				}
 
 				// are there extension-files to this file?
 				// e.g. orig file: scan.pdf, ext file: scan.pdf.edam.xml
-				File[] _extensionFiles = dir.listFiles(
-						(_dir, _name) -> _name.startsWith(file.getName()) && !Objects.equals(_name, file.getName()));
-				extensionFiles.addAll(Arrays.asList(_extensionFiles));
-				GlobalInboxEntry globalInboxEntry = globalInboxEntryFactory.createEntry(file, _extensionFiles);
+				IVirtualFilesystemHandle[] extensionFiles = filesInDir.stream()
+						.filter(candidate -> candidate.getName().startsWith(name)
+								&& !Objects.equals(candidate.getName(), name))
+						.toArray(IVirtualFilesystemHandle[]::new);
+				for (IVirtualFilesystemHandle extensionFile : extensionFiles) {
+					extensionFileNames.add(extensionFile.getName());
+				}
+
+				GlobalInboxEntry globalInboxEntry = globalInboxEntryFactory.createEntry(handle, extensionFiles,
+						category);
 				loadJobList.add(globalInboxEntry);
 			}
+		}
+
+		/**
+		 * Only a local filesystem knows a hidden attribute beyond the leading dot
+		 * convention.
+		 */
+		private boolean isHidden(IVirtualFilesystemHandle handle) {
+			Optional<File> localFile = handle.toFile();
+			return localFile.isPresent() && localFile.get().isHidden();
+		}
+
+		private String subCategory(String parentCategory, String name) {
+			return GlobalInboxUtil.CATEGORY_INBOX_ROOT.equals(parentCategory) ? name
+					: parentCategory + File.separator + name;
 		}
 	}
 

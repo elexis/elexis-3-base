@@ -1,16 +1,14 @@
 
 package ch.elexis.global_inbox.ui.handler;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.slf4j.LoggerFactory;
@@ -29,6 +27,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IDocumentStore;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
@@ -55,8 +54,12 @@ public class GlobalInboxEntryImportHandler {
 	private IInboxElementService inboxElementService;
 
 	@Execute
-	public void execute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
+	public void execute(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
 			IEventBroker eventBroker) {
+
+		if (globalInboxEntry == null) {
+			return;
+		}
 
 		String title = globalInboxEntry.getTitle();
 		IPatient patient = globalInboxEntry.getPatient();
@@ -67,7 +70,7 @@ public class GlobalInboxEntryImportHandler {
 
 		ICategory category = getCategoryOrDefault(globalInboxEntry.getCategory());
 
-		File mainFile = globalInboxEntry.getMainFile();
+		IVirtualFilesystemHandle mainFile = globalInboxEntry.getMainFile();
 		IDocument document = documentStore.createDocument(null, patient.getId(), mainFile.getName(),
 				category.getName());
 		document.setTitle(title);
@@ -78,7 +81,7 @@ public class GlobalInboxEntryImportHandler {
 		} else {
 			document.setCreated(new Date());
 		}
-		try (InputStream fin = new FileInputStream(mainFile)) {
+		try (InputStream fin = mainFile.openInputStream()) {
 			document = documentStore.saveDocument(document, fin);
 		} catch (IOException | ElexisException e) {
 			LoggerFactory.getLogger(getClass()).warn("Import error", e); //$NON-NLS-1$
@@ -138,7 +141,7 @@ public class GlobalInboxEntryImportHandler {
 	 * @return
 	 */
 	private IMandator getDefaultDochandleInboxMandator(IPatient patient) {
-		Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(patient);
+		java.util.Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(patient);
 		if (encounter.isPresent()) {
 			return encounter.get().getMandator();
 		} else {
@@ -161,7 +164,7 @@ public class GlobalInboxEntryImportHandler {
 	}
 
 	@CanExecute
-	public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
+	public boolean canExecute(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
 
 		if (globalInboxEntry == null) {
 			return false;
@@ -177,5 +180,4 @@ public class GlobalInboxEntryImportHandler {
 
 		return true;
 	}
-
 }

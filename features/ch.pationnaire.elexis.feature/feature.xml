@@ -5,16 +5,16 @@
       version="3.14.0.qualifier"
       provider-name="pationnaire.ch">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://pationnaire.ch">
+      Integration des pationnaire Diagnostik Fragebogen in Elexis.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://pationnaire.ch">
+      pationnaire.ch
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <plugin

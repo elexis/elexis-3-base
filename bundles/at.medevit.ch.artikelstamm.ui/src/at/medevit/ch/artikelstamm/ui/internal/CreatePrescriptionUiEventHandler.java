@@ -40,6 +40,17 @@ public class CreatePrescriptionUiEventHandler implements EventHandler {
 				if (item.isPm()) {
 					Optional<ArticleIndicationInfo> indicationInfo = item.getIndicationInfo();
 					if (indicationInfo.isPresent() && !indicationInfo.get().getIndications().isEmpty()) {
+						// check if already a selection is present for patient and article
+						// the selection is performed by the billing process see
+						// GenericTypeOriginalAdjuster
+						Optional<String> selection = IndicationCodeUtil
+								.getIndicationCodeSelection(prescription.getPatient(), item);
+						if (selection.isPresent()) {
+							prescription.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, selection.get());
+							CoreModelServiceHolder.get().save(prescription);
+							return;
+						}
+
 						Optional<String> indicationCodeHistory = IndicationCodeUtil.getLastIndicationCode(item,
 									prescription.getPatient(), Collections.emptyList());
 

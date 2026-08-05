@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.component.annotations.Component;
@@ -51,9 +50,11 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 					}
 				}
 			}
+			// apply indication code on billed if needed
 			if (item.isPm()) {
 				Optional<ArticleIndicationInfo> indicationInfo = item.getIndicationInfo();
 				if (indicationInfo.isPresent() && !indicationInfo.get().getIndications().isEmpty()) {
+					System.out.println("ADD INDICATION CODE WITH UI BILLED " + item.getLabel());
 					// lookup in prescriptions, and use that value without user interaction
 					Optional<String> indicationCodeHistory = IndicationCodeUtil.getLastIndicationCode(item,
 							billed.getEncounter().getPatient(), Arrays.asList(EntryType.FIXED_MEDICATION,
@@ -63,22 +64,21 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 						CoreModelServiceHolder.get().save(billed);
 						return;
 					}
-					IndicationCodeSelectionDialog dialog = new IndicationCodeSelectionDialog(item,
-							Display.getDefault().getActiveShell());
+					// direct apply single indication code
+					Optional<String> singleIndicationCode = IndicationCodeUtil.getSingleIndicationCode(item);
+					if (singleIndicationCode.isPresent()) {
+						billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, singleIndicationCode.get());
+						CoreModelServiceHolder.get().save(billed);
+						return;
+					}
 
-					indicationCodeHistory = IndicationCodeUtil.getLastIndicationCode(item,
-							billed.getEncounter().getPatient());
-					indicationCodeHistory.ifPresent(code -> {
-						dialog.setSelectedCode(code);
-					});
-					if (dialog.open() == Window.OK) {
-						if (dialog.getSelectedCode() instanceof String selectedCode) {
-							billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, selectedCode);
-							CoreModelServiceHolder.get().save(billed);
-							// set selection for possible following prescription creation
-							IndicationCodeUtil.setIndicationCodeSelection(billed.getEncounter().getPatient(), item,
-									selectedCode);
-						}
+					Optional<String> selection = IndicationCodeUtil
+							.getIndicationCodeSelection(billed.getEncounter().getPatient(), item, null, billed);
+					if (selection.isPresent()) {
+						billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, selection.get());
+						CoreModelServiceHolder.get().save(billed);
+						IndicationCodeUtil.applyToMedicationIfMissing(billed.getEncounter().getPatient(), item,
+								selection.get());
 					}
 				}
 			}

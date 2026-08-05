@@ -54,11 +54,11 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 			if (item.isPm()) {
 				Optional<ArticleIndicationInfo> indicationInfo = item.getIndicationInfo();
 				if (indicationInfo.isPresent() && !indicationInfo.get().getIndications().isEmpty()) {
-					System.out.println("ADD INDICATION CODE WITH UI BILLED " + item.getLabel());
 					// lookup in prescriptions, and use that value without user interaction
 					Optional<String> indicationCodeHistory = IndicationCodeUtil.getLastIndicationCode(item,
 							billed.getEncounter().getPatient(), Arrays.asList(EntryType.FIXED_MEDICATION,
-									EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
+									EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION),
+							true);
 					if (indicationCodeHistory.isPresent()) {
 						billed.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, indicationCodeHistory.get());
 						CoreModelServiceHolder.get().save(billed);

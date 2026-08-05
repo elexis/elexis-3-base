@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -91,6 +92,7 @@ public class IndicationCodeSelectionDialog extends TitleAreaDialog {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				extendedTextCode = getSelectedCode();
+				updateOkButton();
 			}
 		});
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -99,6 +101,18 @@ public class IndicationCodeSelectionDialog extends TitleAreaDialog {
 		natTableWrapper.getNatTable().setLayoutData(gd);
 		updateSelection();
 		return ret;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		updateOkButton();
+	}
+
+	private void updateOkButton() {
+		if (getButton(IDialogConstants.OK_ID) != null && !getButton(IDialogConstants.OK_ID).isDisposed()) {
+			getButton(IDialogConstants.OK_ID).setEnabled(getSelectedCode() != null);
+		}
 	}
 
 	private void updateSelection() {

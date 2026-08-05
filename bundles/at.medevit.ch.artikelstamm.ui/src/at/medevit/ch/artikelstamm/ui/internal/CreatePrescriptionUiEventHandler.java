@@ -33,16 +33,7 @@ public class CreatePrescriptionUiEventHandler implements EventHandler {
 				if (item.isPm()) {
 					Optional<ArticleIndicationInfo> indicationInfo = item.getIndicationInfo();
 					if (indicationInfo.isPresent() && !indicationInfo.get().getIndications().isEmpty()) {
-
-//						if (selection.isPresent()) {
-//								prescription.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, selection.get());
-//								CoreModelServiceHolder.get().save(prescription);
-//								if (prescription.getEntryType() == EntryType.SELF_DISPENSED) {
-//									IndicationCodeUtil.applyToMedicationIfMissing(prescription);
-//								}
-//								return;
-//							}
-							IndicationCodeUtil.addIndicationCodeWithUi(prescription);
+						IndicationCodeUtil.addIndicationCodeWithUi(prescription);
 					}
 				}
 			}

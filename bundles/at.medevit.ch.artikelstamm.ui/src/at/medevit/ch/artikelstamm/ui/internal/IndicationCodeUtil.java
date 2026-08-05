@@ -52,7 +52,8 @@ public class IndicationCodeUtil {
 	 * Lookup the last used indication code set on {@link IPrescription} for the
 	 * {@link IPatient} and the {@link IArtikelstammItem}. Which
 	 * {@link IPrescription}s are considered can be configured with the filterType
-	 * parameter, null or empty list considers all.
+	 * parameter, null or empty list considers all. If the {@link IPrescription} is
+	 * active at current date is ignored.
 	 * 
 	 * @param item
 	 * @param patient
@@ -61,6 +62,25 @@ public class IndicationCodeUtil {
 	 */
 	public static Optional<String> getLastIndicationCode(IArtikelstammItem item, IPatient patient,
 			List<EntryType> filterType) {
+		return getLastIndicationCode(item, patient, filterType, false);
+
+	}
+
+	/**
+	 * Lookup the last used indication code set on {@link IPrescription} for the
+	 * {@link IPatient} and the {@link IArtikelstammItem}. Which
+	 * {@link IPrescription}s are considered can be configured with the filterType
+	 * parameter, null or empty list considers all. If parameter active is true only
+	 * active {@link IPrescription} on current date are considered.
+	 * 
+	 * @param item
+	 * @param patient
+	 * @param filterType
+	 * @param active
+	 * @return
+	 */
+	public static Optional<String> getLastIndicationCode(IArtikelstammItem item, IPatient patient,
+			List<EntryType> filterType, boolean active) {
 		INativeQuery nativeQuery = CoreModelServiceHolder.get().getNativeQuery(PRESCRIPTION_BYPATIENT_ANDARTIKEL);
 		Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(Integer.valueOf(1), patient.getId(),
 				Integer.valueOf(2), StoreToStringServiceHolder.getStoreToString(item));
@@ -70,6 +90,11 @@ public class IndicationCodeUtil {
 			IPrescription precription = CoreModelServiceHolder.get().load(next, IPrescription.class).get();
 			if (filterType != null && !filterType.isEmpty()) {
 				if (!filterType.contains(precription.getEntryType())) {
+					continue;
+				}
+			}
+			if (active) {
+				if (precription.getDateTo() != null && precription.getDateTo().isBefore(LocalDateTime.now())) {
 					continue;
 				}
 			}
@@ -117,38 +142,6 @@ public class IndicationCodeUtil {
 		}
 		return Optional.empty();
 	}
-
-//	/**
-//	 * Lookup the "indicationcode.selection" named matching the provided
-//	 * {@link IPatient} and {@link IArtikelstammItem} from the
-//	 * {@link IContextService}. The current value is always cleared after lookup.
-//	 * 
-//	 * @param patient
-//	 * @param item
-//	 * @return
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public static Optional<String> getIndicationCodeSelection(IPatient patient, IArtikelstammItem item) {
-//		Optional<String> ret = Optional.empty();
-//		Optional<String> selection = (Optional<String>) ContextServiceHolder.get().getNamed("indicationcode.selection");
-//		if (selection.isPresent()) {
-//			String prefix = patient.getId() + "|" + item.getId() + "|";
-//			if (selection.get().startsWith(prefix)) {
-//				ret = Optional.of(selection.get().substring(prefix.length()));
-//			}
-//			ContextServiceHolder.get().setNamed("indicationcode.selection", null);
-//		}
-//		return ret;
-//	}
-
-//	public static void setIndicationCodeSelection(IPatient patient, IArtikelstammItem item, String selectedCode) {
-//		ContextServiceHolder.get().setNamed("indicationcode.selection",
-//				toIndicationCodeSelection(patient, item, selectedCode));
-//	}
-
-//	private static String toIndicationCodeSelection(IPatient patient, IArtikelstammItem item, String selectedCode) {
-//		return patient.getId() + "|" + item.getId() + "|" + selectedCode;
-//	}
 
 	/**
 	 * If there is only a single indication code available for the item, that code
@@ -202,7 +195,18 @@ public class IndicationCodeUtil {
 					CoreModelServiceHolder.get().save(prescription);
 					return;
 				}
-
+				if (prescription.getEntryType() == EntryType.SELF_DISPENSED) {
+					// lookup in prescriptions, and use that value without user interaction
+					Optional<String> indicationCodeHistory = IndicationCodeUtil.getLastIndicationCode(item,
+							prescription.getPatient(), Arrays.asList(EntryType.FIXED_MEDICATION,
+									EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION),
+							true);
+					if (indicationCodeHistory.isPresent()) {
+						prescription.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, indicationCodeHistory.get());
+						CoreModelServiceHolder.get().save(prescription);
+						return;
+					}
+				}
 				Optional<String> selection = getIndicationCodeSelection(prescription.getPatient(), item, prescription,
 						null);
 				if (selection.isPresent()) {
@@ -236,7 +240,9 @@ public class IndicationCodeUtil {
 		try {
 			String selection = indicationSelectionCache
 					.get(IndicationCodeLoaderKey.of(patient, item, prescription, billed));
-			return Optional.ofNullable(selection);
+			if (StringUtils.isNotBlank(selection)) {
+				return Optional.of(selection);
+			}
 		} catch (ExecutionException e) {
 			LoggerFactory.getLogger(IndicationCodeUtil.class).error("Error getting indication code", e);
 		}
@@ -346,7 +352,7 @@ public class IndicationCodeUtil {
 
 		@Override
 		public synchronized String load(IndicationCodeLoaderKey key) throws Exception {
-			indicationCodeSelection = null;
+			indicationCodeSelection = StringUtils.EMPTY;
 			if (key != null) {
 				indicationCodeHistory = Optional.empty();
 				if (key.prescription != null) {

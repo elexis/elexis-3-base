@@ -103,7 +103,7 @@ public class NapsScanHandler extends AbstractHandler implements IHandler {
 	private boolean assertScanProfileAvailable(ICommandService commandService, IHandlerService handlerService) {
 		try {
 			Command cmd = commandService.getCommand("at.medevit.elexis.documents.scan.napsprofileslist");
-			if (cmd != null) {
+			if (cmd != null && cmd.isDefined()) {
 				HashMap<String, String> params = new HashMap<String, String>();
 				ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(cmd, params);
 				List<String> profiles = (List<String>) PlatformUI.getWorkbench().getService(IHandlerService.class)

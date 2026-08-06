@@ -34,7 +34,9 @@ public class HL7ImportDirectory {
 	}
 
 	public static String getDirectory(IConfigService configService) {
-		return PreferencesUtil.getOsSpecificPreference(CFG_DIRECTORY, isStoreGlobal(configService), configService);
+		return isStoreGlobal(configService)
+				? PreferencesUtil.getOsSpecificGlobalPreference(CFG_DIRECTORY, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(CFG_DIRECTORY, configService);
 	}
 
 	public static Optional<IVirtualFilesystemHandle> getDirectoryHandle() {

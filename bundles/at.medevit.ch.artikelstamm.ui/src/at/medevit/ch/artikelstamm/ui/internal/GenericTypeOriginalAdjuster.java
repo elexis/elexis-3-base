@@ -79,6 +79,8 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 						CoreModelServiceHolder.get().save(billed);
 						IndicationCodeUtil.applyToMedicationIfMissing(billed.getEncounter().getPatient(), item,
 								selection.get());
+					} else {
+						BillingServiceHolder.get().removeBilled(billed, billed.getEncounter());
 					}
 				}
 			}

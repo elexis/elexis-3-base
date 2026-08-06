@@ -112,6 +112,7 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			monitor.beginTask("Lade Inbox", input.size());
+			new InboxElementUiExtension().prepareElements(input);
 			Map<IPatient, PatientInboxElements> map = new HashMap<>();
 
 			for (IInboxElement inboxElement : input) {

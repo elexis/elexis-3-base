@@ -25,6 +25,9 @@ import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 
 public interface IInboxElementUiProvider {
 
+	public default void prepareElements(List<IInboxElement> elements) {
+	}
+
 	/**
 	 * Image that will be placed on the filter action.
 	 * 

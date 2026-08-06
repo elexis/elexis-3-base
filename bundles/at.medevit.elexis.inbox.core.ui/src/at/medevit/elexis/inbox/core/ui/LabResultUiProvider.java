@@ -12,7 +12,9 @@ package at.medevit.elexis.inbox.core.ui;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +38,8 @@ import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LabServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
@@ -44,6 +48,8 @@ import ch.elexis.data.LabResult;
 import ch.rgw.tools.Result;
 
 public class LabResultUiProvider implements IInboxElementUiProvider {
+	private static final String LAB_RESULT_PREFIX = "ch.elexis.data.LabResult::"; //$NON-NLS-1$
+	private static final int PREFETCH_BATCH_SIZE = 500;
 	private static DecorationOverlayIcon pathologicLabImage;
 
 	private IViewDescriptor rocheView;
@@ -57,6 +63,31 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 
 	public LabResultUiProvider() {
 		labelProvider = new LabResultLabelProvider();
+	}
+
+	@Override
+	public void prepareElements(List<IInboxElement> elements) {
+		Map<String, List<IInboxElement>> elementsById = new HashMap<>();
+		for (IInboxElement element : elements) {
+			String uri = element.getUri();
+			if (uri != null && uri.startsWith(LAB_RESULT_PREFIX)) {
+				elementsById.computeIfAbsent(uri.substring(LAB_RESULT_PREFIX.length()), key -> new ArrayList<>())
+					.add(element);
+			}
+		}
+
+		List<String> ids = new ArrayList<>(elementsById.keySet());
+		for (int from = 0; from < ids.size(); from += PREFETCH_BATCH_SIZE) {
+			List<String> batch = ids.subList(from, Math.min(from + PREFETCH_BATCH_SIZE, ids.size()));
+			IQuery<ILabResult> query = CoreModelServiceHolder.get().getQuery(ILabResult.class);
+			query.and("id", COMPARATOR.IN, batch); //$NON-NLS-1$
+			for (ILabResult result : query.execute()) {
+				List<IInboxElement> matchingElements = elementsById.get(result.getId());
+				if (matchingElements != null) {
+					matchingElements.forEach(element -> element.setResolvedObject(result));
+				}
+			}
+		}
 	}
 
 	@Override

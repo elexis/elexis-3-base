@@ -3,6 +3,9 @@ package at.medevit.elexis.inbox.model.impl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.services.IModelService;
 
@@ -10,6 +13,9 @@ import ch.elexis.core.services.IModelService;
 public class ModelUtil {
 
 	private static IModelService modelService;
+	private static final int MODEL_CACHE_SIZE = 2048;
+	private static final Cache<String, Object> modelCache = CacheBuilder.newBuilder().maximumSize(MODEL_CACHE_SIZE)
+			.weakValues().build();
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
 	public void setModelService(IModelService modelService) {
@@ -18,7 +24,16 @@ public class ModelUtil {
 
 	public static <T> T loadCoreModel(EntityWithId entity, Class<T> clazz) {
 		if (entity != null) {
-			return (T) modelService.load(entity.getId(), clazz).orElse(null);
+			String key = clazz.getName() + ':' + entity.getId();
+			Object cached = modelCache.getIfPresent(key);
+			if (cached != null) {
+				return clazz.cast(cached);
+			}
+			T loaded = modelService.load(entity.getId(), clazz).orElse(null);
+			if (loaded != null) {
+				modelCache.put(key, loaded);
+			}
+			return loaded;
 		}
 		return null;
 	}

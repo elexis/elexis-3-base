@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -35,7 +37,6 @@ import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.EncounterServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
-import jakarta.inject.Inject;
 
 public class NapsScanHandler extends AbstractHandler implements IHandler {
 

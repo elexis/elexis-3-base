@@ -55,8 +55,6 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 
 	@Override
 	protected void createFieldEditors() {
-		HL7ImportDirectory.migrateLegacySetting();
-
 		bStoreGlobal = new BooleanFieldEditor(HL7ImportDirectory.CFG_DIRECTORY_GLOBAL,
 				Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override

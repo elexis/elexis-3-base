@@ -57,9 +57,4 @@ public class HL7ImportDirectory {
 		}
 		return Optional.empty();
 	}
-
-	public static void migrateLegacySetting() {
-		IConfigService configService = ConfigServiceHolder.get();
-		PreferencesUtil.migrateToOsSpecificPreference(CFG_DIRECTORY, isStoreGlobal(configService), configService);
-	}
 }

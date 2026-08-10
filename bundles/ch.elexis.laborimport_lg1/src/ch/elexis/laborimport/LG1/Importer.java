@@ -113,7 +113,6 @@ public class Importer extends ImporterPage {
 
 	private Result<?> importDirect() {
 		Result<String> result = new Result<String>("OK");
-
 		String configuredDir = LG1Settings.get(LG1Settings.DL_DIR);
 		File downloadDir = StringUtils.isBlank(configuredDir) ? CoreHub.getTempDir()
 				: LG1Settings.resolveLocalFile(configuredDir).orElse(null);

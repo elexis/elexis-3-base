@@ -60,9 +60,10 @@ public class LG1Settings {
 		try {
 			return vfsService.of(pathOrUri).toFile();
 		} catch (IOException e) {
-			LoggerFactory.getLogger(LG1Settings.class).warn("Could not resolve location [{}]", //$NON-NLS-1$
-					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri), e);
-			return Optional.empty();
+			LoggerFactory.getLogger(LG1Settings.class).debug(
+					"Location [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
+					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
+			return Optional.of(new File(pathOrUri));
 		}
 	}
 }

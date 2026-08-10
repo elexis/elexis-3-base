@@ -1,5 +1,6 @@
 package ch.elexis.laborimport.hl7.universal;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -49,13 +50,30 @@ public class HL7ImportDirectory {
 			return Optional.empty();
 		}
 		try {
-			IVirtualFilesystemHandle handle = vfsService.of(directory);
-			if (handle.exists() && handle.isDirectory()) {
-				return Optional.of(handle);
-			}
+			return toDirectoryHandle(vfsService.of(directory));
+		} catch (IOException e) {
+			LoggerFactory.getLogger(HL7ImportDirectory.class).debug(
+					"HL7 import directory [{}] is not a valid URI, falling back to plain file resolution",
+					IVirtualFilesystemService.hidePasswordInUrlString(directory));
+			return getLegacyDirectoryHandle(vfsService, directory);
+		}
+	}
+
+	private static Optional<IVirtualFilesystemHandle> getLegacyDirectoryHandle(IVirtualFilesystemService vfsService,
+			String directory) {
+		try {
+			return toDirectoryHandle(vfsService.of(new File(directory)));
 		} catch (IOException e) {
 			LoggerFactory.getLogger(HL7ImportDirectory.class).warn("Could not access HL7 import directory [{}]",
-					IVirtualFilesystemService.hidePasswordInUrlString(directory), e);
+					directory, e);
+			return Optional.empty();
+		}
+	}
+
+	private static Optional<IVirtualFilesystemHandle> toDirectoryHandle(IVirtualFilesystemHandle handle)
+			throws IOException {
+		if (handle != null && handle.exists() && handle.isDirectory()) {
+			return Optional.of(handle);
 		}
 		return Optional.empty();
 	}

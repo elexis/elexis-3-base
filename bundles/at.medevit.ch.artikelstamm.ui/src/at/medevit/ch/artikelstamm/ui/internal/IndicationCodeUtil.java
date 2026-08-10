@@ -370,8 +370,8 @@ public class IndicationCodeUtil {
 						dialog.setSelectedCode(code);
 					});
 					if (dialog.open() == Window.OK) {
-						if (dialog.getSelectedCode() instanceof String selectedCode) {
-							indicationCodeSelection = selectedCode;
+						if (dialog.getSelectedCode() instanceof String) {
+							indicationCodeSelection = dialog.getSelectedCode();
 						}
 					}
 				});

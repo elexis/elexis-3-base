@@ -12,9 +12,9 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
 Export-Package: at.medevit.ch.artikelstamm.ui,
  org.eclipse.wb.swt
 Import-Package: at.medevit.ch.artikelstamm.model.common.preference,
- com.google.common.cache;version="[33.4.0,34.0.0)",
- org.eclipse.nebula.widgets.nattable;version="[2.5.0,3.0.0)",
- org.eclipse.nebula.widgets.nattable.data;version="[2.5.0,3.0.0)"
+ com.google.common.cache;version="[32.1.3,34.0.0)",
+ org.eclipse.nebula.widgets.nattable;version="[2.2.1,3.0.0)",
+ org.eclipse.nebula.widgets.nattable.data;version="[2.2.1,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: at.medevit.ch.artikelstamm.ui.internal.Activator
 Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.CreatePrescriptionUiEventHandler.xml,

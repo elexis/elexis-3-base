@@ -74,8 +74,8 @@ public class MedicationIndicationContribution implements IViewContribution {
 								dialog.setSelectedCode(code);
 							});
 							if (dialog.open() == Window.OK) {
-								if (dialog.getSelectedCode() instanceof String selectedCode) {
-									detailObject.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, selectedCode);
+								if (dialog.getSelectedCode() instanceof String) {
+									detailObject.setExtInfo(Constants.FLD_EXT_INDICATIONCODE, dialog.getSelectedCode());
 									CoreModelServiceHolder.get().save(detailObject);
 									// refresh
 									setDetailObject(detailObject, null);

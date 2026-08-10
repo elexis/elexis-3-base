@@ -95,8 +95,8 @@ public class ArticleDetailDialog extends Dialog {
 				IndicationCodeSelectionDialog dialog = new IndicationCodeSelectionDialog(article, getShell());
 				dialog.setSelectedCode(bIndication.getText());
 				if (dialog.open() == Window.OK) {
-					if (dialog.getSelectedCode() instanceof String selectedCode) {
-						bIndication.setText(selectedCode);
+					if (dialog.getSelectedCode() instanceof String) {
+						bIndication.setText(dialog.getSelectedCode());
 					}
 				}
 			}

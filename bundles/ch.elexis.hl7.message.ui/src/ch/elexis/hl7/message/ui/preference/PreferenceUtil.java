@@ -1,5 +1,6 @@
 package ch.elexis.hl7.message.ui.preference;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,16 +89,33 @@ public class PreferenceUtil {
 			return Optional.empty();
 		}
 		try {
-			IVirtualFilesystemHandle handle = vfsService.of(directory);
-			if (handle.exists() && handle.isDirectory()) {
-				return Optional.of(handle);
-			}
-			LoggerFactory.getLogger(PreferenceUtil.class).warn("HL7 message output directory [{}] is not a directory",
+			return toDirectoryHandle(vfsService.of(directory), directory);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(PreferenceUtil.class).debug(
+					"HL7 message output directory [{}] is not a valid URI, falling back to plain file resolution",
 					IVirtualFilesystemService.hidePasswordInUrlString(directory));
+			return getLegacyOutputDirectoryHandle(vfsService, directory);
+		}
+	}
+
+	private static Optional<IVirtualFilesystemHandle> getLegacyOutputDirectoryHandle(
+			IVirtualFilesystemService vfsService, String directory) {
+		try {
+			return toDirectoryHandle(vfsService.of(new File(directory)), directory);
 		} catch (IOException e) {
 			LoggerFactory.getLogger(PreferenceUtil.class).warn("Could not access HL7 message output directory [{}]",
-					IVirtualFilesystemService.hidePasswordInUrlString(directory), e);
+					directory, e);
+			return Optional.empty();
 		}
+	}
+
+	private static Optional<IVirtualFilesystemHandle> toDirectoryHandle(IVirtualFilesystemHandle handle,
+			String directory) throws IOException {
+		if (handle != null && handle.exists() && handle.isDirectory()) {
+			return Optional.of(handle);
+		}
+		LoggerFactory.getLogger(PreferenceUtil.class).warn("HL7 message output directory [{}] is not a directory",
+				IVirtualFilesystemService.hidePasswordInUrlString(directory));
 		return Optional.empty();
 	}
 }

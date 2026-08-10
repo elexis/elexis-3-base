@@ -73,8 +73,9 @@ public class PreferenceUtil {
 	}
 
 	public static String getOutputDirectory(IConfigService configService) {
-		return PreferencesUtil.getOsSpecificPreference(PREF_FILESYSTEM_OUTPUTDIR, isStoreGlobal(configService),
-				configService);
+		return isStoreGlobal(configService)
+				? PreferencesUtil.getOsSpecificGlobalPreference(PREF_FILESYSTEM_OUTPUTDIR, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(PREF_FILESYSTEM_OUTPUTDIR, configService);
 	}
 
 	public static Optional<IVirtualFilesystemHandle> getOutputDirectoryHandle() {

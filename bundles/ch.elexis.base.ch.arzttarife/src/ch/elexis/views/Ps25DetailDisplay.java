@@ -31,8 +31,8 @@ public class Ps25DetailDisplay implements IDetailDisplay {
 			new InputData("Taxpunkte", "TP", InputData.Typ.STRING, null),
 			new InputData("Stufe", "stufe", InputData.Typ.STRING, null),
 			new InputData("Honorarempfaenger", "honorarEmpfaenger", InputData.Typ.STRING, null),
-			new InputData("Fachgebiet/Kapitel", "fachgebietKapitel", InputData.Typ.STRING, null),
-			new InputData("Unterkapitel", "unterkapitel", InputData.Typ.STRING, null),
+			new InputData("Fachgebiet/Kapitel", "chapter", InputData.Typ.STRING, null),
+			new InputData("Unterkapitel", "subChapter", InputData.Typ.STRING, null),
 			new InputData("Mehrleistungstyp", "mehrleistungsTyp", InputData.Typ.STRING, null),
 			new InputData("Gueltig von", "validFrom", InputData.Typ.STRING, null),
 			new InputData("Gueltig bis", "validTo", InputData.Typ.STRING, null) };

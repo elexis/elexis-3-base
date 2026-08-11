@@ -49,7 +49,7 @@ public class Ps25Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jp
 					int points = 0;
 					if (billable.getTP() != null) {
 						try {
-							points = Integer.valueOf(billable.getTP());
+							points = Integer.valueOf(billable.getTP()) * 100;
 						} catch (NumberFormatException ne) {
 							// ignore ...
 						}

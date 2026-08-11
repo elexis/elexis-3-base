@@ -3,6 +3,8 @@ package ch.elexis.base.ch.arzttarife.ps25.model;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.base.ch.arzttarife.ArzttarifeConstants;
 import ch.elexis.base.ch.arzttarife.ps25.IPs25Leistung;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -213,6 +215,13 @@ public class Ps25Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jp
 	@Override
 	public void setMehrleistung(String value) {
 		getEntityMarkDirty().setMehrleistung(value);
+	}
+
+	@Override
+	public String getLabel() {
+		return getCode() + " - " + getChapter()
+				+ (StringUtils.isNotBlank(getSubChapter()) ? ", " + getSubChapter() : StringUtils.EMPTY) + ", "
+				+ StringUtils.SPACE + getText();
 	}
 
 	@Override

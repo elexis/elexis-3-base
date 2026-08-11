@@ -10,21 +10,17 @@
 
 package ch.elexis.laborimport.synlab;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
 import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
 import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
@@ -38,9 +34,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	private BooleanFieldEditor bStoreGlobal;
 
+	private OsPathEditorGroup pathGroup;
+
 	private URIFieldEditorComposite jarEditor;
 	private URIFieldEditorComposite iniEditor;
-	private URIFieldEditorComposite dirEditor;
 
 	public PreferencePage() {
 		super(GRID);
@@ -63,19 +60,13 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		};
 		addField(bStoreGlobal);
 
-		jarEditor = createPathEditor(SynlabSettings.JAR_PATH, Messages.PreferencePage_JMedTrasferJar);
-		iniEditor = createPathEditor(SynlabSettings.INI_PATH, Messages.PreferencePage_JMedTrasferJni);
-		dirEditor = createPathEditor(SynlabSettings.DL_DIR, Messages.PreferencePage_DownloadDir);
+		pathGroup = new OsPathEditorGroup(getFieldEditorParent(), SWT.NONE);
+		jarEditor = pathGroup.addPathEditor(SynlabSettings.JAR_PATH, Messages.PreferencePage_JMedTrasferJar);
+		iniEditor = pathGroup.addPathEditor(SynlabSettings.INI_PATH, Messages.PreferencePage_JMedTrasferJni);
+		pathGroup.addPathEditor(SynlabSettings.DL_DIR, Messages.PreferencePage_DownloadDir);
 
 		setOptionalHint(jarEditor);
 		setOptionalHint(iniEditor);
-	}
-
-	private URIFieldEditorComposite createPathEditor(String preferenceName, String labelText) {
-		URIFieldEditorComposite editor = new URIFieldEditorComposite(preferenceName, labelText, getFieldEditorParent(),
-				SWT.NONE);
-		editor.setEmptyStringAllowed(true);
-		return editor;
 	}
 
 	private void setOptionalHint(URIFieldEditorComposite editor) {
@@ -92,34 +83,13 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	}
 
 	private void updatePathStores(boolean global) {
-		ConfigServicePreferenceStore store = new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.LOCAL);
-		for (URIFieldEditorComposite editor : getPathEditors()) {
-			editor.setPreferenceStore(store);
-		}
+		pathGroup.setPreferenceStore(new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.LOCAL));
 	}
 
 	@Override
 	protected void adjustGridLayout() {
 		super.adjustGridLayout();
-		if (!(getFieldEditorParent().getLayout() instanceof GridLayout)) {
-			return;
-		}
-		int numColumns = ((GridLayout) getFieldEditorParent().getLayout()).numColumns;
-		for (URIFieldEditorComposite editor : getPathEditors()) {
-			if (editor.getLayoutData() instanceof GridData) {
-				((GridData) editor.getLayoutData()).horizontalSpan = numColumns;
-			}
-		}
-	}
-
-	private List<URIFieldEditorComposite> getPathEditors() {
-		List<URIFieldEditorComposite> editors = new ArrayList<>(3);
-		for (URIFieldEditorComposite editor : new URIFieldEditorComposite[] { jarEditor, iniEditor, dirEditor }) {
-			if (editor != null && !editor.isDisposed()) {
-				editors.add(editor);
-			}
-		}
-		return editors;
+		pathGroup.adjustHorizontalSpan();
 	}
 
 	@Override

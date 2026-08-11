@@ -91,7 +91,6 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		soundPathEditor = new URIFieldEditorComposite(MessageSoundSettings.CFG_SOUND_PATH, Messages.Prefs_SoundSettings,
 				editorComposite, SWT.NONE);
 		soundPathEditor.setEmptyStringAllowed(true);
-		soundPathEditor.setUseFileMode(true);
 		updateSoundPathStore(MessageSoundSettings.isStoreGlobal());
 		updateSoundPathEnablement();
 

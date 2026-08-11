@@ -1,42 +1,65 @@
 /**
  * Copyright Text	Copyright (c) 2018 MEDEVIT <office@medevit.at>....
  */
-package ch.elexis.base.ch.arzttarife.ambulatory.impl;
+package ch.elexis.base.ch.arzttarife.ps25.impl;
+
+import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
+
+import ch.elexis.base.ch.arzttarife.ambulatory.impl.AmbulatoryPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
+
+import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
+
+import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
+
+import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
+
+import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
+
+import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
+
+import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.ps25.IPs25Leistung;
+import ch.elexis.base.ch.arzttarife.ps25.Ps25Factory;
+import ch.elexis.base.ch.arzttarife.ps25.Ps25Package;
+
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
+
+import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
+
+import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
+
+import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
+
+import ch.elexis.base.ch.arzttarife.tardoc.impl.TardocPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
+
+import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
+
+import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
+
+import ch.elexis.core.model.ModelPackage;
+
+import ch.elexis.core.types.TypesPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
 
-import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
-import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryFactory;
-import ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage;
-import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
-import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
-import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
-import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
-import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
-import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
-import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
-import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
-import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
-import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
-import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
-import ch.elexis.base.ch.arzttarife.ps25.Ps25Package;
-import ch.elexis.base.ch.arzttarife.ps25.impl.Ps25PackageImpl;
-import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
-import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
-import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
-import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
-import ch.elexis.base.ch.arzttarife.tardoc.TardocPackage;
-import ch.elexis.base.ch.arzttarife.tardoc.impl.TardocPackageImpl;
-import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
-import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
-import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
-import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
-import ch.elexis.core.model.ModelPackage;
-import ch.elexis.core.types.TypesPackage;
+import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -44,20 +67,13 @@ import ch.elexis.core.types.TypesPackage;
  * <!-- end-user-doc -->
  * @generated
  */
-public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPackage {
+public class Ps25PackageImpl extends EPackageImpl implements Ps25Package {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass iAmbulatoryAllowanceEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType ambulantePauschalenTypEDataType = null;
+	private EClass iPs25LeistungEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -70,12 +86,12 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see ch.elexis.base.ch.arzttarife.ambulatory.AmbulatoryPackage#eNS_URI
+	 * @see ch.elexis.base.ch.arzttarife.ps25.Ps25Package#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private AmbulatoryPackageImpl() {
-		super(eNS_URI, AmbulatoryFactory.eINSTANCE);
+	private Ps25PackageImpl() {
+		super(eNS_URI, Ps25Factory.eINSTANCE);
 	}
 	/**
 	 * <!-- begin-user-doc -->
@@ -87,7 +103,7 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 *
-	 * <p>This method is used to initialize {@link AmbulatoryPackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link Ps25Package#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -96,12 +112,12 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static AmbulatoryPackage init() {
-		if (isInited) return (AmbulatoryPackage)EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
+	public static Ps25Package init() {
+		if (isInited) return (Ps25Package)EPackage.Registry.INSTANCE.getEPackage(Ps25Package.eNS_URI);
 
 		// Obtain or create and register package
-		Object registeredAmbulatoryPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		AmbulatoryPackageImpl theAmbulatoryPackage = registeredAmbulatoryPackage instanceof AmbulatoryPackageImpl ? (AmbulatoryPackageImpl)registeredAmbulatoryPackage : new AmbulatoryPackageImpl();
+		Object registeredPs25Package = EPackage.Registry.INSTANCE.get(eNS_URI);
+		Ps25PackageImpl thePs25Package = registeredPs25Package instanceof Ps25PackageImpl ? (Ps25PackageImpl)registeredPs25Package : new Ps25PackageImpl();
 
 		isInited = true;
 
@@ -130,11 +146,11 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TardocPackage.eNS_URI);
 		TardocPackageImpl theTardocPackage = (TardocPackageImpl)(registeredPackage instanceof TardocPackageImpl ? registeredPackage : TardocPackage.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(Ps25Package.eNS_URI);
-		Ps25PackageImpl thePs25Package = (Ps25PackageImpl)(registeredPackage instanceof Ps25PackageImpl ? registeredPackage : Ps25Package.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
+		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
 
 		// Create package meta-data objects
-		theAmbulatoryPackage.createPackageContents();
+		thePs25Package.createPackageContents();
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
 		theComplementaryPackage.createPackageContents();
@@ -145,10 +161,10 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 		thePsychoPackage.createPackageContents();
 		theOccupationalPackage.createPackageContents();
 		theTardocPackage.createPackageContents();
-		thePs25Package.createPackageContents();
+		theAmbulatoryPackage.createPackageContents();
 
 		// Initialize created meta-data
-		theAmbulatoryPackage.initializePackageContents();
+		thePs25Package.initializePackageContents();
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
 		theComplementaryPackage.initializePackageContents();
@@ -159,14 +175,14 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 		thePsychoPackage.initializePackageContents();
 		theOccupationalPackage.initializePackageContents();
 		theTardocPackage.initializePackageContents();
-		thePs25Package.initializePackageContents();
+		theAmbulatoryPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		theAmbulatoryPackage.freeze();
+		thePs25Package.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(AmbulatoryPackage.eNS_URI, theAmbulatoryPackage);
-		return theAmbulatoryPackage;
+		EPackage.Registry.INSTANCE.put(Ps25Package.eNS_URI, thePs25Package);
+		return thePs25Package;
 	}
 
 	/**
@@ -175,8 +191,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EClass getIAmbulatoryAllowance() {
-		return iAmbulatoryAllowanceEClass;
+	public EClass getIPs25Leistung() {
+		return iPs25LeistungEClass;
 	}
 
 	/**
@@ -185,8 +201,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIAmbulatoryAllowance_ValidFrom() {
-		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(0);
+	public EAttribute getIPs25Leistung_ValidFrom() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -195,8 +211,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIAmbulatoryAllowance_ValidTo() {
-		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(1);
+	public EAttribute getIPs25Leistung_ValidTo() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -205,8 +221,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIAmbulatoryAllowance_Chapter() {
-		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(2);
+	public EAttribute getIPs25Leistung_TP() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -215,8 +231,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIAmbulatoryAllowance_TP() {
-		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(3);
+	public EAttribute getIPs25Leistung_SubChapter() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -225,8 +241,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIAmbulatoryAllowance_DigniQuali() {
-		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(4);
+	public EAttribute getIPs25Leistung_Chapter() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -235,8 +251,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIAmbulatoryAllowance_Typ() {
-		return (EAttribute)iAmbulatoryAllowanceEClass.getEStructuralFeatures().get(5);
+	public EAttribute getIPs25Leistung_HonorarEmpfaenger() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -245,8 +261,8 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public EDataType getAmbulantePauschalenTyp() {
-		return ambulantePauschalenTypEDataType;
+	public EAttribute getIPs25Leistung_MehrleistungBei() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -255,8 +271,68 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 	 * @generated
 	 */
 	@Override
-	public AmbulatoryFactory getAmbulatoryFactory() {
-		return (AmbulatoryFactory)getEFactoryInstance();
+	public EAttribute getIPs25Leistung_Spezifikation() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIPs25Leistung_AnwendungsRegeln() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIPs25Leistung_Stufe() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIPs25Leistung_MoeglicheKombination() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIPs25Leistung_MehrleistungsTyp() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIPs25Leistung_Mehrleistung() {
+		return (EAttribute)iPs25LeistungEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Ps25Factory getPs25Factory() {
+		return (Ps25Factory)getEFactoryInstance();
 	}
 
 	/**
@@ -278,16 +354,20 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 		isCreated = true;
 
 		// Create classes and their features
-		iAmbulatoryAllowanceEClass = createEClass(IAMBULATORY_ALLOWANCE);
-		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__VALID_FROM);
-		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__VALID_TO);
-		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__CHAPTER);
-		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__TP);
-		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__DIGNI_QUALI);
-		createEAttribute(iAmbulatoryAllowanceEClass, IAMBULATORY_ALLOWANCE__TYP);
-
-		// Create data types
-		ambulantePauschalenTypEDataType = createEDataType(AMBULANTE_PAUSCHALEN_TYP);
+		iPs25LeistungEClass = createEClass(IPS25_LEISTUNG);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__VALID_FROM);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__VALID_TO);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__TP);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__SUB_CHAPTER);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__CHAPTER);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__HONORAR_EMPFAENGER);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__MEHRLEISTUNG_BEI);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__SPEZIFIKATION);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__ANWENDUNGS_REGELN);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__STUFE);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__MOEGLICHE_KOMBINATION);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__MEHRLEISTUNGS_TYP);
+		createEAttribute(iPs25LeistungEClass, IPS25_LEISTUNG__MEHRLEISTUNG);
 	}
 
 	/**
@@ -322,22 +402,26 @@ public class AmbulatoryPackageImpl extends EPackageImpl implements AmbulatoryPac
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		iAmbulatoryAllowanceEClass.getESuperTypes().add(theModelPackage.getIBillable());
+		iPs25LeistungEClass.getESuperTypes().add(theModelPackage.getIService());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(iAmbulatoryAllowanceEClass, IAmbulatoryAllowance.class, "IAmbulatoryAllowance", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getIAmbulatoryAllowance_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIAmbulatoryAllowance_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIAmbulatoryAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIAmbulatoryAllowance_TP(), ecorePackage.getEString(), "TP", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIAmbulatoryAllowance_DigniQuali(), ecorePackage.getEString(), "digniQuali", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIAmbulatoryAllowance_Typ(), this.getAmbulantePauschalenTyp(), "typ", null, 0, 1, IAmbulatoryAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		// Initialize data types
-		initEDataType(ambulantePauschalenTypEDataType, AmbulantePauschalenTyp.class, "AmbulantePauschalenTyp", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEClass(iPs25LeistungEClass, IPs25Leistung.class, "IPs25Leistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getIPs25Leistung_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_TP(), ecorePackage.getEString(), "TP", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_SubChapter(), ecorePackage.getEString(), "subChapter", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_HonorarEmpfaenger(), ecorePackage.getEString(), "honorarEmpfaenger", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_MehrleistungBei(), ecorePackage.getEString(), "mehrleistungBei", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_Spezifikation(), ecorePackage.getEString(), "spezifikation", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_AnwendungsRegeln(), ecorePackage.getEString(), "anwendungsRegeln", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_Stufe(), ecorePackage.getEString(), "stufe", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_MoeglicheKombination(), ecorePackage.getEString(), "moeglicheKombination", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_MehrleistungsTyp(), ecorePackage.getEString(), "mehrleistungsTyp", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPs25Leistung_Mehrleistung(), ecorePackage.getEString(), "mehrleistung", null, 0, 1, IPs25Leistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
 	}
 
-} //AmbulatoryPackageImpl
+} //Ps25PackageImpl

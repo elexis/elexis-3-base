@@ -10,6 +10,8 @@
 package ch.docbox.elexis;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
@@ -28,14 +30,20 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbench;
@@ -55,11 +63,15 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
@@ -79,7 +91,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	private StringFieldEditor loginIdFieldEditor;
 	private StringFieldEditor passwordFieldEditor;
-	private URIFieldEditor directoryFieldEditor;
+	private BooleanFieldEditor bStorePathFilesGlobal;
+	private URIFieldEditorComposite directoryFieldEditor;
 	private Button buttonAgendaSettingsPerUser;
 
 	private Combo agendaBereichCombo;
@@ -138,6 +151,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	public static final String ID = "ch.docbox.elexis.UserDocboxPreferences";//$NON-NLS-1$
 
 	public static final String USR_DEFDOCBOXPATHFILES = "docbox/pathfiles"; //$NON-NLS-1$
+	public static final String USR_DEFDOCBOXPATHFILES_GLOBAL = "docbox/pathfiles_global"; //$NON-NLS-1$
 	public static final String USR_DEFDOCBOXPATHHCARDAPI = "docbox/pathhcardapi"; //$NON-NLS-1$
 	public static final String USR_AGENDASETTINGSPERUSER = "docbox/agendasettingsperuser"; //$NON-NLS-1$
 	public static final String USR_USEHCARD = "docbox/usefmhcard"; //$NON-NLS-1$
@@ -216,11 +230,25 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
 				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
-		directoryFieldEditor = new URIFieldEditor(USR_DEFDOCBOXPATHFILES,
-				Messages.UserDocboxPreferences_PathFiles, getFieldEditorParent());
-		directoryFieldEditor.setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
+		bStorePathFilesGlobal = new BooleanFieldEditor(USR_DEFDOCBOXPATHFILES_GLOBAL,
+				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
+			@Override
+			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
+				super.fireValueChanged(property, oldValue, newValue);
+				if (FieldEditor.VALUE.equals(property)) {
+					boolean global = Boolean.TRUE.equals(newValue);
+					ConfigServiceHolder.setGlobal(USR_DEFDOCBOXPATHFILES_GLOBAL, global);
+					updatePathFilesStore(global);
+				}
+			}
+		};
+		addField(bStorePathFilesGlobal);
+		bStorePathFilesGlobal.setEnabled(enableForMandant, getFieldEditorParent());
+
+		directoryFieldEditor = new URIFieldEditorComposite(USR_DEFDOCBOXPATHFILES,
+				Messages.UserDocboxPreferences_PathFiles, getFieldEditorParent(), SWT.NONE);
 		directoryFieldEditor.setEmptyStringAllowed(true);
-		addField(directoryFieldEditor);
+		directoryFieldEditor.setEnabled(enableForMandant);
 
 		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL)
 				.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
@@ -370,8 +398,43 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		return docboxSha1SecretKey;
 	}
 
+	public static boolean isPathFilesStoreGlobal() {
+		return ConfigServiceHolder.get().get(USR_DEFDOCBOXPATHFILES_GLOBAL, false);
+	}
+
 	public static String getPathFiles() {
-		return ConfigServiceHolder.getMandator(USR_DEFDOCBOXPATHFILES, StringUtils.EMPTY);
+		IConfigService configService = ConfigServiceHolder.get();
+		String value;
+		if (isPathFilesStoreGlobal()) {
+			value = PreferencesUtil.getOsSpecificGlobalPreference(USR_DEFDOCBOXPATHFILES, configService);
+		} else {
+			value = ContextServiceHolder.get().getActiveMandator()
+					.map(mandator -> PreferencesUtil.getOsSpecificContactPreference(USR_DEFDOCBOXPATHFILES, mandator,
+							configService))
+					.orElseGet(() -> PreferencesUtil.getOsSpecificGlobalPreference(USR_DEFDOCBOXPATHFILES,
+							configService));
+		}
+		return StringUtils.defaultString(value);
+	}
+
+
+	public static Optional<File> getPathFilesAsLocalFile() {
+		String pathOrUri = getPathFiles();
+		if (StringUtils.isBlank(pathOrUri)) {
+			return Optional.empty();
+		}
+		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
+		if (vfsService == null) {
+			return Optional.of(new File(pathOrUri));
+		}
+		try {
+			return vfsService.of(pathOrUri).toFile();
+		} catch (IOException e) {
+			LoggerFactory.getLogger(UserDocboxPreferences.class).debug(
+					"Attachment directory [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
+					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
+			return Optional.of(new File(pathOrUri));
+		}
 	}
 
 	public static String getPathHCardAPI() {
@@ -434,6 +497,34 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	@Override
+	protected Control createContents(Composite parent) {
+		Control control = super.createContents(parent);
+		bStorePathFilesGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		bStorePathFilesGlobal.load();
+		updatePathFilesStore(isPathFilesStoreGlobal());
+		return control;
+	}
+
+	private void updatePathFilesStore(boolean global) {
+		if (directoryFieldEditor == null || directoryFieldEditor.isDisposed()) {
+			return;
+		}
+		directoryFieldEditor
+				.setPreferenceStore(new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.MANDATOR));
+	}
+
+	@Override
+	protected void adjustGridLayout() {
+		super.adjustGridLayout();
+		if (directoryFieldEditor != null && !directoryFieldEditor.isDisposed()
+				&& getFieldEditorParent().getLayout() instanceof GridLayout
+				&& directoryFieldEditor.getLayoutData() instanceof GridData) {
+			((GridData) directoryFieldEditor.getLayoutData())
+					.horizontalSpan = ((GridLayout) getFieldEditorParent().getLayout()).numColumns;
+		}
+	}
+
+	@Override
 	public boolean performOk() {
 		super.performOk();
 
@@ -441,7 +532,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				: CDACHServicesClient.getSHA1(passwordFieldEditor.getStringValue()));
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, loginIdFieldEditor.getStringValue());
 		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
-		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
 		if (buttonAgendaSettingsPerUser != null) {
 			setAgendaSettingsPerUser(buttonAgendaSettingsPerUser.getSelection());
 		}

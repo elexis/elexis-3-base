@@ -1,20 +1,30 @@
 package ch.elexis.hl7.message.ui.preference;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import ch.elexis.core.data.activator.CoreHub;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
+
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 
 public class PreferenceUtil {
 
 	public static final String PREF_RECEIVERS = "ch.elexis.hl7.message.ui/receivers"; //$NON-NLS-1$
 
 	public static final String PREF_FILESYSTEM_OUTPUTDIR = "ch.elexis.hl7.message.ui/output/directory"; //$NON-NLS-1$
+
+	public static final String PREF_FILESYSTEM_OUTPUTDIR_GLOBAL = "ch.elexis.hl7.message.ui/output/directory_global"; //$NON-NLS-1$
 
 	public static List<Receiver> getReceivers() {
 		List<Receiver> ret = new ArrayList<>();
@@ -51,11 +61,61 @@ public class PreferenceUtil {
 		ConfigServiceHolder.setGlobal(PREF_RECEIVERS, sj.toString());
 	}
 
-	public static Optional<File> getOutputDirectory() {
-		String outputDir = CoreHub.localCfg.get(PREF_FILESYSTEM_OUTPUTDIR, null);
-		if (outputDir != null) {
-			return Optional.of(new File(outputDir));
+	public static boolean isStoreGlobal() {
+		return isStoreGlobal(ConfigServiceHolder.get());
+	}
+
+	public static boolean isStoreGlobal(IConfigService configService) {
+		return configService.get(PREF_FILESYSTEM_OUTPUTDIR_GLOBAL, false);
+	}
+
+	public static String getOutputDirectory() {
+		return getOutputDirectory(ConfigServiceHolder.get());
+	}
+
+	public static String getOutputDirectory(IConfigService configService) {
+		return isStoreGlobal(configService)
+				? PreferencesUtil.getOsSpecificGlobalPreference(PREF_FILESYSTEM_OUTPUTDIR, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(PREF_FILESYSTEM_OUTPUTDIR, configService);
+	}
+
+	public static Optional<IVirtualFilesystemHandle> getOutputDirectoryHandle() {
+		return getOutputDirectoryHandle(VirtualFilesystemServiceHolder.get(), getOutputDirectory());
+	}
+
+	public static Optional<IVirtualFilesystemHandle> getOutputDirectoryHandle(IVirtualFilesystemService vfsService,
+			String directory) {
+		if (StringUtils.isBlank(directory)) {
+			return Optional.empty();
 		}
+		try {
+			return toDirectoryHandle(vfsService.of(directory), directory);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(PreferenceUtil.class).debug(
+					"HL7 message output directory [{}] is not a valid URI, falling back to plain file resolution",
+					IVirtualFilesystemService.hidePasswordInUrlString(directory));
+			return getLegacyOutputDirectoryHandle(vfsService, directory);
+		}
+	}
+
+	private static Optional<IVirtualFilesystemHandle> getLegacyOutputDirectoryHandle(
+			IVirtualFilesystemService vfsService, String directory) {
+		try {
+			return toDirectoryHandle(vfsService.of(new File(directory)), directory);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(PreferenceUtil.class).warn("Could not access HL7 message output directory [{}]",
+					directory, e);
+			return Optional.empty();
+		}
+	}
+
+	private static Optional<IVirtualFilesystemHandle> toDirectoryHandle(IVirtualFilesystemHandle handle,
+			String directory) throws IOException {
+		if (handle != null && handle.exists() && handle.isDirectory()) {
+			return Optional.of(handle);
+		}
+		LoggerFactory.getLogger(PreferenceUtil.class).warn("HL7 message output directory [{}] is not a directory",
+				IVirtualFilesystemService.hidePasswordInUrlString(directory));
 		return Optional.empty();
 	}
 }

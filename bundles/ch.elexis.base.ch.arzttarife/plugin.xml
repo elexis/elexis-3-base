@@ -115,6 +115,15 @@
             system="Psychotherapie">
       </Leistung>
       <Leistung
+            CodeDetailDisplay="ch.elexis.views.Ps25DetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.Ps25CodeSelectorFactory"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.Ps25Importer"
+            elexisClassName="ch.elexis.data.Ps25Leistung"
+            localizedName="PS25"
+            name="PS25"
+            system="PS25">
+      </Leistung>      
+      <Leistung
             CodeDetailDisplay="ch.elexis.views.OccupationalDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.OccupationalLeistungCodeSelectorFactory"
             ImporterClass="ch.elexis.base.ch.arzttarife.importer.OccupationalImporter"

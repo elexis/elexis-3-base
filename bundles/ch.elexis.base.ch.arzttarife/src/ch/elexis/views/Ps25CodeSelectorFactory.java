@@ -3,6 +3,8 @@ package ch.elexis.views;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -27,7 +29,6 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import jakarta.inject.Inject;
 
 public class Ps25CodeSelectorFactory extends CodeSelectorFactory {
 

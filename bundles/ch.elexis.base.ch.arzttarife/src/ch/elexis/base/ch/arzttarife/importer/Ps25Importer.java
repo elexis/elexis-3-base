@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
@@ -14,7 +16,6 @@ import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
-import jakarta.inject.Inject;
 
 public class Ps25Importer extends ImporterPage {
 

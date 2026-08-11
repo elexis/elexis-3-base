@@ -55,8 +55,8 @@ public class Ps25CodeSelectorFactory extends CodeSelectorFactory {
 		});
 		FieldDescriptor<?>[] fd = new FieldDescriptor<?>[] {
 				new FieldDescriptor<IPs25Leistung>("Position", "code", null),
-				new FieldDescriptor<IPs25Leistung>("Kapitel", "fachgebietKapitel", null).likeAny(true),
-				new FieldDescriptor<IPs25Leistung>("Text", "mehrleistung", null).likeAny(true) };
+				new FieldDescriptor<IPs25Leistung>("Text", "mehrleistung", null).likeAny(true),
+				new FieldDescriptor<IPs25Leistung>("Kapitel", "fachgebietKapitel", null).likeAny(true) };
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
 		vc = new ViewerConfigurer(new Ps25ContentProvider(cv, slp), new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(),

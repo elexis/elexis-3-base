@@ -10,7 +10,6 @@ package ch.elexis.labor.medics.v2.order;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
-import java.io.File;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,10 +36,9 @@ import ch.elexis.hl7.data.HL7Mandant;
 import ch.elexis.hl7.data.HL7Patient;
 import ch.elexis.hl7.v26.HL7_OML_O21;
 import ch.elexis.labor.medics.v2.MedicsActivator;
-import ch.elexis.labor.medics.v2.MedicsPreferencePage;
+import ch.elexis.labor.medics.v2.MedicsSettings;
 import ch.elexis.labor.medics.v2.Messages;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -278,10 +276,8 @@ public class iMedAbfrageAction extends Action {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 			String filename = patient.get(Patient.FLD_PATID) + "_" //$NON-NLS-1$
 					+ sdf.format(Calendar.getInstance().getTime()) + ".hl7"; //$NON-NLS-1$
-			File hl7File = new File(MedicsPreferencePage.getUploadDirimed() + File.separator + filename);
-			FileTool.writeFile(hl7File, encodedMessage.getBytes(MedicsActivator.TEXT_ENCODING));
-
-			return hl7File.getPath();
+			return MedicsSettings.writeToDirectory(MedicsSettings.getImedUploadDirectory(), filename,
+					encodedMessage.getBytes(MedicsActivator.TEXT_ENCODING));
 		} catch (Exception e) {
 			SWTHelper.showError(
 					MessageFormat.format(Messages.LabOrderAction_errorTitleCannotCreateHL7, omlO21.getVersion()),

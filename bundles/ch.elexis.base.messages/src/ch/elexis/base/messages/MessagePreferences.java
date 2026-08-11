@@ -33,15 +33,15 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
-	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav"; //$NON-NLS-1$
+	public static final String DEF_SOUND_PATH = MessageSoundSettings.DEF_SOUND_PATH;
 
-	private URIFieldEditor soundPathEditor;
-	private Button btnSoundOn, btnAnswerAutoclear;
+	private URIFieldEditorComposite soundPathEditor;
+	private Button btnSoundOn, btnAnswerAutoclear, btnStoreSoundPathGlobal;
 	private ComboViewer comboDefaultRecipient;
 	private Composite editorComposite;
 	private boolean soundOn, answerAutoclear;
@@ -68,23 +68,32 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		btnSoundOn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (soundPathEditor != null && editorComposite != null) {
-					soundPathEditor.setEnabled(btnSoundOn.getSelection(), editorComposite);
-				}
+				updateSoundPathEnablement();
+			}
+		});
+
+		btnStoreSoundPathGlobal = new Button(grpSound, SWT.CHECK);
+		btnStoreSoundPathGlobal.setText(ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal);
+		btnStoreSoundPathGlobal.setSelection(MessageSoundSettings.isStoreGlobal());
+		btnStoreSoundPathGlobal.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean global = btnStoreSoundPathGlobal.getSelection();
+				ConfigServiceHolder.setGlobal(MessageSoundSettings.CFG_SOUND_PATH_GLOBAL, global);
+				updateSoundPathStore(global);
 			}
 		});
 
 		editorComposite = new Composite(grpSound, SWT.NONE);
 		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		editorComposite.setLayout(new GridLayout(1, false));
 
-		soundPathEditor = new URIFieldEditor(Preferences.USR_MESSAGES_SOUND_PATH, Messages.Prefs_SoundSettings,
-				editorComposite);
-		soundPathEditor.setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
+		soundPathEditor = new URIFieldEditorComposite(MessageSoundSettings.CFG_SOUND_PATH, Messages.Prefs_SoundSettings,
+				editorComposite, SWT.NONE);
 		soundPathEditor.setEmptyStringAllowed(true);
 		soundPathEditor.setUseFileMode(true);
-
-		soundPathEditor.load();
-		soundPathEditor.setEnabled(soundOn, editorComposite);
+		updateSoundPathStore(MessageSoundSettings.isStoreGlobal());
+		updateSoundPathEnablement();
 
 		Group grpDialogConfig = new Group(ret, SWT.NONE);
 		grpDialogConfig.setLayout(new GridLayout(1, false));
@@ -120,6 +129,26 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		return ret;
 	}
 
+	/**
+	 * Switch the scope the sound path is read from and written to. The operating
+	 * system specific key is handled by the {@link URIFieldEditorComposite}.
+	 *
+	 * @param global
+	 */
+	private void updateSoundPathStore(boolean global) {
+		if (soundPathEditor == null || soundPathEditor.isDisposed()) {
+			return;
+		}
+		soundPathEditor.setPreferenceStore(new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.USER));
+	}
+
+	private void updateSoundPathEnablement() {
+		if (soundPathEditor == null || soundPathEditor.isDisposed()) {
+			return;
+		}
+		soundPathEditor.setEnabled(btnSoundOn.getSelection());
+	}
+
 	private void loadSavedRecipient() {
 		String preferenceKey = getPreferenceKeyForUser();
 		String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
@@ -138,8 +167,8 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	protected void performDefaults() {
 		btnSoundOn.setSelection(true);
 		btnAnswerAutoclear.setSelection(false);
-		soundPathEditor.loadDefault();
-		soundPathEditor.setEnabled(true, editorComposite);
+		soundPathEditor.getFieldEditor().loadDefault();
+		updateSoundPathEnablement();
 		super.performDefaults();
 	}
 
@@ -151,7 +180,7 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 			ConfigServiceHolder.setUser(getPreferenceKeyForUser(), selectedUser.getId());
 		}
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_ON, btnSoundOn.getSelection());
-		soundPathEditor.store();
+		soundPathEditor.getFieldEditor().store();
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, btnAnswerAutoclear.getSelection());
 		return super.performOk();
 	}

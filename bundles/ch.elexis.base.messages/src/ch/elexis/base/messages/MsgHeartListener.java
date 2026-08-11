@@ -12,15 +12,19 @@
 
 package ch.elexis.base.messages;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -31,6 +35,7 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.IMessage;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -84,10 +89,9 @@ public class MsgHeartListener implements HeartListener {
 	private void playSound() {
 		try {
 			AudioInputStream audioInStream;
-			String soundPathValue = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH,
-					MessagePreferences.DEF_SOUND_PATH);
+			String soundPathValue = MessageSoundSettings.getSoundPath();
 
-			if (MessagePreferences.DEF_SOUND_PATH.equals(soundPathValue)) {
+			if (MessageSoundSettings.DEF_SOUND_PATH.equals(soundPathValue)) {
 				URL sound = getClass().getResource(soundPathValue);
 				if (sound == null) {
 					log.warn("Default sound resource not found: " + soundPathValue); //$NON-NLS-1$
@@ -95,17 +99,12 @@ public class MsgHeartListener implements HeartListener {
 				}
 				audioInStream = AudioSystem.getAudioInputStream(sound);
 			} else {
-				if (soundPathValue.startsWith("file:") || soundPathValue.contains(":/")) { //$NON-NLS-1$ //$NON-NLS-2$
-					java.net.URI uri = new java.net.URI(soundPathValue);
-					audioInStream = AudioSystem.getAudioInputStream(uri.toURL());
-				} else {
-					File soundFile = new File(soundPathValue);
-					if (!soundFile.exists()) {
-						log.warn("Sound file [" + soundPathValue + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
-						return;
-					}
-					audioInStream = AudioSystem.getAudioInputStream(soundFile);
+				IVirtualFilesystemHandle handle = MessageSoundSettings.resolveHandle(soundPathValue).orElse(null);
+				if (handle == null) {
+					log.warn("Sound file [" + soundPathValue + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
+					return;
 				}
+				audioInStream = openAudioStream(handle);
 			}
 
 			// load the sound into memory (a Clip)
@@ -118,5 +117,22 @@ public class MsgHeartListener implements HeartListener {
 			log.error("Could not play message sound", e); //$NON-NLS-1$
 			return;
 		}
+	}
+
+	/**
+	 * Local files are read directly, everything else - e.g. smb - is streamed. The
+	 * stream is buffered because {@link AudioSystem} has to reset it while probing
+	 * the audio format.
+	 *
+	 * @param handle
+	 * @return
+	 */
+	private AudioInputStream openAudioStream(IVirtualFilesystemHandle handle)
+			throws IOException, UnsupportedAudioFileException {
+		Optional<File> localFile = handle.toFile();
+		if (localFile.isPresent()) {
+			return AudioSystem.getAudioInputStream(localFile.get());
+		}
+		return AudioSystem.getAudioInputStream(new BufferedInputStream(handle.openInputStream()));
 	}
 }

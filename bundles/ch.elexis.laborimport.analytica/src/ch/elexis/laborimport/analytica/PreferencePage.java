@@ -16,13 +16,19 @@
 
 package ch.elexis.laborimport.analytica;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
@@ -47,6 +53,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 
+	private URIFieldEditorComposite downloadDirEditor;
+	private URIFieldEditorComposite ovpnFileEditor;
+
 	public PreferencePage() {
 		super(GRID);
 		prefs.setDefault(FTP_HOST, DEFAULT_FTP_HOST); // $NON-NLS-1$
@@ -68,18 +77,43 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addField(new StringFieldEditor(FTP_HOST, Messages.PreferencePage_label_host, getFieldEditorParent())); // $NON-NLS-1$
 		addField(new StringFieldEditor(FTP_USER, Messages.PreferencePage_label_user, getFieldEditorParent())); // $NON-NLS-1$
 		addField(new StringFieldEditor(FTP_PWD, Messages.PreferencePage_label_password, getFieldEditorParent())); // $NON-NLS-1$
-		URIFieldEditor downloadDir = new URIFieldEditor(DL_DIR, Messages.PreferencePage_label_download,
-				getFieldEditorParent());
-		downloadDir.setEmptyStringAllowed(true);
-		addField(downloadDir);
-
-		URIFieldEditor ovpnFile = new URIFieldEditor(OVPN_DIR, Messages.PreferencePage_label_ovpn,
-				getFieldEditorParent());
-		ovpnFile.setEmptyStringAllowed(true);
-		ovpnFile.setUseFileMode(true);
-		addField(ovpnFile);
+		downloadDirEditor = createPathEditor(DL_DIR, Messages.PreferencePage_label_download);
+		ovpnFileEditor = createPathEditor(OVPN_DIR, Messages.PreferencePage_label_ovpn);
 	}
 
+	private URIFieldEditorComposite createPathEditor(String preferenceName, String labelText) {
+		URIFieldEditorComposite editor = new URIFieldEditorComposite(preferenceName, labelText, getFieldEditorParent(),
+				SWT.NONE);
+		editor.setEmptyStringAllowed(true);
+		editor.setPreferenceStore(prefs);
+		return editor;
+	}
+
+	@Override
+	protected void adjustGridLayout() {
+		super.adjustGridLayout();
+		if (!(getFieldEditorParent().getLayout() instanceof GridLayout)) {
+			return;
+		}
+		int numColumns = ((GridLayout) getFieldEditorParent().getLayout()).numColumns;
+		for (URIFieldEditorComposite editor : getPathEditors()) {
+			if (editor.getLayoutData() instanceof GridData) {
+				((GridData) editor.getLayoutData()).horizontalSpan = numColumns;
+			}
+		}
+	}
+
+	private List<URIFieldEditorComposite> getPathEditors() {
+		List<URIFieldEditorComposite> editors = new ArrayList<>(2);
+		for (URIFieldEditorComposite editor : new URIFieldEditorComposite[] { downloadDirEditor, ovpnFileEditor }) {
+			if (editor != null && !editor.isDisposed()) {
+				editors.add(editor);
+			}
+		}
+		return editors;
+	}
+
+	@Override
 	public void init(final IWorkbench workbench) {
 		// Do nothing
 	}

@@ -21,6 +21,8 @@ import ch.elexis.base.ch.arzttarife.pandemie.PandemieFactory;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
+import ch.elexis.base.ch.arzttarife.ps25.Ps25Package;
+import ch.elexis.base.ch.arzttarife.ps25.impl.Ps25PackageImpl;
 import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
 import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
@@ -120,6 +122,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		TardocPackageImpl theTardocPackage = (TardocPackageImpl)(registeredPackage instanceof TardocPackageImpl ? registeredPackage : TardocPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AmbulatoryPackage.eNS_URI);
 		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(Ps25Package.eNS_URI);
+		Ps25PackageImpl thePs25Package = (Ps25PackageImpl)(registeredPackage instanceof Ps25PackageImpl ? registeredPackage : Ps25Package.eINSTANCE);
 
 		// Create package meta-data objects
 		thePandemiePackage.createPackageContents();
@@ -133,6 +137,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		theOccupationalPackage.createPackageContents();
 		theTardocPackage.createPackageContents();
 		theAmbulatoryPackage.createPackageContents();
+		thePs25Package.createPackageContents();
 
 		// Initialize created meta-data
 		thePandemiePackage.initializePackageContents();
@@ -146,6 +151,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		theOccupationalPackage.initializePackageContents();
 		theTardocPackage.initializePackageContents();
 		theAmbulatoryPackage.initializePackageContents();
+		thePs25Package.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePandemiePackage.freeze();

@@ -20,12 +20,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.dialogs.MoveIntoSubDirsDialog;
+import ch.elexis.extdoc.preferences.ExtDocSettings;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 
 /***
@@ -217,7 +217,7 @@ public class MatchPatientToPath {
 	}
 
 	public static String getSubDirPath(Patient pat) {
-		String s = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, StringUtils.EMPTY) + File.separatorChar
+		String s = ExtDocSettings.getPath(PreferenceConstants.BASIS_PFAD1) + File.separatorChar
 				+ basenameMustBeginWith(pat.getName(), pat.getVorname());
 		return s;
 	}

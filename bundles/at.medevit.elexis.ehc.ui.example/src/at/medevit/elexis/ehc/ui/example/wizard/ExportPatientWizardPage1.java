@@ -28,9 +28,8 @@ import org.eclipse.swt.widgets.Control;
 import org.projecthusky.common.hl7cdar2.POCDMT000040ClinicalDocument;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
-import at.medevit.elexis.ehc.ui.preference.PreferencePage;
+import at.medevit.elexis.ehc.ui.preference.EhcSettings;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -100,8 +99,7 @@ public class ExportPatientWizardPage1 extends WizardPage {
 			POCDMT000040ClinicalDocument document = ServiceComponent.getService().createDocument(selectedPatient,
 					(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 			try {
-				String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
-						PreferencePage.getDefaultOutputDir());
+				String outputDir = EhcSettings.getOutputDir();
 				File file = new File(
 						outputDir + File.separator + selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml"); // $NON-NLS-1$
 				try (FileOutputStream fo = new FileOutputStream(file)) {

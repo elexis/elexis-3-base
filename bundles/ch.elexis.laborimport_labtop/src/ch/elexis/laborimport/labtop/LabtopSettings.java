@@ -58,12 +58,15 @@ public class LabtopSettings {
 			return Optional.of(new File(pathOrUri));
 		}
 		try {
-			return vfsService.of(pathOrUri).toFile();
+			Optional<File> resolved = vfsService.of(pathOrUri).toFile();
+			if (resolved.isPresent()) {
+				return resolved;
+			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger(LabtopSettings.class).debug(
 					"Location [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
 					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
-			return Optional.of(new File(pathOrUri));
 		}
+		return Optional.of(new File(pathOrUri));
 	}
 }

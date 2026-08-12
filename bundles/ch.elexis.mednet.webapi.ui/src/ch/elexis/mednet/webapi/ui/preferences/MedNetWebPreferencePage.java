@@ -30,6 +30,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
@@ -53,6 +54,7 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 	@Inject
 	private IConfigService configService;
 
+	private URIFieldEditorComposite downloadPathComposite;
 	private URIFieldEditor downloadPathEditor;
 	private StringFieldEditor loginNameEditor;
 	private BooleanFieldEditor confirmBeforeSendEditor;
@@ -210,10 +212,11 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 	}
 
 	private void createConfigurationEditors(Composite parent) {
-		downloadPathEditor = new URIFieldEditor(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
-				Messages.MedNetWebPreferencePage_downloadFolder, parent);
-		downloadPathEditor.setEmptyStringAllowed(true);
-		addField(downloadPathEditor);
+		downloadPathComposite = new URIFieldEditorComposite(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
+				Messages.MedNetWebPreferencePage_downloadFolder, parent, SWT.NONE);
+		downloadPathComposite.setEmptyStringAllowed(true);
+		downloadPathComposite.setPreferenceStore(globalPreferenceStore);
+		downloadPathEditor = (URIFieldEditor) downloadPathComposite.getFieldEditor();
 
 		loginNameEditor = new StringFieldEditor(PreferenceConstants.MEDNET_USER_STRING,
 				Messages.MedNetWebPreferencePage_loginName, parent);
@@ -325,12 +328,11 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 	}
 
 	private void updateEditorKeysAndLoad(String editorPrefix) {
-		downloadPathEditor.setPreferenceName(editorPrefix + PreferenceConstants.MEDNET_DOWNLOAD_PATH);
+		downloadPathComposite.setDefaultPreference(editorPrefix + PreferenceConstants.MEDNET_DOWNLOAD_PATH);
 		loginNameEditor.setPreferenceName(editorPrefix + PreferenceConstants.MEDNET_USER_STRING);
 		confirmBeforeSendEditor.setPreferenceName(editorPrefix + PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND);
 		operatingModeEditor.setPreferenceName(editorPrefix + PreferenceConstants.MEDNET_MODE);
 
-		downloadPathEditor.load();
 		loginNameEditor.load();
 		confirmBeforeSendEditor.load();
 		operatingModeEditor.load();
@@ -340,7 +342,8 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
 		Composite parent = getFieldEditorParent();
 		boolean allowEditing = isGlobalMode || overrideEnabled;
 
-		downloadPathEditor.setEnabled(allowEditing, parent);
+		downloadPathEditor.setEnabled(allowEditing, downloadPathComposite);
+		downloadPathComposite.setEnabled(allowEditing);
 		loginNameEditor.setEnabled(allowEditing, parent);
 		confirmBeforeSendEditor.setEnabled(allowEditing, parent);
 		operatingModeEditor.setEnabled(allowEditing, parent);

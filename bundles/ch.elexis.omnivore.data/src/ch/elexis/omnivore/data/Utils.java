@@ -34,12 +34,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.mail.AttachmentsUtil;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.ExHandler;
@@ -122,7 +122,7 @@ public class Utils {
 	}
 
 	static private String getFileElement(String element_key, String element_data) {
-		IPreferenceStore preferenceStore = new SettingsPreferenceStore(CoreHub.localCfg);
+		IPreferenceStore preferenceStore = new ConfigServicePreferenceStore(Scope.LOCAL);
 		return Utils.processFileElement(preferenceStore, element_key, element_data);
 	}
 

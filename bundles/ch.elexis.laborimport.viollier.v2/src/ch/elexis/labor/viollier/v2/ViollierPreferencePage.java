@@ -32,6 +32,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.labor.viollier.v2.data.ViollierLaborImportSettings;
 
 /**
@@ -45,11 +50,12 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 	private GridData gridDataForInputs;
 
 	private Group gGlobalSettings;
-	private Text tGlobalJMedTransferJar;
 	private Text tGlobalJMedTransferParam;
-	private Text tGlobalDirDownload;
-	private Text tGlobalDirArchive;
-	private Text tGlobalDirError;
+	private OsPathEditorGroup globalPathGroup;
+	private URIFieldEditorComposite eGlobalJMedTransferJar;
+	private URIFieldEditorComposite eGlobalDirDownload;
+	private URIFieldEditorComposite eGlobalDirArchive;
+	private URIFieldEditorComposite eGlobalDirError;
 	private Text tGlobalArchivePurgeInterval;
 	private Text tGlobalDocumentCategory;
 
@@ -59,11 +65,12 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 
 	private Group gMachineSettings;
 	private Button bMachineUseGlobalSettings;
-	private Text tMachineJMedTransferJar;
 	private Text tMachineJMedTransferParam;
-	private Text tMachineDirDownload;
-	private Text tMachineDirArchive;
-	private Text tMachineDirError;
+	private OsPathEditorGroup machinePathGroup;
+	private URIFieldEditorComposite eMachineJMedTransferJar;
+	private URIFieldEditorComposite eMachineDirDownload;
+	private URIFieldEditorComposite eMachineDirArchive;
+	private URIFieldEditorComposite eMachineDirError;
 	private Text tMachineArchivePurgeInterval;
 
 	private Boolean isInitializing = true;
@@ -84,11 +91,11 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 	public boolean performOk() {
 		String temp;
 		int days = 30;
-		mySettings.setGlobalJMedTransferJar(tGlobalJMedTransferJar.getText());
+		mySettings.setGlobalJMedTransferJar(getPath(eGlobalJMedTransferJar));
 		mySettings.setGlobalJMedTransferParam(tGlobalJMedTransferParam.getText());
-		mySettings.setGlobalDirDownload(tGlobalDirDownload.getText());
-		mySettings.setGlobalDirArchive(tGlobalDirArchive.getText());
-		mySettings.setGlobalDirError(tGlobalDirError.getText());
+		mySettings.setGlobalDirDownload(getPath(eGlobalDirDownload));
+		mySettings.setGlobalDirArchive(getPath(eGlobalDirArchive));
+		mySettings.setGlobalDirError(getPath(eGlobalDirError));
 		temp = tGlobalArchivePurgeInterval.getText();
 		try {
 			days = Integer.parseInt(temp);
@@ -101,11 +108,11 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		mySettings.setMandantDocumentCategory(tMandantDocumentCategory.getText());
 
 		mySettings.setMachineUsingGlobalSettings(bMachineUseGlobalSettings.getSelection());
-		mySettings.setMachineJMedTransferJar(tMachineJMedTransferJar.getText());
+		mySettings.setMachineJMedTransferJar(getPath(eMachineJMedTransferJar));
 		mySettings.setMachineJMedTransferParam(tMachineJMedTransferParam.getText());
-		mySettings.setMachineDirDownload(tMachineDirDownload.getText());
-		mySettings.setMachineDirArchive(tMachineDirArchive.getText());
-		mySettings.setMachineDirError(tMachineDirError.getText());
+		mySettings.setMachineDirDownload(getPath(eMachineDirDownload));
+		mySettings.setMachineDirArchive(getPath(eMachineDirArchive));
+		mySettings.setMachineDirError(getPath(eMachineDirError));
 		temp = tMachineArchivePurgeInterval.getText();
 		try {
 			days = Integer.parseInt(temp);
@@ -175,15 +182,6 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		grp.setLayout(new GridLayout(2, false));
 		grp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		// JMedTransfer Jar
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_JMedTransferJar);
-		lbl.setLayoutData(gridDataForLabels);
-		tGlobalJMedTransferJar = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tGlobalJMedTransferJar.setLayoutData(gridDataForInputs);
-		tGlobalJMedTransferJar.setText(undefined);
-		tGlobalJMedTransferJar.setMessage("Optional");//$NON-NLS-1$
-
 		// JMedTransfer Parameter
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_JMedTransferParam);
@@ -193,29 +191,18 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalJMedTransferParam.setText(undefined);
 		tGlobalJMedTransferParam.setMessage("Optional");//$NON-NLS-1$
 
-		// Download Verzeichnis
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_DirDownload);
-		lbl.setLayoutData(gridDataForLabels);
-		tGlobalDirDownload = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tGlobalDirDownload.setLayoutData(gridDataForInputs);
-		tGlobalDirDownload.setText(undefined);
-
-		// Archive Verzeichnis
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_DirArchive);
-		lbl.setLayoutData(gridDataForLabels);
-		tGlobalDirArchive = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tGlobalDirArchive.setLayoutData(gridDataForInputs);
-		tGlobalDirArchive.setText(undefined);
-
-		// Error Verzeichnis
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_DirError);
-		lbl.setLayoutData(gridDataForLabels);
-		tGlobalDirError = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tGlobalDirError.setLayoutData(gridDataForInputs);
-		tGlobalDirError.setText(undefined);
+		globalPathGroup = new OsPathEditorGroup(grp, SWT.NONE);
+		globalPathGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		globalPathGroup.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		eGlobalJMedTransferJar = globalPathGroup.addPathEditor(ViollierLaborImportSettings.cfgJMedTransferJar,
+				Messages.Preferences_JMedTransferJar);
+		setOptionalHint(eGlobalJMedTransferJar);
+		eGlobalDirDownload = globalPathGroup.addPathEditor(ViollierLaborImportSettings.cfgDirDownload,
+				Messages.Preferences_DirDownload);
+		eGlobalDirArchive = globalPathGroup.addPathEditor(ViollierLaborImportSettings.cfgDirArchive,
+				Messages.Preferences_DirArchive);
+		eGlobalDirError = globalPathGroup.addPathEditor(ViollierLaborImportSettings.cfgDirError,
+				Messages.Preferences_DirError);
 
 		// Bereinigung Archiv Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
@@ -309,14 +296,6 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 			}
 		});
 
-		// JMedTransfer Jar
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_JMedTransferJar);
-		lbl.setLayoutData(gridDataForLabels);
-		tMachineJMedTransferJar = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tMachineJMedTransferJar.setLayoutData(gridDataForInputs);
-		tMachineJMedTransferJar.setText(undefined);
-
 		// JMedTransfer Param
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_JMedTransferParam);
@@ -325,29 +304,17 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineJMedTransferParam.setLayoutData(gridDataForInputs);
 		tMachineJMedTransferParam.setText(undefined);
 
-		// Download Verzeichnis
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_DirDownload);
-		lbl.setLayoutData(gridDataForLabels);
-		tMachineDirDownload = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tMachineDirDownload.setLayoutData(gridDataForInputs);
-		tMachineDirDownload.setText(undefined);
-
-		// Archive Verzeichnis
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_DirArchive);
-		lbl.setLayoutData(gridDataForLabels);
-		tMachineDirArchive = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tMachineDirArchive.setLayoutData(gridDataForInputs);
-		tMachineDirArchive.setText(undefined);
-
-		// Error Verzeichnis
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_DirError);
-		lbl.setLayoutData(gridDataForLabels);
-		tMachineDirError = new Text(grp, SWT.BORDER | SWT.SINGLE);
-		tMachineDirError.setLayoutData(gridDataForInputs);
-		tMachineDirError.setText(undefined);
+		machinePathGroup = new OsPathEditorGroup(grp, SWT.NONE);
+		machinePathGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		machinePathGroup.setPreferenceStore(new ConfigServicePreferenceStore(Scope.LOCAL));
+		eMachineJMedTransferJar = machinePathGroup.addPathEditor(ViollierLaborImportSettings.cfgJMedTransferJar,
+				Messages.Preferences_JMedTransferJar);
+		eMachineDirDownload = machinePathGroup.addPathEditor(ViollierLaborImportSettings.cfgDirDownload,
+				Messages.Preferences_DirDownload);
+		eMachineDirArchive = machinePathGroup.addPathEditor(ViollierLaborImportSettings.cfgDirArchive,
+				Messages.Preferences_DirArchive);
+		eMachineDirError = machinePathGroup.addPathEditor(ViollierLaborImportSettings.cfgDirError,
+				Messages.Preferences_DirError);
 
 		// Bereinigung Archiv Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
@@ -405,11 +372,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 	 * Settings geladen (Globale, Mandanten- und Machine-Settings)
 	 */
 	private void showSettings() {
-		tGlobalJMedTransferJar.setText(mySettings.getGlobalJMedTransferJar());
 		tGlobalJMedTransferParam.setText(mySettings.getGlobalJMedTransferParam());
-		tGlobalDirDownload.setText(mySettings.getGlobalDirDownload());
-		tGlobalDirArchive.setText(mySettings.getGlobalDirArchive());
-		tGlobalDirError.setText(mySettings.getGlobalDirError());
 		tGlobalArchivePurgeInterval.setText(Integer.toString(mySettings.getGlobalArchivePurgeInterval()));
 		tGlobalDocumentCategory.setText(mySettings.getGlobalDocumentCategory());
 
@@ -447,18 +410,19 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		}
 		gMachineSettings.setText(MessageFormat.format(Messages.Preferences_LocalSettingsFor, hostname));
 		bMachineUseGlobalSettings.setSelection(machineUseGlobalSettings);
-		tMachineJMedTransferJar.setEditable(!machineUseGlobalSettings);
 		tMachineJMedTransferParam.setEditable(!machineUseGlobalSettings);
-		tMachineDirDownload.setEditable(!machineUseGlobalSettings);
-		tMachineDirArchive.setEditable(!machineUseGlobalSettings);
-		tMachineDirError.setEditable(!machineUseGlobalSettings);
+		machinePathGroup.setEnabled(!machineUseGlobalSettings);
 		tMachineArchivePurgeInterval.setEditable(!machineUseGlobalSettings);
 
-		tMachineJMedTransferJar.setText(mySettings.getMachineJMedTransferJar());
 		tMachineJMedTransferParam.setText(mySettings.getMachineJMedTransferParam());
-		tMachineDirDownload.setText(mySettings.getMachineDirDownload());
-		tMachineDirArchive.setText(mySettings.getMachineDirArchive());
-		tMachineDirError.setText(mySettings.getMachineDirError());
 		tMachineArchivePurgeInterval.setText(Integer.toString(mySettings.getMachineArchivePurgeInterval()));
+	}
+
+	private String getPath(URIFieldEditorComposite editor) {
+		return StringUtils.defaultString(((URIFieldEditor) editor.getFieldEditor()).getStringValue());
+	}
+
+	private void setOptionalHint(URIFieldEditorComposite editor) {
+		((URIFieldEditor) editor.getFieldEditor()).getTextControl(editor).setMessage("Optional"); //$NON-NLS-1$
 	}
 }

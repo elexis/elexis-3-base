@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
@@ -20,21 +21,23 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.labor.medics.v2.order.WebAis;
 
 public class MedicsPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String DOWNLOAD_DIR = "medics/download"; //$NON-NLS-1$
-	public static final String UPLOAD_DIR = "medics/upload"; //$NON-NLS-1$
-	public static final String IMED_DIR = "medics/uploadimed"; //$NON-NLS-1$
-	public static final String ARCHIV_DIR = "medics/archiv"; //$NON-NLS-1$
-	public static final String ERROR_DIR = "medics/error"; //$NON-NLS-1$
+	public static final String DOWNLOAD_DIR = MedicsSettings.DOWNLOAD_DIR;
+	public static final String UPLOAD_DIR = MedicsSettings.UPLOAD_DIR;
+	public static final String IMED_DIR = MedicsSettings.IMED_DIR;
+	public static final String ARCHIV_DIR = MedicsSettings.ARCHIV_DIR;
+	public static final String ERROR_DIR = MedicsSettings.ERROR_DIR;
 	public static final String DOKUMENT_CATEGORY = "medics/extern"; //$NON-NLS-1$
 	public static final String DELETE_ARCHIV_DAYS = "medics/del_archiv/days"; //$NON-NLS-1$
 
@@ -50,9 +53,13 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 	private List<WebAisMandatorComposite> webaisMandators;
 	private Composite mandatorsContainer;
 
+	private BooleanFieldEditor bStoreGlobal;
+
+	private OsPathEditorGroup pathGroup;
+
 	public MedicsPreferencePage() {
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.LOCAL));
 		getPreferenceStore().setDefault(DOWNLOAD_DIR, DEFAULT_DOWNLOAD);
 		getPreferenceStore().setDefault(UPLOAD_DIR, DEFAULT_UPLOAD);
 		getPreferenceStore().setDefault(IMED_DIR, DEFAULT_IMED);
@@ -74,6 +81,10 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 		// create field editors
 		super.createContents(fieldEditorContainer);
 		getFieldEditorParent().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		bStoreGlobal.load();
+		updatePathStores(MedicsSettings.isStoreGlobal());
 
 		Button btnChangeApi = new Button(container, SWT.PUSH);
 		btnChangeApi.addSelectionListener(new SelectionAdapter() {
@@ -149,39 +160,60 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 
 	@Override
 	protected void createFieldEditors() {
-		addField(new DirectoryFieldEditor(DOWNLOAD_DIR, Messages.MedicsPreferencePage_labelDownloadDir,
-				getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(UPLOAD_DIR, Messages.MedicsPreferencePage_labelUploadDir,
-				getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(IMED_DIR, Messages.MedicsPreferencePage_labelUploadDirimed,
-				getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(ARCHIV_DIR, Messages.MedicsPreferencePage_labelArchivDir,
-				getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(ERROR_DIR, Messages.MedicsPreferencePage_labelErrorDir,
-				getFieldEditorParent()));
+		bStoreGlobal = new BooleanFieldEditor(MedicsSettings.CFG_PATHS_GLOBAL,
+				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
+			@Override
+			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
+				super.fireValueChanged(property, oldValue, newValue);
+				if (FieldEditor.VALUE.equals(property)) {
+					boolean global = Boolean.TRUE.equals(newValue);
+					ConfigServiceHolder.setGlobal(MedicsSettings.CFG_PATHS_GLOBAL, global);
+					updatePathStores(global);
+				}
+			}
+		};
+		addField(bStoreGlobal);
+
+		pathGroup = new OsPathEditorGroup(getFieldEditorParent(), SWT.NONE);
+		pathGroup.addPathEditor(DOWNLOAD_DIR, Messages.MedicsPreferencePage_labelDownloadDir);
+		pathGroup.addPathEditor(UPLOAD_DIR, Messages.MedicsPreferencePage_labelUploadDir);
+		pathGroup.addPathEditor(IMED_DIR, Messages.MedicsPreferencePage_labelUploadDirimed);
+		pathGroup.addPathEditor(ARCHIV_DIR, Messages.MedicsPreferencePage_labelArchivDir);
+		pathGroup.addPathEditor(ERROR_DIR, Messages.MedicsPreferencePage_labelErrorDir);
+
 		addField(new StringFieldEditor(DOKUMENT_CATEGORY, Messages.MedicsPreferencePage_labelDocumentCategory,
 				getFieldEditorParent()));
 		addField(new StringFieldEditor(DELETE_ARCHIV_DAYS, "Archiv bereinigen (Tage)", getFieldEditorParent()));
 	}
 
+	private void updatePathStores(boolean global) {
+		pathGroup.setPreferenceStore(new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.LOCAL));
+	}
+
+	@Override
+	protected void adjustGridLayout() {
+		super.adjustGridLayout();
+		pathGroup.adjustHorizontalSpan();
+	}
+
 	public static String getDownloadDir() {
-		return CoreHub.localCfg.get(DOWNLOAD_DIR, DEFAULT_DOWNLOAD);
+		return MedicsSettings.getDownloadDirectory();
 	}
 
 	public static String getDokumentKategorie() {
-		return CoreHub.localCfg.get(DOKUMENT_CATEGORY, DEFAULT_DOKUMENT_CATEGORY);
+		return LocalConfigService.get(DOKUMENT_CATEGORY, DEFAULT_DOKUMENT_CATEGORY);
 	}
 
 	public static int getDeleteArchivDays() {
-		return CoreHub.localCfg.get(DELETE_ARCHIV_DAYS, DEFAULT_DELETE_ARCHIV_DAYS);
+		return ConfigServiceHolder.get().getLocal(DELETE_ARCHIV_DAYS, DEFAULT_DELETE_ARCHIV_DAYS);
 	}
 
 	public static String getUploadDirimed() {
-		return CoreHub.localCfg.get(IMED_DIR, DEFAULT_IMED);
+		return MedicsSettings.getImedUploadDirectory();
 	}
 
 	public static String getUploadDir() {
-		return CoreHub.localCfg.get(UPLOAD_DIR, DEFAULT_UPLOAD);
+		return MedicsSettings.getUploadDirectory();
 	}
 
 	@Override

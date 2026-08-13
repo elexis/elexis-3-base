@@ -105,6 +105,7 @@ public class IndicationCodeSelectionDialog extends TitleAreaDialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.CLIENT_ID, "Kein passender Indikationscode vorhanden", true);
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		updateOkButton();
 	}
@@ -113,6 +114,14 @@ public class IndicationCodeSelectionDialog extends TitleAreaDialog {
 		if (getButton(IDialogConstants.OK_ID) != null && !getButton(IDialogConstants.OK_ID).isDisposed()) {
 			getButton(IDialogConstants.OK_ID).setEnabled(getSelectedCode() != null);
 		}
+	}
+
+	@Override
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == IDialogConstants.CLIENT_ID) {
+			cancelPressed();
+		}
+		super.buttonPressed(buttonId);
 	}
 
 	private void updateSelection() {

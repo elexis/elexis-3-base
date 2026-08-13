@@ -80,7 +80,8 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 						IndicationCodeUtil.applyToMedicationIfMissing(billed.getEncounter().getPatient(), item,
 								selection.get());
 					} else {
-						BillingServiceHolder.get().removeBilled(billed, billed.getEncounter());
+						// #28408 allow no indication code
+						// BillingServiceHolder.get().removeBilled(billed, billed.getEncounter());
 					}
 				}
 			}

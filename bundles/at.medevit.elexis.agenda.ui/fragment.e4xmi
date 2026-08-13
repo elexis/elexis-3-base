@@ -11,9 +11,6 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_GXOA1GerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.edit" label="%change" iconURI="icon://IMG_EDIT" command="_JuszoGejEequPMul5sCwsQ">
           <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA1WerEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_ClqdQFluEe-tgp6s_ZOmwA" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.copy" label="%copy" command="_Urc98FluEe-tgp6s_ZOmwA">
-          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_eWTSoFluEe-tgp6s_ZOmwA" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
-        </children>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_GXOA1merEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.move" label="%move" command="_QisP8GejEequPMul5sCwsQ">
           <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA12erEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
         </children>
@@ -35,6 +32,13 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_G4BAxGerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.delete" label="%delete" iconURI="icon://IMG_DELETE" command="_MBYn8GejEequPMul5sCwsQ"/>
       </menus>
       <toolbar xmi:id="_bfi0gGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.toolbar.0"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_CopyMenuContributionFragment" featurename="menuContributions" parentElementId="xpath:/">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_CopyMenuContribution" elementId="at.medevit.elexis.agenda.ui.menucontribution.copy" parentId="at.medevit.elexis.agenda.ui.popupmenu.parallel" positionInParent="after=at.medevit.elexis.agenda.ui.handledmenuitem.edit">
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_ClqdQFluEe-tgp6s_ZOmwA" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.copy" label="%copy" command="_Urc98FluEe-tgp6s_ZOmwA">
+        <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_eWTSoFluEe-tgp6s_ZOmwA" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+      </children>
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_83J5cGeiEequPMul5sCwsQ" featurename="commands" parentElementId="xpath:/">

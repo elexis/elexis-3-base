@@ -15,7 +15,7 @@ package ch.elexis.extdoc.preferences;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PreferenceConstants {
@@ -41,8 +41,8 @@ public class PreferenceConstants {
 		PathElement(String prefsName, String prefsBaseDirName) {
 			prefName = prefsName;
 			prefBaseDir = prefsBaseDirName;
-			name = CoreHub.localCfg.get(prefName, StringUtils.EMPTY);
-			baseDir = CoreHub.localCfg.get(prefsBaseDirName, StringUtils.EMPTY);
+			name = LocalConfigService.get(prefName, StringUtils.EMPTY);
+			baseDir = ExtDocSettings.getPath(prefsBaseDirName);
 		}
 	}
 
@@ -56,10 +56,10 @@ public class PreferenceConstants {
 
 	public static String[] getActiveBasePaths() {
 		String[] paths = new String[4];
-		paths[0] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, StringUtils.EMPTY);
-		paths[1] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD2, StringUtils.EMPTY);
-		paths[2] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD3, StringUtils.EMPTY);
-		paths[3] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD4, StringUtils.EMPTY);
+		paths[0] = ExtDocSettings.getPath(PreferenceConstants.BASIS_PFAD1);
+		paths[1] = ExtDocSettings.getPath(PreferenceConstants.BASIS_PFAD2);
+		paths[2] = ExtDocSettings.getPath(PreferenceConstants.BASIS_PFAD3);
+		paths[3] = ExtDocSettings.getPath(PreferenceConstants.BASIS_PFAD4);
 		for (int j = 0; j < paths.length; j++)
 			if (!pathIsSelected(j))
 				paths[j] = null;

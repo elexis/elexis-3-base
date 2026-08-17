@@ -11,6 +11,8 @@ package ch.docbox.elexis;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
+import java.io.File;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -64,7 +66,10 @@ import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
@@ -332,20 +337,32 @@ public class DocboxDocumentsView extends ViewPart implements IRefreshable, Heart
 
 			@Override
 			public void dragSetData(DragSourceEvent event) {
-
 				ISelection selection = tableViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj != null) {
+				if (obj instanceof CdaMessage) {
 					cdaMessage = (CdaMessage) obj;
 					String files[] = cdaMessage.getFiles();
-					for (int i = 0; i < files.length; ++i) {
-						files[i] = cdaMessage.getPath(files[i]);
-						log.log("dragSetData " + files[i], Log.DEBUGMSG);
-					}
-					event.data = files;
-				}
+					String absolutePaths[] = new String[files.length];
 
+					IVirtualFilesystemService vfs = VirtualFilesystemServiceHolder.get();
+
+					for (int i = 0; i < files.length; ++i) {
+						try {
+							String uriString = cdaMessage.getPath(files[i]);
+							IVirtualFilesystemHandle handle = vfs.of(uriString);
+							java.util.Optional<File> f = handle.toFile();
+							if (f.isPresent()) {
+								absolutePaths[i] = f.get().getAbsolutePath();
+							} else {
+								absolutePaths[i] = uriString;
+							}
+						} catch (Exception e) {
+							log.log("Drag Error: " + e.getMessage(), Log.ERRORS);
+						}
+					}
+					event.data = absolutePaths;
+				}
 			}
 
 			@Override

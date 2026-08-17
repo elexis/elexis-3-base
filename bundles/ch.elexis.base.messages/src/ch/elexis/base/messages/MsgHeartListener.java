@@ -12,15 +12,19 @@
 
 package ch.elexis.base.messages;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -31,6 +35,7 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.IMessage;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -46,7 +51,7 @@ public class MsgHeartListener implements HeartListener {
 		if (!bSkip) {
 			ContextServiceHolder.get().getActiveUserContact().ifPresent(uc -> {
 				List<IMessage> res = CoreModelServiceHolder.get().getQuery(IMessage.class)
-						.and("destination", COMPARATOR.EQUALS, uc.getId()).execute();
+						.and("destination", COMPARATOR.EQUALS, uc.getId()).execute(); //$NON-NLS-1$
 				if (!res.isEmpty()) {
 					UiDesk.getDisplay().asyncExec(() -> {
 						if (!isModalShellOpen()) {
@@ -70,33 +75,36 @@ public class MsgHeartListener implements HeartListener {
 	}
 
 	/**
-	 * Plays a sound. The sound file can be defined via the message preferences.<br>
-	 * <br>
-	 * Set {@link DataLine.Info} and use it to load {@link Clip} to avoid
-	 * IllegalArgumentException caused by missing/wrong system settings. See
-	 * <a href=
+	 * Plays a sound defined in the message preferences.
+	 * <p>
+	 * Supports default resources, local file paths, and URIs (e.g., file:/ or
+	 * network paths).
+	 * </p>
+	 * Uses {@link DataLine.Info} to load the {@link Clip} to avoid
+	 * IllegalArgumentExceptions caused by specific system audio configurations.
+	 * * @see <a href=
 	 * "http://stackoverflow.com/questions/26435282/issue-playing-audio-with-stackoverflows-javasound-tag-example">
-	 * Stackoverflow</a> for detailed explanation.
+	 * Stackoverflow Explanation</a>
 	 */
 	private void playSound() {
 		try {
 			AudioInputStream audioInStream;
-			String soundFilePath = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH,
-					MessagePreferences.DEF_SOUND_PATH);
+			String soundPathValue = MessageSoundSettings.getSoundPath();
 
-			// create an audioinputstream from sound url
-			if (MessagePreferences.DEF_SOUND_PATH.equals(soundFilePath)) {
-				URL sound = getClass().getResource(soundFilePath);
-
-				audioInStream = AudioSystem.getAudioInputStream(sound);
-			} else {
-				// create AudioInputStream from user defined file
-				File soundFile = new File(soundFilePath);
-				if (!soundFile.exists()) {
-					log.warn("Sound file [" + soundFilePath + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageSoundSettings.DEF_SOUND_PATH.equals(soundPathValue)) {
+				URL sound = getClass().getResource(soundPathValue);
+				if (sound == null) {
+					log.warn("Default sound resource not found: " + soundPathValue); //$NON-NLS-1$
 					return;
 				}
-				audioInStream = AudioSystem.getAudioInputStream(soundFile);
+				audioInStream = AudioSystem.getAudioInputStream(sound);
+			} else {
+				IVirtualFilesystemHandle handle = MessageSoundSettings.resolveHandle(soundPathValue).orElse(null);
+				if (handle == null) {
+					log.warn("Sound file [" + soundPathValue + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
+					return;
+				}
+				audioInStream = openAudioStream(handle);
 			}
 
 			// load the sound into memory (a Clip)
@@ -109,5 +117,22 @@ public class MsgHeartListener implements HeartListener {
 			log.error("Could not play message sound", e); //$NON-NLS-1$
 			return;
 		}
+	}
+
+	/**
+	 * Local files are read directly, everything else - e.g. smb - is streamed. The
+	 * stream is buffered because {@link AudioSystem} has to reset it while probing
+	 * the audio format.
+	 *
+	 * @param handle
+	 * @return
+	 */
+	private AudioInputStream openAudioStream(IVirtualFilesystemHandle handle)
+			throws IOException, UnsupportedAudioFileException {
+		Optional<File> localFile = handle.toFile();
+		if (localFile.isPresent()) {
+			return AudioSystem.getAudioInputStream(localFile.get());
+		}
+		return AudioSystem.getAudioInputStream(new BufferedInputStream(handle.openInputStream()));
 	}
 }

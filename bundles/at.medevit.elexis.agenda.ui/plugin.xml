@@ -45,6 +45,11 @@
             apply="always"
             uri="fragment.e4xmi">
       </fragment>
+      <processor
+            apply="always"
+            beforefragment="false"
+            class="at.medevit.elexis.agenda.ui.processor.Processor">
+      </processor>
    </extension>
   <extension
          point="org.eclipse.equinox.http.registry.resources">

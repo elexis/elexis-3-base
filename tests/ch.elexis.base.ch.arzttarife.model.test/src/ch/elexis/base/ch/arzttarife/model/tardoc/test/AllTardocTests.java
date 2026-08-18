@@ -11,7 +11,8 @@ import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingSystemService;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TardocBillingTest.class, TardocGroupLimitsTest.class, AmbulantePauschalenBillingTest.class })
+@SuiteClasses({ TardocBillingTest.class, TardocGroupLimitsTest.class, AmbulantePauschalenBillingTest.class,
+		TardocLimitsTest.class })
 public class AllTardocTests {
 
 	public static final String UVG_NAME = Messages.Case_UVG_Short;

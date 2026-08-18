@@ -10,6 +10,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IOrganization;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.builder.IContactBuilder;
@@ -30,6 +31,8 @@ public abstract class AbstractTardocTest {
 	final IModelService coreModelService = AllTestsSuite.getCoreModelService();
 
 	IMandator mandator;
+	IMandator otherMandator;
+
 	IPatient patient;
 	ICoverage coverage;
 	IEncounter encounter;
@@ -39,9 +42,21 @@ public abstract class AbstractTardocTest {
 
 	public void before() {
 		TimeTool timeTool = new TimeTool();
+
+		IOrganization _biller = new IContactBuilder.OrganizationBuilder(coreModelService, "Praxis").buildAndSave();
+
 		IPerson _mandator = new IContactBuilder.PersonBuilder(coreModelService, "mandator1 " + timeTool.toString(),
 				"Anton" + timeTool.toString(), timeTool.toLocalDate(), Gender.MALE).mandator().buildAndSave();
 		mandator = coreModelService.load(_mandator.getId(), IMandator.class).get();
+		mandator.setBiller(_biller);
+		coreModelService.save(mandator);
+
+		_mandator = new IContactBuilder.PersonBuilder(coreModelService, "mandator2 " + timeTool.toString(),
+				"Antonia" + timeTool.toString(), timeTool.toLocalDate(), Gender.FEMALE).mandator().buildAndSave();
+		otherMandator = coreModelService.load(_mandator.getId(), IMandator.class).get();
+		otherMandator.setBiller(_biller);
+		coreModelService.save(otherMandator);
+
 		patient = new IContactBuilder.PatientBuilder(coreModelService, "Armer", "Anton" + timeTool.toString(),
 				timeTool.toLocalDate(), Gender.MALE).buildAndSave();
 		coverage = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")

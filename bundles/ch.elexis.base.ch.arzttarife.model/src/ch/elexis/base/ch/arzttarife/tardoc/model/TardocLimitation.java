@@ -5,9 +5,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -323,30 +325,49 @@ public class TardocLimitation {
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<IBilled> verrechnetByMandant = getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons,
+				List<VerrechnetPeriod> verrechnetByMandantPeriods = getVerrechnetByRechnungsstellerAndCodeDuringPeriod(
+						kons,
 						verrechnet.getBillable().getCode());
-				if (!verrechnetByMandant.isEmpty()) {
-					// replace value from database with current
-					verrechnetByMandant.remove(verrechnet);
-					verrechnetByMandant.add(verrechnet);
-					if (getVerrechnetCount(verrechnetByMandant) > amount) {
-						ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
-								verrechnet, false);
+				if (!verrechnetByMandantPeriods.isEmpty()) {
+					for (VerrechnetPeriod verrechnetPeriod : verrechnetByMandantPeriods) {
+						List<IBilled> verrechnetByMandant = verrechnetPeriod.getVerrechnete();
+						// replace value from database with current
+						verrechnetByMandant.remove(verrechnet);
+						verrechnetByMandant.add(verrechnet);
+						if (getVerrechnetCount(verrechnetByMandant) > amount) {
+							ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
+									verrechnet, false);
+							break;
+						}
 					}
 				}
 			} else {
-				List<IBilled> allVerrechnetOfGroup = new ArrayList<>();
+				List<VerrechnetPeriod> allGroupVerrechnetPeriods = new ArrayList<>();
 				List<String> serviceCodes = tarmedGroup.getServices();
 				for (String code : serviceCodes) {
-					allVerrechnetOfGroup.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
+					allGroupVerrechnetPeriods.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
 				}
-				// replace loaded with current verrechnet to validate updated amount
-				allVerrechnetOfGroup.remove(verrechnet);
-				allVerrechnetOfGroup.add(verrechnet);
-				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
-							verrechnet,
-							false);
+				// create new groups with all unique verrechnet of groups
+				Set<IBilled> uniqueSet = new HashSet<>();
+				for (VerrechnetPeriod groupVerrechnetPeriod : allGroupVerrechnetPeriods) {
+					uniqueSet.addAll(groupVerrechnetPeriod.getVerrechnete());
+				}
+				List<IBilled> allVerrechnet = new ArrayList<IBilled>(uniqueSet);
+				allGroupVerrechnetPeriods = getGroupedByPeriod(allVerrechnet);
+				if (!allGroupVerrechnetPeriods.isEmpty()) {
+					Collections.sort(allGroupVerrechnetPeriods, (l, r) -> Integer.valueOf(r.getVerrechnete().size())
+							.compareTo(Integer.valueOf(l.getVerrechnete().size())));
+					for (VerrechnetPeriod verrechnetPeriod : allGroupVerrechnetPeriods) {
+						List<IBilled> verrechnetByMandant = verrechnetPeriod.getVerrechnete();
+						// replace value from database with current
+						verrechnetByMandant.remove(verrechnet);
+						verrechnetByMandant.add(verrechnet);
+						if (getVerrechnetCount(verrechnetByMandant) > amount) {
+							ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
+									verrechnet, false);
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -401,7 +422,7 @@ public class TardocLimitation {
 	 * @param code
 	 * @return
 	 */
-	private List<IBilled> getVerrechnetByRechnungsstellerAndCodeDuringPeriod(IEncounter kons, String code) {
+	private List<VerrechnetPeriod> getVerrechnetByRechnungsstellerAndCodeDuringPeriod(IEncounter kons, String code) {
 		IContact rechnungssteller = kons.getMandator().getBiller();
 
 		if (rechnungssteller != null) {
@@ -439,33 +460,29 @@ public class TardocLimitation {
 			// now group in time periods since first verrechnet
 			LocalDate konsDate = kons.getDate();
 			List<VerrechnetPeriod> grouped = getGroupedByPeriod(all);
-			// lookup period matching konsDate
-			for (VerrechnetPeriod verrechnetPeriod : grouped) {
-				if (verrechnetPeriod.isDateInPeriod(konsDate)) {
-					return verrechnetPeriod.getVerrechnete();
-				}
-			}
+			// collect all billed of matching periods
+			return grouped.stream().filter(g -> g.isDateInPeriod(konsDate)).toList();
 		}
 		return Collections.emptyList();
 	}
 
 	private List<VerrechnetPeriod> getGroupedByPeriod(List<IBilled> verrechnete) {
 		if (!verrechnete.isEmpty()) {
+			// sort first for deterministic results
+			Collections.sort(verrechnete, (l, r) -> l.getEncounter().getDate().compareTo(r.getEncounter().getDate()));
 			List<VerrechnetPeriod> ret = new ArrayList<>();
 			for (IBilled verrechnet : verrechnete) {
 				if (ret.isEmpty()) {
 					ret.add(new VerrechnetPeriod(verrechnet));
 				} else {
-					boolean added = false;
 					for (VerrechnetPeriod verrechnetPeriod : ret) {
 						if (verrechnetPeriod.isInPeriod(verrechnet)) {
 							verrechnetPeriod.addVerrechnet(verrechnet);
-							added = true;
-							break;
 						}
 					}
-					// start new period
-					if (!added) {
+					// always start new period if no period with same start exists
+					if (ret.stream().filter(p -> p.start.equals(verrechnet.getEncounter().getDate())).findFirst()
+							.isEmpty()) {
 						ret.add(new VerrechnetPeriod(verrechnet));
 					}
 				}

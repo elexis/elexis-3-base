@@ -12,9 +12,13 @@ package at.medevit.elexis.inbox.model.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -64,30 +68,40 @@ public class InboxElementService implements IInboxElementService {
 
 	HashSet<IInboxUpdateListener> listeners = new HashSet<IInboxUpdateListener>();
 
+	private Map<String, Instant> ignoreObjectIds = new ConcurrentHashMap<>();
+
 	@Override
 	public void createInboxElement(IPatient patient, IMandator mandator, Identifiable object) {
-		// InboxElement element = new InboxElement(patient, mandant, object);
-		IInboxElement element = modelService.create(IInboxElement.class);
-		element.setPatient(patient);
-		element.setMandator(mandator);
-		storeToString.storeToString(object).ifPresent(sts -> {
-			element.setObject(sts);
-		});
-		element.setState(State.NEW);
-		modelService.save(element);
-		fireUpdate(element);
+		if (!ignoreObjectIds.containsKey(object.getId())) {
+			// InboxElement element = new InboxElement(patient, mandant, object);
+			IInboxElement element = modelService.create(IInboxElement.class);
+			element.setPatient(patient);
+			element.setMandator(mandator);
+			storeToString.storeToString(object).ifPresent(sts -> {
+				element.setObject(sts);
+			});
+			element.setState(State.NEW);
+			modelService.save(element);
+			fireUpdate(element);
+		} else {
+			LoggerFactory.getLogger(getClass()).info("Ignoring create inbox for [" + object + "]"); //$NON-NLS-1$
+		}
 	}
 
 	@Override
 	public void createInboxElement(IPatient patient, IMandator mandator, PersistentObject object) {
-		// InboxElement element = new InboxElement(patient, mandant, object);
-		IInboxElement element = modelService.create(IInboxElement.class);
-		element.setPatient(patient);
-		element.setMandator(mandator);
-		element.setObject(object.storeToString());
-		element.setState(State.NEW);
-		modelService.save(element);
-		fireUpdate(element);
+		if (!ignoreObjectIds.containsKey(object.getId())) {
+			// InboxElement element = new InboxElement(patient, mandant, object);
+			IInboxElement element = modelService.create(IInboxElement.class);
+			element.setPatient(patient);
+			element.setMandator(mandator);
+			element.setObject(object.storeToString());
+			element.setState(State.NEW);
+			modelService.save(element);
+			fireUpdate(element);
+		} else {
+			LoggerFactory.getLogger(getClass()).info("Ignoring create inbox for [" + object + "]"); //$NON-NLS-1$
+		}
 	}
 
 	@Override
@@ -218,5 +232,13 @@ public class InboxElementService implements IInboxElementService {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public void addIgnoreObjectId(String id) {
+		Instant now = Instant.now();
+		ignoreObjectIds.put(id, now);
+		// remove old entries
+		ignoreObjectIds.entrySet().removeIf(entry -> Duration.between(entry.getValue(), now).getSeconds() > 30);
 	}
 }

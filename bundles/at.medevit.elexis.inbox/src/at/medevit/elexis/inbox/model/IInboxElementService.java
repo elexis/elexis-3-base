@@ -112,4 +112,13 @@ public interface IInboxElementService {
 	 * @param patient
 	 */
 	public Optional<IMandator> getInboxElementMandator(String providerId, IPatient patient);
+
+	/**
+	 * Add an object id for that create inbox element calls will be ignored. Expires
+	 * after 30 seconds if this method is called again. Expiration is performed on
+	 * next call to this method.
+	 * 
+	 * @param id
+	 */
+	public void addIgnoreObjectId(String id);
 }

@@ -76,6 +76,9 @@ public class GlobalInboxEntryImportHandler {
 			document.setCreated(new Date());
 		}
 		try (InputStream fin = new FileInputStream(mainFile)) {
+			if (globalInboxEntry.isSendNoInfo()) {
+				inboxElementService.addIgnoreObjectId(document.getId());
+			}
 			document = documentStore.saveDocument(document, fin);
 		} catch (IOException | ElexisException e) {
 			LoggerFactory.getLogger(getClass()).warn("Import error", e); //$NON-NLS-1$

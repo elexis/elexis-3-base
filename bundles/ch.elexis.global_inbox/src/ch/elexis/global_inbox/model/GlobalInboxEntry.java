@@ -23,6 +23,7 @@ public class GlobalInboxEntry {
 
 	private boolean sendInfoTo;
 	private List<IMandator> infoTo;
+	private boolean sendNoInfo;
 
 	private List<IPatient> patientCandidates;
 	private List<IContact> senderCandidates;
@@ -132,6 +133,14 @@ public class GlobalInboxEntry {
 
 	public void setSendInfoTo(boolean sendInfoTo) {
 		this.sendInfoTo = sendInfoTo;
+	}
+
+	public boolean isSendNoInfo() {
+		return sendNoInfo;
+	}
+
+	public void setSendNoInfo(boolean sendNoInfo) {
+		this.sendNoInfo = sendNoInfo;
 	}
 
 	public List<IMandator> getInfoTo() {

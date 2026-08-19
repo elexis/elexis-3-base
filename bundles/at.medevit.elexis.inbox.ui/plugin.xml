@@ -106,5 +106,13 @@
             MaintenanceCode="at.medevit.elexis.inbox.ui.dbcheck.RemoveInvalidInboxEntries">
       </ExternalMaintenance>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+	       <page
+	            class="at.medevit.elexis.inbox.ui.preferences.InboxPreferences"
+	            id="at.medevit.elexis.inbox.ui.preferences"
+	            name="Inbox">
+	      </page>
+   </extension>
 
 </plugin>

@@ -12,8 +12,12 @@ package at.medevit.elexis.inbox.ui.part.provider;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -33,18 +37,28 @@ public class InboxElementUiExtension {
 
 	private static Logger logger = LoggerFactory.getLogger(InboxElementUiExtension.class);
 
-	private List<IInboxElementUiProvider> providers;
+	private Map<String, IInboxElementUiProvider> providers;
 
 	public InboxElementUiExtension() {
 		providers = getExtensions();
 	}
 
 	public List<IInboxElementUiProvider> getProviders() {
-		return providers;
+		ArrayList<IInboxElementUiProvider> ret = new ArrayList<>(providers.values());
+		return ret;
+	}
+
+	public String getId(IInboxElementUiProvider provider) {
+		for (Entry<String, IInboxElementUiProvider> entry : providers.entrySet()) {
+			if (entry.getValue().getClass().equals(provider.getClass())) {
+				return entry.getKey();
+			}
+		}
+		return StringUtils.EMPTY;
 	}
 
 	private IInboxElementUiProvider getProvider(IInboxElement element) {
-		for (IInboxElementUiProvider iInboxElementUiProvider : providers) {
+		for (IInboxElementUiProvider iInboxElementUiProvider : providers.values()) {
 			if (iInboxElementUiProvider.isProviderFor(element)) {
 				return iInboxElementUiProvider;
 			}
@@ -52,8 +66,8 @@ public class InboxElementUiExtension {
 		return null;
 	}
 
-	private List<IInboxElementUiProvider> getExtensions() {
-		List<IInboxElementUiProvider> ret = new ArrayList<IInboxElementUiProvider>();
+	private Map<String, IInboxElementUiProvider> getExtensions() {
+		Map<String, IInboxElementUiProvider> ret = new HashMap<>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.inbox.ui.elementsui"); //$NON-NLS-1$
 		if (exp != null) {
@@ -63,7 +77,8 @@ public class InboxElementUiExtension {
 				for (IConfigurationElement el : elems) {
 					if (el.getName().equals("uiprovider")) { //$NON-NLS-1$
 						try {
-							ret.add((IInboxElementUiProvider) el.createExecutableExtension("class")); //$NON-NLS-1$
+							ret.put(el.getAttribute("id"), //$NON-NLS-1$
+									(IInboxElementUiProvider) el.createExecutableExtension("class"));//$NON-NLS-1$
 						} catch (CoreException e) {
 							logger.error("Error creating IInboxElementsProvider " + e); //$NON-NLS-1$
 						}

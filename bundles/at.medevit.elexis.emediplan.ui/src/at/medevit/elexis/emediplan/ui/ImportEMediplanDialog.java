@@ -181,8 +181,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 						LoggerFactory.getLogger(getClass()).error("Could not write emediplan json" + e);
 					}
 				}
-				if (mediplanService.createInboxEntry(medication,
-						ContextServiceHolder.get().getActiveMandator().orElse(null))) {
+				if (mediplanService.createInboxEntry(medication)) {
 					MessageDialog.openInformation(getShell(), "Medikationsplan",
 							"Der Medikationsplan wurde erfolgreich in die Inbox hinzugefügt.");
 					close();

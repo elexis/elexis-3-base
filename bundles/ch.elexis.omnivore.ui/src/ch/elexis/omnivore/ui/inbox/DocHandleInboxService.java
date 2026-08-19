@@ -10,11 +10,8 @@ import org.osgi.service.event.EventHandler;
 
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 
@@ -29,15 +26,10 @@ public class DocHandleInboxService implements EventHandler {
 
 	private void createInboxElement(IDocumentHandle docHandle) {
 		if (docHandle != null && !docHandle.isCategory()) {
-			Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(docHandle.getPatient());
-			IMandator mandator = null;
-			if (encounter.isPresent()) {
-				mandator = encounter.get().getMandator();
-			} else {
-				mandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
-			}
-			if (mandator != null) {
-				service.createInboxElement(docHandle.getPatient(), mandator, docHandle);
+			Optional<IMandator> mandator = service
+					.getInboxElementMandator("at.medevit.elexis.omnivore.inbox.uiprovider", docHandle.getPatient());
+			if (mandator.isPresent()) {
+				service.createInboxElement(docHandle.getPatient(), mandator.get(), docHandle);
 			}
 		}
 	}

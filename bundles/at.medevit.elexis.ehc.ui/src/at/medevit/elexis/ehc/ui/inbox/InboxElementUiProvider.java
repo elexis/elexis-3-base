@@ -73,7 +73,7 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public LocalDate getObjectDate(IInboxElement element) {
-		EhcDocument document = (EhcDocument) ((IInboxElement) element).getObject();
+		EhcDocument document = (EhcDocument) element.getObject();
 		return new TimeTool(document.get(EhcDocument.FLD_TIMESTAMP)).toLocalDate();
 	}
 
@@ -100,5 +100,10 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 				logger.error("Could not open ehc document", e); //$NON-NLS-1$
 			}
 		}
+	}
+
+	@Override
+	public String getObjectLabel() {
+		return "ehealth Dokumente";
 	}
 }

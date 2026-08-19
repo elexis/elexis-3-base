@@ -55,7 +55,7 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public LocalDate getObjectDate(IInboxElement element) {
-		IBlob document = (IBlob) ((IInboxElement) element).getObject();
+		IBlob document = (IBlob) element.getObject();
 		return new TimeTool(document.getLastupdate()).toLocalDate();
 	}
 
@@ -78,4 +78,8 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 		}
 	}
 
+	@Override
+	public String getObjectLabel() {
+		return "eMediplan";
+	}
 }

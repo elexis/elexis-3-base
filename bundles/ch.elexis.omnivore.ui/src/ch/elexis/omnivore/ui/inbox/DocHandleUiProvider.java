@@ -90,4 +90,9 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 			}
 		}
 	}
+
+	@Override
+	public String getObjectLabel() {
+		return "Dokumente";
+	}
 }

@@ -124,7 +124,8 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 					return ((ILabResult) firstElement.getObject()).getDate();
 				}
 			}
-		} else if (element.getObject() instanceof ILabResult) {
+		} else if (element.getObject() instanceof ILabResult
+				&& ((ILabResult) element.getObject()).getObservationTime() != null) {
 			return ((ILabResult) element.getObject()).getObservationTime().toLocalDate();
 		}
 		return null;
@@ -203,5 +204,10 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 		}
 		ret.addElement(element);
 		return ret;
+	}
+
+	@Override
+	public String getObjectLabel() {
+		return "Labor";
 	}
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.inbox;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,6 @@ import at.medevit.elexis.ehc.ui.service.ServiceComponent;
 import at.medevit.elexis.inbox.model.IInboxElementsProvider;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class InboxElementsProvider implements IInboxElementsProvider, InboxListener {
 
@@ -48,8 +49,14 @@ public class InboxElementsProvider implements IInboxElementsProvider, InboxListe
 
 	@Override
 	public void documentCreated(EhcDocument document) {
-		ServiceComponent.getInboxService().createInboxElement(
-				NoPoUtil.loadAsIdentifiable(document.getPatient(), IPatient.class).orElse(null),
-				ContextServiceHolder.get().getActiveMandator().orElse(null), document);
+		Optional<IPatient> patient = NoPoUtil.loadAsIdentifiable(document.getPatient(), IPatient.class);
+		patient.ifPresent(p -> {
+			ServiceComponent.getInboxService().getInboxElementMandator("at.medevit.elexis.ehc.ui.inbox.uiprovider", p)
+					.ifPresent(m -> {
+						ServiceComponent.getInboxService().createInboxElement(p, m, document);
+					});
+		});
+		
+		
 	}
 }

@@ -1,5 +1,7 @@
 package at.medevit.elexis.inbox.model.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -15,7 +17,7 @@ public class ModelUtil {
 	private static IModelService modelService;
 	private static final int MODEL_CACHE_SIZE = 2048;
 	private static final Cache<String, Object> modelCache = CacheBuilder.newBuilder().maximumSize(MODEL_CACHE_SIZE)
-			.weakValues().build();
+			.expireAfterAccess(15, TimeUnit.SECONDS).weakValues().build();
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
 	public void setModelService(IModelService modelService) {

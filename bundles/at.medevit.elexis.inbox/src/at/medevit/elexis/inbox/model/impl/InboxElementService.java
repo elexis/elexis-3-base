@@ -221,7 +221,7 @@ public class InboxElementService implements IInboxElementService {
 		Optional<IMandator> ret = Optional.empty();
 		if (mandatorConfig == Mandator.FAMILY) {
 			IContact doctor = patient.getFamilyDoctor();
-			if(doctor.isMandator()) {
+			if (doctor != null && doctor.isMandator()) {
 				ret = coreModelService.load(doctor.getId(), IMandator.class);
 			}
 		}

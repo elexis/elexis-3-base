@@ -17,6 +17,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -100,6 +104,8 @@ public class InboxView extends ViewPart {
 	private TableViewer viewer;
 
 	private boolean reloadPending;
+	private Job reloadJob;
+	private long reloadGeneration;
 
 	private InboxElementContentProvider contentProvider;
 	private boolean setAutoSelectPatient;
@@ -498,9 +504,28 @@ public class InboxView extends ViewPart {
 	}
 
 	public void reload() {
-		List<IInboxElement> input = getOpenInboxElements();
-		viewer.setInput(input);
-		viewer.refresh();
+		mandatorColumn.getColumn().setWidth(selectedMandators == null || selectedMandators.isEmpty() ? 0 : 75);
+		if (reloadJob != null) {
+			reloadJob.cancel();
+		}
+		long generation = ++reloadGeneration;
+		reloadJob = new Job("Loading Inbox elements") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				List<IInboxElement> input = getOpenInboxElements();
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				Display.getDefault().asyncExec(() -> {
+					if (generation == reloadGeneration && viewer != null && !viewer.getControl().isDisposed()) {
+						viewer.setInput(input);
+						viewer.refresh();
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		reloadJob.schedule();
 	}
 
 	public StructuredViewer getViewer() {

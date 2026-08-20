@@ -25,6 +25,9 @@ import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 
 public interface IInboxElementUiProvider {
 
+	public default void prepareElements(List<IInboxElement> elements) {
+	}
+
 	/**
 	 * Get a label for the Object type this {@link IInboxElementUiProvider} is
 	 * provider for.

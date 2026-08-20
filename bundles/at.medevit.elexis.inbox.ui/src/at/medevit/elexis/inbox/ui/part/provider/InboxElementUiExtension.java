@@ -57,6 +57,10 @@ public class InboxElementUiExtension {
 		return StringUtils.EMPTY;
 	}
 
+	public void prepareElements(List<IInboxElement> elements) {
+		providers.forEach(provider -> provider.prepareElements(elements));
+	}
+
 	private IInboxElementUiProvider getProvider(IInboxElement element) {
 		for (IInboxElementUiProvider iInboxElementUiProvider : providers.values()) {
 			if (iInboxElementUiProvider.isProviderFor(element)) {

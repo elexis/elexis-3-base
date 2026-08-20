@@ -309,6 +309,12 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				}
 			}
 			// return failure
+			if (ret == null) {
+				return new Result<IBilled>(
+						Result.SEVERITY.WARNING, TarifMatcher.KOMBINATION, "Für die Referenzleistung "
+								+ newBilled.getCode() + " konnte keine passende Hauptleistung gefunden werden.",
+						null, false);
+			}
 			return ret;
 		}
 		return new Result<IBilled>(newBilled);

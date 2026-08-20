@@ -342,19 +342,23 @@ public class ArzttarifDetailDialog extends Dialog {
 	@Override
 	protected void okPressed() {
 		if (isArzttarif(billable)) {
-			int idx = cSide.getSelectionIndex();
-			if (idx < 1) {
-				billed.setExtInfo(Constants.FLD_EXT_SIDE, null);
-			} else if (idx == 1) {
-				billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
-			} else {
-				billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
+			if (requiresSide(billed.getBillable())) {
+				int idx = cSide.getSelectionIndex();
+				if (idx < 1) {
+					billed.setExtInfo(Constants.FLD_EXT_SIDE, null);
+				} else if (idx == 1) {
+					billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
+				} else {
+					billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
+				}
 			}
-			if (selectedBezug.isNoBezug) {
-				billed.setExtInfo(Constants.FLD_EXT_REALTION, StringUtils.EMPTY);
-			} else {
-				billed.setExtInfo(Constants.FLD_EXT_REALTION, selectedBezug.getCode());
-				billed.setExtInfo(Constants.FLD_EXT_REALTION_ID, selectedBezug.getId());
+			if (selectedBezug != null) {
+				if (selectedBezug.isNoBezug) {
+					billed.setExtInfo(Constants.FLD_EXT_REALTION, StringUtils.EMPTY);
+				} else {
+					billed.setExtInfo(Constants.FLD_EXT_REALTION, selectedBezug.getCode());
+					billed.setExtInfo(Constants.FLD_EXT_REALTION_ID, selectedBezug.getId());
+				}
 			}
 
 			if (bFranchiseFree.getSelection()) {

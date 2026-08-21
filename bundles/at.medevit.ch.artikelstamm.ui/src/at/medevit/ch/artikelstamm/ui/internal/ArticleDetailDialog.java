@@ -75,16 +75,16 @@ public class ArticleDetailDialog extends Dialog {
 		}
 
 		Label lIndication = new Label(ret, SWT.NONE);
-		lIndication.setText("Indikaitonscode");
+		lIndication.setText("Indikationscode");
 
 		bIndication = new Button(ret, SWT.PUSH);
 		bIndication.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		bIndication.setText(Objects.toString(billed.getExtInfo(Constants.FLD_EXT_INDICATIONCODE), "..."));
 		if (!article.isInSLList()) {
-			bIndication.setText("Indikaitonscode nur bei SL");
+			bIndication.setText("Indikationscode nur bei SL");
 			bIndication.setEnabled(false);
 		} else if (!article.isPm()) {
-			bIndication.setText("Indikaitonscode nur bei Preismodell");
+			bIndication.setText("Indikationscode nur bei Preismodell");
 			bIndication.setEnabled(false);
 		} else {
 			bIndication.setEnabled(true);

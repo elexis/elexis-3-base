@@ -89,6 +89,13 @@ public final class MedicationElement {
 			p.appendChild(c);
 		}
 
+		String reasonForUse = md.getReasonForUse();
+		if (reasonForUse != null && !reasonForUse.trim().isEmpty()) {
+			c = doc.createElement("ReasonForUse"); //$NON-NLS-1$
+			c.appendChild(doc.createTextNode(reasonForUse));
+			p.appendChild(c);
+		}
+
 		c = doc.createElement("PrescriptionDate"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getPrescriptionDate()));
 		p.appendChild(c);

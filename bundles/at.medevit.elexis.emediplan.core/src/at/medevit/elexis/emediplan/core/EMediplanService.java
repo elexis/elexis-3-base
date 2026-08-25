@@ -138,7 +138,7 @@ public interface EMediplanService {
 	 * @param mandant
 	 * @return
 	 */
-	public boolean createInboxEntry(Medication medication, IMandator mandant);
+	public boolean createInboxEntry(Medication medication);
 
 	/**
 	 * Get a private field value from the provided {@link Medicament} with matching

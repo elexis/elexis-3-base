@@ -26,6 +26,14 @@ import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 public interface IInboxElementUiProvider {
 
 	/**
+	 * Get a label for the Object type this {@link IInboxElementUiProvider} is
+	 * provider for.
+	 * 
+	 * @return
+	 */
+	public String getObjectLabel();
+
+	/**
 	 * Image that will be placed on the filter action.
 	 * 
 	 * @param filter

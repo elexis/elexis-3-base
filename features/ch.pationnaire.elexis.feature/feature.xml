@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.pationnaire.elexis.feature"
+      label="Pationnaire in Elexis"
+      version="3.14.0.qualifier"
+      provider-name="pationnaire.ch">
+
+   <description url="http://pationnaire.ch">
+      Integration des pationnaire Diagnostik Fragebogen in Elexis.
+   </description>
+
+   <copyright url="http://pationnaire.ch">
+      pationnaire.ch
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.pationnaire.elexis.scan"
+         version="0.0.0"/>
+
+</feature>

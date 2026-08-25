@@ -11,10 +11,14 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  at.medevit.atc_codes;bundle-version="1.0.0"
 Export-Package: at.medevit.ch.artikelstamm.ui,
  org.eclipse.wb.swt
-Import-Package: at.medevit.ch.artikelstamm.model.common.preference
+Import-Package: at.medevit.ch.artikelstamm.model.common.preference,
+ com.google.common.cache;version="[32.1.3,34.0.0)",
+ org.eclipse.nebula.widgets.nattable;version="[2.2.1,3.0.0)",
+ org.eclipse.nebula.widgets.nattable.data;version="[2.2.1,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: at.medevit.ch.artikelstamm.ui.internal.Activator
-Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalAdjuster.xml,
+Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.CreatePrescriptionUiEventHandler.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalAdjuster.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalArticleValidator.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalRecipeValidator.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.ModelServiceHolder.xml

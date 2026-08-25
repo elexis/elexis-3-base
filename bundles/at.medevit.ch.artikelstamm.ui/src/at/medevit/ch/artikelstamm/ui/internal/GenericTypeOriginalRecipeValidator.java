@@ -37,9 +37,9 @@ public class GenericTypeOriginalRecipeValidator {
 
 			@Override
 			public synchronized Boolean get() {
+				Optional<IRecipe> selectedRecipe = contextService.getTyped(IRecipe.class);
 				ret = Boolean.TRUE;
 				if (configService.get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES_RECIPE, false)) {
-					Optional<IRecipe> selectedRecipe = contextService.getTyped(IRecipe.class);
 					if (selectedRecipe.isPresent()) {
 						List<IArtikelstammItem> originals = new ArrayList<>();
 						for (IPrescription prescription : selectedRecipe.get().getPrescriptions()) {
@@ -63,6 +63,16 @@ public class GenericTypeOriginalRecipeValidator {
 									ret = Boolean.FALSE;
 								}
 							});
+						}
+					}
+				}
+				// validate indication code of the whole recipe
+				if (selectedRecipe.isPresent()) {
+					for (IPrescription prescription : selectedRecipe.get().getPrescriptions()) {
+						if (IndicationCodeUtil.needsIndicationCode(prescription)) {
+							IndicationCodeUtil.addIndicationCodeWithUi(prescription);
+							// that change should also be applied to initial prescription
+							IndicationCodeUtil.applyToMedicationIfMissing(prescription);
 						}
 					}
 				}

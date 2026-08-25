@@ -12,8 +12,13 @@ package at.medevit.elexis.inbox.model.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,9 +34,13 @@ import at.medevit.elexis.inbox.model.IInboxElementService;
 import at.medevit.elexis.inbox.model.IInboxUpdateListener;
 import at.medevit.elexis.inbox.model.InboxElementType;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IEncounterService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -48,32 +57,51 @@ public class InboxElementService implements IInboxElementService {
 	@Reference
 	private IStoreToStringService storeToString;
 
+	@Reference
+	private IConfigService configService;
+
+	@Reference
+	private IEncounterService encounterService;
+
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
+	private IModelService coreModelService;
+
 	HashSet<IInboxUpdateListener> listeners = new HashSet<IInboxUpdateListener>();
+
+	private Map<String, Instant> ignoreObjectIds = new ConcurrentHashMap<>();
 
 	@Override
 	public void createInboxElement(IPatient patient, IMandator mandator, Identifiable object) {
-		// InboxElement element = new InboxElement(patient, mandant, object);
-		IInboxElement element = modelService.create(IInboxElement.class);
-		element.setPatient(patient);
-		element.setMandator(mandator);
-		storeToString.storeToString(object).ifPresent(sts -> {
-			element.setObject(sts);
-		});
-		element.setState(State.NEW);
-		modelService.save(element);
-		fireUpdate(element);
+		if (!ignoreObjectIds.containsKey(object.getId())) {
+			// InboxElement element = new InboxElement(patient, mandant, object);
+			IInboxElement element = modelService.create(IInboxElement.class);
+			element.setPatient(patient);
+			element.setMandator(mandator);
+			storeToString.storeToString(object).ifPresent(sts -> {
+				element.setObject(sts);
+			});
+			element.setState(State.NEW);
+			modelService.save(element);
+			fireUpdate(element);
+		} else {
+			LoggerFactory.getLogger(getClass()).info("Ignoring create inbox for [" + object + "]"); //$NON-NLS-1$
+		}
 	}
 
 	@Override
 	public void createInboxElement(IPatient patient, IMandator mandator, PersistentObject object) {
-		// InboxElement element = new InboxElement(patient, mandant, object);
-		IInboxElement element = modelService.create(IInboxElement.class);
-		element.setPatient(patient);
-		element.setMandator(mandator);
-		element.setObject(object.storeToString());
-		element.setState(State.NEW);
-		modelService.save(element);
-		fireUpdate(element);
+		if (!ignoreObjectIds.containsKey(object.getId())) {
+			// InboxElement element = new InboxElement(patient, mandant, object);
+			IInboxElement element = modelService.create(IInboxElement.class);
+			element.setPatient(patient);
+			element.setMandator(mandator);
+			element.setObject(object.storeToString());
+			element.setState(State.NEW);
+			modelService.save(element);
+			fireUpdate(element);
+		} else {
+			LoggerFactory.getLogger(getClass()).info("Ignoring create inbox for [" + object + "]"); //$NON-NLS-1$
+		}
 	}
 
 	@Override
@@ -183,5 +211,34 @@ public class InboxElementService implements IInboxElementService {
 			ElementsProviderExtension.activateAll();
 		});
 		executor.shutdown();
+	}
+
+	@Override
+	public Optional<IMandator> getInboxElementMandator(String providerId, IPatient patient) {
+		IInboxElementService.Mandator mandatorConfig = IInboxElementService.Mandator
+				.valueOf(configService.get(String.format(IInboxElementService.PREFERENCE_INBOX_MANDATOR, providerId),
+						IInboxElementService.Mandator.ENCOUNTER.name()));
+		Optional<IMandator> ret = Optional.empty();
+		if (mandatorConfig == Mandator.FAMILY) {
+			IContact doctor = patient.getFamilyDoctor();
+			if (doctor != null && doctor.isMandator()) {
+				ret = coreModelService.load(doctor.getId(), IMandator.class);
+			}
+		}
+		if (ret.isEmpty() || mandatorConfig == Mandator.ENCOUNTER) {
+			Optional<IEncounter> latestEncounter = encounterService.getLatestEncounter(patient);
+			if (latestEncounter.isPresent()) {
+				ret = Optional.of(latestEncounter.get().getMandator());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public void addIgnoreObjectId(String id) {
+		Instant now = Instant.now();
+		ignoreObjectIds.put(id, now);
+		// remove old entries
+		ignoreObjectIds.entrySet().removeIf(entry -> Duration.between(entry.getValue(), now).getSeconds() > 30);
 	}
 }

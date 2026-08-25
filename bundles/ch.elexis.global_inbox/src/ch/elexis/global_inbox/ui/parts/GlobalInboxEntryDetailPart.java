@@ -78,6 +78,7 @@ public class GlobalInboxEntryDetailPart {
 	private Text txtKeywords;
 	private Button btnInfoTo;
 	private ComboViewer cvInfoToReceiver;
+	private Button btnNoInfo;
 
 	private static final String NO_CANDIDATES = "Keine Zuordnung gefunden. Eingeben um zu Suchen ...";
 	private static final String MULT_CANDIDATES = "Keine eindeutige Zuordnung - %s Vorschläge. Bitte Auswählen oder Eingeben.";
@@ -347,6 +348,19 @@ public class GlobalInboxEntryDetailPart {
 				globalInboxEntry.setInfoTo(sc.getStructuredSelection().toList());
 			}
 		});
+		btnNoInfo = new Button(infoComposite, SWT.CHECK);
+		btnNoInfo.setText("Keine Info (bereits gelesen)");
+		btnNoInfo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnNoInfo.getSelection()) {
+					btnInfoTo.setSelection(false);
+				}
+				if (globalInboxEntry != null) {
+					globalInboxEntry.setSendNoInfo(btnNoInfo.getSelection());
+				}
+			}
+		});
 
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(2, false));
@@ -401,6 +415,7 @@ public class GlobalInboxEntryDetailPart {
 		txtKeywords.setText(
 				globalInboxEntry.getKeywords() != null ? this.globalInboxEntry.getKeywords() : StringUtils.EMPTY);
 		btnInfoTo.setSelection(globalInboxEntry.isSendInfoTo());
+		btnNoInfo.setSelection(globalInboxEntry.isSendNoInfo());
 
 		Date selectedArchivingDate = globalInboxEntry.getArchivingDate();
 		if (selectedArchivingDate != null) {

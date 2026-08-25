@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="ch.pationnaire.elexis.scan.napsscan"
+            name="Scan Pationnaire">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.Konsdetail">
+         <command
+               commandId="ch.pationnaire.elexis.scan.napsscan"
+               icon="rsc/pationnaire.ico"
+               label="Scan Pationnaire"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="ch.pationnaire.elexis.scan.handler.NapsScanHandler"
+            commandId="ch.pationnaire.elexis.scan.napsscan">
+      </handler>
+   </extension>
+
+</plugin>

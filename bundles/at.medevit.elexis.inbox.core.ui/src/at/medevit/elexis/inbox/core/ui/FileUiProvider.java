@@ -77,4 +77,9 @@ public class FileUiProvider implements IInboxElementUiProvider {
 		Path path = (Path) element.getObject();
 		Program.launch(path.toFile().getAbsolutePath());
 	}
+
+	@Override
+	public String getObjectLabel() {
+		return "Dateien";
+	}
 }

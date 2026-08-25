@@ -306,6 +306,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 		return m;
 	}
 
+	@Override
 	public void addExistingArticlesToMedication(Medication medication) {
 		if (medication != null) {
 			findPatientForMedication(medication);
@@ -560,7 +561,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 
 	@Override
-	public boolean createInboxEntry(Medication medication, IMandator mandant) {
+	public boolean createInboxEntry(Medication medication) {
 
 		if (service == null) {
 			throw new IllegalStateException("No IInboxElementService for inbox defined"); //$NON-NLS-1$
@@ -571,16 +572,20 @@ public class EMediplanServiceImpl implements EMediplanService {
 				IPatient patient = CoreModelServiceHolder.get().load(medication.Patient.patientId, IPatient.class)
 						.orElse(null);
 				if (patient != null) {
-					IBlob blob = CoreModelServiceHolder.get().load(medication.getNamedBlobId(), IBlob.class)
-							.orElse(null);
-					if (blob == null) {
-						blob = CoreModelServiceHolder.get().create(IBlob.class);
-						blob.setId(medication.getNamedBlobId());
+					Optional<IMandator> mandator = service
+							.getInboxElementMandator("at.medevit.elexis.emediplan.inbox.uiprovider", patient);
+					if (mandator.isPresent()) {
+						IBlob blob = CoreModelServiceHolder.get().load(medication.getNamedBlobId(), IBlob.class)
+								.orElse(null);
+						if (blob == null) {
+							blob = CoreModelServiceHolder.get().create(IBlob.class);
+							blob.setId(medication.getNamedBlobId());
+						}
+						blob.setStringContent(medication.chunk);
+						CoreModelServiceHolder.get().save(blob);
+						service.createInboxElement(patient, mandator.get(), NamedBlob.load(blob.getId()));
+						return true;
 					}
-					blob.setStringContent(medication.chunk);
-					CoreModelServiceHolder.get().save(blob);
-					service.createInboxElement(patient, mandant, NamedBlob.load(blob.getId()));
-					return true;
 				}
 			}
 

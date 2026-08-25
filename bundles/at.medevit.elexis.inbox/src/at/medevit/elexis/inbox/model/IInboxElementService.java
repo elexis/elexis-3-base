@@ -11,6 +11,7 @@
 package at.medevit.elexis.inbox.model;
 
 import java.util.List;
+import java.util.Optional;
 
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -18,6 +19,12 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.PersistentObject;
 
 public interface IInboxElementService {
+	public static final String PREFERENCE_INBOX_MANDATOR = "inbox/%s/mandator/"; //$NON-NLS-1$
+
+	public enum Mandator {
+		FAMILY, ENCOUNTER
+	}
+
 	// do not change order, as we save the ordinal to the db, only adding new state
 	// is allowed
 	public enum State {
@@ -95,4 +102,23 @@ public interface IInboxElementService {
 	 * providers are active.
 	 */
 	public void activateProviders();
+
+	/**
+	 * Get the {@link IMandator} that should be used to create an
+	 * {@link IInboxElement}. Depends on preference
+	 * {@link IInboxElementService#PREFERENCE_INBOX_MANDATOR} with providerId of the
+	 * matching {@link IInboxElementUiProvider}.
+	 * 
+	 * @param patient
+	 */
+	public Optional<IMandator> getInboxElementMandator(String providerId, IPatient patient);
+
+	/**
+	 * Add an object id for that create inbox element calls will be ignored. Expires
+	 * after 30 seconds if this method is called again. Expiration is performed on
+	 * next call to this method.
+	 * 
+	 * @param id
+	 */
+	public void addIgnoreObjectId(String id);
 }

@@ -252,5 +252,22 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ambulatory/IAmbulatoryAllowance/typ"/>
       </genClasses>
     </nestedGenPackages>
+    <nestedGenPackages prefix="Ps25" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//ps25">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//ps25/IPs25Leistung">
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/validFrom"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/validTo"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/TP"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/subChapter"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/chapter"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/honorarEmpfaenger"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/mehrleistungBei"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/spezifikation"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/anwendungsRegeln"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/stufe"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/moeglicheKombination"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/mehrleistungsTyp"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//ps25/IPs25Leistung/mehrleistung"/>
+      </genClasses>
+    </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

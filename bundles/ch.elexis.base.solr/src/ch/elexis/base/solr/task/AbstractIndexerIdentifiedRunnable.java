@@ -93,7 +93,7 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 		Optional<IContextService> contextService = OsgiServiceUtil.getService(IContextService.class);
 		Optional<IElexisEnvironmentService> eeService = OsgiServiceUtil.getService(IElexisEnvironmentService.class);
 		if (contextService.isPresent() && eeService.isPresent()) {
-			if (IElexisEnvironmentService.ES_STATION_ID_DEFAULT.equals(contextService.get().getStationIdentifier())) {
+			if (contextService.get().getStationIdentifier().toLowerCase().contains("server")) {
 				// this is Elexis-Server running in EE
 				// see https://solr.apache.org/guide/8_11/basic-authentication-plugin.html
 				String solrPassword = System.getenv("X_EE_SOLR_ELEXIS_SERVER_PASSWORD"); //$NON-NLS-1$

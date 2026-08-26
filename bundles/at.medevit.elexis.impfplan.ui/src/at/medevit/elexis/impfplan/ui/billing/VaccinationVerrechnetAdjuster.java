@@ -20,7 +20,6 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IBilledAdjuster;
-import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -48,7 +47,7 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 							if (coverage != null) {
 								IPatient patient = coverage.getPatient();
 								if (patient != null) {
-									performVaccination(patient.getId(), (IArticle) billable);
+									performVaccination(patient.getId(), (IArticle) billable, encounter.getMandator());
 									Optional<IBilled> vaccineConsultationCode = getVaccineConsultationCode(encounter);
 									if (vaccineConsultationCode.isPresent()) {
 										setFranchiseFree(billed);
@@ -63,7 +62,7 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 		});
 	}
 
-	private void performVaccination(String patientId, IArticle article) {
+	private void performVaccination(String patientId, IArticle article, IMandator iMandator) {
 		UiDesk.asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -72,7 +71,6 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 					d = ApplyVaccinationHandler.getKonsDate();
 				}
 
-				IMandator m = ContextServiceHolder.get().getActiveMandator().orElse(null);
 				ApplicationInputDialog aid = new ApplicationInputDialog(UiDesk.getTopShell(), article);
 				aid.open();
 				String lotNo = aid.getLotNo();
@@ -80,7 +78,7 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 
 				Vaccination vacc = new Vaccination(patientId, StoreToStringServiceHolder.getStoreToString(article),
 						article.getLabel(), article.getGtin(), article.getAtcCode(), d, lotNo,
-						StoreToStringServiceHolder.getStoreToString(m));
+						StoreToStringServiceHolder.getStoreToString(iMandator));
 
 				if (side != null && !side.isEmpty()) {
 					vacc.setSide(side);

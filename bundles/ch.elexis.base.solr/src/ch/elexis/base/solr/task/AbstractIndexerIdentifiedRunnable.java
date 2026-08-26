@@ -105,7 +105,13 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 					LoggerFactory.getLogger(getClass()).error(
 							"Combination EE/ES found, but password is blank in env X_EE_SOLR_ELEXIS_SERVER_PASSWORD"); //$NON-NLS-1$
 				}
+			} else {
+				LoggerFactory.getLogger(getClass()).info(
+						"StationIdentifier does not contain server: " + contextService.get().getStationIdentifier()); //$NON-NLS-1$
 			}
+		} else {
+			LoggerFactory.getLogger(getClass()).error("contextService, eeService presence is " //$NON-NLS-1$
+					+ contextService.isPresent() + " " + eeService.isPresent());
 		}
 
 		return solrClientBuilder;

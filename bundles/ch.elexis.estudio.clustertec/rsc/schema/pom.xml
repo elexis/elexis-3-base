@@ -15,27 +15,54 @@
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
+                    <!-- estudio schemas, package derived from the target namespace -->
                     <execution>
                         <id>xjc</id>
                         <goals>
                             <goal>xjc</goal>
                         </goals>
+                        <configuration>
+                            <!--<xjbSources>
+                                <xjbSource>src/main/resources/global.xjb</xjbSource>
+                            </xjbSources>-->
+                            <laxSchemaValidation>true</laxSchemaValidation>
+                            <sources>
+                                <source>order/orderResponse.xsd</source>
+                                <source>order/order.xsd</source>
+                                <source>order/patient_order.xsd</source>
+                                <source>prescription/prescription.xsd</source>
+                            </sources>
+                            <outputDirectory>${basedir}/../../src-gen/</outputDirectory>
+                            <clearOutputDir>true</clearOutputDir>
+                        </configuration>
+                    </execution>
+                    <!--
+                        Zur Rose prescription schemas. Same target namespace as the estudio
+                        schemas above, therefore the package has to be set explicitly, otherwise
+                        xjc would overwrite ch.clustertec.estudio.schemas.prescription. For the
+                        same reason clearOutputDir must stay false here and the stale file has to
+                        differ from the one of the first execution.
+                    -->
+                    <execution>
+                        <id>xjc-prescriptionrose</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <laxSchemaValidation>true</laxSchemaValidation>
+                            <!-- keep the generated comments in English, xjc would otherwise follow the JVM locale -->
+                            <locale>en</locale>
+                            <packageName>ch.clustertec.estudio.schemas.prescriptionrose</packageName>
+                            <sources>
+                                <source>prescriptionrose/prescription.xsd</source>
+                                <source>prescriptionrose/prescriptionResponse.xsd</source>
+                            </sources>
+                            <outputDirectory>${basedir}/../../src-gen/</outputDirectory>
+                            <clearOutputDir>false</clearOutputDir>
+                            <staleFile>${project.build.directory}/jaxb2/.xjcStaleFlag-prescriptionrose</staleFile>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <!--<xjbSources>
-                        <xjbSource>src/main/resources/global.xjb</xjbSource>
-                    </xjbSources>-->
-                    <laxSchemaValidation>true</laxSchemaValidation>
-                    <sources>
-                        <source>order/orderResponse.xsd</source>
-                        <source>order/order.xsd</source>
-                        <source>order/patient_order.xsd</source>
-                        <source>prescription/prescription.xsd</source>
-                    </sources>
-                    <outputDirectory>${basedir}/../../src-gen/</outputDirectory>
-                    <clearOutputDir>true</clearOutputDir>
-                </configuration>
             </plugin>
         </plugins>
     </build>

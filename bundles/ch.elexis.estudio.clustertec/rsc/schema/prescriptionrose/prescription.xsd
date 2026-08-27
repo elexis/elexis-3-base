@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://estudio.clustertec.ch/schemas/prescription" targetNamespace="http://estudio.clustertec.ch/schemas/prescription" elementFormDefault="qualified">
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:include schemaLocation="elements.xsd"/>
+	<xs:element name="prescription">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="dailymed" minOccurs="0"/>
+				<xs:element ref="prescriptorAddress"/>
+				<xs:element ref="patientAddress"/>
+				<xs:element ref="deliveryAddress" minOccurs="0"/>
+				<xs:element ref="billingAddress" minOccurs="0"/>
+				<xs:element ref="product" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="issueDate" type="xs:date" use="optional"/>
+			<xs:attribute name="validity" type="xs:date" use="optional"/>
+			<xs:attribute name="clustertecPrescriptionNr" type="string8" use="optional"/>
+			<xs:attribute name="prescriptorPrescriptionNr" type="string9" use="optional"/>
+			<xs:attribute name="deliveryType" type="deliveryType" use="optional"/>
+			<xs:attribute name="comment" type="string2000" use="optional"/>
+			<xs:attribute name="prescriptionCategory" type="xs:string" use="optional"/>
+			<xs:attribute name="user" type="xs:string" use="optional"/>
+			<xs:attribute name="password" type="xs:string" use="optional"/>
+			<xs:attribute name="prescriptionNr" type="xs:string" use="optional"/>
+			<xs:attribute name="ignoreInteractions" type="xs:string" use="optional"/>
+			<xs:attribute name="interactionsWithOldPres" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

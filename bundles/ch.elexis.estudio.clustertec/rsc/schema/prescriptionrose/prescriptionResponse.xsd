@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://estudio.clustertec.ch/schemas/prescription" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://estudio.clustertec.ch/schemas/prescription" elementFormDefault="qualified">
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:include schemaLocation="elements.xsd"/>
+	<xs:element name="prescriptionResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="interaction" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="errorCode" type="errorCode"/>
+			<xs:attribute name="errorMessage" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

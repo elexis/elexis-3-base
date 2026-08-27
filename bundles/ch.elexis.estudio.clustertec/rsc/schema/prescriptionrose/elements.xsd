@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns="http://estudio.clustertec.ch/schemas/prescription" 
+           targetNamespace="http://estudio.clustertec.ch/schemas/prescription" 
+           elementFormDefault="qualified">
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:complexType name="addressComplexType">
+		<xs:attribute name="title" type="string32" use="optional"/>
+		<xs:attribute name="titleCode" type="titleCode" use="optional"/>
+		<xs:attribute name="lastName" type="string32" use="optional"/>
+		<xs:attribute name="firstName" type="string32" use="optional"/>
+		<xs:attribute name="additionalAddressLine" type="string32" use="optional"/>
+		<xs:attribute name="street" type="string35" use="optional"/>
+		<xs:attribute name="zipCode" type="string10" use="optional"/>
+		<xs:attribute name="city" type="string32" use="optional"/>
+		<xs:attribute name="kanton" type="string2" use="optional"/>
+		<xs:attribute name="country" type="string2" use="optional"/>
+		<xs:attribute name="phoneNrBusiness" type="string20" use="optional"/>
+		<xs:attribute name="phoneNrHome" type="string20" use="optional"/>
+		<xs:attribute name="phoneNrMobile" type="string20" use="optional"/>
+		<xs:attribute name="faxNr" type="string20" use="optional"/>
+		<xs:attribute name="email" type="string100" use="optional"/>
+	</xs:complexType>
+	<xs:element name="deliveryAddress">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="billingAddress">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="prescriptorAddress">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType">
+					<xs:attribute name="langCode" type="langCode" use="optional"/>
+					<xs:attribute name="clientNrRose" type="string6" use="optional"/>
+					<xs:attribute name="zsrId" type="string7" use="optional"/>
+					<xs:attribute name="eanId" type="eanId" use="optional"/>
+					<xs:attribute name="clientNrClustertec" type="string10" use="optional"/>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="patientAddress">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="addressComplexType">
+					<xs:attribute name="birthday" type="xs:date" use="optional"/>
+					<xs:attribute name="langCode" type="langCode" use="optional"/>
+					<xs:attribute name="coverCardId" type="string25" use="optional"/>
+					<xs:attribute name="sex" type="sex" use="optional"/>
+					<xs:attribute name="patientNr" type="string15" use="optional"/>
+					<xs:attribute name="substitutionWithGenericDrugAllowed" type="substitutionWithGenericDrugAllowedType" use="optional"/>
+					<xs:attribute name="room" type="string50" use="optional"/>
+					<xs:attribute name="section" type="string50" use="optional"/>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="posology">
+		<xs:complexType>
+			<xs:attribute name="qtyMorning" type="string6" use="optional"/>
+			<xs:attribute name="qtyMidday" type="string6" use="optional"/>
+			<xs:attribute name="qtyEvening" type="string6" use="optional"/>
+			<xs:attribute name="qtyNight" type="string6" use="optional"/>
+			<xs:attribute name="posologyText" type="string70" use="optional"/>
+			<xs:attribute name="label" type="xs:boolean" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dailymed">
+		<xs:complexType>
+			<xs:attribute name="timeInterval" type="dailymedTimeIntervalType" use="optional"/>
+			<xs:attribute name="rhythmStartDate" type="xs:date" use="optional"/>
+			<xs:attribute name="endDate" type="xs:date" use="optional"/>
+			<xs:attribute name="isEssential" type="dailymedEssentialType" use="optional"/>
+			<xs:attribute name="boxRemark" type="string70" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dailymedPosition">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="dailymedDosage" minOccurs="1" maxOccurs="4"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dailymedDosage">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="weekday" minOccurs="0" maxOccurs="7"/>
+				<xs:element ref="intakeTime" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="amountOfTablets" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="tabletFraction" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="weekday" type="weekdayType"/>
+	<xs:element name="intakeTime" type="xs:time"/>
+	<xs:element name="amountOfTablets" type="xs:int"/>
+	<xs:element name="tabletFraction" type="tabletFractionType"/>
+	<xs:element name="insurance">
+		<xs:complexType>
+			<xs:attribute name="eanId" type="eanId" use="optional"/>
+			<xs:attribute name="bsvNr" type="string7" use="optional"/>
+			<xs:attribute name="insuranceName" type="string60" use="optional"/>
+			<xs:attribute name="billingType" type="billingType" use="optional"/>
+			<xs:attribute name="insureeNr" type="string20" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="indicationCode" type="xs:string"/>
+	<xs:element name="product">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="posology" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="insurance" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="dailymedPosition" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="indicationCode" minOccurs="0" maxOccurs="1"/>
+			</xs:all>
+			<xs:attribute name="pharmacode" type="pharmaCode" use="optional"/>
+			<xs:attribute name="eanId" type="eanId" use="optional"/>
+			<xs:attribute name="description" type="string50" use="optional"/>
+			<xs:attribute name="repetition" type="xs:string" use="optional"/>
+			<xs:attribute name="nrOfRepetitions" type="xs:string" use="optional"/>
+			<xs:attribute name="quantity" type="xs:string" use="optional"/>
+			<xs:attribute name="validityRepetition" type="xs:string" use="optional"/>
+			<xs:attribute name="reasonOfTreatment" type="reasonOfTreatmentType" use="optional"/>
+			<xs:attribute name="dateOfEvent" type="xs:date" use="optional"/>
+			<xs:attribute name="notSubstitutableForBrandName" type="notSubstitutableForBrandNameType" use="optional"/>
+			<xs:attribute name="recommendationForGenericDrugAllowed" type="recommendationForGenericDrugAllowedType" use="optional"/>
+			<xs:attribute name="pharmacodeOfBrandName" type="pharmaCode" use="optional"/>
+			<xs:attribute name="dateOfSubstitution" type="xs:date" use="optional"/>
+			<xs:attribute name="annotationForPatient" type="string80" use="optional"/>
+			<xs:attribute name="dailymedPosologyCode" type="posologyType" use="optional"/>
+			<xs:attribute name="dailymedMessage" type="string70" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="interactionProduct">
+		<xs:complexType>
+			<xs:attribute name="prescriptionNr" type="string7" use="optional"/>
+			<xs:attribute name="positionNr" type="string10" use="optional"/>
+			<xs:attribute name="pharmacode" type="string7" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="interaction">
+		<xs:complexType>
+			<xs:attribute name="prescriptionNr1" type="string7" use="optional"/>
+			<xs:attribute name="positionNr1" type="string10" use="optional"/>
+			<xs:attribute name="pharmacode1" type="string7" use="optional"/>
+			<xs:attribute name="prescriptionNr2" type="string7" use="optional"/>
+			<xs:attribute name="positionNr2" type="string10" use="optional"/>
+			<xs:attribute name="pharmacode2" type="string7" use="optional"/>
+			<xs:attribute name="interactionState" type="interactionStateType" use="optional"/>
+			<xs:attribute name="interactionGrade" type="interactionGradeType" use="optional"/>
+			<xs:attribute name="interactionDescription" type="string120" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="repetitionPos">
+		<xs:complexType>
+			<xs:attribute name="pharmacode" type="string7" use="optional"/>
+			<xs:attribute name="quantity" type="positiveInteger3" use="optional"/>
+			<xs:attribute name="quantitySurplus" type="positiveInteger3" use="optional"/>
+			<xs:attribute name="validityPosition" type="xs:date" use="optional"/>
+			<xs:attribute name="infoForPrescriptior" type="string80" use="optional"/>
+			<xs:attribute name="description" type="string50" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

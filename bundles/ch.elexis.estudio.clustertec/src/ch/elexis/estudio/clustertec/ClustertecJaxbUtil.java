@@ -5,18 +5,24 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventLocator;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +38,14 @@ import ch.clustertec.estudio.schemas.prescription.Prescription;
 
 public class ClustertecJaxbUtil {
 
-	public static final String JAXB_HEADER_KEY = "com.sun.xml.bind.xmlHeaders"; //$NON-NLS-1$
+	public static final String JAXB_HEADER_KEY = "org.glassfish.jaxb.xmlHeaders"; //$NON-NLS-1$
 	public static final String DEFAULT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
+	private static final String XMLNS_ATTRIBUTE = "xmlns"; //$NON-NLS-1$
+
+	public static final String PRESCRIPTION_NAMESPACE = "http://estudio.clustertec.ch/schemas/prescription"; //$NON-NLS-1$
+
+	public static final String PRESCRIPTION_ROSE_SCHEMA_LOCATION = PRESCRIPTION_NAMESPACE
+			+ "/ prescription.xsd"; //$NON-NLS-1$
 
 	private static Logger log = LoggerFactory.getLogger(ClustertecJaxbUtil.class);
 
@@ -113,8 +125,24 @@ public class ClustertecJaxbUtil {
 	 */
 	private static Marshaller initMarshaller(JAXBContext jaxbContext, String schemaLocation, boolean addDefaultHeader)
 			throws JAXBException {
+		return initMarshaller(jaxbContext, schemaLocation, addDefaultHeader, null, null);
+	}
+
+	private static Marshaller initMarshaller(JAXBContext jaxbContext, String schemaLocation, boolean addDefaultHeader,
+			Schema schema, List<String> violations) throws JAXBException {
 
 		Marshaller marshaller = jaxbContext.createMarshaller();
+		if (schema != null) {
+			marshaller.setSchema(schema);
+			marshaller.setEventHandler(event -> {
+				String violation = format(event);
+				log.warn("XML violates [{}]: {}", schemaLocation, violation); //$NON-NLS-1$
+				if (violations != null) {
+					violations.add(violation);
+				}
+				return true;
+			});
+		}
 		try {
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			if (schemaLocation != null) {
@@ -132,12 +160,15 @@ public class ClustertecJaxbUtil {
 		return marshaller;
 	}
 
-	/**
-	 * Use JAXB to marshal the {@link Prescription} to the returned String.
-	 * 
-	 * @param clustertecPrescription
-	 * @return
-	 */
+	private static String format(ValidationEvent event) {
+		ValidationEventLocator locator = event.getLocator();
+		if (locator != null && locator.getLineNumber() > 0) {
+			return "Zeile " + locator.getLineNumber() + ", Spalte " + locator.getColumnNumber() + ": " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ event.getMessage();
+		}
+		return event.getMessage();
+	}
+
 	public static String marshalPrescription(Prescription clustertecPrescription) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		marshalPrescription(clustertecPrescription, out);
@@ -155,5 +186,79 @@ public class ClustertecJaxbUtil {
 			log.error("Marshalling Order failed", e); //$NON-NLS-1$
 			return false;
 		}
+	}
+
+	public static String marshalPrescription(ch.clustertec.estudio.schemas.prescriptionrose.Prescription rosePrescription) {
+		return marshalPrescription(rosePrescription, (List<String>) null);
+	}
+
+	public static String marshalPrescription(ch.clustertec.estudio.schemas.prescriptionrose.Prescription rosePrescription, List<String> violations) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		if (!marshalPrescription(rosePrescription, out, violations)) {
+			return null;
+		}
+		return out.toString(StandardCharsets.UTF_8);
+	}
+
+	public static boolean marshalPrescription(ch.clustertec.estudio.schemas.prescriptionrose.Prescription rosePrescription, OutputStream outStream) {
+		return marshalPrescription(rosePrescription, outStream, null);
+	}
+
+	public static boolean marshalPrescription(ch.clustertec.estudio.schemas.prescriptionrose.Prescription rosePrescription, OutputStream outStream,
+			List<String> violations) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(ch.clustertec.estudio.schemas.prescriptionrose.Prescription.class);
+			Marshaller marshaller = initMarshaller(jaxbContext, PRESCRIPTION_ROSE_SCHEMA_LOCATION, true,
+					ClustertecSchemaUtil.getSchema(ClustertecSchemaUtil.SCHEMA_PRESCRIPTION), violations);
+			marshaller.marshal(rosePrescription, outStream);
+			return true;
+		} catch (JAXBException e) {
+			log.error("Marshalling Zur Rose prescription failed", e); //$NON-NLS-1$
+			return false;
+		}
+	}
+
+	public static ch.clustertec.estudio.schemas.prescriptionrose.PrescriptionResponse unmarshalPrescriptionResponse(InputStream inStream) {
+		return unmarshalPrescriptionResponse(inStream, null);
+	}
+
+	public static ch.clustertec.estudio.schemas.prescriptionrose.PrescriptionResponse unmarshalPrescriptionResponse(InputStream inStream,
+			List<String> violations) {
+		try {
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new InputSource(inStream));
+			Element root = document.getDocumentElement();
+			if (root.getAttribute(XMLNS_ATTRIBUTE).isEmpty()) {
+				root.setAttribute(XMLNS_ATTRIBUTE, PRESCRIPTION_NAMESPACE);
+			}
+
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			StringWriter writer = new StringWriter();
+			transformer.transform(new DOMSource(document), new StreamResult(writer));
+			return unmarshalPrescriptionResponse(new StreamSource(new StringReader(writer.toString())), violations);
+		} catch (Exception e) {
+			log.error("Unmarshalling Zur Rose PrescriptionResponse failed", e); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	private static ch.clustertec.estudio.schemas.prescriptionrose.PrescriptionResponse unmarshalPrescriptionResponse(Source source, List<String> violations)
+			throws JAXBException {
+		JAXBContext jaxbContext = JAXBContext.newInstance(ch.clustertec.estudio.schemas.prescriptionrose.PrescriptionResponse.class);
+		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+		Schema schema = ClustertecSchemaUtil.getSchema(ClustertecSchemaUtil.SCHEMA_PRESCRIPTION_RESPONSE);
+		if (schema != null) {
+			unmarshaller.setSchema(schema);
+			unmarshaller.setEventHandler(event -> {
+				String violation = format(event);
+				log.warn("Response violates [{}]: {}", ClustertecSchemaUtil.SCHEMA_PRESCRIPTION_RESPONSE, violation); //$NON-NLS-1$
+				if (violations != null) {
+					violations.add(violation);
+				}
+				return true;
+			});
+		}
+		return unmarshaller.unmarshal(source, ch.clustertec.estudio.schemas.prescriptionrose.PrescriptionResponse.class).getValue();
 	}
 }

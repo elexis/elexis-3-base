@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -310,6 +311,8 @@ public class ElexisPDFGenerator {
 		}
 	}
 
+	private static final int MAX_QR_CHUNK_DATA_SIZE = 1262; // 1264 bytes total - 2 bytes for Structured Append header
+
 	private List<String> getEncodedXmlQrs() {
 		Document cloneDocument = (Document) domDocument.cloneNode(true);
 		try {
@@ -348,23 +351,42 @@ public class ElexisPDFGenerator {
 			if (DEBUG) {
 				writeDebugFile(base64Result, ".base64"); //$NON-NLS-1$
 			}
-			// split into chunks of 1264 bytes
+			byte parity = getParity(base64Result);
+			// split into chunks of 1262 bytes
 			List<byte[]> chunks = new ArrayList<byte[]>();
 			int startIndex = 0;
 			while (startIndex < base64Result.length) {
-				int size = startIndex + 1264 > base64Result.length ? base64Result.length - startIndex : 1264;
-				byte[] chunk = new byte[size];
+				int size = startIndex + MAX_QR_CHUNK_DATA_SIZE > base64Result.length ? base64Result.length - startIndex
+						: MAX_QR_CHUNK_DATA_SIZE;
+				byte[] chunk = new byte[MAX_QR_CHUNK_DATA_SIZE];
 				System.arraycopy(base64Result, startIndex, chunk, 0, size);
-				startIndex += 1264;
+				startIndex += MAX_QR_CHUNK_DATA_SIZE;
+				// Pad the last chunk with spaces
+				if (size < MAX_QR_CHUNK_DATA_SIZE) {
+					Arrays.fill(chunk, size, MAX_QR_CHUNK_DATA_SIZE, (byte) ' ');
+				}
 				chunks.add(chunk);
 			}
 			if (!chunks.isEmpty()) {
-				return chunks.stream().map(chunk -> getXmlQrImage(chunk)).map(image -> getEncodedImage(image)).toList();
+				List<String> ret = new ArrayList<>();
+				for (int i = 0; i < chunks.size(); i++) {
+					Image xmlQrImage = getXmlQrImage(i + 1, chunks.size(), parity, chunks.get(i));
+					ret.add(getEncodedImage(xmlQrImage));
+				}
+				return ret;
 			}
 		} catch (TransformerException | XPathExpressionException e) {
 			LoggerFactory.getLogger(getClass()).error("Error encoded xml qrs", e); //$NON-NLS-1$
 		}
 		return Collections.emptyList();
+	}
+
+	private byte getParity(byte[] data) {
+		byte parity = 0;
+		for (byte b : data) {
+			parity ^= b; // XOR each byte with the running parity
+		}
+		return parity;
 	}
 
 	private void writeDebugFile(byte[] content, String ending) {
@@ -549,14 +571,24 @@ public class ElexisPDFGenerator {
 		return StringUtils.EMPTY;
 	}
 
-	private Image getXmlQrImage(byte[] data) {
+	private Image getXmlQrImage(int currentIndex, int totalChunks, byte parity, byte[] data) {
 		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
 		hintMap.put(EncodeHintType.QR_VERSION, 29);
 
+		// Prepend Structured Append header
+		byte[] header = new byte[2];
+		header[0] = (byte) (0x40 | ((currentIndex) << 4) | (totalChunks - 1));
+		header[1] = parity;
+
+		byte[] dataWithHeader = new byte[header.length + data.length];
+		System.arraycopy(header, 0, dataWithHeader, 0, header.length);
+		System.arraycopy(data, 0, dataWithHeader, header.length, data.length);
+
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		try {
-			BitMatrix bitMatrix = qrCodeWriter.encode(new String(data), BarcodeFormat.QR_CODE, 1330, 1330, hintMap);
+			// 591x591 dimensions for 5.0x5.0 cm at 300 DPI
+			BitMatrix bitMatrix = qrCodeWriter.encode(new String(data), BarcodeFormat.QR_CODE, 591, 591, hintMap);
 			int width = bitMatrix.getWidth();
 			int height = bitMatrix.getHeight();
 
@@ -581,13 +613,21 @@ public class ElexisPDFGenerator {
 	 */
 	private String getEncodedImage(Image image) {
 		try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-			ImageLoader imageLoader = new ImageLoader();
-			imageLoader.data = new ImageData[] { image.getImageData() };
-			imageLoader.compression = 100;
-			imageLoader.save(output, SWT.IMAGE_JPEG);
+			if (CoreUtil.isLinux()) {
+				ImageLoader imageLoader = new ImageLoader();
+				imageLoader.data = new ImageData[] { image.getImageData() };
+				imageLoader.compression = 100;
+				imageLoader.save(output, SWT.IMAGE_PNG);
 
-			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
+				return "data:image/png;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); // $NON-NLS-1
+			} else {
+				ImageLoader imageLoader = new ImageLoader();
+				imageLoader.data = new ImageData[] { image.getImageData() };
+				imageLoader.compression = 100;
+				imageLoader.save(output, SWT.IMAGE_JPEG);
 
+				return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
+			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e); //$NON-NLS-1$
 		}

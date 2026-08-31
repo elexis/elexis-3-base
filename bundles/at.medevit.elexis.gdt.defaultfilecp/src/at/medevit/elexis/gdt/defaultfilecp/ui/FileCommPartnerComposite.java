@@ -16,17 +16,19 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.defaultfilecp.FileCommPartner;
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.CoreUtil;
+import ch.elexis.core.utils.CoreUtil.OS;
 
 public class FileCommPartnerComposite extends Composite {
 
@@ -37,11 +39,7 @@ public class FileCommPartnerComposite extends Composite {
 	private Text txtName;
 	private Text txtIdReceiver;
 	private Text txtIdShortReceiver;
-	private Text txtExchangeDir;
-	private Text txtExchangeInDir;
-	private Text txtExchangeOutDir;
-	private Text txtExecutable;
-	private Text txtViewerExecutable;
+	private OsPathEditorGroup pathGroup;
 	private Text txtAdditionalParam;
 	private Button btnExecutableWait;
 	private Button[] btnFileTypes = new Button[2];
@@ -86,68 +84,13 @@ public class FileCommPartnerComposite extends Composite {
 		txtIdShortReceiver.setLayoutData(gridData2Col);
 		txtIdShortReceiver.setText(getValueByConfigKey(fileCommPartner.getFileTransferShortIdReceiver()));
 
-		new Label(this, SWT.NONE).setText("Standard-Austausch-Verzeichnis");
-		txtExchangeDir = new Text(this, SWT.BORDER);
-		txtExchangeDir.setLayoutData(gridData1Col);
-		txtExchangeDir.setText(getValueByConfigKey(fileCommPartner.getFileTransferDirectory()));
-
-		Button btnExchangeDir = new Button(this, SWT.PUSH);
-		btnExchangeDir.setText("Browse...");
-		btnExchangeDir.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dlg = new DirectoryDialog(getShell());
-				dlg.setFilterPath(txtExchangeDir.getText());
-				dlg.setText("Ordner suchen");
-
-				String dir = dlg.open();
-				if (dir != null) {
-					txtExchangeDir.setText(dir);
-				}
-			}
-		});
-
-		new Label(this, SWT.NONE).setText("Verzeichnis Eingehend");
-		txtExchangeInDir = new Text(this, SWT.BORDER);
-		txtExchangeInDir.setLayoutData(gridData1Col);
-		txtExchangeInDir.setText(getValueByConfigKey(fileCommPartner.getFileTransferInDirectory()));
-
-		Button btnExchangeInDir = new Button(this, SWT.PUSH);
-		btnExchangeInDir.setText("Browse...");
-		btnExchangeInDir.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dlg = new DirectoryDialog(getShell());
-				dlg.setFilterPath(txtExchangeInDir.getText());
-				dlg.setText("Ordner suchen");
-
-				String dir = dlg.open();
-				if (dir != null) {
-					txtExchangeInDir.setText(dir);
-				}
-			}
-		});
-
-		new Label(this, SWT.NONE).setText("Verzeichnis Ausgehend");
-		txtExchangeOutDir = new Text(this, SWT.BORDER);
-		txtExchangeOutDir.setLayoutData(gridData1Col);
-		txtExchangeOutDir.setText(getValueByConfigKey(fileCommPartner.getFileTransferOutDirectory()));
-
-		Button btnExchangeOutDir = new Button(this, SWT.PUSH);
-		btnExchangeOutDir.setText("Browse...");
-		btnExchangeOutDir.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dlg = new DirectoryDialog(getShell());
-				dlg.setFilterPath(txtExchangeOutDir.getText());
-				dlg.setText("Ordner suchen");
-
-				String dir = dlg.open();
-				if (dir != null) {
-					txtExchangeOutDir.setText(dir);
-				}
-			}
-		});
+		pathGroup = new OsPathEditorGroup(this, SWT.NONE);
+		pathGroup.setPreferenceStore(fileCommPartner.getSettings());
+		pathGroup.addPathEditor(fileCommPartner.getFileTransferDirectory(), "Standard-Austausch-Verzeichnis");
+		pathGroup.addPathEditor(fileCommPartner.getFileTransferInDirectory(), "Verzeichnis Eingehend");
+		pathGroup.addPathEditor(fileCommPartner.getFileTransferOutDirectory(), "Verzeichnis Ausgehend");
+		pathGroup.addPathEditor(fileCommPartner.getFileTransferExecuteable(), "Verarbeitungsprogramm");
+		pathGroup.addPathEditor(fileCommPartner.getFileTransferViewerExecuteable(), "Anzeigeprogramm");
 
 		new Label(this, SWT.NONE).setText("GuvK (8402)");
 		txtGuvkDefault = new Text(this, SWT.BORDER);
@@ -168,50 +111,6 @@ public class FileCommPartnerComposite extends Composite {
 		btnFileTypes[1].setText("hochzählend");
 		btnFileTypes[1].setSelection(GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND
 				.equals(getValueByConfigKey(fileCommPartner.getFileTransferUsedType())));
-
-		new Label(this, SWT.NONE).setText("Verarbeitungsprogramm");
-		txtExecutable = new Text(this, SWT.BORDER);
-		txtExecutable.setLayoutData(gridData1Col);
-		txtExecutable.setText(getValueByConfigKey(fileCommPartner.getFileTransferExecuteable()));
-
-		Button btnExecutable = new Button(this, SWT.PUSH);
-		btnExecutable.setText("Browse...");
-
-		btnExecutable.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell());
-				dlg.setFilterPath(txtExecutable.getText());
-				dlg.setText("Datei suchen");
-
-				String dir = dlg.open();
-				if (dir != null) {
-					txtExecutable.setText(dir);
-				}
-			}
-		});
-
-		new Label(this, SWT.NONE).setText("Anzeigeprogramm");
-		txtViewerExecutable = new Text(this, SWT.BORDER);
-		txtViewerExecutable.setLayoutData(gridData1Col);
-		txtViewerExecutable.setText(getValueByConfigKey(fileCommPartner.getFileTransferViewerExecuteable()));
-
-		Button btnViewerExecutable = new Button(this, SWT.PUSH);
-		btnViewerExecutable.setText("Browse...");
-
-		btnViewerExecutable.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell());
-				dlg.setFilterPath(txtViewerExecutable.getText());
-				dlg.setText("Datei suchen");
-
-				String dir = dlg.open();
-				if (dir != null) {
-					txtViewerExecutable.setText(dir);
-				}
-			}
-		});
 
 		new Label(this, SWT.NONE).setText("Zusatzparameter");
 		txtAdditionalParam = new Text(this, SWT.BORDER);
@@ -304,18 +203,32 @@ public class FileCommPartnerComposite extends Composite {
 		fileCommPartner.getSettings().setValue(FileCommPartner.CFG_GDT_FILETRANSFER_IDS, cfg);
 	}
 
+	/**
+	 * Clear a path, the key without operating system suffix as well as the keys of
+	 * all operating systems.
+	 *
+	 * @param preferenceName
+	 */
+	private void clearPath(String preferenceName) {
+		fileCommPartner.getSettings().setValue(preferenceName, null);
+		for (OS os : CoreUtil.OS.values()) {
+			fileCommPartner.getSettings().setValue(PreferencesUtil.getOsSpecificPreferenceName(os, preferenceName),
+					null);
+		}
+	}
+
 	private void remove() {
 		removeFileCommPartner(fileCommPartner.getId());
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferIdReceiver(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferShortIdReceiver(), null);
-		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferDirectory(), null);
-		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferInDirectory(), null);
-		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferOutDirectory(), null);
+		clearPath(fileCommPartner.getFileTransferDirectory());
+		clearPath(fileCommPartner.getFileTransferInDirectory());
+		clearPath(fileCommPartner.getFileTransferOutDirectory());
 		fileCommPartner.getSettings().setValue(fileCommPartner.getGuvkDefault(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferUsedType(), null);
-		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteable(), null);
+		clearPath(fileCommPartner.getFileTransferExecuteable());
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteableWait(), null);
-		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferViewerExecuteable(), null);
+		clearPath(fileCommPartner.getFileTransferViewerExecuteable());
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileAdditionalParams(), null);
 		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferName(), null);
 
@@ -330,22 +243,12 @@ public class FileCommPartnerComposite extends Composite {
 					txtIdReceiver.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferShortIdReceiver(),
 					txtIdShortReceiver.getText());
-			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferDirectory(),
-					txtExchangeDir.getText());
-			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferInDirectory(),
-					txtExchangeInDir.getText());
-			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferOutDirectory(),
-					txtExchangeOutDir.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getGuvkDefault(), txtGuvkDefault.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferUsedType(),
 					btnFileTypes[1].getSelection() ? GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND
 							: GDTConstants.GDT_FILETRANSFER_TYP_FEST);
-			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteable(),
-					txtExecutable.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteableWait(),
 					btnExecutableWait.getSelection());
-			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferViewerExecuteable(),
-					txtViewerExecutable.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileAdditionalParams(),
 					txtAdditionalParam.getText());
 			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferName(), txtName.getText());

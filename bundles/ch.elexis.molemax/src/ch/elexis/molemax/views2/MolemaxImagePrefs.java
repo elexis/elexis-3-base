@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -21,17 +20,20 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.molemax.Messages;
+import ch.elexis.molemax.MolemaxSettings;
 
 public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	private List<Control> controlledWidgets = new ArrayList<>();
-	public static final String STORE_GLOBAL = "molemax/store_global";
-	public static final String CUSTOM_BASEDIR = "molemax/custom_imagebase";
-	public static final String BASEDIR = "molemax/imagebase";
+	public static final String STORE_GLOBAL = MolemaxSettings.CFG_PATHS_GLOBAL;
+	public static final String CUSTOM_BASEDIR = MolemaxSettings.CUSTOM_BASEDIR;
+	public static final String BASEDIR = MolemaxSettings.BASEDIR;
 	private BooleanFieldEditor bStoreGlobal;
-	private DirectoryFieldEditor baseDirEditor;
+	private URIFieldEditorComposite baseDirEditor;
 	private StringFieldEditor customBaseDirEditor;
 	private Text dateFormatText;
 	private Text timeFormatText;
@@ -52,17 +54,16 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
-				if ((Boolean) newValue) {
-					updateSettingsStore(true);
-				} else {
-					updateSettingsStore(false);
-				}
+				boolean global = Boolean.TRUE.equals(newValue);
+				ConfigServiceHolder.setGlobal(STORE_GLOBAL, global);
+				updateSettingsStore(global);
 			}
 		};
 		addField(bStoreGlobal);
 
-		baseDirEditor = new DirectoryFieldEditor(BASEDIR, Messages.MolemaxPrefs_basedir, getFieldEditorParent());
-		addField(baseDirEditor);
+		baseDirEditor = new URIFieldEditorComposite(BASEDIR, Messages.MolemaxPrefs_basedir, getFieldEditorParent(),
+				SWT.NONE);
+		baseDirEditor.setEmptyStringAllowed(true);
 
 		customBaseDirEditor = new StringFieldEditor(CUSTOM_BASEDIR, "Patienten Ordner Struktur",
 				getFieldEditorParent());
@@ -170,7 +171,6 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		IPreferenceStore store = global ? new ConfigServicePreferenceStore(Scope.GLOBAL)
 				: new ConfigServicePreferenceStore(Scope.LOCAL);
 		baseDirEditor.setPreferenceStore(store);
-		baseDirEditor.load();
 		customBaseDirEditor.setPreferenceStore(store);
 		customBaseDirEditor.load();
 	}
@@ -183,6 +183,16 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		bStoreGlobal.load();
 		updateSettingsStore(bStoreGlobal.getBooleanValue());
 		return c;
+	}
+
+	@Override
+	protected void adjustGridLayout() {
+		super.adjustGridLayout();
+		if (getFieldEditorParent().getLayout() instanceof GridLayout
+				&& baseDirEditor.getLayoutData() instanceof GridData) {
+			((GridData) baseDirEditor.getLayoutData()).horizontalSpan = ((GridLayout) getFieldEditorParent()
+					.getLayout()).numColumns;
+		}
 	}
 
 	private void appendToGeneratedStructure(String component) {

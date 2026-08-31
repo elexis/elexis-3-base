@@ -49,11 +49,10 @@ import org.eclipse.ui.PlatformUI;
 import at.medevit.elexis.impfplan.ui.VaccinationComposite;
 import at.medevit.elexis.impfplan.ui.VaccinationCompositePaintListener;
 import at.medevit.elexis.impfplan.ui.VaccinationView;
-import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
+import at.medevit.elexis.impfplan.ui.preferences.ImpfplanSettings;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.events.MessageEvent;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -146,9 +145,9 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 			contentStream.close();
 		}
 
-		String outputPath = ConfigServiceHolder.getUser(PreferencePage.VAC_PDF_OUTPUTDIR,
-				CoreHub.getWritableUserDir().getAbsolutePath());
-		if (outputPath.equals(CoreHub.getWritableUserDir().getAbsolutePath())) {
+		String outputPath = ImpfplanSettings.getOutputDirectory();
+		if (StringUtils.isBlank(outputPath)) {
+			outputPath = CoreHub.getWritableUserDir().getAbsolutePath();
 			SWTHelper.showInfo("Kein Ausgabeverzeichnis definiert", "Ausgabe erfolgt in: " + outputPath
 					+ "\nDas Ausgabeverzeichnis kann unter Einstellungen\\Klinische Hilfsmittel\\Impfplan definiert werden.");
 		}

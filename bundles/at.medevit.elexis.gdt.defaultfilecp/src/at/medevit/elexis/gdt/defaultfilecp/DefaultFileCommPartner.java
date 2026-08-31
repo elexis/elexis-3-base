@@ -45,7 +45,7 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	@Override
 	public String getLabel() {
 		return defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferName()) + " (" //$NON-NLS-1$
-				+ defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferDirectory())
+				+ defaultFileCommPartner.getPath(defaultFileCommPartner.getFileTransferDirectory())
 				+ ")"; //$NON-NLS-1$
 	}
 
@@ -109,12 +109,12 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 
 	@Override
 	public String getIncomingDirectory() {
-		return defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferInDirectory());
+		return defaultFileCommPartner.getPath(defaultFileCommPartner.getFileTransferInDirectory());
 	}
 
 	@Override
 	public String getOutgoingDirectory() {
-		return defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferOutDirectory());
+		return defaultFileCommPartner.getPath(defaultFileCommPartner.getFileTransferOutDirectory());
 	}
 
 	@Override
@@ -137,11 +137,9 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	public String getExternalHandlerProgram(HandlerProgramType handlerType) {
 		String executable = null;
 		if (handlerType == HandlerProgramType.VIEWER) {
-			executable = defaultFileCommPartner.getSettings()
-					.getString(defaultFileCommPartner.getFileTransferViewerExecuteable());
+			executable = defaultFileCommPartner.getPath(defaultFileCommPartner.getFileTransferViewerExecuteable());
 		} else {
-			executable = defaultFileCommPartner.getSettings()
-					.getString(defaultFileCommPartner.getFileTransferExecuteable());
+			executable = defaultFileCommPartner.getPath(defaultFileCommPartner.getFileTransferExecuteable());
 		}
 		LoggerFactory.getLogger(getClass())
 				.info("Find external handler [" + executable + "] of [" + defaultFileCommPartner.getId() + "] in [" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -218,8 +216,7 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 
 					@Override
 					public String getOutgoingDirectory() {
-						return defaultFileCommPartner.getSettings()
-								.getString(fileCommPartner.getFileTransferOutDirectory());
+						return fileCommPartner.getPath(fileCommPartner.getFileTransferOutDirectory());
 					}
 
 					@Override
@@ -230,15 +227,13 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					@Override
 					public String getLabel() {
 						return defaultFileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName())
-								+ " (" + defaultFileCommPartner.getSettings() //$NON-NLS-1$
-										.getString(fileCommPartner.getFileTransferDirectory())
+								+ " (" + fileCommPartner.getPath(fileCommPartner.getFileTransferDirectory()) //$NON-NLS-1$
 								+ ")"; //$NON-NLS-1$
 					}
 
 					@Override
 					public String getIncomingDirectory() {
-						return defaultFileCommPartner.getSettings()
-								.getString(fileCommPartner.getFileTransferInDirectory());
+						return fileCommPartner.getPath(fileCommPartner.getFileTransferInDirectory());
 					}
 
 					@Override

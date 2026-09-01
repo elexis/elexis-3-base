@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.xml.elements;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -83,9 +84,16 @@ public final class MedicationElement {
 	    }
 
 		String dosageInstructions = md.getDosageInstructions();
-		if (dosageInstructions != null && !dosageInstructions.trim().isEmpty()) {
+		if (StringUtils.isNotBlank(dosageInstructions)) {
 			c = doc.createElement("DosageInstructions"); //$NON-NLS-1$
 			c.appendChild(doc.createTextNode(dosageInstructions));
+			p.appendChild(c);
+		}
+
+		String reasonForUse = md.getReasonForUse();
+		if (StringUtils.isNotBlank(reasonForUse)) {
+			c = doc.createElement("ReasonForUse"); //$NON-NLS-1$
+			c.appendChild(doc.createTextNode(reasonForUse));
 			p.appendChild(c);
 		}
 

@@ -14,6 +14,9 @@ package ch.itmed.fop.printing.data;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -70,6 +73,24 @@ public final class MedicationData {
 
 	public String getDosageInstructions() {
 		return prescription.getRemark();
+	}
+
+	public String getReasonForUse() {
+		String reasonForUse = prescription.getDisposalComment();
+		if (StringUtils.isNotBlank(reasonForUse) || prescription.getEntryType() != EntryType.SELF_DISPENSED
+				|| prescription.getArticle() == null || prescription.getPatient() == null) {
+			return reasonForUse;
+		}
+
+		List<String> comments = prescription.getPatient()
+				.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
+						EntryType.SYMPTOMATIC_MEDICATION))
+				.stream().filter(candidate -> prescription.getArticle().equals(candidate.getArticle()))
+				.map(IPrescription::getDisposalComment).filter(StringUtils::isNotBlank).distinct()
+				.collect(Collectors.toList());
+
+		// only adopt a comment when the running medication gives an unambiguous answer
+		return comments.size() == 1 ? comments.get(0) : reasonForUse;
 	}
 
 	public String getPrescriptionDate() {

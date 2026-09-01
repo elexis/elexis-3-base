@@ -434,7 +434,13 @@ public class TardocBillingTest extends AbstractTardocTest {
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
 
-		// referenzleistung once per master, but once per session
+		// referenzleistung once per master and side
+		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// referenzleistung once per master
 		status = billingService.bill(TardocLeistung.getFromCode("GG.30.0020", LocalDate.of(2026, 1, 1), null),
 				encounter, 1);
 		billed = status.get();

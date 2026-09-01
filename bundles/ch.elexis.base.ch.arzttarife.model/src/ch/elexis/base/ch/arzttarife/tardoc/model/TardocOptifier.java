@@ -374,6 +374,9 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			if(ret.isOK()) {
 				newBilled.setExtInfo(Constants.FLD_EXT_REALTION, master.getCode());
 				newBilled.setExtInfo(Constants.FLD_EXT_REALTION_ID, master.getId());
+				if (StringUtils.isNotBlank(((String) master.getExtInfo(Constants.FLD_EXT_SIDE)))) {
+					newBilled.setExtInfo(Constants.FLD_EXT_SIDE, master.getExtInfo(Constants.FLD_EXT_SIDE));
+				}
 				return ret;
 			} else if (trySeparate) {
 				String existingBezugCode = (String) newBilled.getExtInfo(Constants.FLD_EXT_REALTION);

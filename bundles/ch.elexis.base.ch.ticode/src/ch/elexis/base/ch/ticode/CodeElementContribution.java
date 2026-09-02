@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
 import ch.elexis.core.model.ICodeElement;
@@ -19,9 +20,16 @@ public class CodeElementContribution implements ICodeElementServiceContribution,
 
 	public static final String STS_CLASS = "ch.elexis.data.TICode"; //$NON-NLS-1$
 
+	private TessinerCodeSystem codeSystem;
+
+	@Activate
+	public void activate() {
+		this.codeSystem = new TessinerCodeSystem();
+	}
+
 	@Override
 	public String getSystem() {
-		return TessinerCode.CODESYSTEM_NAME;
+		return codeSystem.getCodeSystemName();
 	}
 
 	@Override
@@ -32,16 +40,16 @@ public class CodeElementContribution implements ICodeElementServiceContribution,
 	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
-		return (Optional<ICodeElement>) (Optional<?>) TessinerCode.getFromCode(code);
+		return (Optional<ICodeElement>) (Optional<?>) codeSystem.getFromCode(code);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ICodeElement> getElements(Map<Object, Object> context) {
 		if (context.get(ContextKeys.TREE_ROOTS) != null && context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
-			return (List<ICodeElement>) (List<?>) Arrays.asList(TessinerCode.getRootNodes());
+			return (List<ICodeElement>) (List<?>) Arrays.asList(codeSystem.getRootNodes());
 		}
-		return TessinerCode.getLeafNodes();
+		return (List<ICodeElement>) (List<?>) Arrays.asList(codeSystem.getLeafNodes());
 	}
 
 	@Override

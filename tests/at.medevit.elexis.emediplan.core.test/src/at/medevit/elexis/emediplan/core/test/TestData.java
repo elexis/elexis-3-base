@@ -8,7 +8,6 @@ import java.util.List;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.constants.ExtInfoConstants;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
@@ -18,6 +17,7 @@ import ch.elexis.core.model.builder.IPrescriptionBuilder;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.elexis.core.types.ArticleSubTyp;

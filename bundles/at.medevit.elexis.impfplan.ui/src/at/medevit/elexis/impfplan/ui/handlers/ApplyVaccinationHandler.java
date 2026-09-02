@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.elexis.impfplan.ui.billing.AddVaccinationToKons;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.ui.util.GenericObjectDropTarget;

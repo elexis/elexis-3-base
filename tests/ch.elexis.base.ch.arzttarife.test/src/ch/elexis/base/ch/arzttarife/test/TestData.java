@@ -456,7 +456,7 @@ public class TestData {
 
 			mandanten.add(mandant);
 
-			CoreHub.setMandant(mandant);
+			ContextServiceHolder.setActiveMandatorById(mandant.getId());
 
 			// make sure domains are registered
 			assertTrue(CoreModelServiceHolder.get() != null);

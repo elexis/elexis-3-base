@@ -19,8 +19,8 @@ import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import at.medevit.elexis.inbox.ui.part.InboxView;
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import jakarta.inject.Inject;
 

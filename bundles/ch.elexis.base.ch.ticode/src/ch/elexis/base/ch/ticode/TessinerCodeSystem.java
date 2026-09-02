@@ -97,6 +97,8 @@ public class TessinerCodeSystem {
 					codeMap.put(code, ret);
 					return Optional.of(ret);
 				}
+			} else {
+				return Optional.of(ret);
 			}
 		}
 		return Optional.empty();

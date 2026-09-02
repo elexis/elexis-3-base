@@ -89,7 +89,7 @@ public class IEncounterServiceTest {
 		coreModelService.refresh(encounter);
 		assertEquals(0, encounter.getDiagnoses().size());
 
-		ConfigServiceHolder.get().get().setActiveUserContact(Preferences.USR_DEFDIAGNOSE, "ch.elexis.data.TICode::U9");
+		ConfigServiceHolder.get().get().setActiveUserContact(Preferences.USR_DEFDIAGNOSE, "ch.elexis.data.TICode::A1");
 		encounterService.addDefaultDiagnosis(encounter);
 		coreModelService.refresh(encounter);
 		assertEquals(1, encounter.getDiagnoses().size());

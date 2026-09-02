@@ -1,0 +1,3035 @@
+{
+  "resourceType": "CodeSystem",
+  "url": "http://elexis.info/CodeSystem/TI-Code",
+  "version": "1.0.0",
+  "name": "TI-Code",
+  "title": "Tessiner Code",
+  "status": "active",
+  "date": "2026-09-02",
+  "publisher": "elexis.info",
+  "description": "Tessiner Code System including MTK extension for diagnosis codes.",
+  "purpose": "This code system is used for encoding diagnosis in the Tessiner system, including MTK extensions.",
+  "content": "complete",
+  "concept": [
+    {
+      "code": "A",
+      "display": "Herz- / Kreislaufsystem",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Système cardio-vasculaire"
+        },
+        {
+          "language": "it",
+          "value": "cuore / circolazione"
+        }
+      ]
+    },
+    {
+      "code": "A1",
+      "display": "Kardiale Vitien / Herzklappen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Vitiens cardiaques/ valvules cardiaques"
+        },
+        {
+          "language": "it",
+          "value": "vizi cardiaci / valvole cardiache"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "A2",
+      "display": "Erkrankungen der Herzkranzgefässe, inklusive Myokardinfarkt",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies coronariennes, y compris infarctus du myocarde"
+        },
+        {
+          "language": "it",
+          "value": "malattia coronarica, compreso l'infarto miocardico"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "A3",
+      "display": "Herz - Rhythmusstörungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Troubles du rythme cardiaque"
+        },
+        {
+          "language": "it",
+          "value": "disturbi del ritmo cardiaco"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "A4",
+      "display": "Hypertonie",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Hypertonie artèrielles"
+        },
+        {
+          "language": "it",
+          "value": "ipertensione arteriosa"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "A5",
+      "display": "Arterien",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Artères"
+        },
+        {
+          "language": "it",
+          "value": "arterie"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "A6",
+      "display": "Venen (inkl. Varizen)",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Veines (y compris varices)"
+        },
+        {
+          "language": "it",
+          "value": "vene (compreso le varici)"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "A7",
+      "display": "Lymphgefässe inkl. Lymphoedem",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Vaisseaux lymphatiques y compris oedème lymphatique"
+        },
+        {
+          "language": "it",
+          "value": "vasi linfatici, compreso il linfedema"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "A9",
+      "display": "Andere Erkrankungen des Herz- / Kreislaufsystems ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies du système cardio-vasculaire"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie cardiache / del sistema circolatorio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "A"
+        }
+      ]
+    },
+    {
+      "code": "B",
+      "display": "Blut / Knochenmark/ Milz",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Sang / moelle osseuse/ rate"
+        },
+        {
+          "language": "it",
+          "value": "sangue / midollo osseo / milza"
+        }
+      ]
+    },
+    {
+      "code": "B1",
+      "display": "Anämie",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Anémie"
+        },
+        {
+          "language": "it",
+          "value": "anemia"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "B"
+        }
+      ]
+    },
+    {
+      "code": "B2",
+      "display": "Gerinnungsstörungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Coagulopathie"
+        },
+        {
+          "language": "it",
+          "value": "disturbi della coagulazione"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "B"
+        }
+      ]
+    },
+    {
+      "code": "B3",
+      "display": "Erkrankungen des Knochenmarks und des Blutes  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies de la moelle osseuse et du sang"
+        },
+        {
+          "language": "it",
+          "value": "malattie del midollo osseo e del sangue"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "B"
+        }
+      ]
+    },
+    {
+      "code": "B4",
+      "display": "Milz / Lymphknoten / Immunsystem",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Rate / ganglion lymphatique / système immunitaire"
+        },
+        {
+          "language": "it",
+          "value": "milza / linfonodi / sistema immunitario"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "B"
+        }
+      ]
+    },
+    {
+      "code": "B9",
+      "display": "Andere Erkrankungen von Knochenmark / Blut / Milz",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies de la moelle osseuse / du sang / de la rate"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie del midollo osseo / del sangue / della milza"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "B"
+        }
+      ]
+    },
+    {
+      "code": "C",
+      "display": "Lunge / Atemwege",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Poumon / appareil respiratoire"
+        },
+        {
+          "language": "it",
+          "value": "polmoni / vie respiratorie"
+        }
+      ]
+    },
+    {
+      "code": "C1",
+      "display": "Asthma",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Asthme"
+        },
+        {
+          "language": "it",
+          "value": "asma"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "C"
+        }
+      ]
+    },
+    {
+      "code": "C2",
+      "display": "Chronischer Husten  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Bronchite chronique"
+        },
+        {
+          "language": "it",
+          "value": "bronchite cronica"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "C"
+        }
+      ]
+    },
+    {
+      "code": "C3",
+      "display": "Lungenembolie",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Embolie pulmonaire"
+        },
+        {
+          "language": "it",
+          "value": "embolia polmonare"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "C"
+        }
+      ]
+    },
+    {
+      "code": "C4",
+      "display": "Lunge / Pleura exkl. TBC",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Poumon / plèvre (tuberculose exclue)"
+        },
+        {
+          "language": "it",
+          "value": "polmone / pleura (escluso TBC)"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "C"
+        }
+      ]
+    },
+    {
+      "code": "C9",
+      "display": "Andere Erkrankungen des Atemtraktes",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies de l'appareil respiratoire"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie dell'apparato respiratorio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "C"
+        }
+      ]
+    },
+    {
+      "code": "D",
+      "display": "Skelett / Bewegungsapparat",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Squelette / appareil locomoteur"
+        },
+        {
+          "language": "it",
+          "value": "scheletro / apparato locomotore"
+        }
+      ]
+    },
+    {
+      "code": "D1",
+      "display": "Muskeln / Sehnen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Muscles / tendons"
+        },
+        {
+          "language": "it",
+          "value": "muscoli / tendini"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "D"
+        }
+      ]
+    },
+    {
+      "code": "D2",
+      "display": "Gelenke / Bänder / Bursa exkl. D3",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Articulations / ligaments / bourse (D3 exclu.)"
+        },
+        {
+          "language": "it",
+          "value": "articolazioni / legamenti / borse (escluso D3)"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "D"
+        }
+      ]
+    },
+    {
+      "code": "D3",
+      "display": "Arthritis / M. Bechterew  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Arthrite / M. Bechterew"
+        },
+        {
+          "language": "it",
+          "value": "artrite / M. Bechterew"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "D"
+        }
+      ]
+    },
+    {
+      "code": "D4",
+      "display": "Arthrose",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Arthrose"
+        },
+        {
+          "language": "it",
+          "value": "artrosi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "D"
+        }
+      ]
+    },
+    {
+      "code": "D5",
+      "display": "Wirbelsäule exkl. D3",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Colonne vertébrale (D3 exclu.)"
+        },
+        {
+          "language": "it",
+          "value": "vertebre (escluso D3)"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "D"
+        }
+      ]
+    },
+    {
+      "code": "D9",
+      "display": "Andere Erkrankungen des Bewegungsapparates",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies de l'appareil locomoteur"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie dell'apparato locomotore"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "D"
+        }
+      ]
+    },
+    {
+      "code": "E",
+      "display": "Verdauungstrakt",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Tube digestif"
+        },
+        {
+          "language": "it",
+          "value": "apparato digerente"
+        }
+      ]
+    },
+    {
+      "code": "E1",
+      "display": "Oesophagus / Magen / Duodenum, inkl. Ulcera  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Oesophage / estomac / duodénum, ulcère compris)"
+        },
+        {
+          "language": "it",
+          "value": "esofago / stomaco / duodeno, compreso ulcera"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "E2",
+      "display": "Darm (Dünndarm / Kolon)",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Intestin (intestin grêle / colon)"
+        },
+        {
+          "language": "it",
+          "value": "intestino (tenue / colon)"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "E3",
+      "display": "Rektum / Anus, inkl. Hämorrhoiden",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Rectum / anus, hémorroïdes comprises)"
+        },
+        {
+          "language": "it",
+          "value": "retto / ano, compreso emorroidi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "E4",
+      "display": "Leber / Gallenwege / Gallenblase",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Foie / voies biliaires / vésicule biliaire"
+        },
+        {
+          "language": "it",
+          "value": "fegato / vie biliari / cistifellea"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "E5",
+      "display": "Pankreas, exkl. Diabetes",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Pancréas, diabète exclu)"
+        },
+        {
+          "language": "it",
+          "value": "panceras, escluso diabete"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "E6",
+      "display": "Zwerchfell",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Diaphragme"
+        },
+        {
+          "language": "it",
+          "value": "diaframma"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "E7",
+      "display": "Hernien",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Hernies"
+        },
+        {
+          "language": "it",
+          "value": "ernie"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "E9",
+      "display": "Andere Erkrankungen des Verdauungstraktes",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies du tube digestif"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie dell'apparato digerente"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "E"
+        }
+      ]
+    },
+    {
+      "code": "F",
+      "display": "Stoffwechsel",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Métabolisme"
+        },
+        {
+          "language": "it",
+          "value": "metabolismo"
+        }
+      ]
+    },
+    {
+      "code": "F1",
+      "display": "Zuckerstoffwechsel",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Métabolisme glucidique"
+        },
+        {
+          "language": "it",
+          "value": "metabolismo glucidico"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "F"
+        }
+      ]
+    },
+    {
+      "code": "F2",
+      "display": "Erkrankungen der Schilddrüse",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies de la glande thyroïde"
+        },
+        {
+          "language": "it",
+          "value": "malattie della tiroide"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "F"
+        }
+      ]
+    },
+    {
+      "code": "F9",
+      "display": "Andere Stoffwechselerkrankungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies du métabolisme"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie del metabolismo"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "F"
+        }
+      ]
+    },
+    {
+      "code": "G",
+      "display": "Infektions- und Parasitäre - Krankheiten",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies infectieuses et parasitaires"
+        },
+        {
+          "language": "it",
+          "value": "malattie infettive e parassitarie"
+        }
+      ]
+    },
+    {
+      "code": "G1",
+      "display": "Komplikationsloser Infekt",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Infection banale"
+        },
+        {
+          "language": "it",
+          "value": "infezione non complicata"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "G"
+        }
+      ]
+    },
+    {
+      "code": "G2",
+      "display": "Tuberkulose",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Tuberculose"
+        },
+        {
+          "language": "it",
+          "value": "tubercolosi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "G"
+        }
+      ]
+    },
+    {
+      "code": "G3",
+      "display": "Virale Hepatitis",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Hépatite virale"
+        },
+        {
+          "language": "it",
+          "value": "epatite virale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "G"
+        }
+      ]
+    },
+    {
+      "code": "G9",
+      "display": "Andere infektiöse oder parasitäre Krankheiten",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies infectieuses ou parasitaires"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie infettive o parassitarie"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "G"
+        }
+      ]
+    },
+    {
+      "code": "H",
+      "display": "Niere und ableitende Harnwege",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Rein et voies urinaires"
+        },
+        {
+          "language": "it",
+          "value": "rene e vie urinarie"
+        }
+      ]
+    },
+    {
+      "code": "H1",
+      "display": "Niere / Niereninsuffizienz (Dialyse / Transplantation)",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Rein / insuffisance rénale (dialyse / transplantation)"
+        },
+        {
+          "language": "it",
+          "value": "rene / insufficienza renale (dialisi / trapianto)"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "H"
+        }
+      ]
+    },
+    {
+      "code": "H2",
+      "display": "Nierensteinleiden",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Calcul rénal"
+        },
+        {
+          "language": "it",
+          "value": "nefrolitiasi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "H"
+        }
+      ]
+    },
+    {
+      "code": "H3",
+      "display": "Ableitende Harnwege",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Voies urinaires"
+        },
+        {
+          "language": "it",
+          "value": "vie urinarie"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "H"
+        }
+      ]
+    },
+    {
+      "code": "H9",
+      "display": "Andere Erkrankungen der Nieren und der ableitenden Harnwege",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies des reins et des voies urinaires"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie renali e delle vie urinarie"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "H"
+        }
+      ]
+    },
+    {
+      "code": "I",
+      "display": "Geschlechtsorgane",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Organes génitaux"
+        },
+        {
+          "language": "it",
+          "value": "organi genitali"
+        }
+      ]
+    },
+    {
+      "code": "I1",
+      "display": "Männliche Geschlechtsorgane  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Organes génitaux masculins"
+        },
+        {
+          "language": "it",
+          "value": "organi genitali maschili"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "I2",
+      "display": "Vulva, Vagina, kleines Becken",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Vulve, vagin, petit bassin"
+        },
+        {
+          "language": "it",
+          "value": "vulva, vagina, piccolo bacino"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "I3",
+      "display": "Uterus",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Utérus"
+        },
+        {
+          "language": "it",
+          "value": "utero"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "I4",
+      "display": "Adnexe",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Annexes"
+        },
+        {
+          "language": "it",
+          "value": "annessi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "I5",
+      "display": "Störungen des Menstruations - Zyklus",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Troubles du cycle menstruel"
+        },
+        {
+          "language": "it",
+          "value": "disturbi del ciclo mestruale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "I6",
+      "display": "Erkrankungen der Brustdrüse",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies de la glande mammaire"
+        },
+        {
+          "language": "it",
+          "value": "malattie della ghiandola mammaria"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "I7",
+      "display": "Sterilisation",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Stérilisation"
+        },
+        {
+          "language": "it",
+          "value": "sterilizzazione"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "I9",
+      "display": "Andere Erkrankungen der Geschlechtsorgane",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies des organes génitaux"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie degli organi genitali"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "I"
+        }
+      ]
+    },
+    {
+      "code": "K",
+      "display": "Schwangerschaft / Sterilität",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Grossesse / stérilité"
+        },
+        {
+          "language": "it",
+          "value": "gravidanza / infertilita"
+        }
+      ]
+    },
+    {
+      "code": "K1",
+      "display": "Schwangerschaft normales Risiko",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Grossesse risque normal"
+        },
+        {
+          "language": "it",
+          "value": "gravidanza a rischio normale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "K"
+        }
+      ]
+    },
+    {
+      "code": "K2",
+      "display": "Schwangerschaft mit Komplikation",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Grossesse avec complications"
+        },
+        {
+          "language": "it",
+          "value": "gravidanza con complicazioni"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "K"
+        }
+      ]
+    },
+    {
+      "code": "K3",
+      "display": "Sterilität  und  künstliche Befruchtung  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Stérilité et insémination artificielle"
+        },
+        {
+          "language": "it",
+          "value": "infertilita e inseminazione artificiale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "K"
+        }
+      ]
+    },
+    {
+      "code": "L",
+      "display": "Nervensystem",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Système nerveux"
+        },
+        {
+          "language": "it",
+          "value": "sistema nervoso"
+        }
+      ]
+    },
+    {
+      "code": "L1",
+      "display": "Hirn / Rückenmark  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Cerveau / moelle épinière"
+        },
+        {
+          "language": "it",
+          "value": "cervello / midollo spinale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "L"
+        }
+      ]
+    },
+    {
+      "code": "L2",
+      "display": "Periphere Nerven",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Nerfs périphériques"
+        },
+        {
+          "language": "it",
+          "value": "nervi periferici"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "L"
+        }
+      ]
+    },
+    {
+      "code": "L3",
+      "display": "Lähmung / Ataxie",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Paralysie / ataxie"
+        },
+        {
+          "language": "it",
+          "value": "paralisi / atassia"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "L"
+        }
+      ]
+    },
+    {
+      "code": "L4",
+      "display": "Migräne und Äquivalente  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Migraine et équivalents"
+        },
+        {
+          "language": "it",
+          "value": "emicrania ed equivalenti"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "L"
+        }
+      ]
+    },
+    {
+      "code": "L5",
+      "display": "Epilepsie",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Epilepsie"
+        },
+        {
+          "language": "it",
+          "value": "epilessia"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "L"
+        }
+      ]
+    },
+    {
+      "code": "L9",
+      "display": "Andere Erkrankungen des Nervensystems",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies du système nerveux"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie del sistema nervoso"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "L"
+        }
+      ]
+    },
+    {
+      "code": "M",
+      "display": "Psychische Erkrankungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies psychiques"
+        },
+        {
+          "language": "it",
+          "value": "malattie psichiche"
+        }
+      ]
+    },
+    {
+      "code": "M1",
+      "display": "Schlafstörungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Troubles du sommeil"
+        },
+        {
+          "language": "it",
+          "value": "disturbo del sonne"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "M"
+        }
+      ]
+    },
+    {
+      "code": "M2",
+      "display": "Psychische Erkrankungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies psychiques"
+        },
+        {
+          "language": "it",
+          "value": "malattie psichiche"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "M"
+        }
+      ]
+    },
+    {
+      "code": "M3",
+      "display": "Psychoorganische Erkrankungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies psycho-organiques"
+        },
+        {
+          "language": "it",
+          "value": "malattie psicorganiche"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "M"
+        }
+      ]
+    },
+    {
+      "code": "N",
+      "display": "Haut",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Peau"
+        },
+        {
+          "language": "it",
+          "value": "pelle"
+        }
+      ]
+    },
+    {
+      "code": "N1",
+      "display": "Allergische Hauterkrankungen, exkl. Ekzem",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies allergiques de la peau, eczéma exclu."
+        },
+        {
+          "language": "it",
+          "value": "malattie cutanee allergiche, escluso l'eczem."
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "N"
+        }
+      ]
+    },
+    {
+      "code": "N2",
+      "display": "Entzündliche / infektiöse Hautkrankheiten",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies inflammatoires / infectieuses de la peau"
+        },
+        {
+          "language": "it",
+          "value": "malattie cutanee infiammatorie / infettive"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "N"
+        }
+      ]
+    },
+    {
+      "code": "N3",
+      "display": "Ekzem",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Eczéma"
+        },
+        {
+          "language": "it",
+          "value": "eczema"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "N"
+        }
+      ]
+    },
+    {
+      "code": "N4",
+      "display": "Vaskuläre / degenerative Hautkrankheiten",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Maladies vasculaires / dégénératives de la peau"
+        },
+        {
+          "language": "it",
+          "value": "malattie cutanee vascolari / degenerative"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "N"
+        }
+      ]
+    },
+    {
+      "code": "N5",
+      "display": "Psoriasis / Hyperkeratosen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Psoriasis / hyperkératoses"
+        },
+        {
+          "language": "it",
+          "value": "psoriasi / ipercheratosi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "N"
+        }
+      ]
+    },
+    {
+      "code": "N6",
+      "display": "Narben",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Cicatrices"
+        },
+        {
+          "language": "it",
+          "value": "cicatrici"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "N"
+        }
+      ]
+    },
+    {
+      "code": "N9",
+      "display": "Andere Hauterkrankungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies de la peau"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie della pelle"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "N"
+        }
+      ]
+    },
+    {
+      "code": "O",
+      "display": "Hals/Nase/Ohren",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Cou / nez / oreilles"
+        },
+        {
+          "language": "it",
+          "value": "orecchio / naso / gola"
+        }
+      ]
+    },
+    {
+      "code": "O1",
+      "display": "Nase exkl. N6",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Nez, N6 exclu."
+        },
+        {
+          "language": "it",
+          "value": "naso (escluso N6)"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O2",
+      "display": "Nasennebenhöhlen  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "sinus nasal"
+        },
+        {
+          "language": "it",
+          "value": "seni paranasali"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O3",
+      "display": "Mundhöhle, Speicheldrüsen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Cavité buccale, glandes salivaires"
+        },
+        {
+          "language": "it",
+          "value": "cavo orale, ghiandole salivari"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O4",
+      "display": "Tonsillen / Adenoide",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Amygdales / adénoïdes"
+        },
+        {
+          "language": "it",
+          "value": "tonsille / adenoidi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O5",
+      "display": "Larynx / Trachea",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Larynx / trachée"
+        },
+        {
+          "language": "it",
+          "value": "laringe / trachea"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O6",
+      "display": "Missbildungen der Nase und der Ohren",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Malformations du nez et des oreilles"
+        },
+        {
+          "language": "it",
+          "value": "malformazioni del naso e delle orecchie"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O7",
+      "display": "Mittelohr / Tuba Eustachii",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Oreille moyenne / trompe d'Eustache"
+        },
+        {
+          "language": "it",
+          "value": "orecchio medio / tromba d'Eustachio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O8",
+      "display": "Innenohr",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Oreille interne"
+        },
+        {
+          "language": "it",
+          "value": "orecchio interne"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "O9",
+      "display": "Andere HNO - Erkrankungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies ORL"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie 0RL"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "O"
+        }
+      ]
+    },
+    {
+      "code": "P",
+      "display": "Auge",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Oeil"
+        },
+        {
+          "language": "it",
+          "value": "occhio"
+        }
+      ]
+    },
+    {
+      "code": "P1",
+      "display": "Lid / Konjuktiva",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Paupière / conjonctive"
+        },
+        {
+          "language": "it",
+          "value": "palpebra / congiuntiva"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "P"
+        }
+      ]
+    },
+    {
+      "code": "P2",
+      "display": "Linse / Kornea / Glaskörper  ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Lentille / cornée / corps vitré"
+        },
+        {
+          "language": "it",
+          "value": "cristallino / cornea / corpo vitreo"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "P"
+        }
+      ]
+    },
+    {
+      "code": "P3",
+      "display": "Iris / Glaukom",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Iris / glaucome"
+        },
+        {
+          "language": "it",
+          "value": "iride / glaucoma"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "P"
+        }
+      ]
+    },
+    {
+      "code": "P4",
+      "display": "Retina / Sehnerv / Gefässe",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Rétine / nerf optique / vaisseaux"
+        },
+        {
+          "language": "it",
+          "value": "retina / nerve ottico / vasi"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "P"
+        }
+      ]
+    },
+    {
+      "code": "P5",
+      "display": "Augenmuskeln / Strabismus",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Muscle oculomoteur / strabisme"
+        },
+        {
+          "language": "it",
+          "value": "muscoli oculomotori / strabismo"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "P"
+        }
+      ]
+    },
+    {
+      "code": "P9",
+      "display": "Andere Augenerkrankungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies des yeux"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie dell'occhio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "P"
+        }
+      ]
+    },
+    {
+      "code": "Q",
+      "display": "Zähne / Kiefer",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Dents / mâchoire"
+        },
+        {
+          "language": "it",
+          "value": "denti / mascella"
+        }
+      ]
+    },
+    {
+      "code": "Q1",
+      "display": "Zyste",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Kyste"
+        },
+        {
+          "language": "it",
+          "value": "ciste"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "Q"
+        }
+      ]
+    },
+    {
+      "code": "Q2",
+      "display": "Zahnabszess",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Abcès dentaire"
+        },
+        {
+          "language": "it",
+          "value": "ascesso dentario"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "Q"
+        }
+      ]
+    },
+    {
+      "code": "Q3",
+      "display": "Fibrome",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fibromes"
+        },
+        {
+          "language": "it",
+          "value": "fibroma"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "Q"
+        }
+      ]
+    },
+    {
+      "code": "Q9",
+      "display": "Andere Erkrankungen des Kiefers oder der Zähne",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres maladies de la mâchoire ou dentaires"
+        },
+        {
+          "language": "it",
+          "value": "altre malattie della mascella o dei denti"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "Q"
+        }
+      ]
+    },
+    {
+      "code": "R",
+      "display": "Unfall / Unfallbedingt",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Accident / conséquences de l'accident"
+        },
+        {
+          "language": "it",
+          "value": "Incidente / A causa di un incidente"
+        }
+      ]
+    },
+    {
+      "code": "S00",
+      "display": "Prellung und oberflächliche Verletzung  Kopf",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion et blessure superficielle à la tête"
+        },
+        {
+          "language": "it",
+          "value": "Contusione e lesione superficiale alla testa"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S01",
+      "display": "Offene Wunde Kopf",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Plaie ouverte à la tête"
+        },
+        {
+          "language": "it",
+          "value": "Ferita aperta alla testa"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S025",
+      "display": "Zahnfraktur",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture dentaire"
+        },
+        {
+          "language": "it",
+          "value": "Frattura dentale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S060",
+      "display": "Gehirnerschütterung",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Commotion cérébrale"
+        },
+        {
+          "language": "it",
+          "value": "Commozione cerebrale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S134",
+      "display": "Verstauchung und Zerrung HWS",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Entorse et élongation des vertèbres cervicales"
+        },
+        {
+          "language": "it",
+          "value": "Distorsione e stiramento alla colonna cervicale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S20",
+      "display": "Prellung und oberflächliche Verletzung Thorax",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion et blessure superficielle au thorax"
+        },
+        {
+          "language": "it",
+          "value": "Contusione e lesione superficiale al torace"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S22",
+      "display": "Rippenfraktur",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture des côtes"
+        },
+        {
+          "language": "it",
+          "value": "Frattura delle costole"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S30",
+      "display": "Prellung und oberflächliche Verletzung Lumbosakralgegend und Becken",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion et blessure superficielle à la région lombo-sacrée et au bassin"
+        },
+        {
+          "language": "it",
+          "value": "Contusione e lesione superficiale della regione lombosacrale e del bacino"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S400",
+      "display": "Prellung Schulter und Oberarm",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion à l'épaule et au bras"
+        },
+        {
+          "language": "it",
+          "value": "Contusione della spalla e del braccio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S42",
+      "display": "Fraktur Schulter und Oberarm",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture à l'épaule et au bras"
+        },
+        {
+          "language": "it",
+          "value": "Frattura della spalla e del braccio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S43",
+      "display": "Luxation, Verstauchung und Zerrung von Gelenken und Bändern des Schultergürtels",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Luxation, entorse et élongation des articulations et des ligaments de la ceinture scapulaire"
+        },
+        {
+          "language": "it",
+          "value": "Lussazione, distorsione e stiramento delle articolazioni e dei legamenti della cintura scapolare"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S46",
+      "display": "Verletzung anderer Muskeln und Sehnen in Schulter und Oberarm",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Lésion d'autres muscles et tendons de l'épaule et du bras"
+        },
+        {
+          "language": "it",
+          "value": "Lesione di altri muscoli e tendini della spalla e del braccio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S460",
+      "display": "Verletzung Rotatorenmanschette",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Lésion de la coiffe des rotateurs"
+        },
+        {
+          "language": "it",
+          "value": "Lesione della cuffia dei rotatori"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S50",
+      "display": "Oberflächliche Verletzung Unterarme",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Lésion superficielle aux avant-bras"
+        },
+        {
+          "language": "it",
+          "value": "Lesione superficiale degli avambracci"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S500",
+      "display": "Prellung Ellenbogen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion au coude"
+        },
+        {
+          "language": "it",
+          "value": "Contusione del gomito"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S52",
+      "display": "Fraktur Unterarm",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture à l'avant-bras"
+        },
+        {
+          "language": "it",
+          "value": "Frattura dell'avambraccio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S60",
+      "display": "Oberflächliche Verletzung des Handgelenkes und der Hand",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Lésion superficielle du poignet et de la main"
+        },
+        {
+          "language": "it",
+          "value": "Lesione superficiale del polso e della mano"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S600",
+      "display": "Prellung Finger",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion des doigts"
+        },
+        {
+          "language": "it",
+          "value": "Contusione delle dita"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S602",
+      "display": "Prellung sonstiger Teile des Handgelenkes und der Hand",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion d'autres parties du poignet et de la main"
+        },
+        {
+          "language": "it",
+          "value": "Contusione di altre parti del polso e della mano"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S610",
+      "display": "Offene Wunde Finger",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Plaie ouverte des doigts"
+        },
+        {
+          "language": "it",
+          "value": "Ferita aperta delle dita"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S618",
+      "display": "Offene Wunde sonstiger Teile des Handgelenkes und der Hand",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Plaie ouverte d'autres parties du poignet et de la main"
+        },
+        {
+          "language": "it",
+          "value": "Ferita aperta in altre parti del polso e della mano"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S62",
+      "display": "Fraktur sonstiger Teile des Handgelenkes und der Hand",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture d'autres parties du poignet et de la main"
+        },
+        {
+          "language": "it",
+          "value": "Frattura in altre parti del polso e della mano"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S626",
+      "display": "Fraktur Finger",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture des doigts"
+        },
+        {
+          "language": "it",
+          "value": "Frattura delle dita"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S635",
+      "display": "Verstauchung und Zerrung des Handgelenkes",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Entorse et élongation du poignet"
+        },
+        {
+          "language": "it",
+          "value": "Distorsione e stiramento del polso"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S636",
+      "display": "Verstauchung und Zerrung Finger",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Entorse et élongation des doigts"
+        },
+        {
+          "language": "it",
+          "value": "Distorsione e stiramento delle dita"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S63x",
+      "display": "Luxation von Gelenken und Bändern des Handgelenkes und der Hand",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Luxation des articulations et des ligaments du poignet et de la main"
+        },
+        {
+          "language": "it",
+          "value": "Lussazione delle articolazioni e dei legamenti del polso e della mano"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S70",
+      "display": "Prellung und oberflächliche Verletzung von Hüfte und  Oberschenkel",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion et blessure superficielle de la hanche et de la cuisse"
+        },
+        {
+          "language": "it",
+          "value": "Contusione e lesione superficiale dell'anca e della coscia"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S76",
+      "display": "Verletzung von Muskeln und Sehnen von Hüfte und  Oberschenkel",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Blessure des muscles et des tendons de la hanche et de la cuisse"
+        },
+        {
+          "language": "it",
+          "value": "Lesioni ai muscoli e ai tendini dell'anca e della coscia"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S80",
+      "display": "Prellung und oberflächliche Verletzung Unterschenkel",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion et blessure superficielle de la jambe"
+        },
+        {
+          "language": "it",
+          "value": "Contusione e lesione superficiale alla parte inferiore della gamba"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S800",
+      "display": "Prellung Knie",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion du genou"
+        },
+        {
+          "language": "it",
+          "value": "Contusione al ginocchio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S81",
+      "display": "Offene Wunde Unterschenkel",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Plaie ouverte de la jambe"
+        },
+        {
+          "language": "it",
+          "value": "Ferita aperta alla parte inferiore della gamba"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S82",
+      "display": "Fraktur Unterschenkel incl OSG",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture de la jambe, y compris l'articulation tibio-tarsienne"
+        },
+        {
+          "language": "it",
+          "value": "Frattura alla parte inferiore della gamba, compreso l'articolazione tibio-tarsica"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S832",
+      "display": "Meniskusriss, akut",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Rupture du ménisque, aiguë"
+        },
+        {
+          "language": "it",
+          "value": "Rottura del menisco, acuta"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S834",
+      "display": "Verstauchung und Zerrung Seitenband",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Entorse et élongation du ligament latéral"
+        },
+        {
+          "language": "it",
+          "value": "Distorsione e stiramento del legamento collaterale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S835",
+      "display": "Verstauchung und Zerrung Kreuzband",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Entorse et élongation du ligament croisé"
+        },
+        {
+          "language": "it",
+          "value": "Distorsione e stiramento del legamento crociato"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S836",
+      "display": "Verstauchung und Zerrung anderer Teile des Knies",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Entorse et élongation d'autres parties du genou"
+        },
+        {
+          "language": "it",
+          "value": "Distorsione e stiramento di altre parti del ginocchio"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S86",
+      "display": "Verletzung von Muskeln und Sehnen Unterschenkels",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Lésion des muscles et des tendons de la jambe"
+        },
+        {
+          "language": "it",
+          "value": "Lesione dei muscoli e dei tendini della parte inferiore della gamba"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S90",
+      "display": "Oberflächliche Verletzung Knöchel und Fuss",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Lésion superficielle de la cheville et du pied"
+        },
+        {
+          "language": "it",
+          "value": "Lesione superficiale alla caviglia e al piede"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S900",
+      "display": "Prellung Knöchelregion",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion de la région de la cheville"
+        },
+        {
+          "language": "it",
+          "value": "Contusione alla caviglia"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S903",
+      "display": "Prellung Fuss",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Contusion du pied"
+        },
+        {
+          "language": "it",
+          "value": "Contusione al piede"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S92",
+      "display": "Fraktur Fuss excl OSG",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Fracture du pied, à l'exclusion de l'articulation tibio-tarsienne"
+        },
+        {
+          "language": "it",
+          "value": "Frattura del piede esclusa l'articolazione tibio-tarsica"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S93",
+      "display": "Luxation, Verstauchung und Zerrung Fuss",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Luxation, entorse et élongation du pied"
+        },
+        {
+          "language": "it",
+          "value": "Lussazione, distorsione e stiramento del piede"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S932",
+      "display": "Bandruptur OSG",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Rupture ligamentaire de l'articulation tibio-tarsienne"
+        },
+        {
+          "language": "it",
+          "value": "Rottura dei legamenti dell'articolazione tibio-tarsica"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S934",
+      "display": "Verstauchung und Zerrung OSG",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Entorse et élongation de l'articulation tibio-tarsienne"
+        },
+        {
+          "language": "it",
+          "value": "Distorsione e stiramento dell'articolazione tibio-tarsica"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "T09",
+      "display": "Sonstige Verletzungen Wirbelsäule und Rumpf, Höhe nicht näher bezeichnet",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Autres blessures de la colonne vertébrale et du tronc, hauteur non précisée"
+        },
+        {
+          "language": "it",
+          "value": "Altre lesioni alla colonna vertebrale e al tronco, altezza non specificata"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "T15",
+      "display": "Fremdkörper im äusseren Auge",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Corps étranger dans l'œil externe"
+        },
+        {
+          "language": "it",
+          "value": "Corpo estraneo nell'occhio esterno"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "R"
+        }
+      ]
+    },
+    {
+      "code": "S",
+      "display": "Nicht-Pflichtleistungen ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Prestations non prises en charge par l'assurance-maladie"
+        },
+        {
+          "language": "it",
+          "value": "Prestazioni non obbligatorie "
+        }
+      ]
+    },
+    {
+      "code": "T",
+      "display": "Präventive Massnahmen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Mesures préventives"
+        },
+        {
+          "language": "it",
+          "value": "Misure preventive"
+        }
+      ]
+    },
+    {
+      "code": "T1",
+      "display": "Vorsorgeuntersuchung",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Examen préventif"
+        },
+        {
+          "language": "it",
+          "value": "Visita medica preventiva"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "T"
+        }
+      ]
+    },
+    {
+      "code": "T2",
+      "display": "Impfungen",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Vaccinations"
+        },
+        {
+          "language": "it",
+          "value": "Vaccinazioni"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "T"
+        }
+      ]
+    },
+    {
+      "code": "U",
+      "display": "Vertrauensarzt orientiert (anstelle Diagnose) ",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Orientation du médecin-conseil (au lieu du diagnostic)"
+        },
+        {
+          "language": "it",
+          "value": "Medico di fiducia informato (anziché diagnosi)"
+        }
+      ]
+    }
+  ]
+}

@@ -9,3 +9,7 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.ticode.CodeElementContribution.xml
+Import-Package: ch.elexis.core.findings.util,
+ org.apache.commons.io;version="[2.22.0,3.0.0)",
+ org.hl7.fhir.instance.model.api;version="[7.2.0,8.0.0)",
+ org.hl7.fhir.r4.model;version="[6.1.0,7.0.0)"

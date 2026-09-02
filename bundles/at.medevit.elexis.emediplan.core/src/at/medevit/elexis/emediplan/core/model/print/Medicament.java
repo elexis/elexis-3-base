@@ -12,11 +12,18 @@ package at.medevit.elexis.emediplan.core.model.print;
 
 import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import at.medevit.elexis.emediplan.core.ArticleDetailServiceHolder;
+import at.medevit.elexis.emediplan.core.IArticleDetailService;
+import at.medevit.elexis.emediplan.core.internal.ImageUtil;
+import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.elexis.data.Anwender;
@@ -35,7 +42,6 @@ public class Medicament {
 	public String dosageNight;
 
 	public String unit;
-	public String type;
 
 	public String startDate;
 	public String endDate;
@@ -44,9 +50,20 @@ public class Medicament {
 	public String reason;
 	public String prescriptor;
 
+	public String image;
+
+	public String substances;
+
 	public static Medicament fromPrescription(IPrescription prescription) {
+		return fromPrescription(prescription, false);
+	}
+
+	public static Medicament fromPrescription(IPrescription prescription, boolean withDetails) {
 		Medicament ret = new Medicament();
 		ret.name = prescription.getArticle().getLabel();
+		if (withDetails) {
+			addDetails(ret, prescription.getArticle());
+		}
 
 		String[] signature = MedicationServiceHolder.get()
 				.getSignatureAsStringArray(prescription.getDosageInstruction());
@@ -63,7 +80,6 @@ public class Medicament {
 			ret.dosageNoon = signature[1];
 			ret.dosageEvening = signature[2];
 			ret.dosageNight = signature[3];
-			ret.type = "täglich";
 		}
 		ret.startDate = prescription.getDateFrom() != null
 				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom()) //$NON-NLS-1$
@@ -78,6 +94,25 @@ public class Medicament {
 				: StringUtils.EMPTY;
 		ret.prescriptor = getPrescriptorLabel(prescriptorId);
 		return ret;
+	}
+
+	private static void addDetails(Medicament medicament, IArticle article) {
+		if (article == null) {
+			return;
+		}
+		Optional<IArticleDetailService> detailService = ArticleDetailServiceHolder.getService();
+		if (detailService.isPresent()) {
+			Optional<byte[]> image = detailService.get().getImage(article);
+			if (image.isPresent()) {
+				byte[] prepared = ImageUtil.prepareForPrint(image.get());
+				medicament.image = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(prepared); //$NON-NLS-1$
+			}
+			medicament.unit = detailService.get().getPrescriptionUnit(article).orElse(null);
+			List<String> substances = detailService.get().getSubstances(article);
+			if (!substances.isEmpty()) {
+				medicament.substances = String.join(", ", substances); //$NON-NLS-1$
+			}
+		}
 	}
 
 	private static String getPrescriptorLabel(String prescriptorId) {

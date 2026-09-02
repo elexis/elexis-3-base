@@ -8,8 +8,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.views.ArzttarifRefcodesDialog;
 
 public class ArzttarifRefcodesHandler extends AbstractHandler {

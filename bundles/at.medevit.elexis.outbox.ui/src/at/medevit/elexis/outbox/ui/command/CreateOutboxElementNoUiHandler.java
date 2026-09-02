@@ -11,9 +11,9 @@ import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class CreateOutboxElementNoUiHandler extends AbstractHandler {
 

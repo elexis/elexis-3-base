@@ -16,7 +16,7 @@ import at.medevit.elexis.loinc.ui.providers.LoincCodeControlFieldProvider;
 import at.medevit.elexis.loinc.ui.providers.LoincLabelProvider;
 import at.medevit.elexis.loinc.ui.providers.LoincTableContentProvider;
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;

@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
@@ -33,6 +32,7 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;

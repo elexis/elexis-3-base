@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
-import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 
 public class PhysioLawFilter extends ViewerFilter {
 

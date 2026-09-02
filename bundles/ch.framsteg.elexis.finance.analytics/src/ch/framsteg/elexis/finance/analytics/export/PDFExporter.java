@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -33,15 +34,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.framsteg.elexis.finance.analytics.beans.Day;
 import ch.framsteg.elexis.finance.analytics.beans.TreeBuilder;
 import ch.framsteg.elexis.finance.analytics.pdf.PDFColumn;
 import ch.framsteg.elexis.finance.analytics.pdf.PDFPageGenerator;
-import ch.framsteg.elexis.finance.analytics.pdf.PDFTableGenerator;
 import ch.framsteg.elexis.finance.analytics.pdf.PDFTable;
 import ch.framsteg.elexis.finance.analytics.pdf.PDFTableBuilder;
+import ch.framsteg.elexis.finance.analytics.pdf.PDFTableGenerator;
 
 public class PDFExporter {
 

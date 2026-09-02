@@ -31,12 +31,12 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.core.data.interfaces.IDiagnose;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.util.GenericObjectDragSource;

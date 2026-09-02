@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.samples.i18n;
 
-import org.eclipse.osgi.util.NLS;
-
 /**
  * <p>Message class. Used for i18n.</p>
  * 

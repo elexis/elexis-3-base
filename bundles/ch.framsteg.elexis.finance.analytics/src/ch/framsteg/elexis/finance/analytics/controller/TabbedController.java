@@ -32,8 +32,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.constants.ElexisSystemPropertyConstants;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.JdbcLink.Stm;
 

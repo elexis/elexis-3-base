@@ -17,7 +17,7 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeSpan;

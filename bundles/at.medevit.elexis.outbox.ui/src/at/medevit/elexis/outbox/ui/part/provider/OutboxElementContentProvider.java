@@ -13,9 +13,9 @@ import org.eclipse.jface.viewers.Viewer;
 import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class OutboxElementContentProvider implements ITreeContentProvider {
 

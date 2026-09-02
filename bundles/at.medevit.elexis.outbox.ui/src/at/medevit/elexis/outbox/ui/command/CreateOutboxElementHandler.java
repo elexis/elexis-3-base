@@ -14,11 +14,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class CreateOutboxElementHandler extends AbstractHandler {
 

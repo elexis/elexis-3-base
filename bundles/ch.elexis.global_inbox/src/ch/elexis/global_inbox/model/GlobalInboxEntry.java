@@ -1,14 +1,15 @@
 package ch.elexis.global_inbox.model;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 
 public class GlobalInboxEntry {
 
@@ -33,28 +34,29 @@ public class GlobalInboxEntry {
 	/**
 	 * The main file bound for import
 	 */
-	private final File mainFile;
+	private final IVirtualFilesystemHandle mainFile;
 	/**
 	 * Files that provide supportive information on mainfile, they always start with
 	 * the same name as the mainFile, extending it with another extension e.g. orig
 	 * file: scan.pdf, ext file: scan.pdf.edam.xml
 	 */
-	private final File[] extensionFiles;
+	private final IVirtualFilesystemHandle[] extensionFiles;
 
-	public GlobalInboxEntry(File mainFile, File[] extensionFiles) {
+	public GlobalInboxEntry(IVirtualFilesystemHandle mainFile, IVirtualFilesystemHandle[] extensionFiles) {
 		this.mainFile = mainFile;
 		this.title = mainFile.getName();
 		this.extensionFiles = extensionFiles;
 		patientCandidates = new ArrayList<IPatient>();
 		senderCandidates = new ArrayList<IContact>();
 		dateTokens = new ArrayList<LocalDate>();
+		infoTo = new ArrayList<IMandator>();
 	}
 
-	public File getMainFile() {
+	public IVirtualFilesystemHandle getMainFile() {
 		return mainFile;
 	}
 
-	public File[] getExtensionFiles() {
+	public IVirtualFilesystemHandle[] getExtensionFiles() {
 		return extensionFiles;
 	}
 
@@ -199,7 +201,7 @@ public class GlobalInboxEntry {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((mainFile.getAbsolutePath() == null) ? 0 : mainFile.getAbsolutePath().hashCode());
+		result = prime * result + Objects.hashCode(mainFile.getAbsolutePath());
 		return result;
 	}
 
@@ -212,20 +214,15 @@ public class GlobalInboxEntry {
 		if (getClass() != obj.getClass())
 			return false;
 		GlobalInboxEntry other = (GlobalInboxEntry) obj;
-		if (mainFile.getAbsolutePath() == null) {
-			if (other.mainFile.getAbsolutePath() != null)
-				return false;
-		} else if (!mainFile.getAbsolutePath().equals(other.mainFile.getAbsolutePath()))
-			return false;
-		return true;
+		return Objects.equals(mainFile.getAbsolutePath(), other.mainFile.getAbsolutePath());
 	}
 
 	/**
 	 * @return if there is an extension file that ends with .preview.pdf it will be
 	 *         returned, else the main-file is returned
 	 */
-	public File getPdfPreviewFile() {
-		for (File extFile : extensionFiles) {
+	public IVirtualFilesystemHandle getPdfPreviewFile() {
+		for (IVirtualFilesystemHandle extFile : extensionFiles) {
 			if (extFile.getName().endsWith(".preview.pdf")) { //$NON-NLS-1$
 				return extFile;
 			}

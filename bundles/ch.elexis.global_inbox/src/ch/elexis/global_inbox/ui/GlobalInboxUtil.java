@@ -6,21 +6,26 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
-import java.nio.file.Files;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.jdt.Nullable;
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.global_inbox.Preferences;
@@ -29,6 +34,8 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 public class GlobalInboxUtil {
+
+	public static final String CATEGORY_INBOX_ROOT = "-"; //$NON-NLS-1$
 
 	private static IConfigService configService;
 
@@ -47,31 +54,29 @@ public class GlobalInboxUtil {
 	 * @param fileName
 	 * @return the document id if import was successful, else <code>null</code>
 	 */
-	public @Nullable String tryImportForPatient(File file, String patientNo, String fileName) {
+	public @Nullable String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName,
+			String category) {
 		List<Patient> lPat = new Query(Patient.class, Patient.FLD_PATID, patientNo).execute();
 		if (lPat.size() == 1) {
 			if (!isFileOpened(file)) {
 				Patient pat = lPat.get(0);
-				String cat = GlobalInboxUtil.getCategory(file);
-				if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
-					cat = null;
-				}
+				String cat = CATEGORY_INBOX_ROOT.equals(category) ? null : category;
 				IDocumentManager dm = (IDocumentManager) Extensions
 						.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 				try {
 
 					long heapSize = Runtime.getRuntime().totalMemory();
-					long length = file.length();
+					long length = file.getContentLenght();
 					if (length >= heapSize) {
-						logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)"); //$NON-NLS-1$ //$NON-NLS-2$
+						logger.warn("Skipping " + toLogString(file) + " as bigger than heap size. (#3652)"); //$NON-NLS-1$ //$NON-NLS-2$
 						return null;
 					}
 
-					GenericDocument fd = new GenericDocument(pat, fileName, cat, file,
-							new TimeTool().toString(TimeTool.DATE_GER), StringUtils.EMPTY, null);
+					GenericDocument fd = new GenericDocument(pat, fileName, cat, file.readAllBytes(),
+							new TimeTool().toString(TimeTool.DATE_GER), StringUtils.EMPTY, file.getName());
 					file.delete();
 
-					boolean automaticBilling = CoreHub.localCfg.get(Preferences.PREF_AUTOBILLING, false);
+					boolean automaticBilling = ConfigServiceHolder.get().getLocal(Preferences.PREF_AUTOBILLING, false);
 					return dm.addDocument(fd, automaticBilling);
 
 				} catch (Exception ex) {
@@ -83,6 +88,14 @@ public class GlobalInboxUtil {
 
 		return null;
 
+	}
+
+	private boolean isFileOpened(IVirtualFilesystemHandle handle) {
+		Optional<File> localFile = handle.toFile();
+		if (localFile.isEmpty()) {
+			return false;
+		}
+		return isFileOpened(localFile.get());
 	}
 
 	private boolean isFileOpened(File file) {
@@ -104,49 +117,65 @@ public class GlobalInboxUtil {
 		if (GlobalInboxUtil.configService == null) {
 			GlobalInboxUtil.configService = configService;
 		}
-		boolean isGlobal = GlobalInboxUtil.configService.get(Preferences.STOREFSGLOBAL, false);
-		if (isGlobal) {
-			return GlobalInboxUtil.configService.get(Preferences.PREF_DIR, defaultValue);
+		IConfigService cfg = GlobalInboxUtil.configService;
+		if (cfg == null) {
+			return defaultValue;
 		}
-		return GlobalInboxUtil.configService.getLocal(Preferences.PREF_DIR, defaultValue);
+		boolean isGlobal = cfg.get(Preferences.STOREFSGLOBAL, false);
+		String value = read(cfg, isGlobal,
+				PreferencesUtil.getOsSpecificPreferenceName(CoreUtil.getOperatingSystemType(), Preferences.PREF_DIR));
+		if (StringUtils.isBlank(value)) {
+			value = read(cfg, isGlobal, Preferences.PREF_DIR);
+		}
+		return StringUtils.isBlank(value) ? defaultValue : value;
 	}
 
-	public static String getCategory(File file) {
-		String dir = getDirectory(Preferences.PREF_DIR_DEFAULT, null);
-		File parent = file.getParentFile();
-		if (parent == null) {
-			return Messages.Activator_noInbox;
-		} else {
-			String fname = parent.getAbsolutePath();
-			if (fname.startsWith(dir)) {
-				if (fname.length() > dir.length()) {
-					return fname.substring(dir.length() + 1);
-				} else {
-					return "-"; //$NON-NLS-1$
-				}
+	private static String read(IConfigService cfg, boolean isGlobal, String preferenceName) {
+		return isGlobal ? cfg.get(preferenceName, null) : cfg.getLocal(preferenceName, null);
+	}
 
-			} else {
-				return "??"; //$NON-NLS-1$
-			}
+	/**
+	 * Resolve the configured inbox directory as a handle. The configured value may
+	 * be a filesystem URI (file, smb, dav, davs) or a legacy plain path, both are
+	 * handled by the {@link IVirtualFilesystemService}.
+	 *
+	 * @return the inbox directory, or empty if not configured or not resolvable
+	 */
+	public static Optional<IVirtualFilesystemHandle> getDirectoryHandle() {
+		String dir = getDirectory(null, null);
+		if (StringUtils.isBlank(dir)) {
+			return Optional.empty();
 		}
+		try {
+			return Optional.of(asDirectoryHandle(dir));
+		} catch (IOException e) {
+			LoggerFactory.getLogger(GlobalInboxUtil.class).error("Could not resolve inbox directory [{}]", //$NON-NLS-1$
+					IVirtualFilesystemService.hidePasswordInUrlString(dir), e);
+			return Optional.empty();
+		}
+	}
 
+	private static IVirtualFilesystemHandle asDirectoryHandle(String path) throws IOException {
+		String directoryPath = (path.endsWith("/") || path.endsWith("\\")) ? path : path + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return VirtualFilesystemServiceHolder.get().of(directoryPath);
+	}
+
+	public static String toLogString(IVirtualFilesystemHandle handle) {
+		return IVirtualFilesystemService.hidePasswordInUrlString(handle.getAbsolutePath());
 	}
 
 	public void removeFiles(GlobalInboxEntry globalInboxEntry) {
-		File mainFile = globalInboxEntry.getMainFile();
-		try {
-			Files.delete(mainFile.toPath());
-		} catch (IOException e) {
-			logger.warn("Could not delete " + mainFile, e); //$NON-NLS-1$
-		}
-		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
-		for (File extensionFile : extensionFiles) {
-			try {
-				Files.delete(extensionFile.toPath());
-			} catch (IOException e) {
-				logger.warn("Could not delete " + extensionFile, e); //$NON-NLS-1$
-			}
+		delete(globalInboxEntry.getMainFile());
+		for (IVirtualFilesystemHandle extensionFile : globalInboxEntry.getExtensionFiles()) {
+			delete(extensionFile);
 		}
 	}
 
+	private void delete(IVirtualFilesystemHandle handle) {
+		try {
+			handle.delete();
+		} catch (IOException e) {
+			logger.warn("Could not delete " + toLogString(handle), e); //$NON-NLS-1$
+		}
+	}
 }

@@ -1,6 +1,5 @@
 package ch.elexis.global_inbox.ui.parts;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -86,7 +86,7 @@ public class GlobalInboxPart {
 			selectionService.setSelection(globalInboxEntry);
 
 			if (globalInboxEntry != null) {
-				File mainFile = globalInboxEntry.getPdfPreviewFile();
+				IVirtualFilesystemHandle mainFile = globalInboxEntry.getPdfPreviewFile();
 					try {
 						IDocument mainFileDocument = FileDocument.of(mainFile);
 						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, mainFileDocument);

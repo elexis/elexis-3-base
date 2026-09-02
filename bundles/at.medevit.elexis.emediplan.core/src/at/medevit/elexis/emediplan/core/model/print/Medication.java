@@ -14,6 +14,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.slf4j.LoggerFactory;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -21,6 +25,8 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import at.medevit.elexis.emediplan.core.ArticleDetailServiceHolder;
+import at.medevit.elexis.emediplan.core.IArticleDetailService;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -50,13 +56,24 @@ public class Medication {
 	@XmlElement(name = "medicament")
 	List<Medicament> symptomaticMedication;
 
+	public String remark;
+
 	public static Medication fromPrescriptions(@NonNull IMandator author, @NonNull IPatient patient,
 			@NonNull List<IPrescription> prescriptions) {
+		return fromPrescriptions(author, patient, prescriptions, false);
+	}
+
+	public static Medication fromPrescriptions(@NonNull IMandator author, @NonNull IPatient patient,
+			@NonNull List<IPrescription> prescriptions, boolean withDetails) {
 		Medication ret = new Medication();
 		ret.date = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(LocalDateTime.now()); //$NON-NLS-1$
 
 		ret.patientInfo = ContactInfo.fromPatient(patient);
 		ret.mandantInfo = ContactInfo.fromKontakt(author);
+
+		if (withDetails) {
+			loadDetails(prescriptions);
+		}
 
 		for (IPrescription prescription : prescriptions) {
 			EntryType type = prescription.getEntryType();
@@ -64,20 +81,37 @@ public class Medication {
 				if (ret.fixMedication == null) {
 					ret.fixMedication = new ArrayList<>();
 				}
-				ret.fixMedication.add(Medicament.fromPrescription(prescription));
+				ret.fixMedication.add(Medicament.fromPrescription(prescription, withDetails));
 			} else if (type == EntryType.RESERVE_MEDICATION) {
 				if (ret.reserveMedication == null) {
 					ret.reserveMedication = new ArrayList<>();
 				}
-				ret.reserveMedication.add(Medicament.fromPrescription(prescription));
+				ret.reserveMedication.add(Medicament.fromPrescription(prescription, withDetails));
 			} else if (type == EntryType.SYMPTOMATIC_MEDICATION) {
 				if (ret.symptomaticMedication == null) {
 					ret.symptomaticMedication = new ArrayList<>();
 				}
-				ret.symptomaticMedication.add(Medicament.fromPrescription(prescription));
+				ret.symptomaticMedication.add(Medicament.fromPrescription(prescription, withDetails));
 			}
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Load the details of all articles at once, so they do not have to be loaded
+	 * one after the other while the medicaments are created.
+	 *
+	 * @param prescriptions
+	 */
+	private static void loadDetails(List<IPrescription> prescriptions) {
+		Optional<IArticleDetailService> detailService = ArticleDetailServiceHolder.getService();
+		if (detailService.isPresent()) {
+			detailService.get()
+					.loadDetails(prescriptions.stream().map(IPrescription::getArticle).filter(Objects::nonNull).toList());
+		} else {
+			LoggerFactory.getLogger(Medication.class)
+					.info("No IArticleDetailService available, eMediplan is created without pictures and units"); //$NON-NLS-1$
+		}
 	}
 }

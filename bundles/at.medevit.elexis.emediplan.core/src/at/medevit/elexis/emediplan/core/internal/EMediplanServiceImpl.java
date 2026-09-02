@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -102,13 +103,13 @@ public class EMediplanServiceImpl implements EMediplanService {
 
 	@Override
 	public void exportEMediplanPdf(IMandator author, IPatient patient, List<IPrescription> prescriptions,
-			boolean addDesc, OutputStream output) {
+			boolean addDesc, String remark, OutputStream output) {
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
-			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc, remark);
 			Optional<Image> qrCode = jsonString.map(json -> getQrCode(json)).orElse(Optional.empty());
 
 			Optional<at.medevit.elexis.emediplan.core.model.print.Medication> jaxbModel = getJaxbModel(author, patient,
-					prescriptions);
+					prescriptions, remark);
 			jaxbModel.ifPresent(model -> {
 				createPdf(qrCode, model, output);
 			});
@@ -119,7 +120,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	public void exportEMediplanJson(IMandator author, IPatient patient, List<IPrescription> prescriptions,
 			boolean addDesc, OutputStream output) {
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
-			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc, null);
 			if (jsonString.isPresent()) {
 				try (PrintWriter writer = new PrintWriter(output)) {
 					writer.write(jsonString.get());
@@ -132,7 +133,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	public void exportEMediplanChmed(IMandator author, IPatient patient, List<IPrescription> prescriptions,
 			boolean addDesc, OutputStream output) {
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
-			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc, null);
 			if (jsonString.isPresent()) {
 				try (PrintWriter writer = new PrintWriter(output)) {
 					writer.write(EMediplanUtil.getEncodedJson(jsonString.get()));
@@ -147,8 +148,9 @@ public class EMediplanServiceImpl implements EMediplanService {
 				.getServiceReference(IFormattedOutputFactory.class);
 		if (fopFactoryRef != null) {
 			IFormattedOutputFactory fopFactory = bundleContext.getService(fopFactoryRef);
-			IFormattedOutput foOutput = fopFactory.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
+			IFormattedOutput foOutput = fopFactory.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF_A);
 			HashMap<String, String> parameters = new HashMap<>();
+			parameters.put("versionParam", getVersion()); //$NON-NLS-1$
 			parameters.put("logoJpeg", getEncodedLogo()); //$NON-NLS-1$
 			parameters.put("commentText", ConfigServiceHolder.get().getActiveUserContact( //$NON-NLS-1$
 					Preferences.MEDICATION_SETTINGS_EMEDIPLAN_HEADER_COMMENT, Messages.Medication_headerComment));
@@ -161,6 +163,11 @@ public class EMediplanServiceImpl implements EMediplanService {
 		} else {
 			throw new IllegalStateException("No IFormattedOutputFactory available"); //$NON-NLS-1$
 		}
+	}
+
+	private String getVersion() {
+		Version version = FrameworkUtil.getBundle(getClass()).getVersion();
+		return version.getMajor() + "." + version.getMinor() + "." + version.getMicro(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private String getEncodedQr(Image qr) {
@@ -213,15 +220,19 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 
 	protected Optional<at.medevit.elexis.emediplan.core.model.print.Medication> getJaxbModel(IMandator author,
-			IPatient patient, List<IPrescription> prescriptions) {
+			IPatient patient, List<IPrescription> prescriptions, String remark) {
 		at.medevit.elexis.emediplan.core.model.print.Medication medication = at.medevit.elexis.emediplan.core.model.print.Medication
-				.fromPrescriptions(author, patient, prescriptions);
+				.fromPrescriptions(author, patient, prescriptions, true);
+		if (medication != null) {
+			medication.remark = StringUtils.trimToNull(remark);
+		}
 		return Optional.ofNullable(medication);
 	}
 
 	protected Optional<String> getJsonString(IMandator author, IPatient patient, List<IPrescription> prescriptions,
-			boolean addDesc) {
+			boolean addDesc, String remark) {
 		Medication medication = Medication.fromPrescriptions(author, patient, prescriptions, addDesc);
+		medication.Rmk = StringUtils.trimToNull(remark);
 		// TODO remove after verification
 //		Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 //		logger.info("EMEDIPLAN JSON\n\n" + prettyGson.toJson(medication) + "\n\n"); //$NON-NLS-1$ //$NON-NLS-2$

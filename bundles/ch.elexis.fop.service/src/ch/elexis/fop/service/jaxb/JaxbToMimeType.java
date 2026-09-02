@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,14 +69,35 @@ public class JaxbToMimeType {
 	 */
 	public void transform(Object jaxbObject, InputStream xslt, OutputStream outputStream, String outputFormat,
 			Map<String, String> transformerParameters, URIResolver resolver) {
+		transform(jaxbObject, xslt, outputStream, outputFormat, transformerParameters, resolver, false);
+	}
 
-		FOUserAgent foUserAgent = FormattedOutputFactory.getFopFactory().newFOUserAgent();
+	/**
+	 * Transform a given jaxb annotated object into a specific output object
+	 *
+	 * @param jaxbObject            a {@link JAXB} annotated element as source
+	 * @param xslt                  the XSLT stylesheet as {@link InputStream}
+	 *                              element
+	 * @param outputStream          the {@link OutputStream} to output to
+	 * @param outputFormat          the requested output format
+	 *                              {@link MimeConstants}
+	 * @param transformerParameters key/value parameters to be passed to the
+	 *                              transformer, can be <code>null</code>
+	 * @param resolver
+	 * @param pdfAMode              create a PDF document conforming to PDF/A-1b
+	 */
+	public void transform(Object jaxbObject, InputStream xslt, OutputStream outputStream, String outputFormat,
+			Map<String, String> transformerParameters, URIResolver resolver, boolean pdfAMode) {
+
+		FopFactory fopFactory = pdfAMode ? FormattedOutputFactory.getPdfAFopFactory()
+				: FormattedOutputFactory.getFopFactory();
+		FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 		// configure foUserAgent as desired
 
 		// Setup output
 		try {
 			// Construct fop with desired output format
-			Fop fop = FormattedOutputFactory.getFopFactory().newFop(outputFormat, foUserAgent, outputStream);
+			Fop fop = fopFactory.newFop(outputFormat, foUserAgent, outputStream);
 			// Setup XSLT
 			Transformer transformer = XSLTUtil.getTransformerForXSLT(xslt, resolver);
 

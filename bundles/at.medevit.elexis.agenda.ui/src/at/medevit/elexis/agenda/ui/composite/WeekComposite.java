@@ -35,6 +35,7 @@ import at.medevit.elexis.agenda.ui.function.EventDropFunction;
 import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
 import at.medevit.elexis.agenda.ui.function.LoadContactInfoFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
+import at.medevit.elexis.agenda.ui.function.LoadResourcesFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
@@ -88,11 +89,14 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		this.selectionService = selectionService;
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
+		browser.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		scriptingHelper = new ScriptingHelper(browser);
 
 		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize); //$NON-NLS-1$
 
 		new LoadContactInfoFunction(browser, "loadContactInfoFunction"); // $NON-NLS-1
+
+		new LoadResourcesFunction(browser, "loadResourcesFunction", this); // $NON-NLS-1
 
 		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this); //$NON-NLS-1$
 
@@ -190,6 +194,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	public void setSelectedResources(List<String> selectedResources) {
 		loadEventsFunction.setResources(selectedResources);
 		dayClickFunction.setSelectedResources(selectedResources);
+		scriptingHelper.refetchResources();
 		refetchEvents();
 	}
 

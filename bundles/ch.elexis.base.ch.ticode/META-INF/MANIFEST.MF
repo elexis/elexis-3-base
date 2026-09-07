@@ -7,8 +7,8 @@ Bundle-Vendor: elexis.info
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core;bundle-version="3.9.0",
- info.elexis.target.hapi.fhir;bundle-version="7.2.3"
+ info.elexis.target.hapi.fhir;bundle-version="[5.4.2,6.0.0)"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.ticode.CodeElementContribution.xml
 Import-Package: ch.elexis.core.findings.util,
- org.apache.commons.io;version="[2.22.0,3.0.0)"
+ org.apache.commons.io;version="[2.15.0,3.0.0)"

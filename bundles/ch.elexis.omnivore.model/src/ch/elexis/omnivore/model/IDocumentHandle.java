@@ -10,4 +10,6 @@ public interface IDocumentHandle extends IDocument {
 	public IVirtualFilesystemHandle getHandle();
 
 	public boolean exportToFileSystem();
+
+	public boolean isExported();
 }

@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.omnivore.data.Messages;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 
@@ -33,21 +32,31 @@ public class OutsourceUiJob {
 					qDoc.and("kontakt", COMPARATOR.NOT_EQUALS, null);
 					qDoc.limit(100);
 
+					int already = 0;
+					int done = 0;
+					int error = 0;
+
 					List<IDocumentHandle> notExported = qDoc.execute();
 					while (!notExported.isEmpty()) {
 						for (IDocumentHandle docHandle : notExported) {
 							if (monitor.isCanceled())
 								return;
 							monitor.subTask("Datei: " + docHandle.getTitle());
-							if (!docHandle.exportToFileSystem()) {
-								SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
-										Messages.DocHandle_writeErrorCaption2, "Fehlerdetails siehe Logdatei");
+							if (docHandle.isExported()) {
+								already++;
+							} else if (docHandle.exportToFileSystem()) {
+								done++;
+							} else {
+								error++;
 							}
 							monitor.worked(1);
 						}
 						notExported = qDoc.execute();
 					}
 					monitor.done();
+					SWTHelper.showInfo("Omnivore Dateien ausgelagert",
+							"Es wurden " + done + " ausgelagert." + "\nEs waren bereits " + already + " ausgelagert."
+									+ "\nEs konnten " + error + " nicht ausgelagert werden.");
 				}
 			});
 		} catch (InvocationTargetException ite) {

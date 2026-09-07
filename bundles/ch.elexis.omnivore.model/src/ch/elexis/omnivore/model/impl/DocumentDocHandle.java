@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -342,6 +343,14 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		if (doc == null) {
 			return true;
 		}
+		Optional<IPatient> patient = CoreModelServiceHolder.get().load(getEntity().getKontakt().getId(),
+				IPatient.class);
+		if (patient.isEmpty()) {
+			LoggerFactory.getLogger(getClass()).warn("DocHandle [" + getEntity().getId() //$NON-NLS-1$
+					+ "] has no patient, or contact is no patient. Setting deleted."); //$NON-NLS-1$
+			OmnivoreModelServiceHolder.get().delete(this);
+			return false;
+		}
 		IVirtualFilesystemHandle vfsHandle = getStorageFile(true);
 		if (vfsHandle != null) {
 			try (OutputStream out = vfsHandle.openOutputStream()) {
@@ -354,6 +363,11 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isExported() {
+		return getEntity().getDoc() == null;
 	}
 
 	@Override

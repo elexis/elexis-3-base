@@ -2,7 +2,7 @@ import pandas as pd
 import json
 
 # Load the Excel file
-file_path = 'Anhang_H_Tessiner_Code_MTK_Erweiterung_-_Kopie_RS.xlsx'
+file_path = 'tessiner-code-kvg_2026.xlsx'
 df = pd.read_excel(file_path, engine='openpyxl')
 
 # Clean up the column names and drop unnecessary rows
@@ -19,8 +19,8 @@ fhir_code_system = {
     "status": "active",
     "date": "2026-09-02",
     "publisher": "elexis.info",
-    "description": "Tessiner Code System including MTK extension for diagnosis codes.",
-    "purpose": "This code system is used for encoding diagnosis in the Tessiner system, including MTK extensions.",
+    "description": "Tessiner Code System for diagnosis codes.",
+    "purpose": "This code system is used for encoding diagnosis in the Tessiner system.",
     "content": "complete",
     "concept": []
 }
@@ -81,7 +81,7 @@ for _, row in df.iterrows():
         fhir_code_system["concept"].append(concept)
 
 # Save the FHIR CodeSystem JSON to a file
-file_output_path = 'tessiner_mtk_extension_code_system.json'
+file_output_path = 'tessiner_code_system.json'
 with open(file_output_path, 'w', encoding='utf-8') as f:
     json.dump(fhir_code_system, f, indent=2, ensure_ascii=False)
 

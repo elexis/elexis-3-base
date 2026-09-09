@@ -21,12 +21,12 @@ public class TessinerCodeSystem {
 	private Map<String, TessinerCode[]> codesMap;
 	private Map<String, TessinerCode> codeMap;
 
-	public TessinerCodeSystem() {
+	public TessinerCodeSystem(String resourcePath) {
 		codesMap = new HashMap<>();
 		codeMap = new HashMap<>();
 		try {
 			String jsonString = IOUtils
-					.toString(getClass().getResourceAsStream("/rsc/tessiner_mtk_extension_code_system.json"), "UTF-8");
+					.toString(getClass().getResourceAsStream(resourcePath), "UTF-8");
 			IBaseResource resource = ModelUtil.getAsResource(jsonString);
 			if (resource instanceof CodeSystem) {
 				this.codeSystem = (CodeSystem) resource;

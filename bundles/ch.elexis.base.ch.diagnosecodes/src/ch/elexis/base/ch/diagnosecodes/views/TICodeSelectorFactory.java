@@ -14,12 +14,13 @@ package ch.elexis.base.ch.diagnosecodes.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,9 +30,11 @@ import org.eclipse.swt.graphics.Image;
 import ch.elexis.base.ch.diagnosecodes.service.CodeElementServiceHolder;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosisTree;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
@@ -39,14 +42,26 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import jakarta.inject.Inject;
 
 public class TICodeSelectorFactory extends CodeSelectorFactory {
 
+	private CommonViewer commonViewer;
+
 	public TICodeSelectorFactory() {
+		CoreUiUtil.injectServices(this);
+	}
+
+	@Inject
+	void selectedEncounter(@Optional IEncounter encounter) {
+		if (commonViewer != null && commonViewer.getViewerWidget() != null) {
+			commonViewer.getViewerWidget().refresh();
+		}
 	}
 
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
+		commonViewer = cv;
 		ViewerConfigurer vc = new ViewerConfigurer(new TICodeContentProvider(cv), new TICodeLabelProvider(),
 				new DefaultControlFieldProvider(cv, new String[] { "Text" }), //$NON-NLS-1$
 				new ViewerConfigurer.DefaultButtonProvider(),
@@ -63,7 +78,6 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		private String TICKey = "Text";
 
 		private ICodeElementServiceContribution tiCodeElementContribution;
-		private List<ICodeElement> roots;
 
 		public TICodeContentProvider(CommonViewer viewer) {
 			this.viewer = viewer;
@@ -71,8 +85,6 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 					.getContribution(CodeElementTyp.DIAGNOSE, "TI-Code") //$NON-NLS-1$
 					.orElseThrow(() -> new IllegalStateException("No TI CodeElementContribution available")); //$NON-NLS-1$
 
-			roots = tiCodeElementContribution
-					.getElements(Collections.singletonMap(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE));
 			value = StringUtils.EMPTY;
 		}
 
@@ -84,11 +96,13 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			return null;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			IDiagnosisTree c = (IDiagnosisTree) element;
 			return c.getParent();
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			IDiagnosisTree c = (IDiagnosisTree) element;
 			if (c.getChildren() == null) {
@@ -97,15 +111,20 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			return !c.getChildren().isEmpty();
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object inputElement) {
+			Map<Object, Object> context = CodeElementServiceHolder.get().createContext();
+			context.put(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE);
+			List<ICodeElement> roots = tiCodeElementContribution.getElements(context);
+
 			// get all children if no search value is set
 			if (value == null || value.isEmpty()) {
 				return roots.toArray();
 			}
 
 			List<IDiagnosisTree> foundSubs = ((Collection<? extends IDiagnosisTree>) tiCodeElementContribution
-					.getElements(Collections.emptyMap())).stream().map(ce -> (IDiagnosisTree) ce)
+					.getElements(context)).stream().map(ce -> (IDiagnosisTree) ce)
 							.filter(dt -> matchFilter(dt)).collect(Collectors.toList());
 			List<IDiagnosisTree> foundRoots = ((Collection<? extends IDiagnosisTree>) roots).stream()
 					.map(ce -> (IDiagnosisTree) ce).filter(dt -> matchFilter(dt)).collect(Collectors.toList());
@@ -115,22 +134,27 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			return foundElements.toArray(new Object[foundElements.size()]);
 		}
 
+		@Override
 		public void dispose() {
 			// TODO Auto-generated method stub
 
 		}
 
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public void startListening() {
 			viewer.getConfigurer().getControlFieldProvider().addChangeListener(this);
 		}
 
+		@Override
 		public void stopListening() {
 			viewer.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 		}
 
+		@Override
 		public void changed(HashMap<String, String> values) {
 			String filterText = values.get(TICKey).toLowerCase();
 			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) { //$NON-NLS-1$
@@ -150,9 +174,11 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			return true;
 		}
 
+		@Override
 		public void reorder(String field) {
 		}
 
+		@Override
 		public void selected() {
 		}
 
@@ -168,6 +194,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 	}
 
 	static class TICodeLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			IDiagnosisTree c = (IDiagnosisTree) element;
 			return c.getCode() + StringUtils.SPACE + c.getText();

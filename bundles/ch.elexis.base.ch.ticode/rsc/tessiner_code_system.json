@@ -2210,6 +2210,180 @@
           "value": "Medico di fiducia informato (anziché diagnosi)"
         }
       ]
+    },
+    {
+      "code": "0",
+      "display": "Zusatzcode",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "Code Additionnel"
+        },
+        {
+          "language": "it",
+          "value": "code additivo"
+        }
+      ]
+    },
+    {
+      "code": "01",
+      "display": "Rechts",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "droite"
+        },
+        {
+          "language": "it",
+          "value": "destra"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
+    },
+    {
+      "code": "02",
+      "display": "Links",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "gauche"
+        },
+        {
+          "language": "it",
+          "value": "sinistra"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
+    },
+    {
+      "code": "03",
+      "display": "Akut",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "aigu"
+        },
+        {
+          "language": "it",
+          "value": "acuto"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
+    },
+    {
+      "code": "04",
+      "display": "Chronisch / Rezidiv",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "chronique / récidive"
+        },
+        {
+          "language": "it",
+          "value": "cronico / recidiva"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
+    },
+    {
+      "code": "05",
+      "display": "Infektiös",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "infectueux"
+        },
+        {
+          "language": "it",
+          "value": "infettivo"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
+    },
+    {
+      "code": "06",
+      "display": "Funktionell",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "fonctionnel"
+        },
+        {
+          "language": "it",
+          "value": "funzionale"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
+    },
+    {
+      "code": "07",
+      "display": "Neoplasie",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "néoplasie"
+        },
+        {
+          "language": "it",
+          "value": "neoplasia"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
+    },
+    {
+      "code": "08",
+      "display": "Berufsbedingt",
+      "designation": [
+        {
+          "language": "fr",
+          "value": "raisons professionnelles"
+        },
+        {
+          "language": "it",
+          "value": "collegato alla professione"
+        }
+      ],
+      "property": [
+        {
+          "code": "parent",
+          "valueCode": "0"
+        }
+      ]
     }
   ]
 }

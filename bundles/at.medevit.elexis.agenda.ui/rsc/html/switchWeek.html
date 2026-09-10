@@ -15,9 +15,49 @@
     <script src="../lib/moment.min.js"></script>
     <script src="../fullcalendar.js"></script>
     <script src="../locale-all.js"></script>
+    <script src="../scheduler.min.js"></script>
 
     <script>
       $(document).ready(function () {
+      	let schedulerLicenseKey = [+[]]+[+!+[]]+[!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+[]]+[+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+(![]+[])[+[]]+([][(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(!![]+[])[+[]]]+[])[!+[]+!+[]+!+[]]+(![]+[])[!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]];
+
+        ['TimeGrid', 'ResourceGrid'].forEach(function (name) {
+          var proto = $.fullCalendar[name] && $.fullCalendar[name].prototype;
+          if (proto) {
+            proto.unrenderNowIndicator = function () {
+              if (this.el) {
+                this.el.find('.fc-now-indicator').remove();
+              }
+              this.nowIndicatorEls = null;
+            };
+          }
+        });
+
+        (function () {
+          var proto = $.fullCalendar.Calendar.prototype;
+          var original = proto.updateViewSize;
+          proto.updateViewSize = function () {
+            var counter = this.ignoreUpdateViewSize;
+            try {
+              return original.apply(this, arguments);
+            } finally {
+              this.ignoreUpdateViewSize = counter;
+            }
+          };
+        })();
+
+        (function () {
+          var proto = $.fullCalendar.Calendar.prototype;
+          var original = proto.thawContentHeight;
+          proto.thawContentHeight = function () {
+            original.apply(this, arguments);
+            if (this.freezeContentHeightDepth < 0) {
+              this.freezeContentHeightDepth = 0;
+              this.contentEl.css({width: '', height: '', overflow: ''});
+            }
+          };
+        })();
+
         $('#calendar').fullCalendar({
           locale: 'de',
           defaultView: 'agendaWeek',
@@ -27,18 +67,41 @@
           minTime: '06:00:00',
           maxTime: '23:00:00',
           slotDuration: '00:05:00',
+          slotEventOverlap: false,
+          schedulerLicenseKey,
+          groupByDateAndResource: true,
           displayEventTime: false,
           allDaySlot: true,
           weekends: false,
           events: loadEventsCallback,
           dayClick: dayClickCallback,
           eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-            eventDropFunction(event.id, event.start.format(), event.end.format(), null, jsEvent.ctrlKey);
+            eventDropFunction(event.id, event.start.format(), event.end.format(), event.resourceId, jsEvent.ctrlKey);
           },
           eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
             eventResizeFunction(event.id, event.start.format(), event.end.format());
           },
           eventRender: eventRenderCallback,
+          eventAfterAllRender: function (view) {
+            view.updateNowIndicator();
+            markDayBoundaries();
+          },
+          viewRender: function () {
+            setTimeout(function () {
+              var cal = $('#calendar');
+              var calendar = cal.data('fullCalendar');
+              if (calendar && calendar.freezeContentHeightDepth > 0) {
+                calendar.freezeContentHeightDepth = 0;
+                calendar.contentEl.css({width: '', height: '', overflow: ''});
+              }
+              adjustCalendarHeight();
+              markDayBoundaries();
+            }, 0);
+          },
+          windowResize: function () {
+            adjustCalendarHeight();
+            markDayBoundaries();
+          },
           eventDragStart: function (event, jsEvent, ui, view) {
             event.qtip('destroy');
           },
@@ -65,15 +128,87 @@
             center: '',
             right: 'switch reload,today prev,next',
           },
+          resources: loadResources,
+          resourceOrder: 'order',
+          resourceRender: function (resourceObj, labelTds) {
+            var color = getColorForResource(resourceObj.id);
+            if (color.indexOf('undefined') === -1) {
+              labelTds.css('background-color', color);
+            }
+            labelTds.qtip({
+              content: {text: resourceObj.title},
+              style: {classes: 'qtip-light'},
+              position: {my: 'top center', at: 'bottom center', viewport: $('#calendar')},
+              show: {delay: 250, solo: true},
+              hide: {delay: 0},
+            });
+          }
         });
       });
+
+      function adjustCalendarHeight() {
+        var cal = $('#calendar');
+        var container = cal.find('.fc-view-container');
+        if (!container.length) {
+          return;
+        }
+        var available = window.innerHeight - container.offset().top;
+        cal.fullCalendar('option', 'contentHeight', 'auto');
+        if (container.outerHeight() > available) {
+          cal.fullCalendar('option', 'contentHeight', available);
+        }
+      }
+
+      function markDayBoundaries() {
+        var cal = $('#calendar');
+        cal.find('.elexis-day-end').removeClass('elexis-day-end');
+        cal.find('[data-date]').each(function () {
+          var next = this.nextElementSibling;
+          if (next && next.getAttribute('data-date') && next.getAttribute('data-date') !== this.getAttribute('data-date')) {
+            $(this).addClass('elexis-day-end');
+          }
+        });
+      }
+
+      var colorMapping = {};
+
+      function loadResources(callback) {
+        var resources = JSON.parse(loadResourcesFunction());
+        resources.forEach(function (resource) {
+          colorMapping[resource.id] = 'rgba(' + resource.color + ', 0.4)';
+        });
+        callback(resources);
+      }
+
+      function getColorForResource(resourceId) {
+        return colorMapping[resourceId] || 'rgba(255, 255, 255, 0.4)';
+      }
 
       function loadEventsCallback(start, end, timezone, callback) {
         var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
         var jsonEvents = JSON.parse(eventsJson);
 
         var events = [];
+        var processedResources = {};
         jsonEvents.forEach(function (event) {
+          var resourceId = event.resource;
+          if (resourceId && !processedResources[resourceId]) {
+            var color = getColorForResource(resourceId);
+            if (color.indexOf('undefined') === -1) {
+              var bgStart = new Date();
+              var bgEnd = new Date();
+              bgStart.setFullYear(bgStart.getFullYear() - 1);
+              bgEnd.setFullYear(bgEnd.getFullYear() + 3);
+              events.push({
+                resourceId: resourceId,
+                start: bgStart.toISOString().split('T')[0] + 'T00:00',
+                end: bgEnd.toISOString().split('T')[0] + 'T23:59',
+                rendering: 'background',
+                color: color
+              });
+            }
+            processedResources[resourceId] = true;
+          }
           events.push({
             id: event.id,
             title: event.title,
@@ -96,9 +231,13 @@
       var dayClickPosX;
       var dayClickPosY;
 
-      function dayClickCallback(date, jsEvent, view) {
+      function dayClickCallback(date, jsEvent, view, resourceObj) {
         if (dayClickSlotDate) {
-          dayClickFunction(date.format());
+          if (typeof resourceObj !== 'undefined') {
+            dayClickFunction(date.format(), resourceObj.id);
+          } else {
+            dayClickFunction(date.format());
+          }
           dayClickSlotDate = null;
         } else {
           singleClickFunction();
@@ -186,11 +325,30 @@
         padding: 0;
         font-family: 'Lucida Grande', Helvetica, Arial, Verdana, sans-serif;
         font-size: 14px;
+        background-color: #ffffff;
       }
 
       #calendar {
         margin: 0 auto;
         width: 100%;
+      }
+
+      .fc-resource-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 2px;
+        font-size: 12px;
+		font-weight: semi bold;
+      }
+
+      .fc-day-header {
+        font-size: 16px;
+      }
+
+      .fc td.elexis-day-end,
+      .fc th.elexis-day-end {
+        border-right: 2px solid #b4bcc4;
       }
     </style>
   </head>

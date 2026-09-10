@@ -24,6 +24,43 @@
       
       	let schedulerLicenseKey = [+[]]+[+!+[]]+[!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+[]]+[+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+(![]+[])[+[]]+([][(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(!![]+[])[+[]]]+[])[!+[]+!+[]+!+[]]+(![]+[])[!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]];
       
+        ['TimeGrid', 'ResourceGrid'].forEach(function (name) {
+          var proto = $.fullCalendar[name] && $.fullCalendar[name].prototype;
+          if (proto) {
+            proto.unrenderNowIndicator = function () {
+              if (this.el) {
+                this.el.find('.fc-now-indicator').remove();
+              }
+              this.nowIndicatorEls = null;
+            };
+          }
+        });
+
+        (function () {
+          var proto = $.fullCalendar.Calendar.prototype;
+          var original = proto.updateViewSize;
+          proto.updateViewSize = function () {
+            var counter = this.ignoreUpdateViewSize;
+            try {
+              return original.apply(this, arguments);
+            } finally {
+              this.ignoreUpdateViewSize = counter;
+            }
+          };
+        })();
+
+        (function () {
+          var proto = $.fullCalendar.Calendar.prototype;
+          var original = proto.thawContentHeight;
+          proto.thawContentHeight = function () {
+            original.apply(this, arguments);
+            if (this.freezeContentHeightDepth < 0) {
+              this.freezeContentHeightDepth = 0;
+              this.contentEl.css({width: '', height: '', overflow: ''});
+            }
+          };
+        })();
+
         $('#calendar').fullCalendar({
           locale: 'de',
           defaultView: 'agendaDay',
@@ -32,6 +69,7 @@
           minTime: '06:00:00',
           maxTime: '23:00:00',
           slotDuration: '00:05:00',
+          slotEventOverlap: false,
           displayEventTime: false,
           allDaySlot: true,
           defaultTimedEventDuration: '00:15:00',
@@ -56,6 +94,23 @@
             eventResizeFunction(event.id, event.start.format(), event.end.format());
           },
           eventRender: eventRenderCallback,
+          eventAfterAllRender: function (view) {
+            view.updateNowIndicator();
+          },
+          viewRender: function () {
+            setTimeout(function () {
+              var cal = $('#calendar');
+              var calendar = cal.data('fullCalendar');
+              if (calendar && calendar.freezeContentHeightDepth > 0) {
+                calendar.freezeContentHeightDepth = 0;
+                calendar.contentEl.css({width: '', height: '', overflow: ''});
+              }
+              adjustCalendarHeight();
+            }, 0);
+          },
+          windowResize: function () {
+            adjustCalendarHeight();
+          },
 		  customButtons: {
 		    print: {
 		      text: 'Screenshot',
@@ -89,7 +144,20 @@
             right: 'print pdf switch reload,today prev,next',
           },
           resources: loadResources,
-          resourceOrder: 'order'
+          resourceOrder: 'order',
+          resourceRender: function (resourceObj, labelTds) {
+            var color = getColorForResource(resourceObj.id);
+            if (color.indexOf('undefined') === -1) {
+              labelTds.css('background-color', color);
+            }
+            labelTds.qtip({
+              content: {text: resourceObj.title},
+              style: {classes: 'qtip-light'},
+              position: {my: 'top center', at: 'bottom center', viewport: $('#calendar')},
+              show: {delay: 250, solo: true},
+              hide: {delay: 0},
+            });
+          }
         });
       });
 	  
@@ -242,6 +310,19 @@
 
       // https://fullcalendar.io/docs/v3/resourceOrder
       
+      function adjustCalendarHeight() {
+        var cal = $('#calendar');
+        var container = cal.find('.fc-view-container');
+        if (!container.length) {
+          return;
+        }
+        var available = window.innerHeight - container.offset().top;
+        cal.fullCalendar('option', 'contentHeight', 'auto');
+        if (container.outerHeight() > available) {
+          cal.fullCalendar('option', 'contentHeight', available);
+        }
+      }
+
       var colorMapping = {};
       function loadResources(callback) {
         var _resources = loadResourcesFunction();
@@ -406,6 +487,7 @@
         padding: 0;
         font-family: 'Lucida Grande', Helvetica, Arial, Verdana, sans-serif;
         font-size: 14px;
+        background-color: #ffffff;
       }
 
       #calendar {
@@ -414,6 +496,15 @@
       }
       .fc-agenda-view .fc-axis {
         width: 70px !important;
+      }
+
+      .fc-resource-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 2px;
+		font-size: 12px;
+		font-weight: semi bold;
       }
     </style>
   </head>

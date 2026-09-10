@@ -2,6 +2,7 @@ package ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +23,17 @@ import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.oaat_otma.PatientCase;
 import ch.oaat_otma.Service;
 import ch.oaat_otma.casemaster.CasemasterError.CasemasterErrorType;
 import ch.oaat_otma.casemaster.CasemasterResult;
+import ch.oaat_otma.grouper.GrouperDecision;
+import ch.oaat_otma.grouper.GrouperResult;
 import ch.oaat_otma.mapper.MapperLogEntry;
 import ch.oaat_otma.mapper.MapperLogEntry.MapperLogEntryLevel;
 import ch.oaat_otma.mapper.MapperResult;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 
 public class TarifMatcher<T extends IBillable> {
@@ -103,7 +108,12 @@ public class TarifMatcher<T extends IBillable> {
 								// remove everything but allowance
 								for (IBilled encounterBilled : encounter.getBilled()) {
 									if (!(encounterBilled.getBillable() instanceof IAmbulatoryAllowance)) {
-										optifier.remove(encounterBilled, encounter);
+										if (isUsed(patientCase.getGrouperResult(), encounterBilled.getBillable())) {
+											encounterBilled.setPrice(new Money());
+											CoreModelServiceHolder.get().save(encounterBilled);
+										} else {
+											optifier.remove(encounterBilled, encounter);
+										}
 									}
 								}
 								// remove previous existing allowance
@@ -134,6 +144,26 @@ public class TarifMatcher<T extends IBillable> {
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Test if the {@link IBillable} was used in the decision path of the
+	 * {@link GrouperResult}.
+	 * 
+	 * @param grouperResult
+	 * @param billable
+	 * @return
+	 */
+	private boolean isUsed(GrouperResult grouperResult, IBillable billable) {
+		String billableCode = billable.getCode().replace(".", "");
+		for (GrouperDecision decision : grouperResult.decisionPath) {
+			if (decision.explanation != null && decision.explanation.get("codes") instanceof Collection) {
+				if (decision.explanation.get("codes").contains(billableCode)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private Optional<IBilled> getExistingPauschale(IEncounter encounter) {

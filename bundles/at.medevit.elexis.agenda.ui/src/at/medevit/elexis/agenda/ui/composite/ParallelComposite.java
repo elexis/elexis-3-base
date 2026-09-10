@@ -95,6 +95,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		this.selectionService = selectionService;
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
+		browser.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		scriptingHelper = new ScriptingHelper(browser);
 
 		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize); //$NON-NLS-1$

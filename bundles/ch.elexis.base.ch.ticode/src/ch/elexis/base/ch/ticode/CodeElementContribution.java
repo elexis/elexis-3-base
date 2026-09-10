@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.ticode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -76,12 +77,18 @@ public class CodeElementContribution implements ICodeElementServiceContribution,
 					&& context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
 				return (List<ICodeElement>) (List<?>) Arrays.asList(codeSystemKvg.getRootNodes());
 			}
-			return (List<ICodeElement>) (List<?>) Arrays.asList(codeSystemKvg.getLeafNodes());
+			ArrayList<ICodeElement> ret = new ArrayList<>(
+					(List<ICodeElement>) (List<?>) Arrays.asList(codeSystemKvg.getRootNodes()));
+			ret.addAll((List<ICodeElement>) (List<?>) Arrays.asList(codeSystemKvg.getLeafNodes()));
+			return ret;
 		}
 		if (context.get(ContextKeys.TREE_ROOTS) != null && context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
 			return (List<ICodeElement>) (List<?>) Arrays.asList(codeSystemMtk.getRootNodes());
 		}
-		return (List<ICodeElement>) (List<?>) Arrays.asList(codeSystemMtk.getLeafNodes());
+		ArrayList<ICodeElement> ret = new ArrayList<>(
+				(List<ICodeElement>) (List<?>) Arrays.asList(codeSystemMtk.getRootNodes()));
+		ret.addAll((List<ICodeElement>) (List<?>) Arrays.asList(codeSystemMtk.getLeafNodes()));
+		return ret;
 
 	}
 

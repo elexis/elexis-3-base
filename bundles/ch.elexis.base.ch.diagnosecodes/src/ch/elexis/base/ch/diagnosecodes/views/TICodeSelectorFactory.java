@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -27,13 +29,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
-import ch.elexis.base.ch.diagnosecodes.service.CodeElementServiceHolder;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.services.holder.CodeElementServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
@@ -42,7 +44,6 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import jakarta.inject.Inject;
 
 public class TICodeSelectorFactory extends CodeSelectorFactory {
 
@@ -114,7 +115,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		@Override
 		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object inputElement) {
-			Map<Object, Object> context = CodeElementServiceHolder.get().createContext();
+			Map<Object, Object> context = CodeElementServiceHolder.createContext();
 			context.put(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE);
 			List<ICodeElement> roots = tiCodeElementContribution.getElements(context);
 

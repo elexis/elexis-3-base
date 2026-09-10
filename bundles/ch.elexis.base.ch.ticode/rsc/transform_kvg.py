@@ -31,7 +31,7 @@ last_parent_code = None
 
 # Populate the 'concept' array with properties for parent relationships
 for _, row in df.iterrows():
-    code = row['Hauptcode']
+    code = str(row['Hauptcode'])
 
     # If the code is one character, it's a parent concept
     if len(code) == 1:

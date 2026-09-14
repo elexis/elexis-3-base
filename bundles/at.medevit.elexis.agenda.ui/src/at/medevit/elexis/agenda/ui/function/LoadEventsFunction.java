@@ -183,7 +183,9 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			try {
 				IContact userContact = ContextServiceHolder.get().getActiveUser().map(IUser::getAssignedContact)
 						.orElse(null);
+				TimeSpan previousTimeSpan = currentTimeSpan;
 				currentTimeSpan = new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]), userContact);
+				final boolean timeSpanChanged = !currentTimeSpan.equals(previousTimeSpan);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.BASE + "agenda/loadtimespan", //$NON-NLS-1$
 						new LoadEventTimeSpan(currentTimeSpan.startDate, currentTimeSpan.endDate));
 				long currentLastUpdate = CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
@@ -209,7 +211,9 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 						if (!isDisposed()) {
 							// update calendar height
 							updateCalendarHeight();
-							scriptingHelper.scrollToNow();
+							if (timeSpanChanged) {
+								scriptingHelper.scrollToNow();
+							}
 						}
 					}
 				});

@@ -316,10 +316,15 @@
         if (!container.length) {
           return;
         }
+        var view = cal.fullCalendar('getView');
+        var scroll = view ? view.queryScroll() : null;
         var available = window.innerHeight - container.offset().top;
         cal.fullCalendar('option', 'contentHeight', 'auto');
         if (container.outerHeight() > available) {
           cal.fullCalendar('option', 'contentHeight', available);
+        }
+        if (view && scroll) {
+          view.applyScroll(scroll);
         }
       }
 

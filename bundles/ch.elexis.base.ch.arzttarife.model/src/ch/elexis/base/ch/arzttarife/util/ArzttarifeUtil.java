@@ -215,6 +215,43 @@ public class ArzttarifeUtil {
 	}
 
 	/**
+	 * Test if there is AL TL based scaling information present for the
+	 * {@link IBilled}.
+	 * 
+	 * @param billed
+	 * @return
+	 */
+	public static boolean isALTLScale(IBilled billed) {
+		String alScaleString = (String) billed.getExtInfo(Verrechnet.EXT_VERRRECHNET_AL_SCALE);
+		String tlScaleString = (String) billed.getExtInfo(Verrechnet.EXT_VERRRECHNET_TL_SCALE);
+		return StringUtils.isNotBlank(alScaleString) && StringUtils.isNotBlank(tlScaleString);
+	}
+
+	public static double getALScaleFactor(IBilled billed) {
+		String alScaleString = (String) billed.getExtInfo(Verrechnet.EXT_VERRRECHNET_AL_SCALE);
+		if (StringUtils.isNotBlank(alScaleString)) {
+			try {
+				return Double.parseDouble(alScaleString) / 100;
+			} catch (NumberFormatException ne) {
+				// ignore
+			}
+		}
+		return 1.0;
+	}
+
+	public static double getTLScaleFactor(IBilled billed) {
+		String tlScaleString = (String) billed.getExtInfo(Verrechnet.EXT_VERRRECHNET_TL_SCALE);
+		if (StringUtils.isNotBlank(tlScaleString)) {
+			try {
+				return Double.parseDouble(tlScaleString) / 100;
+			} catch (NumberFormatException ne) {
+				// ignore
+			}
+		}
+		return 1.0;
+	}
+
+	/**
 	 * Get the AL value of the {@link IBilled} from the ext info of it. If there is
 	 * no such information present and the {@link IBillable} linked with the
 	 * {@link IBilled} is a {@link ITarmedLeistung}, that AL value is returned as

@@ -791,7 +791,11 @@ public class Tarmed50Exporter {
 							serviceExType.setUnitMt(d / 100.0);
 						});
 						serviceExType.setUnitFactorMt(mult);
-						serviceExType.setScaleFactorMt(primaryScale);
+						if (ArzttarifeUtil.isALTLScale(billed)) {
+							serviceExType.setScaleFactorMt(ArzttarifeUtil.getALScaleFactor(billed));
+						} else {
+							serviceExType.setScaleFactorMt(primaryScale);
+						}
 						XMLExporterUtil.getALScalingFactor(billed).ifPresent(f -> {
 							f = f * primaryScale;
 							serviceExType.setScaleFactorMt(f);
@@ -801,7 +805,11 @@ public class Tarmed50Exporter {
 						// tarmed TL
 						serviceExType.setUnitTt(tlTL / 100.0);
 						serviceExType.setUnitFactorTt(mult);
-						serviceExType.setScaleFactorTt(primaryScale);
+						if (ArzttarifeUtil.isALTLScale(billed)) {
+							serviceExType.setScaleFactorTt(ArzttarifeUtil.getTLScaleFactor(billed));
+						} else {
+							serviceExType.setScaleFactorTt(primaryScale);
+						}
 						serviceExType.setExternalFactorTt(secondaryScale);
 						serviceExType.setAmountTt(mTL.doubleValue());
 

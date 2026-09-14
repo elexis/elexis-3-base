@@ -742,10 +742,15 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			}
 			billed.setPoints((int) Math.round(alSum));
 			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL, Double.toString(alSum));
+			// separate scaling info
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL_SCALE, Integer.toString((int) (alFactor * 100)));
+			// backward compatibility
 			billed.setPrimaryScale((int) (alFactor * 100));
+		} else {
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL_SCALE, Integer.toString((int) (1.0 * 100)));
 		}
 		Double tlFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_TL);
-		if (tlFactor > 0.0 && (alFactor == 0.0 || Double.compare(tlFactor, alFactor) == 0)) {
+		if (tlFactor > 0.0) {
 			for (IBilled v : encounter.getBilled()) {
 				if (v.getBillable() instanceof TardocLeistung) {
 					TardocLeistung tl = (TardocLeistung) v.getBillable();
@@ -756,7 +761,10 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			}
 			billed.setPoints((int) Math.round(tlSum + alSum));
 			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL, Double.toString(tlSum));
-			billed.setPrimaryScale((int) (tlFactor * 100));
+			// separate scaling info
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL_SCALE, Integer.toString((int) (tlFactor * 100)));
+		} else {
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL_SCALE, Integer.toString((int) (1.0 * 100)));
 		}
 	}
 
@@ -766,6 +774,8 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			private Optional<String> bezugFilter = initBezug(billed, encounter);
 
 			private Optional<String> notInChapterFilter = initNotInChapterFilter(billed);
+
+			private Optional<String> inChapterFilter = initInChapterFilter(billed);
 			
 			@Override
 			public boolean test(TardocLeistung tl) {
@@ -773,7 +783,18 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 				if (ret && notInChapterFilter.isPresent()) {
 					ret = !notInChapterFilter.get().equals(tl.getParent().getCode());
 				}
+				if (ret && inChapterFilter.isPresent()) {
+					ret = inChapterFilter.get().equals(tl.getParent().getCode());
+				}
 				return ret;
+			}
+
+			private Optional<String> initInChapterFilter(IBilled billed) {
+				if (billed.getBillable() instanceof TardocLeistung
+						&& ((TardocLeistung) billed.getBillable()).getParent().getCode().equals("KF.10")) {
+					return Optional.of("KF.10");
+				}
+				return Optional.empty();
 			}
 
 			private Optional<String> initNotInChapterFilter(IBilled billed) {

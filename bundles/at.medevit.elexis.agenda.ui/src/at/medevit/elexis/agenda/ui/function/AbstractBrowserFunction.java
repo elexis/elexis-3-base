@@ -30,9 +30,11 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 
 	public void updateCalendarHeight() {
 		String updateHeight = "(function(){var c=$('#calendar');var k=c.find('.fc-view-container');"
-				+ "if(!k.length){return;}var a=(%d - k.offset().top);"
+				+ "if(!k.length){return;}var v=c.fullCalendar('getView');var s=v?v.queryScroll():null;"
+				+ "var a=(%d - k.offset().top);"
 				+ "c.fullCalendar('option','contentHeight','auto');"
-				+ "if(k.outerHeight()>a){c.fullCalendar('option','contentHeight',a);}})();"; //$NON-NLS-1$
+				+ "if(k.outerHeight()>a){c.fullCalendar('option','contentHeight',a);}"
+				+ "if(v&&s){v.applyScroll(s);}})();"; //$NON-NLS-1$
 		int browserHeight = getBrowser().getBounds().height;
 		String script = String.format(updateHeight, browserHeight);
 		SingleSourceUtil.executeScript(getBrowser(), script);

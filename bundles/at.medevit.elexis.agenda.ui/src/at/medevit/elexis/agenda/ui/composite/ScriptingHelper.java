@@ -11,6 +11,39 @@ import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 
 public class ScriptingHelper {
 
+	private static final String SET_SLOT_DURATION = "$('#calendar').fullCalendar('option', 'slotDuration', '%s');"; //$NON-NLS-1$
+
+	/**
+	 * Script changing the {@code slotDuration} (e.g., {@code 00:10:00}) while maintaining the current scroll position.
+	 * <p>
+	 * FullCalendar normally causes the view to drift when the slot duration changes. 
+	 * To prevent visual jumping, this script synchronously calculates and reapplies the relative scroll 
+	 * position (ratio of scrollTop to scrollHeight) during the update.
+	 *
+	 * @see #SCROLL_TO_NOW
+	 */
+	private static final String KEEP_SCROLL_TIME = "(function(){var c=$('#calendar');var o=c.fullCalendar('getView');" //$NON-NLS-1$
+			+ "var f=(o&&o.scroller&&o.scroller.el[0].scrollHeight)" //$NON-NLS-1$
+			+ "?o.scroller.getScrollTop()/o.scroller.el[0].scrollHeight:0;" //$NON-NLS-1$
+			+ "c.fullCalendar('option','slotDuration','%s');" //$NON-NLS-1$
+			+ "var v=c.fullCalendar('getView');" //$NON-NLS-1$
+			+ "if(f&&v&&v.scroller){v.applyScroll({top:Math.round(f*v.scroller.el[0].scrollHeight)});}})();"; //$NON-NLS-1$
+
+	/**
+	 * Script vertically centering the current time in the agenda view. Takes no format arguments.
+	 * <p>
+	 * It safely aborts if the view is not yet rendered or if the current time is outside the visible dates. 
+	 * The target position is calculated directly from the time of day rather than UI elements, 
+	 * allowing it to run synchronously and without visual flickering.
+	 *
+	 * @see #KEEP_SCROLL_TIME
+	 */
+	private static final String SCROLL_TO_NOW = "(function(){var c=$('#calendar');var v=c.fullCalendar('getView');" //$NON-NLS-1$
+			+ "if(!v||!v.timeGrid){return;}var n=c.fullCalendar('getNow');" //$NON-NLS-1$
+			+ "if(n<v.intervalStart||n>=v.intervalEnd){return;}" //$NON-NLS-1$
+			+ "var t=v.timeGrid.computeTimeTop(moment.duration(n.format('HH:mm:ss')));" //$NON-NLS-1$
+			+ "v.applyScroll({top:Math.max(0,Math.ceil(t-v.scroller.el.height()/2))});})();"; //$NON-NLS-1$
+
 	private Browser browser;
 
 	private volatile boolean doScroll;
@@ -20,10 +53,9 @@ public class ScriptingHelper {
 	}
 
 	public void setSelectedSpanSize(AgendaSpanSize size) {
-		String slotDuration = "$('#calendar').fullCalendar('option', 'slotDuration', '%s');"; //$NON-NLS-1$
-		String script = String.format(slotDuration, size.getCalendarString());
+		String script = doScroll ? String.format(SET_SLOT_DURATION, size.getCalendarString()) + SCROLL_TO_NOW
+				: String.format(KEEP_SCROLL_TIME, size.getCalendarString());
 		SingleSourceUtil.executeScript(browser, script);
-		scrollToNow();
 	}
 
 	/**
@@ -97,7 +129,7 @@ public class ScriptingHelper {
 
 	public void scrollToNow() {
 		if (doScroll) {
-			String script = "var now = $('#calendar').fullCalendar('getNow'); if (now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top - ($('#calendar').height() / 2) );}  , 500 );}"; //$NON-NLS-1$
+			String script = "setTimeout(function(){" + SCROLL_TO_NOW + "}, 500);"; //$NON-NLS-1$ //$NON-NLS-2$
 			SingleSourceUtil.executeScript(browser, script);
 		}
 	}

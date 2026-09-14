@@ -258,6 +258,47 @@ public class TardocBillingTest extends AbstractTardocTest {
 	}
 
 	@Test
+	public void zuschlagProzentALTLSeparateScaling() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService
+				.bill(TardocLeistung.getFromCode("KF.00.0030", LocalDate.of(2026, 1, 1), null), encounter, 26);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(TardocLeistung.getFromCode("KF.05.0040", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(TardocLeistung.getFromCode("KF.10.0010", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(TardocLeistung.getFromCode("KF.10.0130", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+
+		assertEquals("0.4", TardocLeistung.getFromCode("KF.10.0130", LocalDate.of(2026, 1, 1), null).getExtension()
+				.getExtInfo(TardocConstants.TardocLeistung.EXT_FLD_F_AL));
+		assertEquals("0.2", TardocLeistung.getFromCode("KF.10.0130", LocalDate.of(2026, 1, 1), null).getExtension()
+				.getExtInfo(TardocConstants.TardocLeistung.EXT_FLD_F_TL));
+
+		// zuschlag prozent
+		assertEquals(1.0, billed.getAmount(), 0.001);
+		assertFalse(billed.getPrice().isZero());
+		assertEquals(6761.0, ArzttarifeUtil.getAL(billed), 0.001);
+		assertEquals(12453.0, ArzttarifeUtil.getTL(billed), 0.001);
+		assertEquals(0.4, ArzttarifeUtil.getALScaleFactor(billed), 0.001);
+		assertEquals(0.2, ArzttarifeUtil.getTLScaleFactor(billed), 0.001);
+		assertEquals(5195, billed.getTotal().getCents(), 0.01);
+	}
+
+	@Test
 	public void kumulationTardocPosition() {
 		encounter.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter);

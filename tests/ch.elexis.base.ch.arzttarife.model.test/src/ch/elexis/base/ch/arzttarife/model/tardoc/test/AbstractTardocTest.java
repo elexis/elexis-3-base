@@ -71,6 +71,8 @@ public abstract class AbstractTardocTest {
 						new TransientCoding("tardoc_dignitaet", "1000", null),
 						new TransientCoding("tardoc_dignitaet", "1100", null),
 						new TransientCoding("tardoc_dignitaet", "0026", null),
+						new TransientCoding("tardoc_dignitaet", "0506", null),
+						new TransientCoding("tardoc_dignitaet", "9912", null),
 						new TransientCoding("tardoc_dignitaet", "9971", null)));
 		coreModelService.save(mandator);
 	}

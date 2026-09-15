@@ -1,7 +1,7 @@
 package at.medevit.elexis.impfplan.ui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -22,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.impfplan.ui.VaccinationView;
 import at.medevit.elexis.impfplan.ui.handlers.ImportLegacyVaccinationsHandler;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -38,6 +41,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String VAC_SHOW_SIDE = PREFBASE + "showside"; //$NON-NLS-1$
 	public static final String VAC_AUTO_BILL = PREFBASE + "autobill"; //$NON-NLS-1$
 	public static final String VAC_DEFAULT_SIDE = PREFBASE + "defaultside"; //$NON-NLS-1$
+
+	private BooleanFieldEditor bStoreGlobal;
+
+	private URIFieldEditorComposite outputDirEditor;
 
 	private Text txtLog;
 	private Label lblInfo;
@@ -62,9 +69,25 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	@Override
 	protected void createFieldEditors() {
-		DirectoryFieldEditor editor = new DirectoryFieldEditor(VAC_PDF_OUTPUTDIR, "Druck-Ausgabeverzeichnis",
-				getFieldEditorParent());
-		addField(editor);
+		bStoreGlobal = new BooleanFieldEditor(ImpfplanSettings.CFG_PATHS_GLOBAL,
+				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
+			@Override
+			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
+				super.fireValueChanged(property, oldValue, newValue);
+				if (FieldEditor.VALUE.equals(property)) {
+					boolean global = Boolean.TRUE.equals(newValue);
+					ConfigServiceHolder.setGlobal(ImpfplanSettings.CFG_PATHS_GLOBAL, global);
+					updatePathStore(global);
+				}
+			}
+		};
+		addField(bStoreGlobal);
+
+		Composite pathParent = getFieldEditorParent();
+		pathParent.setLayout(new GridLayout(3, false));
+		outputDirEditor = new URIFieldEditorComposite(VAC_PDF_OUTPUTDIR, "Druck-Ausgabeverzeichnis", pathParent,
+				SWT.NONE);
+		outputDirEditor.setEmptyStringAllowed(true);
 
 		BooleanFieldEditor bfAutoBillEditor = new BooleanFieldEditor(VAC_AUTO_BILL,
 				"Impfungen automatisch mit Position 00.0010 verrechnen", getFieldEditorParent());
@@ -117,6 +140,22 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		txtLog.setText("Import log...");
 
 		setImportFieldVisibility();
+	}
+
+	@Override
+	protected Control createContents(Composite parent) {
+		Control control = super.createContents(parent);
+		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		bStoreGlobal.load();
+		updatePathStore(ImpfplanSettings.isStoreGlobal());
+		return control;
+	}
+
+	private void updatePathStore(boolean global) {
+		if (outputDirEditor == null || outputDirEditor.isDisposed()) {
+			return;
+		}
+		outputDirEditor.setPreferenceStore(new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.USER));
 	}
 
 	private void setImportFieldVisibility() {

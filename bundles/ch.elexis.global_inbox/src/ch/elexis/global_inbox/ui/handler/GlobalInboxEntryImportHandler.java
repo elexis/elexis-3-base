@@ -1,8 +1,6 @@
 
 package ch.elexis.global_inbox.ui.handler;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -10,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IDocumentStore;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.Preferences;
@@ -51,8 +51,12 @@ public class GlobalInboxEntryImportHandler {
 	private IInboxElementService inboxElementService;
 
 	@Execute
-	public void execute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
+	public void execute(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
 			IEventBroker eventBroker) {
+
+		if (globalInboxEntry == null) {
+			return;
+		}
 
 		String title = globalInboxEntry.getTitle();
 		IPatient patient = globalInboxEntry.getPatient();
@@ -63,7 +67,7 @@ public class GlobalInboxEntryImportHandler {
 
 		ICategory category = getCategoryOrDefault(globalInboxEntry.getCategory());
 
-		File mainFile = globalInboxEntry.getMainFile();
+		IVirtualFilesystemHandle mainFile = globalInboxEntry.getMainFile();
 		IDocument document = documentStore.createDocument(null, patient.getId(), mainFile.getName(),
 				category.getName());
 		document.setTitle(title);
@@ -74,7 +78,7 @@ public class GlobalInboxEntryImportHandler {
 		} else {
 			document.setCreated(new Date());
 		}
-		try (InputStream fin = new FileInputStream(mainFile)) {
+		try (InputStream fin = mainFile.openInputStream()) {
 			if (globalInboxEntry.isSendNoInfo()) {
 				inboxElementService.addIgnoreObjectId(document.getId());
 			}
@@ -145,7 +149,7 @@ public class GlobalInboxEntryImportHandler {
 	}
 
 	@CanExecute
-	public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
+	public boolean canExecute(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
 
 		if (globalInboxEntry == null) {
 			return false;
@@ -161,5 +165,4 @@ public class GlobalInboxEntryImportHandler {
 
 		return true;
 	}
-
 }

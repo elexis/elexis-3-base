@@ -27,7 +27,8 @@ public class TIMakro implements IKonsMakro {
 		Optional<IEncounter> encounter = ContextServiceHolder.get().getRootContext().getTyped(IEncounter.class);
 		if (encounter.isPresent()) {
 			try {
-				Optional<ICodeElement> tiCode = CodeElementServiceHolder.get().loadFromString("TI-Code", makro, null); //$NON-NLS-1$
+				Optional<ICodeElement> tiCode = CodeElementServiceHolder.get().loadFromString("TI-Code", makro, //$NON-NLS-1$
+						CodeElementServiceHolder.get().createContext());
 				if (tiCode.isPresent()) {
 					encounter.get().addDiagnosis((IDiagnosis) tiCode.get());
 					CoreModelServiceHolder.get().save(encounter.get());

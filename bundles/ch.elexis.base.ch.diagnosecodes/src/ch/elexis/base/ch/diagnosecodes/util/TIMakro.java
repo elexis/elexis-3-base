@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.base.ch.diagnosecodes.service.CodeElementServiceHolder;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.CodeElementServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.IKonsMakro;
@@ -28,7 +28,7 @@ public class TIMakro implements IKonsMakro {
 		if (encounter.isPresent()) {
 			try {
 				Optional<ICodeElement> tiCode = CodeElementServiceHolder.get().loadFromString("TI-Code", makro, //$NON-NLS-1$
-						CodeElementServiceHolder.get().createContext());
+						CodeElementServiceHolder.createContext());
 				if (tiCode.isPresent()) {
 					encounter.get().addDiagnosis((IDiagnosis) tiCode.get());
 					CoreModelServiceHolder.get().save(encounter.get());

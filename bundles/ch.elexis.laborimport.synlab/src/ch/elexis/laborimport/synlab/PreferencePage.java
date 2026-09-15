@@ -10,44 +10,89 @@
 
 package ch.elexis.laborimport.synlab;
 
-import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String JAR_PATH = "synlab/jar_path"; //$NON-NLS-1$
-	public static final String INI_PATH = "synlab/ini_path"; //$NON-NLS-1$
-	public static final String DL_DIR = "synlab/downloaddir"; //$NON-NLS-1$
+	public static final String JAR_PATH = SynlabSettings.JAR_PATH;
+	public static final String INI_PATH = SynlabSettings.INI_PATH;
+	public static final String DL_DIR = SynlabSettings.DL_DIR;
+
+	private BooleanFieldEditor bStoreGlobal;
+
+	private OsPathEditorGroup pathGroup;
+
+	private URIFieldEditorComposite jarEditor;
+	private URIFieldEditorComposite iniEditor;
 
 	public PreferencePage() {
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.LOCAL));
 	}
 
 	@Override
 	protected void createFieldEditors() {
-		FileFieldEditor jarEditor = new FileFieldEditor(JAR_PATH, Messages.PreferencePage_JMedTrasferJar,
-				getFieldEditorParent());
-		FileFieldEditor iniEditor = new FileFieldEditor(INI_PATH, Messages.PreferencePage_JMedTrasferJni,
-				getFieldEditorParent());
-		DirectoryFieldEditor dirEditor = new DirectoryFieldEditor(DL_DIR, Messages.PreferencePage_DownloadDir,
-				getFieldEditorParent());
+		bStoreGlobal = new BooleanFieldEditor(SynlabSettings.CFG_PATHS_GLOBAL, Messages.PreferencePage_storeFSGlobal,
+				getFieldEditorParent()) {
+			@Override
+			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
+				super.fireValueChanged(property, oldValue, newValue);
+				if (FieldEditor.VALUE.equals(property)) {
+					boolean global = Boolean.TRUE.equals(newValue);
+					ConfigServiceHolder.setGlobal(SynlabSettings.CFG_PATHS_GLOBAL, global);
+					updatePathStores(global);
+				}
+			}
+		};
+		addField(bStoreGlobal);
 
-		jarEditor.getTextControl(getFieldEditorParent()).setMessage("Optional");//$NON-NLS-1$
-		iniEditor.getTextControl(getFieldEditorParent()).setMessage("Optional");//$NON-NLS-1$
+		pathGroup = new OsPathEditorGroup(getFieldEditorParent(), SWT.NONE);
+		jarEditor = pathGroup.addPathEditor(SynlabSettings.JAR_PATH, Messages.PreferencePage_JMedTrasferJar);
+		iniEditor = pathGroup.addPathEditor(SynlabSettings.INI_PATH, Messages.PreferencePage_JMedTrasferJni);
+		pathGroup.addPathEditor(SynlabSettings.DL_DIR, Messages.PreferencePage_DownloadDir);
 
-		addField(jarEditor);
-		addField(iniEditor);
-		addField(dirEditor);
+		setOptionalHint(jarEditor);
+		setOptionalHint(iniEditor);
 	}
 
+	private void setOptionalHint(URIFieldEditorComposite editor) {
+		((URIFieldEditor) editor.getFieldEditor()).getTextControl(editor).setMessage("Optional"); //$NON-NLS-1$
+	}
+
+	@Override
+	protected Control createContents(Composite parent) {
+		Control control = super.createContents(parent);
+		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		bStoreGlobal.load();
+		updatePathStores(SynlabSettings.isStoreGlobal());
+		return control;
+	}
+
+	private void updatePathStores(boolean global) {
+		pathGroup.setPreferenceStore(new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.LOCAL));
+	}
+
+	@Override
+	protected void adjustGridLayout() {
+		super.adjustGridLayout();
+		pathGroup.adjustHorizontalSpan();
+	}
+
+	@Override
 	public void init(final IWorkbench workbench) {
-		// TODO Auto-generated method stub
 	}
 }

@@ -27,9 +27,11 @@ import static ch.elexis.omnivore.PreferenceConstants.PREF_SRC_PATTERN;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFS;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -54,13 +56,12 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.l10n.Messages;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.Leistungsblock;
@@ -84,12 +85,15 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	public static final String GLOBAL_SHOW_CREATED_IN_INBOX = PREFBASE + "showCreatedInInbox"; //$NON-NLS-1$
 
+	private static final int COTF_COLUMNS = 10;
+
 	private BooleanFieldEditor bStoreFSGlobal;
 	private BooleanFieldEditor bStoreFS;
 	private BooleanFieldEditor bAutomaticBilling;
 	private BooleanFieldEditor bShowCreatedInInbox;
 	private BooleanFieldEditor bDateModifiable;
-	private URIFieldEditor dfStorePath;
+	private URIFieldEditorComposite dfStorePath;
+	private final List<URIFieldEditorComposite> destDirEditors = new ArrayList<>();
 
 	private Button btnSaveColumnWidths;
 	private Button btnSaveSortDirection;
@@ -103,7 +107,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public PreferencePage() {
 		super(GRID);
 
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.LOCAL));
 		setDescription(ch.elexis.omnivore.data.Messages.Preferences_omnivore);
 
 		String basePath = Preferences.getBasepath();
@@ -182,7 +186,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 					Preferences.setFsSettingStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 					updateFSSettingsStore();
 				} else {
-					Preferences.setFsSettingStore(new SettingsPreferenceStore(CoreHub.localCfg));
+					Preferences.setFsSettingStore(new ConfigServicePreferenceStore(Scope.LOCAL));
 					updateFSSettingsStore();
 				}
 			}
@@ -194,17 +198,15 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addField(bStoreFS);
 		Preferences.storeInFilesystem();
 
-		dfStorePath = new URIFieldEditor(BASEPATH, ch.elexis.omnivore.data.Messages.Preferences_pathForDocs,
-				gPathForDocs);
+		dfStorePath = new URIFieldEditorComposite(BASEPATH,
+				ch.elexis.omnivore.data.Messages.Preferences_pathForDocs, gPathForDocs, SWT.NONE);
+		dfStorePath.setEmptyStringAllowed(true);
 		Preferences.getBasepath();
 		String debugPath = System.getProperty(Utils.DEMO_DOCUMENTS); // $NON-NLS-1$
 		if (StringUtils.isNotEmpty(debugPath)) {
-			dfStorePath.setEnabled(false, gPathForDocs);
+			dfStorePath.setEnabled(false);
 			SWTHelper.createDemoInfoLabel(gPathForDocs, Messages.Texterstellung_demo_browse_disabled);
 		}
-
-		dfStorePath.setEmptyStringAllowed(true);
-		addField(dfStorePath);
 
 		Label label = new Label(gAllOmnivorePrefs, SWT.NONE);
 		label.setText("Datenbankeinträge auf Filesystem auslagern");
@@ -221,7 +223,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 		Group gPathForMaxChars = new Group(gGeneralOptions, SWT.NONE);
 		gPathForMaxChars.setLayout(new FillLayout());
-		IPreferenceStore preferenceStore = new SettingsPreferenceStore(CoreHub.localCfg);
+		IPreferenceStore preferenceStore = new ConfigServicePreferenceStore(Scope.LOCAL);
 		preferenceStore.setDefault(PREF_MAX_FILENAME_LENGTH, OmnivoreMax_Filename_Length_Default);
 		IntegerFieldEditor maxCharsEditor = new IntegerFieldEditor(PREF_MAX_FILENAME_LENGTH,
 				ch.elexis.omnivore.data.Messages.Preferences_MAX_FILENAME_LENGTH, gPathForMaxChars);
@@ -292,8 +294,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			log.debug("i {} val {}", i, PREF_SRC_PATTERN[i]); //$NON-NLS-1$
 			addField(new StringFieldEditor(PREF_SRC_PATTERN[i],
 					ch.elexis.omnivore.data.Messages.Preferences_SRC_PATTERN, gAutoArchiveRule));
-			addField(new DirectoryFieldEditor(PREF_DEST_DIR[i], ch.elexis.omnivore.data.Messages.Preferences_DEST_DIR,
-					gAutoArchiveRule));
+			URIFieldEditorComposite destDirEditor = new URIFieldEditorComposite(PREF_DEST_DIR[i],
+					ch.elexis.omnivore.data.Messages.Preferences_DEST_DIR, gAutoArchiveRule, SWT.NONE);
+			destDirEditor.setEmptyStringAllowed(true);
+			destDirEditors.add(destDirEditor);
 		}
 		// ---
 
@@ -329,7 +333,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		// would probably make groups-within-group completely disappear.
 
 		GridLayout gCotfRulesGridLayout = new GridLayout();
-		gCotfRulesGridLayout.numColumns = nCotfRules; // at least this one is finally honoured...
+		gCotfRulesGridLayout.numColumns = Math.min(nCotfRules, COTF_COLUMNS);
 		gCotfRules.setLayout(gCotfRulesGridLayout);
 
 		GridData gCotfRulesGridLayoutData = new GridData();
@@ -378,6 +382,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				addField(
 						new StringFieldEditor(str2, Preferences.PREFERENCE_cotf_parameters_messages[2], 10, gCotfRule));
 			}
+			((GridLayout) gCotfRule.getLayout()).numColumns = 1;
 		}
 
 		enableOutsourceButton();
@@ -402,17 +407,17 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 					if (dialog.getResult() != null && dialog.getResult().length > 0) {
 						Leistungsblock block = (Leistungsblock) dialog.getResult()[0];
 						selectBlock(block);
-						CoreHub.localCfg.set(PreferenceConstants.AUTO_BILLING_BLOCK, block.getId());
+						LocalConfigService.set(PreferenceConstants.AUTO_BILLING_BLOCK, block.getId());
 					} else {
-						CoreHub.localCfg.set(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY);
+						LocalConfigService.set(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY);
 						selectBlock(null);
 					}
 				}
 			}
 		});
-		if (!CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY).isEmpty()) {
+		if (!LocalConfigService.get(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY).isEmpty()) {
 			selectBlock(Leistungsblock
-					.load(CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY)));
+					.load(LocalConfigService.get(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY)));
 		}
 	}
 
@@ -442,7 +447,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		bStoreFS.setPreferenceStore(Preferences.getFsSettingsStore());
 		bStoreFS.load();
 		dfStorePath.setPreferenceStore(Preferences.getFsSettingsStore());
-		dfStorePath.load();
+		for (URIFieldEditorComposite destDirEditor : destDirEditors) {
+			destDirEditor.setPreferenceStore(Preferences.getFsSettingsStore());
+		}
 	}
 
 	@Override
@@ -502,7 +509,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public boolean performOk() {
 		ConfigServiceHolder.setUser(PreferencePage.SAVE_COLUM_WIDTH, btnSaveColumnWidths.getSelection());
 		ConfigServiceHolder.setUser(PreferencePage.SAVE_SORT_DIRECTION, btnSaveSortDirection.getSelection());
-		CoreHub.localCfg.flush();
 		return super.performOk();
 	}
 }

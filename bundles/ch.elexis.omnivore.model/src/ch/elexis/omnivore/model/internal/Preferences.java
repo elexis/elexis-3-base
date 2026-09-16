@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.omnivore.util.Utils;
 
@@ -55,11 +56,11 @@ public class Preferences {
 
 		String ret = StringUtils.EMPTY;
 		if (ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false)) {
-			ret = ConfigServiceHolder.getGlobal(BASEPATH, null);
+			ret = PreferencesUtil.getOsSpecificGlobalPreference(BASEPATH, ConfigServiceHolder.get());
 		} else {
-			ret = ConfigServiceHolder.getLocal(BASEPATH, null);
+			ret = PreferencesUtil.getOsSpecificLocalPreference(BASEPATH, ConfigServiceHolder.get());
 		}
-		if (StringUtils.contains(ret, "no protocol: ")) { //$NON-NLS-1$
+		if (ret != null && ret.contains("no protocol: ")) { //$NON-NLS-1$
 			ret = ret.replaceAll("no protocol: ", StringUtils.EMPTY); //$NON-NLS-1$
 		}
 		return ret;

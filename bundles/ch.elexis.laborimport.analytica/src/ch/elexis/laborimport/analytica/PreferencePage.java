@@ -19,13 +19,13 @@ package ch.elexis.laborimport.analytica;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
-import ch.elexis.core.ui.preferences.inputs.InexistingDirectoryOKDirectoryFieldEditor;
-import ch.elexis.core.ui.preferences.inputs.InexistingFileOKFileFieldEditor;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -48,6 +48,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 
+	private OsPathEditorGroup pathGroup;
+
 	public PreferencePage() {
 		super(GRID);
 		prefs.setDefault(FTP_HOST, DEFAULT_FTP_HOST); // $NON-NLS-1$
@@ -69,12 +71,19 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addField(new StringFieldEditor(FTP_HOST, Messages.PreferencePage_label_host, getFieldEditorParent())); // $NON-NLS-1$
 		addField(new StringFieldEditor(FTP_USER, Messages.PreferencePage_label_user, getFieldEditorParent())); // $NON-NLS-1$
 		addField(new StringFieldEditor(FTP_PWD, Messages.PreferencePage_label_password, getFieldEditorParent())); // $NON-NLS-1$
-		addField(new InexistingDirectoryOKDirectoryFieldEditor(DL_DIR, Messages.PreferencePage_label_download,
-				getFieldEditorParent())); // $NON-NLS-1$
-		addField(new InexistingFileOKFileFieldEditor(OVPN_DIR, Messages.PreferencePage_label_ovpn,
-				getFieldEditorParent())); // $NON-NLS-1$
+		pathGroup = new OsPathEditorGroup(getFieldEditorParent(), SWT.NONE);
+		pathGroup.setPreferenceStore(prefs);
+		pathGroup.addPathEditor(DL_DIR, Messages.PreferencePage_label_download);
+		pathGroup.addPathEditor(OVPN_DIR, Messages.PreferencePage_label_ovpn);
 	}
 
+	@Override
+	protected void adjustGridLayout() {
+		super.adjustGridLayout();
+		pathGroup.adjustHorizontalSpan();
+	}
+
+	@Override
 	public void init(final IWorkbench workbench) {
 		// Do nothing
 	}

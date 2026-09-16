@@ -124,13 +124,10 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 				return roots.toArray();
 			}
 
-			List<IDiagnosisTree> foundSubs = ((Collection<? extends IDiagnosisTree>) tiCodeElementContribution
-					.getElements(context)).stream().map(ce -> (IDiagnosisTree) ce)
-							.filter(dt -> matchFilter(dt)).collect(Collectors.toList());
-			List<IDiagnosisTree> foundRoots = ((Collection<? extends IDiagnosisTree>) roots).stream()
+			List<IDiagnosisTree> found = ((Collection<? extends IDiagnosisTree>) tiCodeElementContribution
+					.getElements(CodeElementServiceHolder.get().createContext())).stream()
 					.map(ce -> (IDiagnosisTree) ce).filter(dt -> matchFilter(dt)).collect(Collectors.toList());
-			List<IDiagnosisTree> foundElements = new ArrayList<>(foundRoots);
-			foundElements.addAll(foundSubs);
+			List<IDiagnosisTree> foundElements = new ArrayList<>(found);
 
 			return foundElements.toArray(new Object[foundElements.size()]);
 		}
@@ -169,7 +166,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 
 		public boolean matchFilter(IDiagnosisTree element) {
 			if (StringUtils.isNotBlank(value)) {
-				return (element.getCode() + StringUtils.SPACE + element.getText().toLowerCase())
+				return (element.getCode().toLowerCase() + StringUtils.SPACE + element.getText().toLowerCase())
 						.contains(value.toLowerCase());
 			}
 			return true;

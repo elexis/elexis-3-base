@@ -1,11 +1,21 @@
 package at.medevit.elexis.gdt.defaultfilecp;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.activator.CoreHubHelper;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
@@ -133,10 +143,54 @@ public class FileCommPartner {
 					.getGlobal(FileCommPartner.CFG_GDT_FILETRANSFER_IDS, FileCommPartner.DEFAULT_COMM_PARTNER_ID)
 					.split(FileCommPartner.COMM_PARTNER_SEPERATOR);
 		} else {
-			return CoreHub.localCfg
+			return LocalConfigService
 					.get(FileCommPartner.CFG_GDT_FILETRANSFER_IDS, FileCommPartner.DEFAULT_COMM_PARTNER_ID)
 					.split(FileCommPartner.COMM_PARTNER_SEPERATOR);
 		}
+	}
+
+	/**
+	 * Read a path of this communication partner. The value is read operating system
+	 * specific from the scope currently in use, falling back to the key without
+	 * operating system suffix, so existing installations keep working.
+	 *
+	 * @param preferenceName the base key, without the operating system suffix
+	 * @return the configured location as local path, empty String if there is none
+	 */
+	public String getPath(String preferenceName) {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = isFileTransferGlobalConfigured()
+				? PreferencesUtil.getOsSpecificGlobalPreference(preferenceName, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(preferenceName, configService);
+		return resolveLocalFile(value).map(File::getAbsolutePath).orElse(StringUtils.EMPTY);
+	}
+
+	/**
+	 * Resolve a stored value to a local {@link File}. Handles plain paths, file
+	 * URIs and relative paths.
+	 *
+	 * @param pathOrUri
+	 * @return
+	 */
+	public static Optional<File> resolveLocalFile(String pathOrUri) {
+		if (StringUtils.isBlank(pathOrUri)) {
+			return Optional.empty();
+		}
+		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
+		if (vfsService == null) {
+			return Optional.of(new File(pathOrUri));
+		}
+		try {
+			Optional<File> resolved = vfsService.of(pathOrUri).toFile();
+			if (resolved.isPresent()) {
+				return resolved;
+			}
+		} catch (IOException e) {
+			LoggerFactory.getLogger(FileCommPartner.class).debug(
+					"Location [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
+					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
+		}
+		return Optional.of(new File(pathOrUri));
 	}
 
 	public IPreferenceStore getSettings() {

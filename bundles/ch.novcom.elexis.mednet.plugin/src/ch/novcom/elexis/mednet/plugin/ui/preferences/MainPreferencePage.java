@@ -10,23 +10,23 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
-import java.nio.file.Paths;
-
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.WidgetFactory;
 import ch.novcom.elexis.mednet.plugin.MedNet;
@@ -38,10 +38,11 @@ import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
  */
 public class MainPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	Text exePath;
-	private Button exePathSelection;
+	private URIFieldEditorComposite exePathEditor;
 
 	private Text purgeInterval;
+
+	private final ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 
 	/**
 	 * Standard Constructor
@@ -64,29 +65,10 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements IWo
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(3, false));
 
-		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelExePath);
-		exePath = new Text(ret, SWT.BORDER);
-		exePath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		exePath.setTextLimit(80);
-		exePath.setEnabled(false);
-		if (MedNet.getSettings().getExePath() != null) {
-			exePath.setText(MedNet.getSettings().getExePath().toString());
-		}
-
-		exePathSelection = new Button(ret, SWT.PUSH);
-		exePathSelection.setText("...");
-		exePathSelection.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(getShell());
-				dialog.setText(MedNetMessages.MainPreferences_labelExePath);
-				if (System.getProperty("os.name").contains("Windows")) {
-					dialog.setFilterExtensions(new String[] { "*.exe" });
-				}
-				String selected = dialog.open();
-				exePath.setText(selected);
-			}
-		});
+		exePathEditor = new URIFieldEditorComposite(MedNetSettings.cfgExePath,
+				MedNetMessages.MainPreferences_labelExePath, ret, SWT.NONE);
+		exePathEditor.setEmptyStringAllowed(true);
+		exePathEditor.setPreferenceStore(prefs);
 
 		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelPurgeInterval);
 		purgeInterval = new Text(ret, SWT.BORDER);
@@ -129,9 +111,13 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements IWo
 	 */
 	@Override
 	public boolean performOk() {
-		MedNet.getSettings().setExePath(Paths.get(exePath.getText()));
+		String exePathValue = ((URIFieldEditor) exePathEditor.getFieldEditor()).getStringValue();
+		if (StringUtils.isBlank(exePathValue)) {
+			ConfigServiceHolder.setGlobal(MedNetSettings.cfgExePath, StringUtils.EMPTY);
+		}
 		MedNet.getSettings().setArchivePurgeInterval(Integer.valueOf(purgeInterval.getText()));
 		MedNet.getSettings().saveSettings();
+		MedNet.getSettings().loadExePath();
 		return true;
 	}
 

@@ -26,9 +26,10 @@ import org.eclipse.swt.dnd.Transfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Patient;
+import ch.elexis.core.services.LocalConfigService;
+import ch.elexis.extdoc.preferences.ExtDocSettings;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 
 @SuppressWarnings("deprecation")
@@ -132,9 +133,12 @@ public class Email {
 		logger = LoggerFactory.getLogger("ch.elexis.extdoc");
 
 		if (subject == null)
-			subject = CoreHub.localCfg.get(PreferenceConstants.CONCERNS, "Überweisung");
+			subject = LocalConfigService.get(PreferenceConstants.CONCERNS, "Überweisung");
 		// quote for programs with white spaces in file
-		String app = CoreHub.localCfg.get(PreferenceConstants.EMAIL_PROGRAM, "mailto:");
+		String app = ExtDocSettings.getPath(PreferenceConstants.EMAIL_PROGRAM);
+		if (StringUtils.isBlank(app)) {
+			app = "mailto:";
+		}
 		String params = StringUtils.EMPTY;
 		try {
 			if (app.toLowerCase().indexOf("outlook") >= 0) {

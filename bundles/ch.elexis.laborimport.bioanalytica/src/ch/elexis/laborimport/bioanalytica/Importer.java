@@ -45,6 +45,7 @@ import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -81,32 +82,29 @@ public class Importer extends ImporterPage {
 	@Override
 	public Composite createPage(Composite parent) {
 		// try to dynamically load the openmedical JAR file
-		String jarPath = CoreHub.localCfg.get(PreferencePage.JAR_PATH, null);
-		if (jarPath != null) {
-			File jar = new File(jarPath);
-			if (jar.canRead()) {
+		File jar = BioanalyticaSettings.getJarFile().orElse(null);
+		if (jar != null && jar.canRead()) {
+			try {
+				URLClassLoader urlLoader = getURLClassLoader(jar.toURI().toURL());
+
+				Class<?> openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
+
+				// try to get the download method
+				Method meth;
 				try {
-					URLClassLoader urlLoader = getURLClassLoader(new URL("file", null, jar.getAbsolutePath()));
-
-					Class openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
-
-					// try to get the download method
-					Method meth;
-					try {
-						meth = openmedicalClass.getMethod("download", String[].class);
-					} catch (Throwable e) {
-						throw e;
-					}
-
-					// try to get an instance
-					Object obj = openmedicalClass.newInstance();
-
-					// success (no exception); set the global variables
-					openmedicalObject = obj;
-					openmedicalDownloadMethod = meth;
+					meth = openmedicalClass.getMethod("download", String[].class);
 				} catch (Throwable e) {
-					// loading the class failed; do nothing
+					throw e;
 				}
+
+				// try to get an instance
+				Object obj = openmedicalClass.getDeclaredConstructor().newInstance();
+
+				// success (no exception); set the global variables
+				openmedicalObject = obj;
+				openmedicalDownloadMethod = meth;
+			} catch (Throwable e) {
+				// loading the class failed; do nothing
 			}
 		}
 
@@ -120,14 +118,20 @@ public class Importer extends ImporterPage {
 		return ret;
 	}
 
-	private Result importDirect() {
+	private Result<String> importDirect() {
 		Result<String> result = new Result<String>("OK");
 
-		String downloadDirPath = CoreHub.localCfg.get(PreferencePage.DL_DIR, CoreHub.getTempDir().toString());
-		String iniPath = CoreHub.localCfg.get(PreferencePage.INI_PATH, null);
+		// only fall back to the temp directory if nothing is configured at all - a
+		// configured but unresolvable location must not silently import from somewhere
+		// else
+		String configuredDir = BioanalyticaSettings.get(BioanalyticaSettings.DL_DIR);
+		File downloadDir = StringUtils.isBlank(configuredDir) ? CoreHub.getTempDir()
+				: BioanalyticaSettings.resolveLocalFile(configuredDir).orElse(null);
+		String downloadDirPath = downloadDir != null ? downloadDir.getAbsolutePath() : null;
+		String iniPath = BioanalyticaSettings.getIniFile().map(File::getAbsolutePath).orElse(null);
 
 		int res = -1;
-		if (openmedicalObject != null && iniPath != null) {
+		if (openmedicalObject != null && iniPath != null && downloadDirPath != null) {
 			try {
 				Object omResult = openmedicalDownloadMethod.invoke(openmedicalObject,
 						new Object[] { new String[] { "--download", downloadDirPath, "--logPath", downloadDirPath,
@@ -146,8 +150,7 @@ public class Importer extends ImporterPage {
 		}
 		// if (res > 0) {
 		res = 0;
-		File downloadDir = new File(downloadDirPath);
-		if (downloadDir.isDirectory()) {
+		if (downloadDir != null && downloadDir.isDirectory()) {
 			File archiveDir = new File(downloadDir, "archive");
 			if (!archiveDir.exists()) {
 				archiveDir.mkdir();
@@ -166,7 +169,7 @@ public class Importer extends ImporterPage {
 			Result<String> errors = new Result<>();
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result rs;
+				Result<?> rs;
 				try {
 					rs = hlp.importFile(f, archiveDir, false);
 					if (rs.isOK()) {
@@ -282,7 +285,7 @@ public class Importer extends ImporterPage {
 			bDirect.setText("Direkter Import");
 			bDirect.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
-			int type = CoreHub.localCfg.get("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
+			int type = ConfigServiceHolder.getLocal(getTypeKey(home), FILE);
 			if (openmedicalObject == null) {
 				type = FILE;
 			}
@@ -293,11 +296,10 @@ public class Importer extends ImporterPage {
 				bFile.setSelection(true);
 				bDirect.setSelection(false);
 
-				String filename = CoreHub.localCfg.get("ImporterPage/" + home.getTitle() + "/filename", //$NON-NLS-1$ //$NON-NLS-2$
-						StringUtils.EMPTY);
+				String filename = ConfigServiceHolder.getLocal(getFilenameKey(home), StringUtils.EMPTY);
 				tFilename.setText(filename);
 
-				home.results[0] = new Integer(FILE).toString();
+				home.results[0] = Integer.toString(FILE);
 				home.results[1] = filename;
 			} else {
 				bFile.setSelection(false);
@@ -305,7 +307,7 @@ public class Importer extends ImporterPage {
 
 				tFilename.setText(StringUtils.EMPTY);
 
-				home.results[0] = new Integer(DIRECT).toString();
+				home.results[0] = Integer.toString(DIRECT);
 				home.results[1] = StringUtils.EMPTY;
 			}
 
@@ -333,23 +335,22 @@ public class Importer extends ImporterPage {
 
 						String filename = tFilename.getText();
 
-						home.results[0] = new Integer(FILE).toString();
+						home.results[0] = Integer.toString(FILE);
 						home.results[1] = filename;
 
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", //$NON-NLS-1$//$NON-NLS-2$
-								filename);
+						ConfigServiceHolder.get().setLocal(getTypeKey(home), FILE);
+						ConfigServiceHolder.get().setLocal(getFilenameKey(home), filename);
 					} else {
 						bFile.setSelection(false);
 						bDirect.setSelection(true);
 
 						tFilename.setText(StringUtils.EMPTY);
 
-						home.results[0] = new Integer(DIRECT).toString();
+						home.results[0] = Integer.toString(DIRECT);
 						home.results[1] = StringUtils.EMPTY;
 
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", DIRECT); //$NON-NLS-1$ //$NON-NLS-2$
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", StringUtils.EMPTY); //$NON-NLS-1$
+						ConfigServiceHolder.get().setLocal(getTypeKey(home), DIRECT);
+						ConfigServiceHolder.get().setLocal(getFilenameKey(home), StringUtils.EMPTY);
 					}
 				}
 			};
@@ -373,14 +374,22 @@ public class Importer extends ImporterPage {
 					}
 
 					tFilename.setText(filename);
-					home.results[0] = new Integer(FILE).toString();
+					home.results[0] = Integer.toString(FILE);
 					home.results[1] = filename;
 
-					CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-					CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
+					ConfigServiceHolder.get().setLocal(getTypeKey(home), FILE);
+					ConfigServiceHolder.get().setLocal(getFilenameKey(home), filename);
 				}
 
 			});
+		}
+
+		private String getTypeKey(ImporterPage home) {
+			return "ImporterPage/" + home.getTitle() + "/type"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		private String getFilenameKey(ImporterPage home) {
+			return "ImporterPage/" + home.getTitle() + "/filename"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

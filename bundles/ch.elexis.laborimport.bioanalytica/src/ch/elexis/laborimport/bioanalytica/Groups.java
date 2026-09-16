@@ -12,7 +12,6 @@
 
 package ch.elexis.laborimport.bioanalytica;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,10 +23,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ch.elexis.core.data.util.PlatformHelper;
+import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.core.importer.div.importers.ILabItemResolver;
 import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
 import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.rcp.utils.PlatformHelper;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Query;
 import ch.elexis.hl7.model.AbstractData;

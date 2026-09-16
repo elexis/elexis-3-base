@@ -34,12 +34,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.mail.MailAccount;
 import ch.elexis.core.mail.MailAccount.TYPE;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
+import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -64,13 +64,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	private Text headerLine1Text;
 	private Text headerLine2Text;
 
-	private Text reminderDays2Text;
-	private Text reminderDays3Text;
-
 	private Text mandantHeaderLine1Text;
 	private Text mandantHeaderLine2Text;
-	private Text mandantReminderDays2Text;
-	private Text mandantReminderDays3Text;
 
 	private Text pdfRnTextTP;
 	private Text pdfRnTextTG;
@@ -140,10 +135,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		couvertRight.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(RnOutputter.CFG_ESR_COUVERT_LEFT, couvertRight.getSelection());
+				LocalConfigService.set(RnOutputter.CFG_ESR_COUVERT_LEFT, couvertRight.getSelection());
 			}
 		});
-		couvertRight.setSelection(CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_LEFT, false));
+		couvertRight.setSelection(LocalConfigService.get(RnOutputter.CFG_ESR_COUVERT_LEFT, false));
 
 		final Button doPrint = new Button(printerConfigComposite, SWT.CHECK);
 		doPrint.setText("Direkter Druck");
@@ -151,11 +146,11 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		doPrint.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(RnOutputter.CFG_PRINT_DIRECT, doPrint.getSelection());
+				LocalConfigService.set(RnOutputter.CFG_PRINT_DIRECT, doPrint.getSelection());
 				updatePrintDirect();
 			}
 		});
-		doPrint.setSelection(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false));
+		doPrint.setSelection(LocalConfigService.get(RnOutputter.CFG_PRINT_DIRECT, false));
 
 		Label label = new Label(printerConfigComposite, SWT.NONE);
 		label.setText("Drucker Konfiguration");
@@ -166,11 +161,11 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PrinterSettingsDialog dialog = new PrinterSettingsDialog(Display.getDefault().getActiveShell(),
-						CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY),
-						CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY));
+						LocalConfigService.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY),
+						LocalConfigService.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY));
 				if (dialog.open() == Dialog.OK) {
-					CoreHub.localCfg.set(RnOutputter.CFG_PRINT_PRINTER, dialog.getPrinter());
-					CoreHub.localCfg.set(RnOutputter.CFG_PRINT_TRAY, dialog.getMediaTray());
+					LocalConfigService.set(RnOutputter.CFG_PRINT_PRINTER, dialog.getPrinter());
+					LocalConfigService.set(RnOutputter.CFG_PRINT_TRAY, dialog.getMediaTray());
 					printerConfigLabel.setText(getPrinterConfigText());
 					printerConfigComposite.layout();
 				}
@@ -190,11 +185,11 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PrinterSettingsDialog dialog = new PrinterSettingsDialog(Display.getDefault().getActiveShell(),
-						CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY),
-						CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY));
+						LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY),
+						LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY));
 				if (dialog.open() == Dialog.OK) {
-					CoreHub.localCfg.set(RnOutputter.CFG_ESR_PRINT_PRINTER, dialog.getPrinter());
-					CoreHub.localCfg.set(RnOutputter.CFG_ESR_PRINT_TRAY, dialog.getMediaTray());
+					LocalConfigService.set(RnOutputter.CFG_ESR_PRINT_PRINTER, dialog.getPrinter());
+					LocalConfigService.set(RnOutputter.CFG_ESR_PRINT_TRAY, dialog.getMediaTray());
 					esrPrinterConfigLabel.setText(getEsrPrinterConfigText());
 					printerConfigComposite.layout();
 				}
@@ -214,19 +209,19 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		label.setText("Befehl");
 		printCommandText = new Text(printerConfigComposite, SWT.BORDER);
 		printCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		printCommandText.setText(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY));
+		printCommandText.setText(LocalConfigService.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY));
 
 		if (CoreUtil.isWindows()) {
 			final Button useScript = new Button(printerConfigComposite, SWT.CHECK);
 			useScript.setText("Vordefinierte Scripts und Befehle verwenden.");
-			if (CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USE_SCRIPT, false)) {
+			if (LocalConfigService.get(RnOutputter.CFG_PRINT_USE_SCRIPT, false)) {
 				useScript.setSelection(true);
 				printCommandText.setEditable(false);
 			}
 			useScript.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					CoreHub.localCfg.set(RnOutputter.CFG_PRINT_USE_SCRIPT, useScript.getSelection());
+					LocalConfigService.set(RnOutputter.CFG_PRINT_USE_SCRIPT, useScript.getSelection());
 					if (useScript.getSelection() && StringUtils.isBlank(printCommandText.getText())) {
 						Properties commandsProperties = ScriptInitializer
 								.getPrintCommands("/rsc/script/win/printcommands.properties"); //$NON-NLS-1$
@@ -252,12 +247,12 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		useGuarantorPostalAddress.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL,
+				LocalConfigService.set(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL,
 						useGuarantorPostalAddress.getSelection());
 				updatePrintDirect();
 			}
 		});
-		useGuarantorPostalAddress.setSelection(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL, false));
+		useGuarantorPostalAddress.setSelection(LocalConfigService.get(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL, false));
 
 		return ret;
 	}
@@ -270,34 +265,21 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		useGlobalConfig.setText("Globale Ausgabe Verzeichnisse");
 		useGlobalConfig.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
-		Label lbl = new Label(composite, SWT.NONE);
-		lbl.setText("XML Verzeichnis");
-		URIFieldEditorComposite globalXmlDir = new URIFieldEditorComposite(OutputterUtil.CFG_PRINT_GLOBALXMLDIR,
-				composite, SWT.NONE);
-		globalXmlDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
-		globalXmlDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
-		lbl = new Label(composite, SWT.NONE);
-		lbl.setText("PDF Verzeichnis");
-		URIFieldEditorComposite globalPdfDir = new URIFieldEditorComposite(OutputterUtil.CFG_PRINT_GLOBALPDFDIR,
-				composite, SWT.NONE);
-		globalPdfDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
-		globalPdfDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		OsPathEditorGroup pathGroup = new OsPathEditorGroup(composite, SWT.NONE);
+		pathGroup.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		pathGroup.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		pathGroup.addPathEditor(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, "XML Verzeichnis");
+		pathGroup.addPathEditor(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, "PDF Verzeichnis");
 
 		useGlobalConfig.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(OutputterUtil.CFG_PRINT_GLOBALOUTPUTDIRS, useGlobalConfig.getSelection());
-				if (useGlobalConfig.getSelection()) {
-					globalXmlDir.setEnabled(true);
-					globalPdfDir.setEnabled(true);
-				} else {
-					globalXmlDir.setEnabled(false);
-					globalPdfDir.setEnabled(false);
-				}
+				LocalConfigService.set(OutputterUtil.CFG_PRINT_GLOBALOUTPUTDIRS, useGlobalConfig.getSelection());
+				pathGroup.setEnabled(useGlobalConfig.getSelection());
 			}
 		});
-		useGlobalConfig.setSelection(CoreHub.localCfg.get(OutputterUtil.CFG_PRINT_GLOBALOUTPUTDIRS, true));
+		useGlobalConfig.setSelection(LocalConfigService.get(OutputterUtil.CFG_PRINT_GLOBALOUTPUTDIRS, true));
+		pathGroup.setEnabled(useGlobalConfig.getSelection());
 
 		item.setControl(composite);
 	}
@@ -394,7 +376,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	public static String getConfigTransferGlobal(String key, String defaultValue) {
 		String globalValue = ConfigServiceHolder.get().get(key, null);
 		if (globalValue == null) {
-			String localValue = CoreHub.localCfg.get(key, defaultValue);
+			String localValue = LocalConfigService.get(key, defaultValue);
 			if (StringUtils.isNotBlank(localValue)) {
 				ConfigServiceHolder.get().set(key, localValue);
 				globalValue = localValue;
@@ -550,20 +532,20 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	}
 
 	private void updatePrintDirect() {
-		openDialogBtn.setEnabled(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false));
-		openEsrDialogBtn.setEnabled(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false));
-		printCommandText.setEnabled(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false));
+		openDialogBtn.setEnabled(LocalConfigService.get(RnOutputter.CFG_PRINT_DIRECT, false));
+		openEsrDialogBtn.setEnabled(LocalConfigService.get(RnOutputter.CFG_PRINT_DIRECT, false));
+		printCommandText.setEnabled(LocalConfigService.get(RnOutputter.CFG_PRINT_DIRECT, false));
 	}
 
 	private String getEsrPrinterConfigText() {
 		StringBuilder sb = new StringBuilder();
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY).isEmpty()) {
-			sb.append(CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY));
+		if (!LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY).isEmpty()) {
+			sb.append(LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY));
 		} else {
 			sb.append("Kein Drucker");
 		}
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY).isEmpty()) {
-			sb.append(", Fach ").append(CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY));
+		if (!LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY).isEmpty()) {
+			sb.append(", Fach ").append(LocalConfigService.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY));
 		} else {
 			sb.append(", Kein Fach");
 		}
@@ -572,13 +554,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 	private String getPrinterConfigText() {
 		StringBuilder sb = new StringBuilder();
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY).isEmpty()) {
-			sb.append(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY));
+		if (!LocalConfigService.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY).isEmpty()) {
+			sb.append(LocalConfigService.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY));
 		} else {
 			sb.append("Kein Drucker");
 		}
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY).isEmpty()) {
-			sb.append(", Fach ").append(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY));
+		if (!LocalConfigService.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY).isEmpty()) {
+			sb.append(", Fach ").append(LocalConfigService.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY));
 		} else {
 			sb.append(", Kein Fach");
 		}
@@ -601,14 +583,14 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				String cfgKey = (String) control.getData();
 				String value = text.getText();
 				if (value != null && !value.isEmpty() && checkValue(value)) {
-					CoreHub.localCfg.set(cfgKey, value);
+					LocalConfigService.set(cfgKey, value);
 				}
 			}
 		}
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_1, headerLine1Text.getText());
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_2, headerLine2Text.getText());
 
-		CoreHub.localCfg.set(RnOutputter.CFG_PRINT_COMMAND, printCommandText.getText());
+		LocalConfigService.set(RnOutputter.CFG_PRINT_COMMAND, printCommandText.getText());
 
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TG_M0, pdfRnTextTG.getText());
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M0, pdfRnTextTP.getText());
@@ -618,8 +600,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M1, pdfRnTextM1TP.getText());
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M2, pdfRnTextM2TP.getText());
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M3, pdfRnTextM3TP.getText());
-
-		CoreHub.localCfg.flush();
 	}
 
 	public boolean checkValue(String value) {
@@ -644,13 +624,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	}
 
 	public static String getSetting(String cfgKey) {
-		return CoreHub.localCfg.get(cfgKey, getDefault(cfgKey));
+		return LocalConfigService.get(cfgKey, getDefault(cfgKey));
 	}
 
 	private static String getDefault(String cfgKey) {
 		// first try old settings ... then default
 		String oldKey = cfgKey.replaceFirst("4.4/", StringUtils.EMPTY).replaceFirst("4.0/", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
-		String oldSetting = CoreHub.localCfg.get(oldKey, null);
+		String oldSetting = LocalConfigService.get(oldKey, null);
 		if (oldSetting != null) {
 			return oldSetting;
 		} else {

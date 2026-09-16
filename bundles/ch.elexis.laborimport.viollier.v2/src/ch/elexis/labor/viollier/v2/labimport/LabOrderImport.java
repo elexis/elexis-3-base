@@ -182,10 +182,10 @@ public class LabOrderImport extends ImporterPage {
 					.println(MessageFormat.format(Messages.LabOrderImport_InfoNumberDonloadedFiles, count));
 
 			// Eigentlicher Import
-			downloadDir = new File(settings.getDirDownload());
+			downloadDir = settings.getDirDownloadFile().orElse(null);
 			ViollierLogger.getLogger()
 					.println(MessageFormat.format(Messages.LabOrderImport_InfoReadDownloadDir, downloadDir));
-			if (downloadDir.isDirectory()) {
+			if (downloadDir != null && downloadDir.isDirectory()) {
 				hl7Files = downloadDir.listFiles(new FilenameFilter() {
 					@Override
 					public boolean accept(File dir, String name) {
@@ -349,7 +349,7 @@ public class LabOrderImport extends ImporterPage {
 
 					labor = new PatientLabor(patient);
 
-					Result<?> result = hlp.importFile(hl7File, new File(settings.getDirArchive()),
+					Result<?> result = hlp.importFile(hl7File, settings.getDirArchiveFile().orElse(null),
 							new ILabItemResolver() {
 								@Override
 								public String getTestName(AbstractData data) {
@@ -509,9 +509,8 @@ public class LabOrderImport extends ImporterPage {
 		long lastTime = cal.getTime().getTime();
 
 		// Archiv löschen
-		String archivDirName = settings.getDirArchive();
-		if (archivDirName != null) {
-			File archivDir = new File(archivDirName);
+		File archivDir = settings.getDirArchiveFile().orElse(null);
+		if (archivDir != null) {
 			if (archivDir.exists() && archivDir.isDirectory()) {
 				for (File archivFile : archivDir.listFiles()) {
 					if (archivFile.lastModified() < lastTime) {
@@ -535,10 +534,10 @@ public class LabOrderImport extends ImporterPage {
 	 * @return true bei Erfolg, sonst false.
 	 */
 	private boolean moveToArchiv(final File file) {
-		String archivDir = settings.getDirArchive();
+		File archivDir = settings.getDirArchiveFile().orElse(null);
 		boolean ok = false;
-		if (FileTool.copyFile(file, new File(archivDir + File.separator + file.getName()),
-				FileTool.REPLACE_IF_EXISTS)) {
+		if (archivDir != null
+				&& FileTool.copyFile(file, new File(archivDir, file.getName()), FileTool.REPLACE_IF_EXISTS)) {
 			ok = file.delete();
 		}
 		return ok;
@@ -551,11 +550,10 @@ public class LabOrderImport extends ImporterPage {
 	 * @return true bei Erfolg, sonst false.
 	 */
 	private boolean moveToError(final File file) {
-		String errorDir = settings.getDirError();
+		File errorDir = settings.getDirErrorFile().orElse(null);
 		boolean ok = false;
-		if (errorDir != null && errorDir.length() > 0) {
-			if (FileTool.copyFile(file, new File(errorDir + File.separator + file.getName()),
-					FileTool.REPLACE_IF_EXISTS)) {
+		if (errorDir != null) {
+			if (FileTool.copyFile(file, new File(errorDir, file.getName()), FileTool.REPLACE_IF_EXISTS)) {
 				ok = file.delete();
 			}
 		}

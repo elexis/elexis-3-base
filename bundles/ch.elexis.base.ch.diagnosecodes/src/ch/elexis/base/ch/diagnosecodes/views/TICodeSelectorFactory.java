@@ -125,7 +125,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			}
 
 			List<IDiagnosisTree> found = ((Collection<? extends IDiagnosisTree>) tiCodeElementContribution
-					.getElements(CodeElementServiceHolder.get().createContext())).stream()
+					.getElements(CodeElementServiceHolder.createContext())).stream()
 					.map(ce -> (IDiagnosisTree) ce).filter(dt -> matchFilter(dt)).collect(Collectors.toList());
 			List<IDiagnosisTree> foundElements = new ArrayList<>(found);
 

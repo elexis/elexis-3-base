@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -55,7 +56,9 @@ public class MedNetConfig {
 			}
 		}
 
-		String downloadPath = configService.get(prefix + PreferenceConstants.MEDNET_DOWNLOAD_PATH, StringUtils.EMPTY);
+		// operating system specific, with fallback to the key without the suffix
+		String downloadPath = StringUtils.defaultString(PreferencesUtil
+				.getOsSpecificGlobalPreference(prefix + PreferenceConstants.MEDNET_DOWNLOAD_PATH, configService));
 		String loginName = configService.get(prefix + PreferenceConstants.MEDNET_USER_STRING, StringUtils.EMPTY);
 		// FIXED: Changed getBoolean to get
 		boolean confirmBeforeSend = configService.get(prefix + PreferenceConstants.MEDNET_CONFIRM_BEFORE_SEND, true);

@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -42,11 +44,14 @@ import ch.elexis.base.ch.arzttarife.tardoc.ITardocLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.dialogs.ResultDialog;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Money;
+import ch.rgw.tools.Result;
 
 public class ArzttarifDetailDialog extends Dialog {
 	private IBilled billed;
@@ -133,6 +138,35 @@ public class ArzttarifDetailDialog extends Dialog {
 				} else {
 					cSide.select(2);
 				}
+				cSide.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						int selectionIndex = cSide.getSelectionIndex();
+						if (selectionIndex > 0) {
+							IBillableVerifier verifier = billed.getBillable().getVerifier();
+							if (verifier != null) {
+								String origSide = (String) billed.getExtInfo(Constants.FLD_EXT_SIDE);
+								int origSideIndex = getSideIndex(origSide);
+								// save change for verification
+								applySide(selectionIndex, billed);
+								CoreModelServiceHolder.get().save(billed);
+
+								Result<IBilled> result = verifier.verify(billed.getEncounter());
+								if (!result.isOK()) {
+									if (result.getMessages().size() > 1) {
+										result.removeMsgEntry(result.getMessages().get(1).getText(),
+												result.getMessages().get(1).getCode());
+									}
+									ResultDialog.show(result);
+									cSide.select(origSideIndex);
+								}
+								// revert change after verification
+								billed.setExtInfo(Constants.FLD_EXT_SIDE, origSide);
+								CoreModelServiceHolder.get().save(billed);
+							}
+						}
+					}
+				});
 				cSide.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			}
 
@@ -344,13 +378,7 @@ public class ArzttarifDetailDialog extends Dialog {
 		if (isArzttarif(billable)) {
 			if (requiresSide(billed.getBillable())) {
 				int idx = cSide.getSelectionIndex();
-				if (idx < 1) {
-					billed.setExtInfo(Constants.FLD_EXT_SIDE, null);
-				} else if (idx == 1) {
-					billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
-				} else {
-					billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
-				}
+				applySide(idx, billed);
 			}
 			if (selectedBezug != null) {
 				if (selectedBezug.isNoBezug) {
@@ -369,6 +397,25 @@ public class ArzttarifDetailDialog extends Dialog {
 			CoreModelServiceHolder.get().save(billed);
 		}
 		super.okPressed();
+	}
+
+	private int getSideIndex(String side) {
+		if (StringUtils.isEmpty(side)) {
+			return 0;
+		} else if (Constants.SIDE_L.equals(side)) {
+			return 1;
+		}
+		return 2;
+	}
+
+	private void applySide(int idx, IBilled billed) {
+		if (idx < 1) {
+			billed.setExtInfo(Constants.FLD_EXT_SIDE, null);
+		} else if (idx == 1) {
+			billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
+		} else {
+			billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
+		}
 	}
 
 	public static boolean isPauschale(IBillable billable) {

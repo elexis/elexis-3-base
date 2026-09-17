@@ -461,9 +461,11 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			if ((countSideLeft > countSideRight) && rightVerrechnet != null) {
 				newBilled = rightVerrechnet;
 				newBilled.setAmount(newBilled.getAmount() + 1);
+				return new Result<IBilled>(newBilled);
 			} else if ((countSideLeft <= countSideRight) && leftVerrechnet != null) {
 				newBilled = leftVerrechnet;
 				newBilled.setAmount(newBilled.getAmount() + 1);
+				return new Result<IBilled>(newBilled);
 			} else if ((countSideLeft > countSideRight) && rightVerrechnet == null) {
 				newBilled.setAmount(newBilled.getAmount() - 1);
 				newBilled = initializeBilled((TardocLeistung) newBilled.getBillable(), encounter, false);

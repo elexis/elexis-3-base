@@ -21,12 +21,14 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.agenda;bundle-version="3.9.0",
  ch.elexis.docbox.ws.client;bundle-version="3.9.0",
- ch.elexis.core.ui.dbcheck;bundle-version="3.11.0",
- info.elexis.target.jaxws.core;bundle-version="4.0.3"
+ ch.elexis.core.ui.dbcheck;bundle-version="3.11.0"
 Import-Package: com.equo.chromium.swt,
  com.sun.jna;version="4.5.1",
  com.sun.jna.ptr;version="4.5.1",
+ jakarta.jws;version="[4.0.0,5.0.0)",
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,
  jakarta.xml.bind.annotation.adapters,
+ jakarta.xml.ws;version="[4.0.0,5.0.0)",
+ jakarta.xml.ws.handler;version="[4.0.0,5.0.0)",
  org.apache.commons.codec.binary;version="1.14.0"

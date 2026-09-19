@@ -38,6 +38,8 @@ public class AllTests {
 		suite.addTest(DatasetHelperTest.suite());
 		suite.addTest(StringHelperTest.suite());
 		suite.addTest(CohortTest.suite());
+		suite.addTest(ContainsContentProposalProviderTest.suite());
+		suite.addTest(FavoriteStatisticsTest.suite());
 		// $JUnit-END$
 		return suite;
 	}

@@ -11,32 +11,45 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.views;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.jface.fieldassist.AutoCompleteField;
-import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.nebula.widgets.tablecombo.TableCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
 import ch.unibe.iam.scg.archie.actions.NewStatisticsAction;
 import ch.unibe.iam.scg.archie.controller.ProviderManager;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
+import ch.unibe.iam.scg.archie.preferences.PreferenceConstants;
 import ch.unibe.iam.scg.archie.ui.DetailsPanel;
+import ch.unibe.iam.scg.archie.ui.widgets.ContainsContentProposalProvider;
+import ch.unibe.iam.scg.archie.ui.widgets.FavoriteStatistics;
 import jakarta.inject.Inject;
 
 /**
@@ -57,16 +70,28 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	 */
 	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.StatisticsSidebarView"; //$NON-NLS-1$
 
-	protected Combo list;
+	protected TableCombo list;
 
 	protected DetailsPanel details;
 
-	protected AutoCompleteField autoComplete;
+	private Button favoriteButton;
+
+	private final IPreferenceStore favoritePreferenceStore = new ConfigServicePreferenceStore(Scope.USER);
+
+	private final Set<String> favoriteTitles = new HashSet<>();
+
+	private boolean refreshingStatistics;
 
 	@Inject
 	void activeUser(@Optional IUser user) {
 		Display.getDefault().asyncExec(() -> {
 			if (user != null) {
+				loadFavoriteTitles();
+				if (list != null && !list.isDisposed()) {
+					String selectedTitle = isValidProviderTitle(list.getText()) ? list.getText() : null;
+					refreshAvailableStatistics(selectedTitle);
+				}
+
 				// Set enabled according to ACL.
 				boolean accessEnabled = ArchieACL.userHasAccess();
 				setEnabled(accessEnabled);
@@ -104,24 +129,29 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 		// Create a simple field for auto complete.
 		Group availableStatistics = new Group(container, SWT.NONE);
 		availableStatistics.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		availableStatistics.setLayout(layout);
+		availableStatistics.setLayout(new GridLayout(2, false));
 		availableStatistics.setText(Messages.STATISTICS_LIST_TITLE);
 
-		// Create an auto-complete field
-		TreeMap<String, AbstractDataProvider> providers = ArchieActivator.getInstance().getProviderTable();
-		String[] availableTitles = providers.keySet().toArray(new String[providers.size()]);
+		// Create a searchable statistics dropdown.
+		this.list = new TableCombo(availableStatistics, SWT.BORDER);
+		this.list.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		this.list.setClosePopupAfterSelection(true);
 
-		this.list = new Combo(availableStatistics, SWT.BORDER | SWT.DROP_DOWN);
-		this.list.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.autoComplete = new AutoCompleteField(this.list, new ComboContentAdapter(), availableTitles);
-		this.list.setItems(availableTitles);
+		this.favoriteButton = new Button(availableStatistics, SWT.TOGGLE);
+		this.favoriteButton.setToolTipText("Ausgewählte Statistik als Favorit markieren"); //$NON-NLS-1$
+		this.favoriteButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				toggleFavorite();
+			}
+		});
 
-		// NOTE: Currently does not work on GTK, any maybe not even on OS X
-		// TODO: Add value in Archie preference pane.
-		this.list.setVisibleItemCount(5);
+		this.loadFavoriteTitles();
+		this.refreshAvailableStatistics(null);
 
 		// add listeners
 		this.list.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String title = SidebarView.this.list.getText();
 
@@ -130,6 +160,22 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 					ProviderManager.getInstance().setProvider(provider);
 				} else {
 					SidebarView.this.details.reset();
+				}
+				if (!SidebarView.this.refreshingStatistics && !SidebarView.this.isValidProviderTitle(title)) {
+					SidebarView.this.refreshAvailableStatistics(null);
+					if (!title.isEmpty()) {
+						SidebarView.this.list.setTableVisible(true);
+					}
+				}
+				SidebarView.this.updateFavoriteButton();
+			}
+		});
+		this.list.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				String title = SidebarView.this.list.getText();
+				if (!SidebarView.this.refreshingStatistics && SidebarView.this.isValidProviderTitle(title)) {
+					SidebarView.this.refreshAvailableStatistics(title);
 				}
 			}
 		});
@@ -159,6 +205,70 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 		return ArchieActivator.getInstance().getProviderTable().get(title) != null;
 	}
 
+	private void toggleFavorite() {
+		String title = this.list.getText();
+		if (!this.isValidProviderTitle(title)) {
+			return;
+		}
+
+		if (!this.favoriteTitles.add(title)) {
+			this.favoriteTitles.remove(title);
+		}
+		this.favoritePreferenceStore.setValue(PreferenceConstants.P_FAVORITE_STATISTICS,
+				FavoriteStatistics.serialize(this.favoriteTitles));
+		this.refreshAvailableStatistics(title);
+	}
+
+	private void loadFavoriteTitles() {
+		this.favoriteTitles.clear();
+		this.favoriteTitles.addAll(FavoriteStatistics
+				.deserialize(this.favoritePreferenceStore.getString(PreferenceConstants.P_FAVORITE_STATISTICS)));
+	}
+
+	private void refreshAvailableStatistics(String selectedTitle) {
+		TreeMap<String, AbstractDataProvider> providers = ArchieActivator.getInstance().getProviderTable();
+		List<String> sortedTitles = FavoriteStatistics.sort(providers.keySet(), this.favoriteTitles);
+		List<String> visibleTitles = new ArrayList<>();
+		String filter = selectedTitle == null ? this.list.getText() : ""; //$NON-NLS-1$
+		this.list.getTable().removeAll();
+
+		for (String title : sortedTitles) {
+			if (ContainsContentProposalProvider.matches(title, filter)) {
+				TableItem item = new TableItem(this.list.getTable(), SWT.NONE);
+				item.setText(title);
+				item.setImage(this.favoriteTitles.contains(title) ? Images.IMG_STAR.getImage()
+						: Images.IMG_STAR_EMPTY.getImage());
+				visibleTitles.add(title);
+			}
+		}
+		this.list.setVisibleItemCount(Math.max(1, visibleTitles.size()));
+
+		if (selectedTitle != null) {
+			for (int index = 0; index < visibleTitles.size(); index++) {
+				if (visibleTitles.get(index).equals(selectedTitle)) {
+					this.refreshingStatistics = true;
+					this.list.select(index);
+					this.refreshingStatistics = false;
+					break;
+				}
+			}
+		}
+		this.updateFavoriteButton();
+	}
+
+	private void updateFavoriteButton() {
+		if (this.favoriteButton == null || this.favoriteButton.isDisposed()) {
+			return;
+		}
+		String title = this.list.getText();
+		boolean validTitle = this.isValidProviderTitle(title);
+		this.favoriteButton.setEnabled(this.list.isEnabled() && validTitle);
+		this.favoriteButton.setSelection(validTitle && this.favoriteTitles.contains(title));
+		boolean favorite = validTitle && this.favoriteTitles.contains(title);
+		this.favoriteButton.setImage(favorite ? Images.IMG_STAR.getImage() : Images.IMG_STAR_EMPTY.getImage());
+		this.favoriteButton.setToolTipText(favorite ? "Aus Favoriten entfernen" : "Als Favorit markieren"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	/**
 	 * Nothing is done on focus here.
 	 *
@@ -178,6 +288,7 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 		if (this.list != null && this.details != null) {
 			this.list.setEnabled(enabled);
 			this.details.setEnabled(enabled);
+			this.updateFavoriteButton();
 		}
 	}
 
@@ -185,6 +296,7 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange
 	 *      (org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(NewStatisticsAction.JOB_RUNNING)) {
 			this.setEnabled(false);

@@ -14,11 +14,13 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
 import ch.elexis.core.model.IOrderEntry;
+import ch.elexis.core.model.IStockEntry;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.OrderEntryState;
 import ch.elexis.core.rcp.utils.OsgiServiceUtil;
@@ -27,6 +29,7 @@ import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IOrderService;
 import ch.elexis.core.services.holder.CodeElementServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.OrderServiceHolder;
 import ch.elexis.core.status.ElexisStatus;
@@ -56,6 +59,8 @@ public class RegiomedSender implements IDataSender {
 	private static final String ABORT_BY_USER = "ABORT_BY_USER"; //$NON-NLS-1$
 
 	private final List<IOrderEntry> exportedEntries = new ArrayList<>();
+	private final List<ArticleReplacement> pendingReplacements = new ArrayList<>();
+	private final List<AmountChange> pendingAmountChanges = new ArrayList<>();
 	private final RegiomedOrderClient orderClient = new RegiomedOrderClient();
 	private int counter;
 
@@ -141,7 +146,39 @@ public class RegiomedSender implements IDataSender {
 			}
 		}
 		updateOrderEntriesStatus(exportedEntries, response);
+		applyPendingMediorderSyncs();
 		exportedEntries.clear();
+	}
+
+	private void rememberArticleReplacement(IOrderEntry entry, IArticle previousArticle) {
+		pendingAmountChanges.removeIf(change -> change.entry().getId().equals(entry.getId()));
+		pendingReplacements.add(new ArticleReplacement(entry, previousArticle));
+	}
+
+	private void applyPendingMediorderSyncs() {
+		for (AmountChange change : pendingAmountChanges) {
+			if (!change.entry().isDeleted()) {
+				OrderServiceHolder.get().syncMediorderAmount(change.entry(), change.previousAmount());
+			}
+		}
+		for (ArticleReplacement replacement : pendingReplacements) {
+			if (!replacement.entry().isDeleted()) {
+				OrderServiceHolder.get().syncMediorderArticleReplacement(replacement.entry(),
+						replacement.previousArticle());
+			}
+		}
+		boolean hasChanges = !pendingAmountChanges.isEmpty() || !pendingReplacements.isEmpty();
+		pendingAmountChanges.clear();
+		pendingReplacements.clear();
+		if (hasChanges) {
+			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IStockEntry.class);
+		}
+	}
+
+	private record ArticleReplacement(IOrderEntry entry, IArticle previousArticle) {
+	}
+
+	private record AmountChange(IOrderEntry entry, int previousAmount) {
 	}
 
 	private void handleDialogChanges(RegiomedCheckDialog dialog, RegiomedOrderResponse response) {
@@ -176,6 +213,8 @@ public class RegiomedSender implements IDataSender {
 	private XChangeElement addOrder(IOrder order) throws XChangeException {
 		counter = 0;
 		exportedEntries.clear();
+		pendingReplacements.clear();
+		pendingAmountChanges.clear();
 		if (order == null || order.getEntries() == null || order.getEntries().isEmpty()) {
 			throw new XChangeException(Messages.RegiomedSender_OrderEmpty);
 		}
@@ -249,8 +288,10 @@ public class RegiomedSender implements IDataSender {
 					if (entry.getAmount() != res.getQuantity()) {
 						log.info("Regiomed: Menge geändert für {} von {} auf {}", art.getLabel(), entry.getAmount(),
 								res.getQuantity());
+						int previousAmount = entry.getAmount();
 						entry.setAmount(res.getQuantity());
 						CoreModelServiceHolder.get().save(entry);
+						pendingAmountChanges.add(new AmountChange(entry, previousAmount));
 					}
 					break;
 				}
@@ -290,6 +331,7 @@ public class RegiomedSender implements IDataSender {
 								newArticle.getLabel());
 						entry.setArticle(newArticle);
 						CoreModelServiceHolder.get().save(entry);
+						rememberArticleReplacement(entry, art);
 					} else {
 						log.warn("Regiomed: Alternative not found locally. EAN: {}, Pharma: {}", newEan, newPharma); //$NON-NLS-1$
 						String errorMsg = MessageFormat.format(Messages.RegiomedSender_AlternativeNotFoundLocally,

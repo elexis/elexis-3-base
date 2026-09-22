@@ -17,12 +17,14 @@ import java.util.Observer;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
@@ -75,10 +77,33 @@ public class DetailsPanel extends Composite implements Observer {
 		this.setLayout(layout);
 		this.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		// Add the statistics description
-		this.description = new Text(this, SWT.MULTI | SWT.WRAP);
+		// Add the statistics description. a text with SWT.WRAP reports the full
+		// unwrapped width as its preferred size and cannot be subclassed, so it
+		// is wrapped in a composite with a layout that constrains it to the
+		// available width, otherwise the text is never wrapped
+		Composite descriptionContainer = new Composite(this, SWT.NONE);
+		descriptionContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		descriptionContainer.setLayout(new Layout() {
+			@Override
+			protected Point computeSize(Composite composite, int wHint, int hHint,
+				boolean flushCache) {
+				int width = wHint;
+				if (width == SWT.DEFAULT) {
+					width = composite.getParent().getClientArea().width;
+				}
+				if (width <= 0) {
+					return new Point(0, 0);
+				}
+				return description.computeSize(width, SWT.DEFAULT);
+			}
+
+			@Override
+			protected void layout(Composite composite, boolean flushCache) {
+				description.setBounds(composite.getClientArea());
+			}
+		});
+		this.description = new Text(descriptionContainer, SWT.MULTI | SWT.WRAP);
 		this.description.setEditable(false);
-		this.description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.description.setBackground(parent.getBackground());
 
 		// add parameters
@@ -202,7 +227,6 @@ public class DetailsPanel extends Composite implements Observer {
 
 			// set provider information in this panel
 			this.description.setText(provider.getDescription());
-			this.description.pack(true);
 
 			// update parameters panel
 			this.parameters.updateParameterList(provider);

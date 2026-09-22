@@ -19,8 +19,10 @@ import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -63,6 +65,10 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 
 	protected AutoCompleteField autoComplete;
 
+	private ScrolledComposite scrolled;
+
+	private Composite container;
+
 	@Inject
 	void activeUser(@Optional IUser user) {
 		Display.getDefault().asyncExec(() -> {
@@ -95,14 +101,23 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	 */
 	@Override
 	public void createPartControl(final Composite parent) {
+		// wrap the sidebar in a scrollable container, so statistics with many
+		// parameters stay usable even if the view is too small to show them all
+		// no horizontal scrolling, the content width always matches the view
+		this.scrolled = new ScrolledComposite(parent, SWT.V_SCROLL);
+		this.scrolled.setLayout(new FillLayout());
+		this.scrolled.setExpandHorizontal(true);
+		this.scrolled.setExpandVertical(true);
+		this.scrolled.addListener(SWT.Resize, event -> SidebarView.this.updateScrollMinSize());
+
 		// create a new container for sidebar controls
-		Composite container = new Composite(parent, SWT.NONE);
+		this.container = new Composite(this.scrolled, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
+		this.container.setLayout(layout);
 
 		// Create a simple field for auto complete.
-		Group availableStatistics = new Group(container, SWT.NONE);
+		Group availableStatistics = new Group(this.container, SWT.NONE);
 		availableStatistics.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		availableStatistics.setLayout(layout);
 		availableStatistics.setText(Messages.STATISTICS_LIST_TITLE);
@@ -122,6 +137,7 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 
 		// add listeners
 		this.list.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String title = SidebarView.this.list.getText();
 
@@ -131,11 +147,15 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 				} else {
 					SidebarView.this.details.reset();
 				}
+
+				// the selected statistic may have a different number of
+				// parameters, so the size of the scrollable content has changed
+				SidebarView.this.updateScrollMinSize();
 			}
 		});
 
 		// Add parameters group.
-		Group statisticParameters = new Group(container, SWT.NONE);
+		Group statisticParameters = new Group(this.container, SWT.NONE);
 		statisticParameters.setLayoutData(new GridData(GridData.FILL_BOTH));
 		statisticParameters.setLayout(layout);
 		statisticParameters.setText(Messages.STATISTIC_PARAMETERS_TITLE);
@@ -144,8 +164,31 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 		this.details = new DetailsPanel(statisticParameters, SWT.NONE);
 		this.details.addPropertyChangeListener(this);
 
+		// let the scrolled composite control the container
+		this.scrolled.setContent(this.container);
+		this.updateScrollMinSize();
+
 		// Disable by default if user has no access rights.
 		this.setEnabled(ArchieACL.userHasAccess());
+	}
+
+	/**
+	 * Updates the minimum height of the scrollable content of this view. Has to
+	 * be called whenever the content of the sidebar changes, i.e. when a
+	 * statistic with a different number of parameters is selected.
+	 */
+	private void updateScrollMinSize() {
+		if (this.scrolled == null || this.scrolled.isDisposed() || this.container == null
+			|| this.container.isDisposed()) {
+			return;
+		}
+		// constrain the width of the content to the visible area of the view, so
+		// texts wrap and only a vertical scrollbar is needed
+		int width = this.scrolled.getClientArea().width;
+		// only the height is set as minimum. the width of the content always
+		// matches the view (setExpandHorizontal), a set minimum width would
+		// keep the content wider than the view after shrinking the view
+		this.scrolled.setMinHeight(this.container.computeSize(width, SWT.DEFAULT).y);
 	}
 
 	/**
@@ -185,6 +228,7 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange
 	 *      (org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(NewStatisticsAction.JOB_RUNNING)) {
 			this.setEnabled(false);

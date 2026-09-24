@@ -65,7 +65,6 @@ import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
-import ch.elexis.data.PersistentObject;
 import jakarta.xml.bind.JAXBException;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v6")
@@ -217,7 +216,6 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		
 		try {
 			log.info("Import finished. Running automatic price adjustment...");
-			PersistentObject.clearCache();
 			diffService.captureNewPrices();
 			Map<IArtikelstammItem, ArticlePriceDiffService.PriceChange> diffs = diffService.compare();
 			ArticlePriceDiffService.UpdateStatistics stats = diffService.updateOpenEncounters(diffs);

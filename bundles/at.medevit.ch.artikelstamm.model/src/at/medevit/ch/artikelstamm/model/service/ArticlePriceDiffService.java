@@ -123,7 +123,7 @@ public class ArticlePriceDiffService {
 	 */
 	public UpdateStatistics updateOpenEncounters(Map<IArtikelstammItem, PriceChange> priceChanges) {
 		UpdateStatistics stats = new UpdateStatistics();
-		boolean autoAdjust = configService.getGlobal(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true);
+		boolean autoAdjust = configService.get(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true);
 
 		if (priceChanges.isEmpty()) {
 			log.info("No price changes — nothing to update."); //$NON-NLS-1$

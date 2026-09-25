@@ -20,11 +20,11 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import at.medevit.elexis.emediplan.core.ArticleDetailServiceHolder;
-import at.medevit.elexis.emediplan.core.IArticleDetailService;
 import at.medevit.elexis.emediplan.core.internal.ImageUtil;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.services.IMedicationDetailService;
+import ch.elexis.core.services.holder.MedicationDetailServiceHolder;
 import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Person;
@@ -100,7 +100,7 @@ public class Medicament {
 		if (article == null) {
 			return;
 		}
-		Optional<IArticleDetailService> detailService = ArticleDetailServiceHolder.getService();
+		Optional<IMedicationDetailService> detailService = MedicationDetailServiceHolder.get();
 		if (detailService.isPresent()) {
 			Optional<byte[]> image = detailService.get().getImage(article);
 			if (image.isPresent()) {

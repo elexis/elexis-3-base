@@ -25,13 +25,13 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import at.medevit.elexis.emediplan.core.ArticleDetailServiceHolder;
-import at.medevit.elexis.emediplan.core.IArticleDetailService;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.IMedicationDetailService;
+import ch.elexis.core.services.holder.MedicationDetailServiceHolder;
 
 @XmlRootElement(name = "medication")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -105,13 +105,13 @@ public class Medication {
 	 * @param prescriptions
 	 */
 	private static void loadDetails(List<IPrescription> prescriptions) {
-		Optional<IArticleDetailService> detailService = ArticleDetailServiceHolder.getService();
+		Optional<IMedicationDetailService> detailService = MedicationDetailServiceHolder.get();
 		if (detailService.isPresent()) {
 			detailService.get()
 					.loadDetails(prescriptions.stream().map(IPrescription::getArticle).filter(Objects::nonNull).toList());
 		} else {
 			LoggerFactory.getLogger(Medication.class)
-					.info("No IArticleDetailService available, eMediplan is created without pictures and units"); //$NON-NLS-1$
+					.info("No IMedicationDetailService available, eMediplan is created without pictures and units"); //$NON-NLS-1$
 		}
 	}
 }

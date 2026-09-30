@@ -50,6 +50,17 @@ public class ConfigFile {
 	 *
 	 */
 	public ConfigFile() {
+		this(false);
+	}
+
+	/**
+	 * Create a ConfigFile instance containing FOP specific configuration.
+	 *
+	 * @param pdfAMode create PDF documents conforming to PDF/A-1b. All fonts used
+	 *                 have to be embeddable then, the base 14 fonts like Helvetica
+	 *                 are not allowed.
+	 */
+	public ConfigFile(boolean pdfAMode) {
 		try {
 			// other features should contribute fonts to this directory via p2 touchpoint
 			final File fonts = new File(PlatformHelper.getBasePath("ch.elexis.fop.service"), "rsc/fonts");
@@ -71,6 +82,12 @@ public class ConfigFile {
 			Element rendererPS = doc.createElement("renderer");
 			rendererPS.setAttribute("mime", "application/postscript");
 			rendererPS.appendChild(getPsVersionElement());
+
+			if (pdfAMode) {
+				Element pdfA = doc.createElement("pdf-a-mode");
+				pdfA.setTextContent("PDF/A-1b");
+				rendererPDF.appendChild(pdfA);
+			}
 
 			rendererPDF.appendChild(getFontsDirectoryElement(fonts));
 			// rendererPS.appendChild(getType1Fonts(fonts));

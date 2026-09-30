@@ -37,6 +37,7 @@ import ch.elexis.fop.service.dom.DomToPng;
 import ch.elexis.fop.service.dom.DomToPs;
 import ch.elexis.fop.service.jaxb.JaxbToPcl;
 import ch.elexis.fop.service.jaxb.JaxbToPdf;
+import ch.elexis.fop.service.jaxb.JaxbToPdfA;
 import ch.elexis.fop.service.jaxb.JaxbToPng;
 import ch.elexis.fop.service.jaxb.JaxbToPs;
 import ch.elexis.fop.service.xmlstream.XmlStreamToPcl;
@@ -48,6 +49,8 @@ import ch.elexis.fop.service.xmlstream.XmlStreamToPs;
 public class FormattedOutputFactory implements IFormattedOutputFactory {
 
 	private static FopFactory fopFactory;
+
+	private static FopFactory pdfAFopFactory;
 
 	@Activate
 	public void activate() {
@@ -62,6 +65,8 @@ public class FormattedOutputFactory implements IFormattedOutputFactory {
 				return JaxbToPcl.getInstance();
 			case PDF:
 				return JaxbToPdf.getInstance();
+			case PDF_A:
+				return JaxbToPdfA.getInstance();
 			case PS:
 				return JaxbToPs.getInstance();
 			case PNG:
@@ -125,18 +130,28 @@ public class FormattedOutputFactory implements IFormattedOutputFactory {
 	}
 
 	public static void initialize() {
+		fopFactory = initialize(false);
+		pdfAFopFactory = initialize(true);
+	}
+
+	private static FopFactory initialize(boolean pdfAMode) {
 		try {
-			FopConfParser parser = new FopConfParser(new ConfigFile().getAsInputStream(),
+			FopConfParser parser = new FopConfParser(new ConfigFile(pdfAMode).getAsInputStream(),
 					new URI("http://dummy.domain"));
 			FopFactoryBuilder builder = parser.getFopFactoryBuilder();
 			builder.setStrictFOValidation(false);
-			fopFactory = builder.build();
+			return builder.build();
 		} catch (SAXException | IOException | URISyntaxException e) {
 			LoggerFactory.getLogger(FormattedOutputFactory.class).error("Error initializing", e);
 		}
+		return null;
 	}
 
 	public static FopFactory getFopFactory() {
 		return fopFactory;
+	}
+
+	public static FopFactory getPdfAFopFactory() {
+		return pdfAFopFactory;
 	}
 }

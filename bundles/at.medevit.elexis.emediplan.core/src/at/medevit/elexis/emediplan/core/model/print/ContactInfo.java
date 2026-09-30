@@ -45,8 +45,28 @@ public class ContactInfo {
 		ret.setLastname(pat.getLastName());
 		ret.setStreet1(pat.getStreet());
 		ret.setZip(pat.getZip());
-		ret.setTel(pat.getPhone1());
+		ret.setTel(getFirstPhone(pat));
 		return ret;
+	}
+
+	/**
+	 * Get the first phone number of the contact that is set, in the order phone 1,
+	 * phone 2, mobile.
+	 *
+	 * @param contact
+	 * @return the number, or null if the contact has none
+	 */
+	private static String getFirstPhone(IContact contact) {
+		if (StringUtils.isNotBlank(contact.getPhone1())) {
+			return contact.getPhone1();
+		}
+		if (StringUtils.isNotBlank(contact.getPhone2())) {
+			return contact.getPhone2();
+		}
+		if (StringUtils.isNotBlank(contact.getMobile())) {
+			return contact.getMobile();
+		}
+		return null;
 	}
 
 	/**

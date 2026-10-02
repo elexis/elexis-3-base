@@ -13,6 +13,7 @@ package ch.itmed.fop.printing.xml.documents;
 
 import java.io.InputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -21,6 +22,7 @@ import ch.elexis.core.model.IPrescription;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.MandatorElement;
 import ch.itmed.fop.printing.xml.elements.MedicationElement;
+import ch.itmed.fop.printing.xml.elements.MediorderElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public final class MedicationLabel {
@@ -48,6 +50,11 @@ public final class MedicationLabel {
 	}
 
 	public static InputStream create(IPrescription iPrescription, IPatient patient) throws Exception {
+		return create(iPrescription, patient, null);
+	}
+
+	public static InputStream create(IPrescription iPrescription, IPatient patient, String mediorderBarcode)
+			throws Exception {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.MEDICATION_LABEL);
@@ -61,6 +68,10 @@ public final class MedicationLabel {
 		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
 			page.appendChild(mandator);
+		}
+
+		if (StringUtils.isNotBlank(mediorderBarcode)) {
+			page.appendChild(MediorderElement.create(doc, mediorderBarcode));
 		}
 
 		return DomDocument.toInputStream(doc);

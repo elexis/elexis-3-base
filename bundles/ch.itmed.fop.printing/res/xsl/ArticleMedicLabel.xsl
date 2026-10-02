@@ -24,6 +24,16 @@
 	<xsl:variable name="textOrientation">
 		<xsl:value-of select="Page/@textOrientation" />
 	</xsl:variable>
+	<!-- region of the barcode of a delivered mediorder article: end if the text is
+		wider than high, otherwise after -->
+	<xsl:variable name="barcodeRegion">
+		<xsl:choose>
+			<xsl:when test="not(/Page/Mediorder)">none</xsl:when>
+			<xsl:when
+				test="($textOrientation = '90') = (number(substring-before($pageHeight, 'mm')) &gt; number(substring-before($pageWidth, 'mm')))">end</xsl:when>
+			<xsl:otherwise>after</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
 	<xsl:template match="/">
 		<fo:root>
 			<fo:layout-master-set>
@@ -32,11 +42,17 @@
 					page-height="{$pageHeight}" margin-top="{$marginTop}"
 					margin-bottom="{$marginBottom}" margin-left="{$marginLeft}"
 					margin-right="{$marginRight}" reference-orientation="{$textOrientation}">
-					<fo:region-body />
-					<fo:region-after />
+					<fo:region-body>
+						<xsl:call-template name="barcodeRegionBodyMargin" />
+					</fo:region-body>
+					<fo:region-after>
+						<xsl:call-template name="barcodeRegionAfterExtent" />
+					</fo:region-after>
+					<xsl:call-template name="barcodeRegionEnd" />
 				</fo:simple-page-master>
 			</fo:layout-master-set>
 			<fo:page-sequence master-reference="ArticleLabel">
+				<xsl:apply-templates select="/Page/Mediorder" mode="barcode" />
 				<fo:flow flow-name="xsl-region-body">
 					<fo:block-container font="8pt Helvetica"
 						font-weight="normal" text-align="center">
@@ -130,5 +146,42 @@
         </xsl:choose>
 			</fo:block>
 		</xsl:for-each>
+	</xsl:template>
+	<!-- barcode of a delivered mediorder article, scanning it hands the article
+		out. Placed in its own region, so it never covers the text. -->
+	<xsl:template name="barcodeRegionBodyMargin">
+		<xsl:if test="$barcodeRegion = 'end'">
+			<xsl:attribute name="margin-right">13mm</xsl:attribute>
+		</xsl:if>
+		<xsl:if test="$barcodeRegion = 'after'">
+			<xsl:attribute name="margin-bottom">13mm</xsl:attribute>
+		</xsl:if>
+	</xsl:template>
+	<xsl:template name="barcodeRegionAfterExtent">
+		<xsl:if test="$barcodeRegion = 'after'">
+			<xsl:attribute name="extent">13mm</xsl:attribute>
+			<xsl:attribute name="display-align">after</xsl:attribute>
+		</xsl:if>
+	</xsl:template>
+	<xsl:template name="barcodeRegionEnd">
+		<xsl:if test="$barcodeRegion = 'end'">
+			<fo:region-end extent="13mm" display-align="after" />
+		</xsl:if>
+	</xsl:template>
+	<xsl:template match="Mediorder" mode="barcode">
+		<fo:static-content flow-name="xsl-region-{$barcodeRegion}">
+			<fo:block text-align="end" line-height="0">
+				<fo:instream-foreign-object>
+					<barcode:barcode
+						xmlns:barcode="http://barcode4j.krysalis.org/ns"
+						message="{@barcodeLabel}">
+						<barcode:datamatrix>
+							<barcode:module-width>0.35mm</barcode:module-width>
+							<barcode:shape>force-square</barcode:shape>
+						</barcode:datamatrix>
+					</barcode:barcode>
+				</fo:instream-foreign-object>
+			</fo:block>
+		</fo:static-content>
 	</xsl:template>
 </xsl:stylesheet>

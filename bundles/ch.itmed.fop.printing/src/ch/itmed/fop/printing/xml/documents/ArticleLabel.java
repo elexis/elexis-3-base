@@ -20,9 +20,11 @@ import org.w3c.dom.Element;
 
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IArticleDefaultSignature;
+import ch.elexis.core.model.IPatient;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.ArticlesElement;
 import ch.itmed.fop.printing.xml.elements.MandatorElement;
+import ch.itmed.fop.printing.xml.elements.MediorderElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public class ArticleLabel {
@@ -57,6 +59,14 @@ public class ArticleLabel {
 	}
 
 	public static InputStream create(IArticle article) throws Exception {
+		return create(article, null);
+	}
+
+	public static InputStream create(IArticle article, IPatient patient) throws Exception {
+		return create(article, patient, null);
+	}
+
+	public static InputStream create(IArticle article, IPatient patient, String mediorderBarcode) throws Exception {
 		Document doc = DomDocument.newDocument();
 		Optional<IArticleDefaultSignature> signatureOpt = ArticlesElement.getDefaultSignature(article);
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_LABEL);
@@ -70,8 +80,8 @@ public class ArticleLabel {
 			}
 		}
 		doc.appendChild(page);
-		Element patient = PatientElement.create(doc, false);
-		page.appendChild(patient);
+		Element patientElement = PatientElement.create(doc, false, false, patient);
+		page.appendChild(patientElement);
 
 		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
@@ -80,6 +90,10 @@ public class ArticleLabel {
 
 		Element articles = ArticlesElement.create(doc, article);
 		page.appendChild(articles);
+
+		if (StringUtils.isNotBlank(mediorderBarcode)) {
+			page.appendChild(MediorderElement.create(doc, mediorderBarcode));
+		}
 
 		return DomDocument.toInputStream(doc);
 	}

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Medi-Print Tests
+Bundle-SymbolicName: ch.itmed.fop.printing.tests
+Bundle-Version: 3.14.0.qualifier
+Bundle-Vendor: elexis.info
+Fragment-Host: ch.itmed.fop.printing;bundle-version="3.14.0"
+Automatic-Module-Name: ch.itmed.fop.printing.tests
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Bundle: org.junit

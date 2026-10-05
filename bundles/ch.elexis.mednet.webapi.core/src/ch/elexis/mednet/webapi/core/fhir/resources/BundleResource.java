@@ -278,22 +278,6 @@ public class BundleResource {
 		socialHistorySection.getEntry().addAll(familyHistoryReferences);
 		composition.addSection(socialHistorySection);
 
-		// Annotations
-		List<Observation> annotations = AnnotationResource.createAnnotations(new Reference(patientFullUrl));
-		List<Reference> annotationReferences = new ArrayList<>();
-		for (Observation annotation : annotations) {
-			annotation.setSubject(new Reference(patientFullUrl));
-			String annFullUrl = addEntryAndIndex(bundleEntries, annotation);
-			annotationReferences.add(new Reference(annFullUrl));
-		}
-
-		Composition.SectionComponent annotationsSection = new Composition.SectionComponent();
-		annotationsSection.setTitle(FHIRConstants.ANNOTATIONS_SECTION_TITLE);
-		annotationsSection.setCode(new CodeableConcept().addCoding(new Coding(FHIRConstants.LOINC_SYSTEM,
-				FHIRConstants.ANNOTATIONS_CODE, FHIRConstants.ANNOTATIONS_DISPLAY)));
-		annotationsSection.setEntry(annotationReferences);
-		composition.addSection(annotationsSection);
-
 		// Documents
 		if (selectedDocuments != null) {
 			List<DocumentReference> documents = DocumentResource.createDocuments(sourcePatient, patientFullUrl,

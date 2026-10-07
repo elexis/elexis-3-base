@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IPatient;
@@ -56,21 +55,26 @@ public class StickyNotesView extends ViewPart implements IRefreshable, HeartList
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this) {
 
 		public void partDeactivated(IWorkbenchPartReference partRef) {
-			if (actPatient != null) {
+			if (isMatchingPart(partRef) && actPatient != null && etf.isDirty()) {
 				if (actNote == null) {
 					actNote = StickyNote.load(actPatient);
 				}
 				actNote.setText(etf.getContentsAsXML());
+				etf.setDirty(false);
 			}
 		};
 
 		public void partVisible(org.eclipse.ui.IWorkbenchPartReference partRef) {
-			CoreHub.heart.addListener(StickyNotesView.this);
+			if (isMatchingPart(partRef)) {
+				CoreHub.heart.addListener(StickyNotesView.this);
+			}
 			super.partVisible(partRef);
 		};
 
 		public void partHidden(org.eclipse.ui.IWorkbenchPartReference partRef) {
-			CoreHub.heart.removeListener(StickyNotesView.this);
+			if (isMatchingPart(partRef)) {
+				CoreHub.heart.removeListener(StickyNotesView.this);
+			}
 		};
 	};
 
@@ -155,9 +159,6 @@ public class StickyNotesView extends ViewPart implements IRefreshable, HeartList
 	}
 
 	public void heartbeat() {
-		if (actPatient == null) {
-			actPatient = ElexisEventDispatcher.getSelectedPatient();
-		}
 		if (actPatient != null) {
 			if (actNote == null) {
 				actNote = StickyNote.load(actPatient);

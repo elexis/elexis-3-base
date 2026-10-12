@@ -16,6 +16,7 @@ import java.io.InputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.MandatorElement;
@@ -43,6 +44,10 @@ public final class MedicationLabel {
 	}
 
 	public static InputStream create(IPrescription iPrescription) throws Exception {
+		return create(iPrescription, null);
+	}
+
+	public static InputStream create(IPrescription iPrescription, IPatient patient) throws Exception {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.MEDICATION_LABEL);
@@ -50,8 +55,8 @@ public final class MedicationLabel {
 		doc.appendChild(page);
 		Element medication = MedicationElement.create(doc, iPrescription);
 		page.appendChild(medication);
-		Element patient = PatientElement.create(doc, false);
-		page.appendChild(patient);
+		Element patientElement = PatientElement.create(doc, false, false, patient);
+		page.appendChild(patientElement);
 
 		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {

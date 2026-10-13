@@ -53,7 +53,7 @@ public class Sender implements IDataSender {
 			}
 			String xml = xmlGenerator.createOrderXml(order);
 			if (System.getProperty(DEBUG_MODE) != null) {
-				System.out.println("GS1 Rose Order XML Payload:\n" + xml); //$NON-NLS-1$
+				LoggerFactory.getLogger(getClass()).info("GS1 Rose Order XML Payload:\n{}", xml); //$NON-NLS-1$
 			}
 			if (!xml.contains("orderLineItem")) {
 				throw new XChangeException(ExtensionPointConstantsUi.ABORT_BY_USER);

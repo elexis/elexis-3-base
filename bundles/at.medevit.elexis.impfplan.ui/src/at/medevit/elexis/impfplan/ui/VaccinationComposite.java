@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
@@ -92,6 +93,11 @@ public class VaccinationComposite extends Composite implements ISelectionProvide
 
 	@Override
 	public Point computeSize(int wHint, int hHint) {
-		return new Point(vcpl.getWidth(), vcpl.getHeight());
+		GC gc = new GC(this);
+		try {
+			return vcpl.computeSize(gc);
+		} finally {
+			gc.dispose();
+		}
 	}
 }

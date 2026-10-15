@@ -35,13 +35,11 @@ public class VaccinationCompositeMouseMoveListener implements MouseMoveListener 
 		vcpl.mouseX = e.x;
 		vcpl.mouseY = e.y;
 
-		if (e.widget instanceof VaccinationComposite) {
-			VaccinationComposite composite = (VaccinationComposite) e.widget;
-			if (vcpl.isTitleArea() || vcpl.getSelectedVaccination() != null) {
-				composite.setCursor(e.display.getSystemCursor(SWT.CURSOR_HAND));
-			} else {
-				composite.setCursor(null);
-			}
+		Control control = (Control) e.widget;
+		if (vcpl.isTitleArea() || (control instanceof VaccinationComposite && vcpl.getSelectedVaccination() != null)) {
+			control.setCursor(e.display.getSystemCursor(SWT.CURSOR_HAND));
+		} else {
+			control.setCursor(null);
 		}
 	}
 }

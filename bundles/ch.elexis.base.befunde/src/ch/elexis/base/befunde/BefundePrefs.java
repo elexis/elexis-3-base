@@ -10,7 +10,9 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
@@ -140,11 +142,9 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 				if (ci != null) {
 					PrefsPage pp = (PrefsPage) ci.getControl();
 					if (pp.remove()) {
-						names = names.replaceFirst(ci.getText(), StringUtils.EMPTY);
-						names = names.replaceAll(Messwert.SETUP_SEPARATOR + Messwert.SETUP_SEPARATOR,
-								Messwert.SETUP_SEPARATOR);
-						names.replaceFirst(Messwert.SETUP_SEPARATOR + "$", StringUtils.EMPTY); //$NON-NLS-1$
-						names = names.replaceFirst("^" + Messwert.SETUP_SEPARATOR, StringUtils.EMPTY); //$NON-NLS-1$
+						names = Arrays.stream(names.split(Messwert.SETUP_SEPARATOR))
+								.filter(n -> !n.equals(ci.getText()))
+								.collect(Collectors.joining(Messwert.SETUP_SEPARATOR));
 						fields.put("names", names); //$NON-NLS-1$
 						lastIDX = -1;
 						ci.dispose();
@@ -176,7 +176,9 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 						PrefsPage pp = (PrefsPage) tab.getControl();
 						// renames all relations in DB
 						if (pp.rename(newName)) {
-							names = names.replaceFirst(oldName, newName); // $NON-NLS-1$
+							names = Arrays.stream(names.split(Messwert.SETUP_SEPARATOR))
+									.map(n -> n.equals(oldName) ? newName : n)
+									.collect(Collectors.joining(Messwert.SETUP_SEPARATOR));
 						}
 						fields.put("names", names); //$NON-NLS-1$
 						tab.setText(newName);

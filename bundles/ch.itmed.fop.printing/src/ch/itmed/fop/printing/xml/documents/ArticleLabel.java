@@ -20,6 +20,7 @@ import org.w3c.dom.Element;
 
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IArticleDefaultSignature;
+import ch.elexis.core.model.IPatient;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.ArticlesElement;
 import ch.itmed.fop.printing.xml.elements.MandatorElement;
@@ -57,6 +58,10 @@ public class ArticleLabel {
 	}
 
 	public static InputStream create(IArticle article) throws Exception {
+		return create(article, null);
+	}
+
+	public static InputStream create(IArticle article, IPatient patient) throws Exception {
 		Document doc = DomDocument.newDocument();
 		Optional<IArticleDefaultSignature> signatureOpt = ArticlesElement.getDefaultSignature(article);
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_LABEL);
@@ -70,8 +75,8 @@ public class ArticleLabel {
 			}
 		}
 		doc.appendChild(page);
-		Element patient = PatientElement.create(doc, false);
-		page.appendChild(patient);
+		Element patientElement = PatientElement.create(doc, false, false, patient);
+		page.appendChild(patientElement);
 
 		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {

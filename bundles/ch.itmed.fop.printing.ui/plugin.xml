@@ -94,6 +94,15 @@
             name="Article ID"/>
         </command>
         <command
+              defaultHandler="ch.itmed.fop.printing.handlers.OrderEntryLabelPrintHandler"
+              id="ch.itmed.fop.printing.command.OrderEntryLabelPrint"
+              name="Bestellposten Etiketten drucken">
+           <commandParameter
+                 id="orderentry_label_entries"
+                 name="Order entries"
+                 optional="false"/>
+        </command>
+        <command
               defaultHandler="ch.itmed.fop.printing.handlers.SelectedAppointmentCardHandler"
               id="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
               name="Termin drucken">

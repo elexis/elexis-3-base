@@ -158,7 +158,9 @@ public class PrefsPage extends Composite {
 			Object value = hash.get(name + Messwert._FIELDS);
 			hash.remove(name + Messwert._FIELDS);
 			// add new name with value
-			hash.put(newName + Messwert._FIELDS, value);
+			if (value != null) {
+				hash.put(newName + Messwert._FIELDS, value);
+			}
 			name = newName;
 
 			return true;

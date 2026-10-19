@@ -24,6 +24,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
@@ -34,6 +35,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.emediplan.core.EMediplanService;
+import at.medevit.elexis.emediplan.ui.RemarkDialog;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
@@ -72,9 +74,18 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 			ServiceReference<EMediplanService> eMediplanServiceRef = bundleContext
 					.getServiceReference(EMediplanService.class);
 			if (eMediplanServiceRef != null) {
+				String remark = null;
+				if (RemarkDialog.isAskForRemark()) {
+					RemarkDialog remarkDialog = new RemarkDialog(HandlerUtil.getActiveShell(event));
+					if (remarkDialog.open() != Window.OK) {
+						bundleContext.ungetService(eMediplanServiceRef);
+						return null;
+					}
+					remark = remarkDialog.getRemark();
+				}
 				EMediplanService eMediplanService = bundleContext.getService(eMediplanServiceRef);
 				ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
-				eMediplanService.exportEMediplanPdf(mandant, patient, prescriptions, pdfOutput);
+				eMediplanService.exportEMediplanPdf(mandant, patient, prescriptions, false, remark, pdfOutput);
 				// save as Brief
 				IDocument letter = SaveEMediplanUtil.saveEMediplan(patient, mandant, pdfOutput.toByteArray());
 				// open with system viewer

@@ -17,7 +17,9 @@
 	<!-- root element: letter -->
 	<!-- ========================= -->
 	<xsl:template match="medication">
-		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+		<!-- PDF/A does not allow the base 14 fonts, the font used has to be embedded -->
+		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+			font-family="Open Sans">
 			<fo:layout-master-set>
 				<fo:simple-page-master master-name="simpleA4"
 					page-height="21cm" page-width="29.7cm" margin-top="0.8cm"
@@ -29,7 +31,7 @@
 
 			<fo:page-sequence master-reference="simpleA4">
 				<fo:static-content flow-name="xsl-region-after">
-					<fo:table font-size="8pt" table-layout="fixed" width="100%">
+					<fo:table font-size="8.5pt" table-layout="fixed" width="100%">
 						<fo:table-column />
 						<fo:table-column />
 						<fo:table-column />
@@ -50,9 +52,13 @@
 								<fo:table-cell display-align="center">
 									<fo:block text-align="center">
 										eMediplan by Elexis
+										<fo:character character="&#x20;" />
+										<fo:character character="&#x28;" />
+										<xsl:value-of select="$versionParam" />
+										<fo:character character="&#x29;" />
 									</fo:block>
 								</fo:table-cell>
-								<fo:table-cell display-align="right">
+								<fo:table-cell>
 									<fo:block text-align="right">
 										Seite
 										<fo:page-number />
@@ -110,9 +116,10 @@
 							</fo:table-row>
 							<fo:table-row>
 								<fo:table-cell number-columns-spanned="3">
-									<fo:block linefeed-treatment="preserve" padding-top="5mm" font-size="9pt">
-											<xsl:value-of select="$commentText" />
-										</fo:block>
+									<fo:block linefeed-treatment="preserve" padding-top="5mm"
+										font-size="8.5pt">
+										<xsl:value-of select="$commentText" />
+									</fo:block>
 								</fo:table-cell>
 							</fo:table-row>
 						</fo:table-body>
@@ -120,13 +127,14 @@
 
 					<xsl:if test="count(fix/medicament) > 0 or count(symptomatic/medicament) > 0 ">
 						<fo:block padding-top="1mm" padding-bottom="1mm"
-							font-size="8pt">
-							Letzter Stand:
+							font-size="8.5pt">
+							Ausstellungsdatum:
 							<xsl:value-of select="date" />
 						</fo:block>
 	
-						<fo:table font-size="8pt" table-layout="fixed" width="100%">
-							<fo:table-column column-width="23%" />
+						<fo:table font-size="8.5pt" table-layout="fixed" width="100%">
+							<fo:table-column column-width="17%" />
+							<fo:table-column column-width="6%" />
 							<fo:table-column column-width="5%" />
 							<fo:table-column column-width="5%" />
 							<fo:table-column column-width="5%" />
@@ -138,11 +146,16 @@
 							<fo:table-column column-width="10%" />
 							<fo:table-column column-width="10%" />
 							<fo:table-header>
-								<fo:table-row font-weight="bold">
+								<fo:table-row font-weight="bold"
+									background-color="#DDDDDD">
 									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 										<fo:block margin="1mm">
 											Medikament
 										</fo:block>
+									</fo:table-cell>
+									<!-- picture of the dose form -->
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm" />
 									</fo:table-cell>
 									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 										<fo:block margin="1mm">
@@ -171,12 +184,12 @@
 									</fo:table-cell>
 									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 										<fo:block margin="1mm">
-											Art der Medikation
+											Von
 										</fo:block>
 									</fo:table-cell>
 									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 										<fo:block margin="1mm">
-											Von bis und mit
+											Bis u. mit
 										</fo:block>
 									</fo:table-cell>
 									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
@@ -204,11 +217,12 @@
 					</xsl:if>
 					<xsl:if test="count(reserve/medicament) > 0">
 						<fo:block padding-top="3mm" padding-bottom="1mm"
-							font-size="8pt" font-weight="bold">
+							font-size="8.5pt" font-weight="bold">
 							Reserve Medikation
 						</fo:block>
-						<fo:table font-size="8pt" table-layout="fixed" width="100%">
-							<fo:table-column column-width="23%" />
+						<fo:table font-size="8.5pt" table-layout="fixed" width="100%">
+							<fo:table-column column-width="17%" />
+							<fo:table-column column-width="6%" />
 							<fo:table-column column-width="5%" />
 							<fo:table-column column-width="5%" />
 							<fo:table-column column-width="5%" />
@@ -224,6 +238,17 @@
 							</fo:table-body>
 						</fo:table>
 					</xsl:if>
+					<!-- remark the author wrote for this plan, shown only if there is one -->
+					<xsl:if test="count(remark) > 0 and string-length(remark) > 0">
+						<fo:block padding-top="3mm" padding-bottom="1mm"
+							font-size="8.5pt" font-weight="bold">
+							Bemerkung:
+						</fo:block>
+						<fo:block linefeed-treatment="preserve" font-size="8.5pt"
+							background-color="#EEEEEE" padding="2mm">
+							<xsl:value-of select="remark" />
+						</fo:block>
+					</xsl:if>
 					<fo:block id="last-page" />
 				</fo:flow>
 			</fo:page-sequence>
@@ -234,7 +259,7 @@
 	<!-- child element: mandant -->
 	<!-- ========================= -->
 	<xsl:template match="mandant">
-		<fo:block-container font-size="8pt" white-space="pre">
+		<fo:block-container font-size="8.5pt" white-space="pre">
 			<fo:block>erstellt von:</fo:block>
 			<fo:block>
 				<fo:character character="&#x20;" />
@@ -298,10 +323,12 @@
 					<xsl:value-of select="zip" />
 					<fo:character character="&#x20;" />
 					<xsl:value-of select="city" />
-					<fo:character character="&#x20;" />
-					<fo:character character="&#x2F;" />
-					<fo:character character="&#x20;" />
-					<xsl:value-of select="tel" />
+					<xsl:if test="count(tel) > 0 and string-length(tel) > 0">
+						<fo:character character="&#x20;" />
+						<fo:character character="&#x2F;" />
+						<fo:character character="&#x20;" />
+						<xsl:value-of select="tel" />
+					</xsl:if>
 				</fo:block>
 			</fo:table-cell>
 		</fo:table-row>
@@ -315,6 +342,22 @@
 			<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 				<fo:block margin="1mm">
 					<xsl:value-of select="name" />
+				</fo:block>
+				<xsl:if test="count(substances) > 0 and string-length(substances) > 0">
+					<fo:block margin-left="1mm" margin-right="1mm" margin-bottom="1mm"
+						font-size="7pt" color="#555555">
+						<xsl:value-of select="substances" />
+					</fo:block>
+				</xsl:if>
+			</fo:table-cell>
+			<fo:table-cell xsl:use-attribute-sets="simpleBorder"
+				display-align="center">
+				<fo:block margin="1mm" text-align="center">
+					<xsl:if test="count(image) > 0 and string-length(image) > 0">
+						<!-- scaled uniformly into a box of 14mm x 10mm -->
+						<fo:external-graphic src="{image}" content-width="14mm"
+							content-height="10mm" scaling="uniform" />
+					</xsl:if>
 				</fo:block>
 			</fo:table-cell>
 			<xsl:choose>
@@ -362,25 +405,22 @@
 					<fo:table-cell xsl:use-attribute-sets="simpleBorder"
 						display-align="center">
 						<fo:block margin="1mm" text-align="center">
-							<xsl:value-of select="unit" />
+							<xsl:call-template name="FormatSignaturePart">
+								<xsl:with-param name="SignaturePart" select="unit" />
+							</xsl:call-template>
 						</fo:block>
 					</fo:table-cell>
 				</xsl:otherwise>
 			</xsl:choose>
 			<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 				<fo:block margin="1mm">
-					<xsl:value-of select="type" />
+					<xsl:value-of select="startDate" />
 				</fo:block>
 			</fo:table-cell>
 			<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 				<fo:block margin="1mm">
-					<xsl:value-of select="startDate" />
+					<xsl:value-of select="endDate" />
 				</fo:block>
-				<xsl:if test="count(endDate) > 0 and string-length(endDate) > 0">
-					<fo:block margin="1mm">
-						<xsl:value-of select="endDate" />
-					</fo:block>
-				</xsl:if>
 			</fo:table-cell>
 			<fo:table-cell xsl:use-attribute-sets="simpleBorder">
 				<xsl:if
@@ -410,21 +450,67 @@
 	<xsl:template name="FormatSignaturePart">
 		<xsl:param name="SignaturePart" />
 		<xsl:choose>
-			<xsl:when test="$SignaturePart = '0'">
+			<xsl:when
+				test="$SignaturePart = '0' or string-length(normalize-space($SignaturePart)) = 0">
 				<xsl:value-of select="'-'" />
 			</xsl:when>
-			<xsl:when test="$SignaturePart = '1/2' or $SignaturePart = '0.5'">
-				<xsl:value-of select="'½'" />
+			<xsl:when test="contains($SignaturePart, '/') and not(contains($SignaturePart, ' '))">
+				<xsl:call-template name="FormatFraction">
+					<xsl:with-param name="Numerator" select="substring-before($SignaturePart, '/')" />
+					<xsl:with-param name="Denominator" select="substring-after($SignaturePart, '/')" />
+				</xsl:call-template>
 			</xsl:when>
-			<xsl:when test="$SignaturePart = '1/4' or $SignaturePart = '0.25'">
-				<xsl:value-of select="'¼'" />
+			<xsl:when test="$SignaturePart = '0.5'">
+				<xsl:call-template name="FormatFraction">
+					<xsl:with-param name="Numerator" select="'1'" />
+					<xsl:with-param name="Denominator" select="'2'" />
+				</xsl:call-template>
 			</xsl:when>
-			<xsl:when test="$SignaturePart = '3/4' or $SignaturePart = '0.75'">
-				<xsl:value-of select="'¾'" />
+			<xsl:when test="$SignaturePart = '0.25'">
+				<xsl:call-template name="FormatFraction">
+					<xsl:with-param name="Numerator" select="'1'" />
+					<xsl:with-param name="Denominator" select="'4'" />
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="$SignaturePart = '0.75'">
+				<xsl:call-template name="FormatFraction">
+					<xsl:with-param name="Numerator" select="'3'" />
+					<xsl:with-param name="Denominator" select="'4'" />
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="$SignaturePart = '0.125'">
+				<xsl:call-template name="FormatFraction">
+					<xsl:with-param name="Numerator" select="'1'" />
+					<xsl:with-param name="Denominator" select="'8'" />
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="$SignaturePart = '0.33' or $SignaturePart = '0.333'">
+				<xsl:call-template name="FormatFraction">
+					<xsl:with-param name="Numerator" select="'1'" />
+					<xsl:with-param name="Denominator" select="'3'" />
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="$SignaturePart = '0.66' or $SignaturePart = '0.667'">
+				<xsl:call-template name="FormatFraction">
+					<xsl:with-param name="Numerator" select="'2'" />
+					<xsl:with-param name="Denominator" select="'3'" />
+				</xsl:call-template>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$SignaturePart" />
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+
+	<!--
+		Numerator raised, denominator lowered, separated by a fraction slash. The
+		slash is written as text on purpose, that makes the content of the cell mixed
+		and keeps the serializer from indenting the parts, which would end up as
+		spaces between them.
+	-->
+	<xsl:template name="FormatFraction">
+		<xsl:param name="Numerator" />
+		<xsl:param name="Denominator" />
+		<fo:inline font-size="70%" baseline-shift="super"><xsl:value-of select="$Numerator" /></fo:inline><xsl:text>&#x2044;</xsl:text><fo:inline font-size="70%" baseline-shift="sub"><xsl:value-of select="$Denominator" /></fo:inline>
 	</xsl:template>
 </xsl:stylesheet>

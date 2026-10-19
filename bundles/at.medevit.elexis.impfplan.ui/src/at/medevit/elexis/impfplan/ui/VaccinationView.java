@@ -30,7 +30,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
@@ -89,6 +93,9 @@ public class VaccinationView extends ViewPart implements IRefreshable {
 	}
 
 	private ScrolledComposite scrolledComposite;
+	private Composite headerViewport;
+	private Canvas headerCanvas;
+	private Composite content;
 
 	public VaccinationView() {
 		ImpfplanSchweiz2019 is = new ImpfplanSchweiz2019();
@@ -103,14 +110,36 @@ public class VaccinationView extends ViewPart implements IRefreshable {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new FillLayout(SWT.VERTICAL));
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.verticalSpacing = 0;
+		parent.setLayout(layout);
+		headerViewport = new Composite(parent, SWT.NONE);
+		GridData headerData = new GridData(SWT.BEGINNING, SWT.TOP, false, false);
+		headerData.exclude = true;
+		headerData.heightHint = 0;
+		headerViewport.setLayoutData(headerData);
+		headerViewport.setVisible(false);
 		scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		vaccinationComposite = new VaccinationComposite(scrolledComposite);
-		scrolledComposite.setContent(vaccinationComposite);
+		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		content = new Composite(scrolledComposite, SWT.NONE);
+		vaccinationComposite = new VaccinationComposite(content);
+		scrolledComposite.setContent(content);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
-		scrolledComposite.setMinSize(vaccinationComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		vcPaintListener = vaccinationComposite.getVaccinationCompositePaintListener();
+		headerCanvas = new Canvas(headerViewport, SWT.DOUBLE_BUFFERED);
+		headerCanvas.setBackground(vaccinationComposite.getBackground());
+		headerCanvas.addPaintListener(e -> vcPaintListener.paintControl(e.gc, e.display,
+				headerCanvas.getSize().x, vaccinationComposite.getSize().y, false, -1));
+		headerCanvas.addMouseListener(new VaccinationCompositeMouseListener(vcPaintListener));
+		headerCanvas.addMouseMoveListener(new VaccinationCompositeMouseMoveListener(vcPaintListener));
+		content.addListener(SWT.Resize, e -> updateContentBounds());
+		scrolledComposite.getHorizontalBar().addListener(SWT.Selection, e -> syncHeader());
+		scrolledComposite.addListener(SWT.Resize, e -> syncHeader());
+		parent.addListener(SWT.Resize, e -> updateLayout());
+		updateLayout();
 		vaccinationComposite.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -162,6 +191,42 @@ public class VaccinationView extends ViewPart implements IRefreshable {
 		getSite().setSelectionProvider(vaccinationComposite);
 
 		getSite().getPage().addPartListener(udpateOnVisible);
+	}
+
+	private void updateLayout() {
+		Point size = vaccinationComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		int headerHeight = vcPaintListener.getHeaderHeight();
+		boolean fixedHeader = headerHeight > 0 && scrolledComposite.getParent().getClientArea().height > headerHeight
+				+ 3 * vcPaintListener.getEntryHeight();
+		GridData headerData = (GridData) headerViewport.getLayoutData();
+		headerData.exclude = !fixedHeader;
+		headerData.heightHint = fixedHeader ? headerHeight : 0;
+		headerViewport.setVisible(fixedHeader);
+		scrolledComposite.setMinSize(size.x, size.y - (fixedHeader ? headerHeight : 0));
+		scrolledComposite.getParent().layout(true, true);
+		updateContentBounds();
+		syncHeader();
+	}
+
+	private void updateContentBounds() {
+		Rectangle area = content.getClientArea();
+		int headerHeight = ((GridData) headerViewport.getLayoutData()).exclude ? 0 : vcPaintListener.getHeaderHeight();
+		vaccinationComposite.setBounds(0, -headerHeight, area.width, area.height + headerHeight);
+		syncHeader();
+	}
+
+	private void syncHeader() {
+		Rectangle area = scrolledComposite.getClientArea();
+		GridData headerData = (GridData) headerViewport.getLayoutData();
+		if (headerData.widthHint != area.width || headerData.horizontalIndent != scrolledComposite.getBorderWidth()) {
+			headerData.widthHint = area.width;
+			headerData.horizontalIndent = scrolledComposite.getBorderWidth();
+			scrolledComposite.getParent().layout(true, true);
+		}
+		if (!headerData.exclude) {
+			headerCanvas.setBounds(-scrolledComposite.getOrigin().x, 0, content.getClientArea().width,
+					vcPaintListener.getHeaderHeight());
+		}
 	}
 
 	private void editVaccination(Vaccination selVaccination) {
@@ -217,6 +282,8 @@ public class VaccinationView extends ViewPart implements IRefreshable {
 					"Nur verabreichte Impfungen", new ArrayList<String>(atc), Collections.emptyList());
 		}
 		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations, new TimeTool(pat.getGeburtsdatum()));
+		updateLayout();
+		headerCanvas.redraw();
 		// workaround for layout after patient changed
 		if (patientChanged) {
 			vaccinationComposite.update();

@@ -209,6 +209,49 @@ public class TardocBillingTest extends AbstractTardocTest {
 	}
 
 	@Test
+	public void zuschlagOncePerMaster() {
+		encounter.setDate(LocalDate.of(2026, 1, 1));
+		CoreModelServiceHolder.get().save(encounter);
+
+		Result<IBilled> status = billingService.bill(code_MK250020, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		// zuschlag
+		status = billingService.bill(code_MK250090, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		String bezug = (String) billed.getExtInfo("Bezug");
+		assertNotNull(bezug);
+		assertEquals("MK.25.0020", bezug);
+
+		// fail once per master
+		status = billingService.bill(code_MK250090, encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		// add second master
+		status = billingService.bill(code_MK250020, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		assertEquals(2, billed.getAmount(), 0.01);
+
+		// add second zuschlag
+		status = billingService.bill(code_MK250090, encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		assertEquals(2, billed.getAmount(), 0.01);
+
+		// fail once per master with third zuschlag
+		status = billingService.bill(code_MK250090, encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		assertEquals(4, encounter.getBilled().stream().mapToInt(b -> (int) b.getAmount()).sum());
+	}
+
+	@Test
 	public void zuschlagProzentALTardocPosition() {
 		encounter.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter);

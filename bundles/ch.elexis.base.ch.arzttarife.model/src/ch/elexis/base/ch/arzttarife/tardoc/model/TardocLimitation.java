@@ -261,7 +261,8 @@ public class TardocLimitation {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		String bezug = (String) newVerrechnet.getExtInfo("Bezug");
 		if (StringUtils.isNotBlank(bezug)) {
-			if (newVerrechnet.getAmount() > amount) {
+			int mainServiceAmount = getVerrechnetAmount(bezug, kons.getBilled());
+			if (newVerrechnet.getAmount() > (amount * mainServiceAmount)) {
 				ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null, false);
 			}
 		}
@@ -740,6 +741,12 @@ public class TardocLimitation {
 			}
 		}
 		return ret;
+	}
+
+	private int getVerrechnetAmount(String code, List<IBilled> verrechnete) {
+		List<IBilled> matchingCodeVerrechnet = verrechnete.stream()
+				.filter(b -> b.getBillable() != null && code.equals(b.getBillable().getCode())).toList();
+		return getVerrechnetCount(matchingCodeVerrechnet);
 	}
 
 	private int getVerrechnetAmount(IBilled verrechnet) {

@@ -45,7 +45,16 @@ public final class AppointmentCard {
 		boolean singleAppointment = (appointments == null || appointments.size() <= 1);
 		Element _appointment = AppointmentsInformationElement.create(doc, singleAppointment, appointments, patient);
 		page.appendChild(_appointment);
-		Element patientElement = PatientElement.create(doc, patient == null, false, patient);
+		Element patientElement;
+		if (patient == null && appointments != null && !appointments.isEmpty()
+				&& appointments.get(0).getContact() == null) {
+			patientElement = doc.createElement("Patient"); //$NON-NLS-1$
+			Element firstName = doc.createElement("FirstName"); //$NON-NLS-1$
+			firstName.appendChild(doc.createTextNode(appointments.get(0).getSubjectOrPatient()));
+			patientElement.appendChild(firstName);
+		} else {
+			patientElement = PatientElement.create(doc, patient == null, false, patient);
+		}
 		page.appendChild(patientElement);
 		Element mandatorElement = MandatorElement.create(doc, mandator);
 		if (mandatorElement != null) {

@@ -124,6 +124,15 @@
             system="PS25">
       </Leistung>      
       <Leistung
+            CodeDetailDisplay="ch.elexis.views.Os25DetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.Os25CodeSelectorFactory"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.Os25Importer"
+            elexisClassName="ch.elexis.data.Os25Leistung"
+            localizedName="OS25"
+            name="OS25"
+            system="OS25">
+      </Leistung>      
+      <Leistung
             CodeDetailDisplay="ch.elexis.views.OccupationalDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.OccupationalLeistungCodeSelectorFactory"
             ImporterClass="ch.elexis.base.ch.arzttarife.importer.OccupationalImporter"

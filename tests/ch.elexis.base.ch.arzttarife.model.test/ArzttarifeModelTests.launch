@@ -208,6 +208,7 @@
         <setEntry value="org.hamcrest@default:default"/>
         <setEntry value="org.jboss.logging.jboss-logging@default:default"/>
         <setEntry value="org.jdom.2@default:default"/>
+        <setEntry value="org.jsoup@default:default"/>
         <setEntry value="org.junit@default:default"/>
         <setEntry value="org.jvnet.mimepull@default:default"/>
         <setEntry value="org.objectweb.asm*9.7.1@default:default"/>

@@ -206,7 +206,12 @@ public class InsertHandler {
 		clonedAppointment.setCreated(originalAppointment.getCreated());
 		clonedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 		clonedAppointment.setStartTime(newStartTime);
-		clonedAppointment.setEndTime(newStartTime.plusMinutes(originalAppointment.getDurationMinutes()));
+		if (originalAppointment.isAllDay()) {
+			clonedAppointment.setStartTime(newStartTime.toLocalDate().atStartOfDay());
+			clonedAppointment.setEndTime(null);
+		} else {
+			clonedAppointment.setEndTime(newStartTime.plusMinutes(originalAppointment.getDurationMinutes()));
+		}
 		clonedAppointment.setSchedule(newResource);
 		clonedAppointment.setReason(originalAppointment.getReason());
 		CoreModelServiceHolder.get().save(clonedAppointment);

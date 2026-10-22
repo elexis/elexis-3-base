@@ -387,7 +387,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 				GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD,
 				GDTConstants.FELDKENNUNG_PATIENT_MUTTERSPRACHE, GDTConstants.FELDKENNUNG_PATIENT_WOHNORT,
 				GDTConstants.FELDKENNUNG_PATIENT_STRASSE, GDTConstants.FELDKENNUNG_PATIENT_TITEL,
-				GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER, GDTConstants.FELDKENNUNG_TEST_IDENT };
+				GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER, GDTConstants.FELDKENNUNG_TEST_IDENT };
 
 		for (int i = 0; i < control.length; i++) {
 			bindMapValue(control[i], property[i], bindingContext, gdt6302ValuesObserveMap);

@@ -46,11 +46,12 @@ public class GDTConstants {
 	/** Format: TTMMJJJJ */
 	public static final int FELDKENNUNG_PATIENT_GEBURTSDATUM = 3103;
 	public static final int FELDKENNUNG_PATIENT_TITEL = 3104;
-	public static final int FELDKENNUNG_PATIENT_VERSICHERTENNUMMER = 3105;
+	public static final int FELDKENNUNG_PATIENT_AHVNUMMER = 3105;
 	public static final int FELDKENNUNG_PATIENT_WOHNORT = 3106;
 	public static final int FELDKENNUNG_PATIENT_STRASSE = 3107;
 	public static final int FELDKENNUNG_PATIENT_VERSICHERTENART = 3108;
 	public static final int FELDKENNUNG_PATIENT_GESCHLECHT = 3110;
+	public static final int FELDKENNUNG_PATIENT_EMAIL = 3619;
 	public static final int FELDKENNUNG_PATIENT_GROESSE = 3622;
 	public static final int FELDKENNUNG_PATIENT_GEWICHT = 3623;
 	public static final int FELDKENNUNG_PATIENT_MUTTERSPRACHE = 3628;
@@ -69,6 +70,9 @@ public class GDTConstants {
 	public static final int FELDKENNUNG_VERWEIS_AUF_DATEI = 6305;
 	public static final int FELDKENNUNG_NAME_DER_FREIEN_KATEGORIE = 6330;
 	public static final int FELDKENNUNG_INHALT_DER_FREIEN_KATEGORIE = 6331;
+	public static final int FELDKENNUNG_PATIENT_KRANKENKASSE = 6335;
+	public static final int FELDKENNUNG_PATIENT_KRANKENKASSEEAN = 6347;
+	public static final int FELDKENNUNG_PATIENT_VERSICHERTENNUMMER = 6358;
 
 	public static final int FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD = 8402;
 

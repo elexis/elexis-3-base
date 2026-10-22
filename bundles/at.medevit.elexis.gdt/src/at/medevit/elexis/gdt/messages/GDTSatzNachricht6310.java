@@ -31,7 +31,7 @@ public class GDTSatzNachricht6310 extends GDTSatzNachricht {
 	TestIdent[] testIdent = null;
 
 	public GDTSatzNachricht6310(String patientenkennung, String nachnamePatient, String vornamePatient,
-			String geburtsdatumPatient, String namenszusatz, String titelPatient, String versichertenNrPatient,
+			String geburtsdatumPatient, String namenszusatz, String titelPatient, String ahvNrPatient,
 			String wohnortPatient, String strassePatient, String versichertenartPatient, String geschlechtPatient,
 			String groessePatient, String gewichtPatient, String muttersprachePatient, String guvskf,
 			String tagErhebungBehandlungsdaten, String uhrzeitErhebungBehandlungsdaten, String[] aktuelleDiagnose, // 6205
@@ -57,7 +57,7 @@ public class GDTSatzNachricht6310 extends GDTSatzNachricht {
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_GEBURTSDATUM, geburtsdatumPatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_NAMENSZUSATZ, namenszusatz);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_TITEL, titelPatient);
-		values.put(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER, versichertenNrPatient);
+		values.put(GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER, ahvNrPatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_WOHNORT, wohnortPatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_STRASSE, strassePatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENART, versichertenartPatient);
@@ -158,7 +158,7 @@ public class GDTSatzNachricht6310 extends GDTSatzNachricht {
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_NAME), ds.get(GDTConstants.FELDKENNUNG_PATIENT_VORNAME),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_GEBURTSDATUM),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_NAMENSZUSATZ), ds.get(GDTConstants.FELDKENNUNG_PATIENT_TITEL),
-				ds.get(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER),
+				ds.get(GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_WOHNORT), ds.get(GDTConstants.FELDKENNUNG_PATIENT_STRASSE),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENART),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_GESCHLECHT), ds.get(GDTConstants.FELDKENNUNG_PATIENT_GROESSE),
@@ -289,7 +289,7 @@ public class GDTSatzNachricht6310 extends GDTSatzNachricht {
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_VORNAME);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_GEBURTSDATUM);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_TITEL);
-		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER);
+		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_WOHNORT);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_STRASSE);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENART);

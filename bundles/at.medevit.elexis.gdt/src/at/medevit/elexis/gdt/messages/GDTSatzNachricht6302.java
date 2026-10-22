@@ -29,7 +29,7 @@ public class GDTSatzNachricht6302 extends GDTSatzNachricht {
 	 * @param geburtsdatumPatient
 	 * @param namenszusatz           optional
 	 * @param titelPatient           optional
-	 * @param versichertenNrPatient  optional
+	 * @param ahvNrPatient           optional
 	 * @param wohnortPatient         optional
 	 * @param strassePatient         optional
 	 * @param versichertenartPatient optional
@@ -45,7 +45,7 @@ public class GDTSatzNachricht6302 extends GDTSatzNachricht {
 	 * @param gdtVersion
 	 */
 	public GDTSatzNachricht6302(String patientenkennung, String nachnamePatient, String vornamePatient,
-			String geburtsdatumPatient, String namenszusatz, String titelPatient, String versichertenNrPatient,
+			String geburtsdatumPatient, String namenszusatz, String titelPatient, String ahvNrPatient,
 			String wohnortPatient, String strassePatient, String versichertenartPatient, String geschlechtPatient,
 			String groessePatient, String gewichtPatient, String muttersprachePatient, String guvskf, String testIdent,
 			String gdtIdReceiver, String gdtIdSender, String zeichensatz, String gdtVersion) {
@@ -74,7 +74,7 @@ public class GDTSatzNachricht6302 extends GDTSatzNachricht {
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_GEBURTSDATUM, geburtsdatumPatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_NAMENSZUSATZ, namenszusatz);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_TITEL, titelPatient);
-		values.put(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER, versichertenNrPatient);
+		values.put(GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER, ahvNrPatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_WOHNORT, wohnortPatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_STRASSE, strassePatient);
 		values.put(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENART, versichertenartPatient);
@@ -86,6 +86,7 @@ public class GDTSatzNachricht6302 extends GDTSatzNachricht {
 		values.put(GDTConstants.FELDKENNUNG_TEST_IDENT, testIdent);
 	}
 
+	@Override
 	protected void createMessage() {
 		super.createMessage();
 
@@ -99,7 +100,7 @@ public class GDTSatzNachricht6302 extends GDTSatzNachricht {
 		addLine(GDTConstants.FELDKENNUNG_PATIENT_VORNAME);
 		addLine(GDTConstants.FELDKENNUNG_PATIENT_GEBURTSDATUM);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_TITEL);
-		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER);
+		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_WOHNORT);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_STRASSE);
 		ifSetAddLine(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENART);
@@ -152,7 +153,7 @@ public class GDTSatzNachricht6302 extends GDTSatzNachricht {
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_NAME), ds.get(GDTConstants.FELDKENNUNG_PATIENT_VORNAME),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_GEBURTSDATUM),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_NAMENSZUSATZ), ds.get(GDTConstants.FELDKENNUNG_PATIENT_TITEL),
-				ds.get(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER),
+				ds.get(GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_WOHNORT), ds.get(GDTConstants.FELDKENNUNG_PATIENT_STRASSE),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENART),
 				ds.get(GDTConstants.FELDKENNUNG_PATIENT_GESCHLECHT), ds.get(GDTConstants.FELDKENNUNG_PATIENT_GROESSE),

@@ -181,6 +181,13 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 		}
 
 		Result<IBilled> matcherResult = tarifMatcher.evaluate(newBilled, encounter);
+		if (!matcherResult.isOK()
+				&& TardocLimitationAdjuster.limitWasAdjustedFor((TardocLeistung) newBilled.getBillable())) {
+			LoggerFactory.getLogger(getClass())
+					.info("Limitation was adjusted for [" + newBilled.getCode() + "] ignoring tarif matcher.");
+			matcherResult = new Result<IBilled>(newBilled);
+		}
+		TardocLimitationAdjuster.clearContext();
 
 		List<ITardocKumulation> customKumulations = CustomKumulations.of(newBilled);
 		if (customKumulations != null && !customKumulations.isEmpty()) {

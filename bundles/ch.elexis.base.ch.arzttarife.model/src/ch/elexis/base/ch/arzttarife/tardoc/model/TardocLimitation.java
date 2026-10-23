@@ -783,4 +783,12 @@ public class TardocLimitation {
 	public void setSkip(boolean value) {
 		this.skip = true;
 	}
+
+	public TardocLeistung getTardocLeistung() {
+		return tardocLeistung;
+	}
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
 }

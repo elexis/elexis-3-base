@@ -287,10 +287,11 @@
                 ".fc-bgevent-skeleton, .fc-highlight-skeleton"
               );
               if (fcContainer.length) {
-                grid.prepareHits();
-                let hit = grid.queryHit(ev.pageX, ev.pageY);
+                let hitGrid = that.dayGrid && $(ev.target).closest(".fc-day-grid").length ? that.dayGrid : grid;
+                hitGrid.prepareHits();
+                let hit = hitGrid.queryHit(ev.pageX, ev.pageY);
                 if (hit) {
-                  let cell = grid.getSafeHitFootprint(hit);
+                  let cell = hitGrid.getSafeHitFootprint(hit);
                   if (cell) {
                     var dateProfile = that.calendar.footprintToDateProfile(cell);
                     cell.start = dateProfile.start;

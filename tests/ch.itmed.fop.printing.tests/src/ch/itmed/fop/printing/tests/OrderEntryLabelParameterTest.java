@@ -32,7 +32,7 @@ public class OrderEntryLabelParameterTest {
 	@Test
 	public void parseIgnoresInvalid() {
 		Map<String, Integer> entries = OrderEntryLabelParameter
-				.parse("valid:3;noAmount;:2;nonNumeric:x;zero:0;negative:-1;too:many:parts;");
+				.parse("valid:3;noAmount;:2;nonNumeric:x;zero:0;negative:-1;too:many:parts;overflow:9999999999;");
 		assertEquals(1, entries.size());
 		assertEquals(Integer.valueOf(3), entries.get("valid"));
 	}

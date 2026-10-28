@@ -441,15 +441,9 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	public void setUserDefinedPrice(boolean activate) {
 		if (activate) {
 			String ppub = StringUtils.defaultString(getEntity().getPpub(), "0"); //$NON-NLS-1$
+			Money sellingPrice = getSellingPrice();
 			setExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE, ppub);
-			double value = 0;
-			try {
-				value = Double.valueOf(ppub);
-			} catch (NumberFormatException nfe) {
-				LoggerFactory.getLogger(getClass()).error("Error #setUserDefinedPrice [{}] value is [{}], setting 0", //$NON-NLS-1$
-						getId(), ppub);
-			}
-			setUserDefinedPriceValue(new Money(value));
+			setUserDefinedPriceValue(sellingPrice);
 		} else {
 			String ppubStored = (String) getExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE);
 			getEntityMarkDirty().setPpub(ppubStored);

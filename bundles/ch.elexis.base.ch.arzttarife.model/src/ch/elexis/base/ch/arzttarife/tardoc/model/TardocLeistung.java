@@ -249,7 +249,9 @@ public class TardocLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 			List<TardocLimitation> ret = new ArrayList<>();
 			String[] lines = lim.split("#"); //$NON-NLS-1$
 			for (String line : lines) {
-				ret.add(TardocLimitation.of(line).setTardocLeistung(this));
+				TardocLimitation limitation = TardocLimitation.of(line).setTardocLeistung(this);
+				TardocLimitationAdjuster.adjust(limitation);
+				ret.add(limitation);
 			}
 			return ret;
 		}

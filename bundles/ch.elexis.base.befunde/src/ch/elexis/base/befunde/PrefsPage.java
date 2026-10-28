@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
-import ch.elexis.core.findings.IFinding;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 //import ch.elexis.core.ui.UiDesk;
@@ -122,7 +121,7 @@ public class PrefsPage extends Composite {
 	}
 
 	boolean remove() {
-		if (AccessControlServiceHolder.get().evaluate(EvACE.of(IFinding.class, Right.DELETE))
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(Messwert.class, Right.DELETE))
 				&& SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, // $NON-NLS-1$
 						Messages.PrefsPage_warningConfirmMessage)) { // $NON-NLS-1$
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
@@ -159,7 +158,9 @@ public class PrefsPage extends Composite {
 			Object value = hash.get(name + Messwert._FIELDS);
 			hash.remove(name + Messwert._FIELDS);
 			// add new name with value
-			hash.put(newName + Messwert._FIELDS, value);
+			if (value != null) {
+				hash.put(newName + Messwert._FIELDS, value);
+			}
 			name = newName;
 
 			return true;

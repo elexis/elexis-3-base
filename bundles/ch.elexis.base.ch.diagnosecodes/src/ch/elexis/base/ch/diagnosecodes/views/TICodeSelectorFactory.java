@@ -54,7 +54,8 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 
 	@Inject
 	void selectedEncounter(@Optional IEncounter encounter) {
-		if (commonViewer != null && commonViewer.getViewerWidget() != null) {
+		if (commonViewer != null && commonViewer.getViewerWidget() != null
+				&& !commonViewer.getViewerWidget().getControl().isDisposed()) {
 			commonViewer.getViewerWidget().refresh();
 		}
 	}

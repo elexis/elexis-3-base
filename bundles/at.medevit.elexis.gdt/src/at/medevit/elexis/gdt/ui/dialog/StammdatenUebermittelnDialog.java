@@ -214,10 +214,10 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 
 		Label lblVersichertennr = new Label(grpOptionaleDaten, SWT.NONE);
 		lblVersichertennr.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblVersichertennr.setText("Versicherten-Nr.");
+		lblVersichertennr.setText("AHV-Nr.");
 
 		txtVersichertenNr = new Text(grpOptionaleDaten, SWT.BORDER);
-		txtVersichertenNr.setTextLimit(12);
+		txtVersichertenNr.setTextLimit(13);
 		txtVersichertenNr.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(grpOptionaleDaten, SWT.NONE);
 
@@ -333,7 +333,7 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 				GDTConstants.FELDKENNUNG_GDT_ID_SENDER, GDTConstants.FELDKENNUNG_PATIENT_GEWICHT,
 				GDTConstants.FELDKENNUNG_PATIENT_GROESSE, GDTConstants.FELDKENNUNG_PATIENT_MUTTERSPRACHE,
 				GDTConstants.FELDKENNUNG_PATIENT_WOHNORT, GDTConstants.FELDKENNUNG_PATIENT_STRASSE,
-				GDTConstants.FELDKENNUNG_PATIENT_TITEL, GDTConstants.FELDKENNUNG_PATIENT_VERSICHERTENNUMMER };
+				GDTConstants.FELDKENNUNG_PATIENT_TITEL, GDTConstants.FELDKENNUNG_PATIENT_AHVNUMMER };
 
 		for (int i = 0; i < control.length; i++) {
 			bindMapValue(control[i], property[i], bindingContext, gdt6301ValuesObserveMap);

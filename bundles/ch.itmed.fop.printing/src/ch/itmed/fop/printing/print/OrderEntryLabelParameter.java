@@ -2,6 +2,7 @@ package ch.itmed.fop.printing.print;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,8 @@ import ch.elexis.core.constants.OrderLabelPrintConstants;
 public final class OrderEntryLabelParameter {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderEntryLabelParameter.class);
+
+	private static final Pattern ENTRY_PATTERN = Pattern.compile("(?<id>[^:\\s]+):(?<amount>[1-9]\\d{0,8})"); //$NON-NLS-1$
 
 	private OrderEntryLabelParameter() {
 	}
@@ -26,20 +29,11 @@ public final class OrderEntryLabelParameter {
 			if (StringUtils.isBlank(part)) {
 				continue;
 			}
-			String[] idAndAmount = part.trim().split(Pattern.quote(OrderLabelPrintConstants.AMOUNT_SEPARATOR));
-			if (idAndAmount.length != 2 || StringUtils.isBlank(idAndAmount[0])) {
+			Matcher matcher = ENTRY_PATTERN.matcher(part.trim());
+			if (matcher.matches()) {
+				ret.merge(matcher.group("id"), Integer.parseInt(matcher.group("amount")), Integer::sum); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
 				logger.warn("Ignoring invalid order entry label parameter [{}]", part); //$NON-NLS-1$
-				continue;
-			}
-			try {
-				int amount = Integer.parseInt(idAndAmount[1].trim());
-				if (amount > 0) {
-					ret.merge(idAndAmount[0].trim(), amount, Integer::sum);
-				} else {
-					logger.warn("Ignoring non positive amount in order entry label parameter [{}]", part); //$NON-NLS-1$
-				}
-			} catch (NumberFormatException e) {
-				logger.warn("Ignoring invalid amount in order entry label parameter [{}]", part); //$NON-NLS-1$
 			}
 		}
 		return ret;

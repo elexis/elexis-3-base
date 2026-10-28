@@ -27,13 +27,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -72,12 +72,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.qrcode.encoder.ByteMatrix;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -311,7 +307,9 @@ public class ElexisPDFGenerator {
 		}
 	}
 
-	private static final int MAX_QR_CHUNK_DATA_SIZE = 1262; // 1264 bytes total - 2 bytes for Structured Append header
+	// Version 29-M holds 1267 data codewords = 10136 bits; the ISO 18004 structured append header
+	// (20 bits) plus the byte mode segment header (4 bit mode + 16 bit count) leave 1262 payload bytes
+	private static final int MAX_QR_CHUNK_DATA_SIZE = 1262;
 
 	private List<String> getEncodedXmlQrs() {
 		Document cloneDocument = (Document) domDocument.cloneNode(true);
@@ -331,10 +329,10 @@ public class ElexisPDFGenerator {
 			Transformer transformer = tf.newTransformer();
 			transformer.transform(domSource, result);
 			if (DEBUG) {
-				writeDebugFile(writer.toString().getBytes(), ".xml"); //$NON-NLS-1$
+				writeDebugFile(writer.toString().getBytes(StandardCharsets.UTF_8), ".xml"); //$NON-NLS-1$
 			}
 			// compress
-			byte[] inputData = writer.toString().getBytes();
+			byte[] inputData = writer.toString().getBytes(StandardCharsets.UTF_8);
 			Deflater deflater = new Deflater(Deflater.DEFLATED, true);
 			deflater.setInput(inputData);
 			deflater.finish();
@@ -370,8 +368,9 @@ public class ElexisPDFGenerator {
 			if (!chunks.isEmpty()) {
 				List<String> ret = new ArrayList<>();
 				for (int i = 0; i < chunks.size(); i++) {
-					Image xmlQrImage = getXmlQrImage(i + 1, chunks.size(), parity, chunks.get(i));
+					Image xmlQrImage = getXmlQrImage(i, chunks.size(), parity, chunks.get(i));
 					ret.add(getEncodedImage(xmlQrImage));
+					xmlQrImage.dispose();
 				}
 				return ret;
 			}
@@ -382,6 +381,9 @@ public class ElexisPDFGenerator {
 	}
 
 	private byte getParity(byte[] data) {
+		// parity per spec: XOR of all payload bytes of the whole sequence; computed over the
+		// unpadded base64 - the space padding of the last chunk is always an even number of bytes
+		// and therefore does not change the XOR
 		byte parity = 0;
 		for (byte b : data) {
 			parity ^= b; // XOR each byte with the running parity
@@ -572,30 +574,34 @@ public class ElexisPDFGenerator {
 	}
 
 	private Image getXmlQrImage(int currentIndex, int totalChunks, byte parity, byte[] data) {
-		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
-		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-		hintMap.put(EncodeHintType.QR_VERSION, 29);
-
-		// Prepend Structured Append header
-		byte[] header = new byte[2];
-		header[0] = (byte) (0x40 | ((currentIndex) << 4) | (totalChunks - 1));
-		header[1] = parity;
-
-		byte[] dataWithHeader = new byte[header.length + data.length];
-		System.arraycopy(header, 0, dataWithHeader, 0, header.length);
-		System.arraycopy(data, 0, dataWithHeader, header.length, data.length);
-
-		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		try {
-			// 591x591 dimensions for 5.0x5.0 cm at 300 DPI
-			BitMatrix bitMatrix = qrCodeWriter.encode(new String(data), BarcodeFormat.QR_CODE, 591, 591, hintMap);
-			int width = bitMatrix.getWidth();
-			int height = bitMatrix.getHeight();
+			// ISO 18004 structured append symbol: version 29 (133x133 modules), error correction
+			// level M, 20 bit structured append header + byte mode segment holding the base64 chunk
+			ByteMatrix matrix = StructuredAppendQrEncoder.encode(data, currentIndex, totalChunks, parity & 0xFF);
+			// render at 591x591 px (5.0x5.0 cm at 300 DPI), same layout as QRCodeWriter.renderResult:
+			// quiet zone of 4 modules, module scale 4, remaining space as white padding
+			int dimension = matrix.getWidth();
+			int outputSize = 591;
+			int multiple = outputSize / (dimension + 2 * 4);
+			int leftPadding = (outputSize - dimension * multiple) / 2;
+			int topPadding = leftPadding;
 
-			ImageData imageData = new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					imageData.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
+			ImageData imageData = new ImageData(outputSize, outputSize, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
+			for (int y = 0; y < outputSize; y++) {
+				for (int x = 0; x < outputSize; x++) {
+					imageData.setPixel(x, y, 0xFFFFFF);
+				}
+			}
+			for (int y = 0; y < dimension; y++) {
+				for (int x = 0; x < dimension; x++) {
+					if (matrix.get(x, y) == 1) {
+						for (int dy = 0; dy < multiple; dy++) {
+							for (int dx = 0; dx < multiple; dx++) {
+								imageData.setPixel(leftPadding + x * multiple + dx, topPadding + y * multiple + dy,
+										0x000000);
+							}
+						}
+					}
 				}
 			}
 			return new Image(Display.getDefault(), imageData);

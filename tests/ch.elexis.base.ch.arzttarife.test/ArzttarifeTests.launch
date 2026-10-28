@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
+    <booleanAttribute key="add_console" value="false"/>
     <booleanAttribute key="append.args" value="true"/>
     <booleanAttribute key="askclear" value="false"/>
     <booleanAttribute key="automaticAdd" value="false"/>
@@ -238,6 +239,7 @@
         <setEntry value="org.postgresql.jdbc@default:default"/>
         <setEntry value="slf4j.api@default:default"/>
         <setEntry value="slf4j.osgi@default:default"/>
+        <setEntry value="wrapped.io.quarkus.arc.arc@default:default"/>
         <setEntry value="wrapped.io.smallrye.common.smallrye-common-annotation@default:default"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
@@ -252,6 +254,8 @@
         <setEntry value="ch.elexis.core.cdi@default:default"/>
         <setEntry value="ch.elexis.core.data@default:default"/>
         <setEntry value="ch.elexis.core.documents@default:default"/>
+        <setEntry value="ch.elexis.core.ee.openapi@default:default"/>
+        <setEntry value="ch.elexis.core.fhir.mapper.r4@default:default"/>
         <setEntry value="ch.elexis.core.findings.util@default:default"/>
         <setEntry value="ch.elexis.core.findings@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>

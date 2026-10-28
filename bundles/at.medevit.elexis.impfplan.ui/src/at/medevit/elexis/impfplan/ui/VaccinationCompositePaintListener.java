@@ -19,17 +19,15 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Widget;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
@@ -87,12 +85,11 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private int maxLengthDoctor = 100;
 	private int maxLengthLotNr = 70;
 
-	private int pageElementCount = 20; // default will be calculated
+	private List<Integer> pageStarts = new ArrayList<>();
 	private int pageTotalSize = 1; // default will be calculated
 
 	private int entryHeight;
-	private int defaultEntryHeight;
-	private ScrolledComposite scrolledComposite;
+	private List<Integer> entryHeights = new ArrayList<>();
 
 	public int mouseX;
 	public int mouseY;
@@ -110,7 +107,6 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		fontHeightBoldFont = (int) ((boldFont.getFontData()[0].getHeight() + 5) * getScaleFactor());
 
 		entryHeight = (int) ((fontHeightBoldFont + 4) * getScaleFactor());
-		defaultEntryHeight = entryHeight;
 
 		naviVacMap = new TreeMap<Integer, Vaccination>();
 		selectedVacc = null;
@@ -154,17 +150,8 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		if (_vphd == null)
 			return;
 
-		paintControl(e.gc, e.display, e.width, e.height, false, -1);
-
-		Widget widget = e.widget;
-		if (widget instanceof VaccinationComposite) {
-			VaccinationComposite vaccinationComposite = (VaccinationComposite) widget;
-			Composite parent = vaccinationComposite.getParent();
-			if (parent instanceof ScrolledComposite) {
-				scrolledComposite = (ScrolledComposite) parent;
-				scrolledComposite.setMinSize(vaccinationComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-			}
-		}
+		Rectangle clientArea = ((VaccinationComposite) e.widget).getClientArea();
+		paintControl(e.gc, e.display, clientArea.width, clientArea.height, false, -1);
 	}
 
 	public void paintControl(GC gc, Display display, int width, int height, boolean b, int pageIdx) {
@@ -178,9 +165,6 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		} else {
 			if (width < 800) {
 				width = 800;
-			}
-			if (scrolledComposite != null && scrolledComposite.getVerticalBar().isVisible()) {
-				width = width - scrolledComposite.getVerticalBar().getSize().x;
 			}
 			if (locationOfLotNrBorder - OFFSET > 0) {
 				maxLengthBasisImpf = locationOfLotNrBorder - OFFSET;
@@ -199,38 +183,24 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			}
 		}
 
-		// check if 2 row height is needed
-		boolean wrapText = false;
-		for (Vaccination vacc : _vaccinations) {
-			if (wrapTextByWidth(gc, vacc.getShortBusinessName(), maxLengthBasisImpf, false).contains(StringUtils.LF)) {
-				wrapText = true;
-				break;
-			}
-			if (wrapTextByWidth(gc, vacc.getLotNo(), maxLengthLotNr, true).contains(StringUtils.LF)) {
-				wrapText = true;
-				break;
-			}
-			if (wrapTextByWidth(gc, vacc.getAdministratorLabel(), maxLengthDoctor, false).contains(StringUtils.LF)) {
-				wrapText = true;
-				break;
-			}
-		}
-
-		entryHeight = defaultEntryHeight;
-		if (wrapText) {
-			entryHeight = entryHeight + defaultEntryHeight;
-		}
+		measure(gc);
 
 		if (b) {
-			// calculate page element count
-			pageElementCount = (height - HEADER_HEIGHT) / entryHeight;
-			// calculate total page size
-			pageTotalSize = (int) Math.ceil((float) _vaccinations.size() / pageElementCount);
+			// calculate the first entry of each page
+			pageStarts.clear();
+			int pageHeight = 0;
+			for (int i = 0; i < entryHeights.size(); i++) {
+				if (pageStarts.isEmpty() || pageHeight + entryHeights.get(i) > height - HEADER_HEIGHT) {
+					pageStarts.add(i);
+					pageHeight = 0;
+				}
+				pageHeight += entryHeights.get(i);
+			}
+			pageTotalSize = pageStarts.size();
 		} else {
 			pageTotalSize = 1;
 		}
 
-		determineMinWidth(gc, wrapText);
 		drawHeader(gc, display, width, pageIdx);
 		drawEntries(gc, display, width, b, pageIdx);
 
@@ -240,6 +210,46 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			gc.drawLine(0, height - 1, width, height - 1);
 			gc.drawLine(width - 1, 0, width - 1, height - 1);
 		}
+	}
+
+	public Point computeSize(GC gc) {
+		if (_vphd == null || _vaccinations == null) {
+			return new Point(800, 64);
+		}
+		return new Point(Math.max(800, measure(gc)), eh(-1));
+	}
+
+	private int measure(GC gc) {
+		// check how many rows each entry needs
+		boolean wrapText = false;
+		entryHeights.clear();
+		for (Vaccination vacc : _vaccinations) {
+			int lines = 1;
+			lines = Math.max(lines, StringUtils.countMatches(
+					wrapTextByWidth(gc, vacc.getShortBusinessName(), maxLengthBasisImpf, false), StringUtils.LF) + 1);
+			lines = Math.max(lines,
+					StringUtils.countMatches(wrapTextByWidth(gc, vacc.getLotNo(), maxLengthLotNr, true), StringUtils.LF)
+							+ 1);
+			lines = Math.max(lines, StringUtils.countMatches(
+					wrapTextByWidth(gc, vacc.getAdministratorLabel(), maxLengthDoctor, false), StringUtils.LF) + 1);
+			wrapText |= lines > 1;
+			entryHeights.add(lines);
+		}
+		int minLines = wrapText ? 2 : 1;
+		entryHeights.replaceAll(lines -> entryHeight * Math.max(lines, minLines));
+
+		if (HEADER_HEIGHT == -1)
+			HEADER_HEIGHT = determineMaxDiseaseStringExtension(gc).x + 10;
+
+		return determineMinWidth(gc, wrapText);
+	}
+
+	int getHeaderHeight() {
+		return HEADER_HEIGHT;
+	}
+
+	int getEntryHeight() {
+		return entryHeight;
 	}
 
 	public int getPageTotalSize() {
@@ -291,10 +301,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		boolean alternator = true;
 		diseaseBoundaries.clear();
 
-		if (HEADER_HEIGHT == -1)
-			HEADER_HEIGHT = determineMaxDiseaseStringExtension(gc).x + 10;
-
-		int ehHeight = calcEhHeight(pageIdx);
+		int ehHeight = eh(pageIdx);
 
 		// main label
 		gc.setFont(headerFont);
@@ -412,16 +419,12 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		}
 	}
 
-	private int calcEhHeight(int pageIdx) {
-		if (pageIdx > 0) {
-			// calculate how many elements left and its height
-			int diff = _vaccinations.size() - (pageElementCount * pageIdx);
-			if (diff <= pageElementCount) {
-				// show only the elements which are left
-				return HEADER_HEIGHT + diff * entryHeight;
-			}
-		}
-		return eh(pageIdx);
+	private int firstEntry(int pageIdx) {
+		return pageIdx == -1 ? 0 : pageStarts.get(pageIdx);
+	}
+
+	private int lastEntry(int pageIdx) {
+		return pageIdx == -1 || pageIdx + 1 >= pageStarts.size() ? entryHeights.size() : pageStarts.get(pageIdx + 1);
 	}
 
 	private Point determineMaxDiseaseStringExtension(GC gc) {
@@ -500,43 +503,32 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	}
 
 	/**
-	 * the extended height, including the header and the number of entries*entries
-	 * height
+	 * the extended height, including the header and the height of all entries
 	 *
 	 * @return
 	 */
 	private int eh(int pageIndex) {
-		return HEADER_HEIGHT + ((pageIndex == -1 || _vaccinations.size() < pageElementCount ? _vaccinations.size()
-				: pageElementCount) * entryHeight);
+		int height = HEADER_HEIGHT;
+		for (int i = firstEntry(pageIndex); i < lastEntry(pageIndex); i++) {
+			height += entryHeights.get(i);
+		}
+		return height;
 	}
 
 	private void drawEntries(GC gc, Display display, int width, boolean b, int pageIdx) {
-		int lastHeightStart = 0;
 		naviVacMap.clear();
 		naviVacMap.put(0, null);
 
-		// calculate the offset and the max size for paginagtion
-		int i = 0;
-		int size = _vaccinations.size();
-		if (pageIdx > -1) {
-			i = pageElementCount * pageIdx;
-			size = pageElementCount * (pageIdx + 1);
-		}
-		int a = 0; // only for increment
-		for (; i < size; i++) {
-			if (_vaccinations.size() <= i) {
-				break;
-			}
-
+		int heightStart = HEADER_HEIGHT + 1;
+		for (int i = firstEntry(pageIdx); i < lastEntry(pageIdx); i++) {
 			Vaccination vacc = _vaccinations.get(i);
+			int rowHeight = entryHeights.get(i);
 
 			gc.setBackground(COLOR_WHITE);
 			gc.setForeground(COLOR_BLACK);
-			int heightStart = HEADER_HEIGHT + (entryHeight * a + 1);
-			lastHeightStart = heightStart;
 
 			if (vacc.equals(selectedVacc)) {
-				highlightSelectedEntry(gc, heightStart, width, pageIdx);
+				highlightSelectedEntry(gc, heightStart, rowHeight, width, pageIdx);
 			}
 
 			gc.setFont(boldFont);
@@ -567,15 +559,15 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			// get age
 			gc.drawText(getAgeLabel(_administrationDate), locationOfAgeBorder + 7, heightStart);
 			drawDiseaseMarkers(gc, heightStart, vacc, gc.getBackground());
-			gc.drawLine(0, heightStart + entryHeight - 1, width, heightStart + entryHeight - 1);
+			gc.drawLine(0, heightStart + rowHeight - 1, width, heightStart + rowHeight - 1);
 
 			gc.setBackground(COLOR_WHITE);
 			naviVacMap.put(heightStart, vacc);
 
-			a++;
+			heightStart += rowHeight;
 		}
 		// position from which on to ignore selection
-		naviVacMap.put(lastHeightStart + entryHeight - 1, null);
+		naviVacMap.put(heightStart - 1, null);
 	}
 
 	/**
@@ -587,23 +579,29 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	 * @return
 	 */
 	private String wrapTextByWidth(GC gc, String text, int maxTextWidth, boolean wrapWithoutSeperator) {
-		if (text != null) {
-			int stringWidth = gc.stringExtent(text).x;
-			int textLength = text.length();
-			if (stringWidth > maxTextWidth) {
-				int maxChars = maxTextWidth * textLength / stringWidth;
-				if (maxChars < textLength) {
-					int idxLastSpace = text.substring(0, maxChars).lastIndexOf(StringUtils.SPACE) + 1;
-					if (idxLastSpace > 1 && idxLastSpace < textLength) {
-						return text.replaceFirst("(.{" + idxLastSpace + "})", "$1\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					} else {
-						return text.replaceFirst("(.{" + maxChars + "})", //$NON-NLS-1$ //$NON-NLS-2$
-								"$1" + (wrapWithoutSeperator ? StringUtils.EMPTY : "-") + StringUtils.LF); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				}
+		if (text == null) {
+			return text;
+		}
+		StringBuilder sb = new StringBuilder();
+		String rest = text;
+		while (gc.stringExtent(rest).x > maxTextWidth) {
+			int maxChars = Math.max(1, maxTextWidth * rest.length() / gc.stringExtent(rest).x);
+			String line = rest.substring(0, maxChars);
+			int idxLastSpace = line.lastIndexOf(StringUtils.SPACE);
+			int idxLastHyphen = line.lastIndexOf('-');
+			if (idxLastSpace > 0 && idxLastSpace > idxLastHyphen) {
+				sb.append(rest, 0, idxLastSpace).append(StringUtils.LF);
+				rest = rest.substring(idxLastSpace + 1);
+			} else if (idxLastHyphen > 0) {
+				sb.append(rest, 0, idxLastHyphen + 1).append(StringUtils.LF);
+				rest = rest.substring(idxLastHyphen + 1);
+			} else {
+				sb.append(rest, 0, maxChars).append(wrapWithoutSeperator ? StringUtils.EMPTY : "-") //$NON-NLS-1$
+						.append(StringUtils.LF);
+				rest = rest.substring(maxChars);
 			}
 		}
-		return text;
+		return sb.append(rest).toString();
 	}
 
 	/**
@@ -613,15 +611,15 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	 * @param heightStart start of the row
 	 * @param width
 	 */
-	private void highlightSelectedEntry(GC gc, int heightStart, int width, int pageIdx) {
+	private void highlightSelectedEntry(GC gc, int heightStart, int rowHeight, int width, int pageIdx) {
 		gc.setForeground(COLOR_CREME);
 		gc.setBackground(UiDesk.getColorFromRGB("FEFFCB")); //$NON-NLS-1$
-		gc.drawRectangle(0, heightStart, width, entryHeight - 1);
+		gc.drawRectangle(0, heightStart, width, rowHeight - 1);
 		// gc.fillRectangle(0, heightStart, width, ENTRY_HEIGHT - 1);
-		gc.fillGradientRectangle(0, heightStart, width, entryHeight - 1, true);
+		gc.fillGradientRectangle(0, heightStart, width, rowHeight - 1, true);
 		gc.setForeground(COLOR_BLACK);
 		// vertical lines
-		int ehHeight = calcEhHeight(pageIdx);
+		int ehHeight = eh(pageIdx);
 
 		int yStart = HEADER_HEIGHT;
 		if (ehHeight != HEADER_HEIGHT) {

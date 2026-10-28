@@ -24,6 +24,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -55,7 +56,8 @@ public final class SelectedAppointmentCardHandler extends AbstractHandler {
 			return null;
 		}
 
-		IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
+		IContact contact = appointments.get(0).getContact();
+		IPatient patient = (contact != null && contact.isPatient()) ? contact.asIPatient() : null;
 		IMandator mandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
 
 		try {

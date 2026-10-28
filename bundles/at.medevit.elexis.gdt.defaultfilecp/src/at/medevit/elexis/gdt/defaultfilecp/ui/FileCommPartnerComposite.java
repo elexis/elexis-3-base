@@ -223,7 +223,7 @@ public class FileCommPartnerComposite extends Composite {
 
 		new Label(this, SWT.NONE).setText("Auf Programm Antwort warten");
 		btnExecutableWait = new Button(this, SWT.CHECK);
-		btnExecutableWait.setLayoutData(gridData2Col);
+		btnExecutableWait.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		btnExecutableWait.setSelection(getBooleanValueByConfigKey(fileCommPartner.getFileTransferExecuteableWait()));
 
 		Label itemText = new Label(this, SWT.NONE);

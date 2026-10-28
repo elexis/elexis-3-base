@@ -387,7 +387,52 @@ public class Tarmed50Exporter {
 			partnersType.getPartner().add(referrerPartner);
 		}
 
+		// service_provider
+		List<IContact> serviceProviders = getServiceProviders(invoice);
+		if (!serviceProviders.isEmpty()) {
+			for (IContact serviceProvider : serviceProviders) {
+				PartnerAddressType providerPartner = new PartnerAddressType();
+				providerPartner.setType("service_provider");
+				String ean = TarmedRequirements.getEAN(serviceProvider, EAN_PSEUDO);
+				if (StringUtils.isNotBlank(ean)) {
+					providerPartner.setGln(ean);
+				}
+				String zsr = TarmedRequirements.getKSK(serviceProvider);
+				if (StringUtils.isNotBlank(zsr)) {
+					providerPartner.setZsr(zsr);
+				}
+				Object companyOrPerson = getCompanyOrPerson(serviceProvider, false);
+				if (companyOrPerson instanceof CompanyType) {
+					providerPartner.setCompany((CompanyType) companyOrPerson);
+				} else if (companyOrPerson instanceof PersonType) {
+					providerPartner.setPerson((PersonType) companyOrPerson);
+				}
+				partnersType.getPartner().add(providerPartner);
+			}
+		}
 		return partnersType;
+	}
+
+	private List<IContact> getServiceProviders(IInvoice invoice) {
+		List<IContact> ret = new ArrayList<IContact>();
+		// ignore contact that is already set as provider
+		IMandator ignoreProvider = invoice.getMandator();
+		Map<String, IContact> eanContactMap = new HashMap<String, IContact>();
+		List<IEncounter> encounters = invoice.getEncounters();
+		for (IEncounter encounter : encounters) {
+			if (!encounter.getMandator().getId().equals(ignoreProvider.getId())) {
+				String providerEAN = TarmedRequirements.getEAN(encounter.getMandator(), EAN_PSEUDO);
+				if (StringUtils.isNotBlank(providerEAN) && !EAN_PSEUDO.equals(providerEAN)) {
+					if (eanContactMap.get(providerEAN) == null) {
+						eanContactMap.put(providerEAN, encounter.getMandator());
+					}
+				}
+			}
+		}
+		if (!eanContactMap.isEmpty()) {
+			ret.addAll(eanContactMap.values());
+		}
+		return ret;
 	}
 
 	protected DebitorAddressType getDebitor(IInvoice invoice) {

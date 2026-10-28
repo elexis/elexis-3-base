@@ -110,6 +110,24 @@ public final class LabelPrintService {
 	 */
 	public static int printMedicationLabels(IPrescription prescription, IPatient patient, int amount,
 			boolean requirePrinter) throws Exception {
+		return printMedicationLabels(prescription, patient, amount, requirePrinter, List.of());
+	}
+
+	/**
+	 * Print medication labels of the prescription, see
+	 * {@link #printMedicationLabels(IPrescription, IPatient, int, boolean)}.
+	 *
+	 * @param prescription
+	 * @param patient
+	 * @param amount
+	 * @param requirePrinter
+	 * @param mediorderBarcodes barcodes of the packages of a delivered mediorder
+	 *                          article, one per label, may be empty
+	 * @return number of labels sent to the printer
+	 * @throws Exception
+	 */
+	public static int printMedicationLabels(IPrescription prescription, IPatient patient, int amount,
+			boolean requirePrinter, List<String> mediorderBarcodes) throws Exception {
 		String docName = PreferenceConstants.MEDICATION_LABEL;
 		String printerName = getPrinterName(docName);
 		if (!isPrintAllowed(printerName, requirePrinter)) {
@@ -119,7 +137,8 @@ public final class LabelPrintService {
 		File xslTemplate = ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID);
 		logger.info("Printing document " + docName + " on printer: " + printerName); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < amount; i++) {
-			InputStream xmlDoc = MedicationLabel.create(prescription, patient);
+			InputStream xmlDoc = MedicationLabel.create(prescription, patient,
+					getMediorderBarcode(mediorderBarcodes, i));
 			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc, xslTemplate);
 			PrintProvider.printPdf(pdf, printerName);
 		}
@@ -142,6 +161,24 @@ public final class LabelPrintService {
 	 */
 	public static int printArticleLabels(IArticle article, IPatient patient, int amount, boolean requirePrinter)
 			throws Exception {
+		return printArticleLabels(article, patient, amount, requirePrinter, List.of());
+	}
+
+	/**
+	 * Print article labels of the article, see
+	 * {@link #printArticleLabels(IArticle, IPatient, int, boolean)}.
+	 *
+	 * @param article
+	 * @param patient
+	 * @param amount
+	 * @param requirePrinter
+	 * @param mediorderBarcodes barcodes of the packages of a delivered mediorder
+	 *                          article, one per label, may be empty
+	 * @return number of labels sent to the printer
+	 * @throws Exception
+	 */
+	public static int printArticleLabels(IArticle article, IPatient patient, int amount, boolean requirePrinter,
+			List<String> mediorderBarcodes) throws Exception {
 		String docName;
 		File xslTemplate;
 		if (getDosageInstructions(article).isPresent() && hasPrinterConfigured(PreferenceConstants.ARTICLE_MEDIC_LABEL)) {
@@ -157,13 +194,22 @@ public final class LabelPrintService {
 			return 0;
 		}
 		logger.info("Printing document " + docName + " on printer: " + printerName); //$NON-NLS-1$ //$NON-NLS-2$
-		InputStream xmlDoc = ArticleLabel.create(article, patient);
+		boolean hasMediorderBarcodes = mediorderBarcodes != null && !mediorderBarcodes.isEmpty();
+		InputStream xmlDoc = null;
 		for (int i = 0; i < amount; i++) {
+			if (xmlDoc == null || hasMediorderBarcodes) {
+				xmlDoc = ArticleLabel.create(article, patient, getMediorderBarcode(mediorderBarcodes, i));
+			} else {
+				xmlDoc.reset();
+			}
 			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc, xslTemplate);
 			PrintProvider.printPdf(pdf, printerName);
-			xmlDoc.reset();
 		}
 		return Math.max(amount, 0);
+	}
+
+	private static String getMediorderBarcode(List<String> mediorderBarcodes, int label) {
+		return mediorderBarcodes != null && label < mediorderBarcodes.size() ? mediorderBarcodes.get(label) : null;
 	}
 
 	private static Optional<String> getDosageInstructions(IArticle article) {

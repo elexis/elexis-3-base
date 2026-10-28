@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.OrderLabelPrintConstants;
+import ch.elexis.core.mediorder.MediorderLabelCode;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IOrderEntry;
 import ch.elexis.core.model.IPatient;
@@ -48,7 +49,7 @@ public class OrderEntryLabelPrintHandler extends AbstractHandler {
 					logger.warn("Skipping order entry [{}] without patient stock or article", entry.getKey()); //$NON-NLS-1$
 					continue;
 				}
-				int entryPrinted = print(orderEntry.get().getArticle(), patient.get(), amount);
+				int entryPrinted = print(orderEntry.get(), patient.get(), amount);
 				printed += entryPrinted;
 				skippedNoPrinter += amount - entryPrinted;
 			} catch (Exception e) {
@@ -61,14 +62,17 @@ public class OrderEntryLabelPrintHandler extends AbstractHandler {
 		return result;
 	}
 
-	private int print(IArticle article, IPatient patient, int amount) throws Exception {
+	private int print(IOrderEntry orderEntry, IPatient patient, int amount) throws Exception {
+		IArticle article = orderEntry.getArticle();
+		List<String> mediorderBarcodes = MediorderLabelCode.encodeDelivery(orderEntry, amount);
 		List<IPrescription> medications = patient.getMedication(LabelPrintService.MEDICATION_ENTRY_TYPES);
 		Optional<IPrescription> prescription = LabelPrintService.findUniquePrescription(article, medications);
 		boolean requirePrinter = true;
 		if (prescription.isPresent() && LabelPrintService.hasDoseOrRemark(prescription.get())) {
-			return LabelPrintService.printMedicationLabels(prescription.get(), patient, amount, requirePrinter);
+			return LabelPrintService.printMedicationLabels(prescription.get(), patient, amount, requirePrinter,
+					mediorderBarcodes);
 		}
-		return LabelPrintService.printArticleLabels(article, patient, amount, requirePrinter);
+		return LabelPrintService.printArticleLabels(article, patient, amount, requirePrinter, mediorderBarcodes);
 	}
 
 	private Optional<IPatient> getPatient(IOrderEntry orderEntry) {

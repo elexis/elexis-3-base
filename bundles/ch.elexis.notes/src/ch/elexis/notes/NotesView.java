@@ -34,7 +34,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.util.Extensions;
@@ -189,8 +188,8 @@ public class NotesView extends ViewPart implements IRefreshable {
 										StringUtils.EMPTY, null);
 								if (id.open() == Dialog.OK) {
 									String name = id.getValue();
-									String basedir = CoreHub.localCfg.get(Preferences.CFGTREE, null);
-									if (basedir == null) {
+									String basedir = NotesSettings.getBaseDirectory();
+									if (StringUtils.isBlank(basedir)) {
 										SWTHelper.alert(Messages.NotesView_badBaseDirectoryTitle,
 												Messages.NotesView_badBaseDirectoryMessage);
 										return;

@@ -23,6 +23,8 @@ import ch.elexis.core.model.IBillable;
  *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getZiffer <em>Ziffer</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getDescription <em>Description</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getLaw <em>Law</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getKapitel <em>Kapitel</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getInterpretation <em>Interpretation</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.physio.PhysioPackage#getIPhysioLeistung()
@@ -171,4 +173,48 @@ public interface IPhysioLeistung extends IBillable {
 	 * @generated
 	 */
 	String getLaw();
+
+	/**
+	 * Returns the value of the '<em><b>Kapitel</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Kapitel</em>' attribute.
+	 * @see #setKapitel(String)
+	 * @see ch.elexis.base.ch.arzttarife.physio.PhysioPackage#getIPhysioLeistung_Kapitel()
+	 * @model
+	 * @generated
+	 */
+	String getKapitel();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getKapitel <em>Kapitel</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Kapitel</em>' attribute.
+	 * @see #getKapitel()
+	 * @generated
+	 */
+	void setKapitel(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Interpretation</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Interpretation</em>' attribute.
+	 * @see #setInterpretation(String)
+	 * @see ch.elexis.base.ch.arzttarife.physio.PhysioPackage#getIPhysioLeistung_Interpretation()
+	 * @model
+	 * @generated
+	 */
+	String getInterpretation();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getInterpretation <em>Interpretation</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Interpretation</em>' attribute.
+	 * @see #getInterpretation()
+	 * @generated
+	 */
+	void setInterpretation(String value);
 } // IPhysioLeistung

@@ -16,6 +16,8 @@ import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
 import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
 import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
 import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
+import ch.elexis.base.ch.arzttarife.os25.Os25Package;
+import ch.elexis.base.ch.arzttarife.os25.impl.Os25PackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
@@ -124,6 +126,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		AmbulatoryPackageImpl theAmbulatoryPackage = (AmbulatoryPackageImpl)(registeredPackage instanceof AmbulatoryPackageImpl ? registeredPackage : AmbulatoryPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(Ps25Package.eNS_URI);
 		Ps25PackageImpl thePs25Package = (Ps25PackageImpl)(registeredPackage instanceof Ps25PackageImpl ? registeredPackage : Ps25Package.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(Os25Package.eNS_URI);
+		Os25PackageImpl theOs25Package = (Os25PackageImpl)(registeredPackage instanceof Os25PackageImpl ? registeredPackage : Os25Package.eINSTANCE);
 
 		// Create package meta-data objects
 		thePhysioPackage.createPackageContents();
@@ -138,6 +142,7 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		theTardocPackage.createPackageContents();
 		theAmbulatoryPackage.createPackageContents();
 		thePs25Package.createPackageContents();
+		theOs25Package.createPackageContents();
 
 		// Initialize created meta-data
 		thePhysioPackage.initializePackageContents();
@@ -152,6 +157,7 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		theTardocPackage.initializePackageContents();
 		theAmbulatoryPackage.initializePackageContents();
 		thePs25Package.initializePackageContents();
+		theOs25Package.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePhysioPackage.freeze();
@@ -237,6 +243,26 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getIPhysioLeistung_Kapitel() {
+		return (EAttribute)iPhysioLeistungEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIPhysioLeistung_Interpretation() {
+		return (EAttribute)iPhysioLeistungEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public PhysioFactory getPhysioFactory() {
 		return (PhysioFactory)getEFactoryInstance();
 	}
@@ -267,6 +293,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__ZIFFER);
 		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__DESCRIPTION);
 		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__LAW);
+		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__KAPITEL);
+		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__INTERPRETATION);
 	}
 
 	/**
@@ -311,6 +339,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		initEAttribute(getIPhysioLeistung_Ziffer(), ecorePackage.getEString(), "ziffer", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIPhysioLeistung_Description(), ecorePackage.getEString(), "description", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIPhysioLeistung_Law(), ecorePackage.getEString(), "law", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPhysioLeistung_Kapitel(), ecorePackage.getEString(), "kapitel", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIPhysioLeistung_Interpretation(), ecorePackage.getEString(), "interpretation", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

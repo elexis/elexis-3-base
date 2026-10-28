@@ -155,6 +155,26 @@ public class PhysioLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 	}
 
 	@Override
+	public String getKapitel() {
+		return getEntity().getKapitel();
+	}
+
+	@Override
+	public void setKapitel(String value) {
+		getEntity().setKapitel(value);
+	}
+
+	@Override
+	public String getInterpretation() {
+		return getEntity().getInterpretation();
+	}
+
+	@Override
+	public void setInterpretation(String value) {
+		getEntity().setInterpretation(value);
+	}
+
+	@Override
 	public String getLabel() {
 		return getCode() + StringUtils.SPACE + getText()
 				+ ((getEntity().getLaw() != null && !getEntity().getLaw().isEmpty()) ? " (" + getEntity().getLaw() + ")"

@@ -149,13 +149,31 @@ public interface PhysioPackage extends EPackage {
 	int IPHYSIO_LEISTUNG__LAW = ModelPackage.IBILLABLE_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>Kapitel</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IPHYSIO_LEISTUNG__KAPITEL = ModelPackage.IBILLABLE_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Interpretation</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IPHYSIO_LEISTUNG__INTERPRETATION = ModelPackage.IBILLABLE_FEATURE_COUNT + 7;
+
+	/**
 	 * The number of structural features of the '<em>IPhysio Leistung</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IPHYSIO_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 6;
+	int IPHYSIO_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 8;
 
 
 	/**
@@ -235,6 +253,28 @@ public interface PhysioPackage extends EPackage {
 	EAttribute getIPhysioLeistung_Law();
 
 	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getKapitel <em>Kapitel</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Kapitel</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getKapitel()
+	 * @see #getIPhysioLeistung()
+	 * @generated
+	 */
+	EAttribute getIPhysioLeistung_Kapitel();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getInterpretation <em>Interpretation</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Interpretation</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung#getInterpretation()
+	 * @see #getIPhysioLeistung()
+	 * @generated
+	 */
+	EAttribute getIPhysioLeistung_Interpretation();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -307,6 +347,20 @@ public interface PhysioPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute IPHYSIO_LEISTUNG__LAW = eINSTANCE.getIPhysioLeistung_Law();
+		/**
+		 * The meta object literal for the '<em><b>Kapitel</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IPHYSIO_LEISTUNG__KAPITEL = eINSTANCE.getIPhysioLeistung_Kapitel();
+		/**
+		 * The meta object literal for the '<em><b>Interpretation</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IPHYSIO_LEISTUNG__INTERPRETATION = eINSTANCE.getIPhysioLeistung_Interpretation();
 
 	}
 

@@ -32,17 +32,14 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
-import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.molemax.views.MolemaxPrefs;
+import ch.elexis.molemax.MolemaxSettings;
 import ch.elexis.molemax.views2.MolemaxImagePrefs;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
@@ -527,7 +524,7 @@ public class Tracker extends PersistentObject {
 			date = getLastSequenceDate(p);
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(getImagePath(MolemaxPrefs.BASEDIR)).append(File.separator);
+		ret.append(MolemaxSettings.getImageBaseDirectory()).append(File.separator);
 		String name = p.getDescription1();
 		ret.append(name.length() > 2 ? name.substring(0, 2) : name);
 		String vname = p.getDescription2();
@@ -559,7 +556,7 @@ public class Tracker extends PersistentObject {
 	}
 
 	public static String makeDescriptorImage(final IPatient p) {
-		String basePath = getImagePath(MolemaxPrefs.BASEDIR);
+		String basePath = MolemaxSettings.getImageBaseDirectory();
 		String customPath = getImagePath(MolemaxImagePrefs.CUSTOM_BASEDIR);
 		
 		if (StringUtils.isBlank(basePath) || StringUtils.isBlank(customPath)) {
@@ -696,12 +693,6 @@ public class Tracker extends PersistentObject {
 	}
 
 	private static String getImagePath(String key) {
-		ConfigServicePreferenceStore globalStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
-		boolean isGlobal = globalStore.getBoolean(MolemaxImagePrefs.STORE_GLOBAL);
-		if (isGlobal) {
-			return globalStore.getString(key);
-		} else {
-			return LocalConfigService.get(key, StringUtils.EMPTY);
-		}
+		return MolemaxSettings.getPlain(key);
 	}
 }

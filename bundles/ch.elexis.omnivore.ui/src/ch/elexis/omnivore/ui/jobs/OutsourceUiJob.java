@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -42,11 +43,18 @@ public class OutsourceUiJob {
 							if (monitor.isCanceled())
 								return;
 							monitor.subTask("Datei: " + docHandle.getTitle());
-							if (docHandle.isExported()) {
-								already++;
-							} else if (docHandle.exportToFileSystem()) {
-								done++;
-							} else {
+							try {
+								if (docHandle.isExported()) {
+									already++;
+								} else if (docHandle.exportToFileSystem()) {
+									done++;
+								} else {
+									error++;
+								}
+							} catch (Exception e) {
+								LoggerFactory.getLogger(getClass())
+										.error("Exception exporting [" + docHandle != null ? docHandle.getId()
+												: "?" + "] to file system", e);
 								error++;
 							}
 							monitor.worked(1);
@@ -59,12 +67,9 @@ public class OutsourceUiJob {
 									+ "\nEs konnten " + error + " nicht ausgelagert werden.");
 				}
 			});
-		} catch (InvocationTargetException ite) {
-			ite.printStackTrace();
-		} catch (InterruptedException ie) {
-			ie.printStackTrace();
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass()).error("Exception exporting omnivore to file system", e);
 		}
-
 		return null;
 	}
 

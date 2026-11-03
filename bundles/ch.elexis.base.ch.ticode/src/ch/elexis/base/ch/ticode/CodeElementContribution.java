@@ -94,9 +94,8 @@ public class CodeElementContribution implements ICodeElementServiceContribution,
 
 	@Override
 	public Optional<String> storeToString(Identifiable identifiable) {
-		if (identifiable instanceof TessinerCode) {
-			return Optional
-					.of(STS_CLASS + IStoreToStringContribution.DOUBLECOLON + ((TessinerCode) identifiable).getId());
+		if (identifiable instanceof TessinerCode || identifiable instanceof TransientTessinerCode) {
+			return Optional.of(STS_CLASS + IStoreToStringContribution.DOUBLECOLON + identifiable.getId());
 		}
 		return Optional.empty();
 	}

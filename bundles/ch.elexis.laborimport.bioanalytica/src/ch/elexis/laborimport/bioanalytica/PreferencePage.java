@@ -30,9 +30,10 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String JAR_PATH = BioanalyticaSettings.JAR_PATH;
-	public static final String INI_PATH = BioanalyticaSettings.INI_PATH;
-	public static final String DL_DIR = BioanalyticaSettings.DL_DIR;
+	public static final String JAR_PATH = "bioanalytica/jar_path"; //$NON-NLS-1$
+	public static final String INI_PATH = "bioanalytica/ini_path"; //$NON-NLS-1$
+	public static final String DL_DIR = "bioanalytica/downloaddir"; //$NON-NLS-1$
+	public static final String PATHS_GLOBAL = "bioanalytica/paths_global"; //$NON-NLS-1$
 
 	private BooleanFieldEditor bStoreGlobal;
 
@@ -48,14 +49,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(BioanalyticaSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(PATHS_GLOBAL,
 				Messages.PreferencePage_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(BioanalyticaSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(PATHS_GLOBAL, global);
 					updatePathStores(global);
 				}
 			}
@@ -63,9 +64,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addField(bStoreGlobal);
 
 		pathGroup = new OsPathEditorGroup(getFieldEditorParent(), SWT.NONE);
-		jarEditor = pathGroup.addPathEditor(BioanalyticaSettings.JAR_PATH, Messages.PreferencePage_JMedTrasferJar);
-		iniEditor = pathGroup.addPathEditor(BioanalyticaSettings.INI_PATH, Messages.PreferencePage_JMedTrasferJni);
-		pathGroup.addPathEditor(BioanalyticaSettings.DL_DIR, Messages.PreferencePage_DownloadDir);
+		jarEditor = pathGroup.addPathEditor(JAR_PATH, Messages.PreferencePage_JMedTrasferJar);
+		iniEditor = pathGroup.addPathEditor(INI_PATH, Messages.PreferencePage_JMedTrasferJni);
+		pathGroup.addPathEditor(DL_DIR, Messages.PreferencePage_DownloadDir);
 
 		setOptionalHint(jarEditor);
 		setOptionalHint(iniEditor);
@@ -80,7 +81,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStores(BioanalyticaSettings.isStoreGlobal());
+		updatePathStores(ConfigServiceHolder.getGlobal(PATHS_GLOBAL, false));
 		return control;
 	}
 

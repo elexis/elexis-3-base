@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.FileLocator;
@@ -42,8 +43,11 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -75,29 +79,32 @@ public class Importer extends ImporterPage {
 	@Override
 	public Composite createPage(final Composite parent) {
 		// try to dynamically load the openmedical JAR file
-		File jar = LabtopSettings.getJarFile().orElse(null);
-		if (jar != null && jar.canRead()) {
-			try {
-				URLClassLoader urlLoader = getURLClassLoader(jar.toURI().toURL());
-
-				Class<?> openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
-
-				// try to get the download method
-				Method meth;
+		Optional<File> jarFile = getLocalFile(PreferencePage.JAR_PATH);
+		if (jarFile.isPresent()) {
+			File jar = jarFile.get();
+			if (jar.canRead()) {
 				try {
-					meth = openmedicalClass.getMethod("download", String[].class);
+					URLClassLoader urlLoader = getURLClassLoader(new URL("file", null, jar.getAbsolutePath()));
+
+					Class<?> openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
+
+					// try to get the download method
+					Method meth;
+					try {
+						meth = openmedicalClass.getMethod("download", String[].class);
+					} catch (Throwable e) {
+						throw e;
+					}
+
+					// try to get an instance
+					Object obj = openmedicalClass.newInstance();
+
+					// success (no exception); set the global variables
+					openmedicalObject = obj;
+					openmedicalDownloadMethod = meth;
 				} catch (Throwable e) {
-					throw e;
+					// loading the class failed; do nothing
 				}
-
-				// try to get an instance
-				Object obj = openmedicalClass.getDeclaredConstructor().newInstance();
-
-				// success (no exception); set the global variables
-				openmedicalObject = obj;
-				openmedicalDownloadMethod = meth;
-			} catch (Throwable e) {
-				// loading the class failed; do nothing
 			}
 		}
 
@@ -111,17 +118,23 @@ public class Importer extends ImporterPage {
 		return ret;
 	}
 
+	private Optional<File> getLocalFile(String preference) {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = configService.get(PreferencePage.PATHS_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(preference, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(preference, configService);
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value);
+	}
+
 	private Result<?> importDirect() {
 		Result<String> result = new Result<String>("OK");
 
-		String configuredDir = LabtopSettings.get(LabtopSettings.DL_DIR);
-		File downloadDir = StringUtils.isBlank(configuredDir) ? CoreHub.getTempDir()
-				: LabtopSettings.resolveLocalFile(configuredDir).orElse(null);
-		String downloadDirPath = downloadDir != null ? downloadDir.getAbsolutePath() : null;
-		String iniPath = LabtopSettings.getIniFile().map(File::getAbsolutePath).orElse(null);
+		File downloadDir = getLocalFile(PreferencePage.DL_DIR).orElse(CoreHub.getTempDir());
+		String downloadDirPath = downloadDir.getAbsolutePath();
+		String iniPath = getLocalFile(PreferencePage.INI_PATH).map(File::getAbsolutePath).orElse(null);
 
 		int res = -1;
-		if (openmedicalObject != null && iniPath != null && downloadDirPath != null) {
+		if (openmedicalObject != null && iniPath != null) {
 			try {
 				Object omResult = openmedicalDownloadMethod.invoke(openmedicalObject,
 						new Object[] { new String[] { "--download", downloadDirPath, "--logPath", downloadDirPath,
@@ -140,7 +153,7 @@ public class Importer extends ImporterPage {
 		}
 		// if (res > 0) {
 		res = 0;
-		if (downloadDir != null && downloadDir.isDirectory()) {
+		if (downloadDir.isDirectory()) {
 			File archiveDir = new File(downloadDir, "archive");
 			if (!archiveDir.exists()) {
 				archiveDir.mkdir();

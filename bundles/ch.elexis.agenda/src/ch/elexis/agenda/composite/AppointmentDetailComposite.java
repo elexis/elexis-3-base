@@ -953,8 +953,9 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			appointment.setSubjectOrPatient(null);
 		}
-		List<IAppointment> kombiAppointments = appointmentService.getKombiTermineIfApplicable(appointment,
-				getSelectedContact(), comboType.getText(), txtPatSearch.getText());
+		List<IAppointment> kombiAppointments = chkTerminLinks.getSelection() ? Collections.emptyList()
+				: appointmentService.getKombiTermineIfApplicable(appointment, getSelectedContact(),
+						comboType.getText(), txtPatSearch.getText());
 		if (!kombiAppointments.isEmpty()) {
 			for (IAppointment kombi : kombiAppointments) {
 				CoreModelServiceHolder.get().save(kombi);

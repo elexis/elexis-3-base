@@ -33,9 +33,10 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String JAR_PATH = ViollierSettings.JAR_PATH;
-	public static final String INI_PATH = ViollierSettings.INI_PATH;
-	public static final String DL_DIR = ViollierSettings.DL_DIR;
+	public static final String JAR_PATH = "viollier/jar_path"; //$NON-NLS-1$
+	public static final String INI_PATH = "viollier/ini_path"; //$NON-NLS-1$
+	public static final String DL_DIR = "viollier/downloaddir"; //$NON-NLS-1$
+	public static final String PATHS_GLOBAL = "viollier/paths_global"; //$NON-NLS-1$
 
 	private BooleanFieldEditor bStoreGlobal;
 
@@ -51,14 +52,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(ViollierSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(PATHS_GLOBAL,
 				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(ViollierSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(PATHS_GLOBAL, global);
 					updatePathStores(global);
 				}
 			}
@@ -66,9 +67,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		addField(bStoreGlobal);
 
 		pathGroup = new OsPathEditorGroup(getFieldEditorParent(), SWT.NONE);
-		jarEditor = pathGroup.addPathEditor(ViollierSettings.JAR_PATH, Messages.PreferencePage_JMedTrasferJar);
-		iniEditor = pathGroup.addPathEditor(ViollierSettings.INI_PATH, Messages.PreferencePage_JMedTrasferJni);
-		pathGroup.addPathEditor(ViollierSettings.DL_DIR, Messages.PreferencePage_DownloadDir);
+		jarEditor = pathGroup.addPathEditor(JAR_PATH, Messages.PreferencePage_JMedTrasferJar);
+		iniEditor = pathGroup.addPathEditor(INI_PATH, Messages.PreferencePage_JMedTrasferJni);
+		pathGroup.addPathEditor(DL_DIR, Messages.PreferencePage_DownloadDir);
 
 		setOptionalHint(jarEditor);
 		setOptionalHint(iniEditor);
@@ -83,7 +84,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStores(ViollierSettings.isStoreGlobal());
+		updatePathStores(ConfigServiceHolder.getGlobal(PATHS_GLOBAL, false));
 		return control;
 	}
 

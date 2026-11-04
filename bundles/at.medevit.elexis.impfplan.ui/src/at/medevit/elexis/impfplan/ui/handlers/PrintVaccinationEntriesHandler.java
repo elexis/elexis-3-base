@@ -53,7 +53,11 @@ import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.events.MessageEvent;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -146,9 +150,9 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 			contentStream.close();
 		}
 
-		String outputPath = ConfigServiceHolder.getUser(PreferencePage.VAC_PDF_OUTPUTDIR,
-				CoreHub.getWritableUserDir().getAbsolutePath());
-		if (outputPath.equals(CoreHub.getWritableUserDir().getAbsolutePath())) {
+		String outputPath = getOutputDirectory();
+		if (StringUtils.isBlank(outputPath)) {
+			outputPath = CoreHub.getWritableUserDir().getAbsolutePath();
 			SWTHelper.showInfo("Kein Ausgabeverzeichnis definiert", "Ausgabe erfolgt in: " + outputPath
 					+ "\nDas Ausgabeverzeichnis kann unter Einstellungen\\Klinische Hilfsmittel\\Impfplan definiert werden.");
 		}
@@ -158,6 +162,16 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		document.close();
 		// open with system viewer
 		Program.launch(pdf.getAbsolutePath());
+	}
+
+	private String getOutputDirectory() {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = configService.get(PreferencePage.PATHS_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(PreferencePage.VAC_PDF_OUTPUTDIR, configService)
+				: PreferencesUtil.getOsSpecificContactPreference(PreferencePage.VAC_PDF_OUTPUTDIR,
+						ContextServiceHolder.get().getActiveUserContact().orElse(null), configService);
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value).map(File::getAbsolutePath)
+				.orElse(StringUtils.EMPTY);
 	}
 
 	static BufferedImage convertToAWT(ImageData data) {

@@ -25,13 +25,12 @@ import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.molemax.Messages;
-import ch.elexis.molemax.MolemaxSettings;
 
 public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	private List<Control> controlledWidgets = new ArrayList<>();
-	public static final String STORE_GLOBAL = MolemaxSettings.CFG_PATHS_GLOBAL;
-	public static final String CUSTOM_BASEDIR = MolemaxSettings.CUSTOM_BASEDIR;
-	public static final String BASEDIR = MolemaxSettings.BASEDIR;
+	public static final String STORE_GLOBAL = "molemax/store_global";
+	public static final String CUSTOM_BASEDIR = "molemax/custom_imagebase";
+	public static final String BASEDIR = "molemax/imagebase";
 	private BooleanFieldEditor bStoreGlobal;
 	private URIFieldEditorComposite baseDirEditor;
 	private StringFieldEditor customBaseDirEditor;

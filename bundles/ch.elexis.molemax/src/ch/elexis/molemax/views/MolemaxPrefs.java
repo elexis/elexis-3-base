@@ -27,10 +27,10 @@ import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.molemax.Messages;
-import ch.elexis.molemax.MolemaxSettings;
+import ch.elexis.molemax.views2.MolemaxImagePrefs;
 
 public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	public static final String BASEDIR = MolemaxSettings.BASEDIR;
+	public static final String BASEDIR = "molemax/imagebase";
 
 	private BooleanFieldEditor bStoreGlobal;
 
@@ -43,21 +43,21 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(MolemaxSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(MolemaxImagePrefs.STORE_GLOBAL,
 				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(MolemaxSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(MolemaxImagePrefs.STORE_GLOBAL, global);
 					updatePathStore(global);
 				}
 			}
 		};
 		addField(bStoreGlobal);
 
-		baseDirEditor = new URIFieldEditorComposite(MolemaxSettings.BASEDIR, Messages.MolemaxPrefs_basedir,
+		baseDirEditor = new URIFieldEditorComposite(BASEDIR, Messages.MolemaxPrefs_basedir,
 				getFieldEditorParent(), SWT.NONE);
 		baseDirEditor.setEmptyStringAllowed(true);
 	}
@@ -67,7 +67,7 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStore(MolemaxSettings.isStoreGlobal());
+		updatePathStore(ConfigServiceHolder.getGlobal(MolemaxImagePrefs.STORE_GLOBAL, false));
 		return control;
 	}
 

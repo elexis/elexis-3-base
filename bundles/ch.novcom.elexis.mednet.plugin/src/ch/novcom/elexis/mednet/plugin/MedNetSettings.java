@@ -11,12 +11,9 @@
 package ch.novcom.elexis.mednet.plugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -25,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.preferences.PreferencesUtil;
-import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 
@@ -193,32 +189,11 @@ public class MedNetSettings {
 		exePath = null;
 		String exePathString = PreferencesUtil.getOsSpecificGlobalPreference(cfgExePath, ConfigServiceHolder.get());
 		if (StringUtils.isNotBlank(exePathString)) {
-			exePath = resolveLocalPath(exePathString);
+			exePath = VirtualFilesystemServiceHolder.get().toLocalFile(exePathString).map(File::toPath).orElse(null);
 			if (exePath == null || !Files.isRegularFile(exePath)) {
 				LOGGER.error(logPrefix + "MedNet exe path: " + exePathString + " is not a valid file");//$NON-NLS-1$
 				exePath = null;
 			}
-		}
-	}
-
-	private static Path resolveLocalPath(String pathOrUri) {
-		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
-		if (vfsService != null) {
-			try {
-				Optional<File> file = vfsService.of(pathOrUri).toFile();
-				if (file.isPresent()) {
-					return file.get().toPath();
-				}
-			} catch (IOException e) {
-				LOGGER.debug("Location [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
-						IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
-			}
-		}
-		try {
-			return Paths.get(pathOrUri);
-		} catch (Exception e) {
-			LOGGER.error("Location [{}] is not a valid path", pathOrUri, e); //$NON-NLS-1$
-			return null;
 		}
 	}
 

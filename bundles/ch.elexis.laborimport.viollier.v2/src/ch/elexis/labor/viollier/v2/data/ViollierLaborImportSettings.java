@@ -12,11 +12,17 @@
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2.data;
 
+import java.io.File;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
-import ch.elexis.core.data.activator.CoreHub;
+
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Mandant;
-import ch.rgw.io.Settings;
 
 /**
  * Klasse zum Verwalten der Einstellungen zum Viollier Labor-Importer Plugin
@@ -24,8 +30,6 @@ import ch.rgw.io.Settings;
 public class ViollierLaborImportSettings {
 	public static final String PLUGIN_ID = "ch.elexis.laborimport.viollier.v2.ViollierLaborImportSettings"; //$NON-NLS-1$
 	public static final String cfgBase = "ch/elexis/laborimport/viollier/v2/ViollierLaborImport"; //$NON-NLS-1$
-
-	Settings machineCfg = CoreHub.localCfg; // Settings: lokal auf dem PC (Windows: Registry)
 
 	Mandant mandant;
 
@@ -476,11 +480,11 @@ public class ViollierLaborImportSettings {
 		globalDocumentCategory = null;
 
 		// Globale Settings
-		globalJMedTransferJar = ConfigServiceHolder.getGlobal(cfgJMedTransferJar, StringUtils.EMPTY);
+		globalJMedTransferJar = getGlobalPath(cfgJMedTransferJar);
 		globalJMedTransferParam = ConfigServiceHolder.getGlobal(cfgJMedTransferParam, StringUtils.EMPTY);
-		globalDirDownload = ConfigServiceHolder.getGlobal(cfgDirDownload, StringUtils.EMPTY);
-		globalDirArchive = ConfigServiceHolder.getGlobal(cfgDirArchive, StringUtils.EMPTY);
-		globalDirError = ConfigServiceHolder.getGlobal(cfgDirError, StringUtils.EMPTY);
+		globalDirDownload = getGlobalPath(cfgDirDownload);
+		globalDirArchive = getGlobalPath(cfgDirArchive);
+		globalDirError = getGlobalPath(cfgDirError);
 		temp = ConfigServiceHolder.getGlobal(cfgArchivePurgeInterval, StringUtils.EMPTY);
 		try {
 			globalArchivePurgeInterval = Integer.parseInt(temp);
@@ -494,14 +498,14 @@ public class ViollierLaborImportSettings {
 		mandantDocumentCategory = ConfigServiceHolder.getMandator(cfgDocumentCategory, StringUtils.EMPTY);
 
 		// Machine Settings
-		settingText = machineCfg.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$
+		settingText = LocalConfigService.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$
 		machineUseGlobalSettings = Boolean.parseBoolean(settingText);
-		machineJMedTransferJar = machineCfg.get(cfgJMedTransferJar, StringUtils.EMPTY);
-		machineJMedTransferParam = machineCfg.get(cfgJMedTransferParam, StringUtils.EMPTY);
-		machineDirDownload = machineCfg.get(cfgDirDownload, StringUtils.EMPTY);
-		machineDirArchive = machineCfg.get(cfgDirArchive, StringUtils.EMPTY);
-		machineDirError = machineCfg.get(cfgDirError, StringUtils.EMPTY);
-		temp = machineCfg.get(cfgArchivePurgeInterval, StringUtils.EMPTY);
+		machineJMedTransferJar = getMachinePath(cfgJMedTransferJar);
+		machineJMedTransferParam = LocalConfigService.get(cfgJMedTransferParam, StringUtils.EMPTY);
+		machineDirDownload = getMachinePath(cfgDirDownload);
+		machineDirArchive = getMachinePath(cfgDirArchive);
+		machineDirError = getMachinePath(cfgDirError);
+		temp = LocalConfigService.get(cfgArchivePurgeInterval, StringUtils.EMPTY);
 		try {
 			machineArchivePurgeInterval = Integer.parseInt(temp);
 		} catch (Exception e) {
@@ -514,11 +518,11 @@ public class ViollierLaborImportSettings {
 	public void saveSettings() {
 
 		// Globale Settings
-		ConfigServiceHolder.setGlobal(cfgJMedTransferJar, globalJMedTransferJar);
+		setGlobalPath(cfgJMedTransferJar, globalJMedTransferJar);
 		ConfigServiceHolder.setGlobal(cfgJMedTransferParam, globalJMedTransferParam);
-		ConfigServiceHolder.setGlobal(cfgDirDownload, globalDirDownload);
-		ConfigServiceHolder.setGlobal(cfgDirArchive, globalDirArchive);
-		ConfigServiceHolder.setGlobal(cfgDirError, globalDirError);
+		setGlobalPath(cfgDirDownload, globalDirDownload);
+		setGlobalPath(cfgDirArchive, globalDirArchive);
+		setGlobalPath(cfgDirError, globalDirError);
 		ConfigServiceHolder.setGlobal(cfgArchivePurgeInterval, globalArchivePurgeInterval);
 		ConfigServiceHolder.setGlobal(cfgDocumentCategory, globalDocumentCategory);
 
@@ -527,13 +531,59 @@ public class ViollierLaborImportSettings {
 		ConfigServiceHolder.setMandator(cfgDocumentCategory, mandantDocumentCategory);
 
 		// Machine Settings
-		machineCfg.set(cfgMachineUseGlobalSettings, machineUseGlobalSettings.toString());
-		machineCfg.set(cfgJMedTransferJar, machineJMedTransferJar);
-		machineCfg.set(cfgJMedTransferParam, machineJMedTransferParam);
-		machineCfg.set(cfgDirDownload, machineDirDownload);
-		machineCfg.set(cfgDirArchive, machineDirArchive);
-		machineCfg.set(cfgDirError, machineDirError);
-		machineCfg.set(cfgArchivePurgeInterval, machineArchivePurgeInterval);
-		machineCfg.flush();
+		LocalConfigService.set(cfgMachineUseGlobalSettings, machineUseGlobalSettings.toString());
+		setMachinePath(cfgJMedTransferJar, machineJMedTransferJar);
+		LocalConfigService.set(cfgJMedTransferParam, machineJMedTransferParam);
+		setMachinePath(cfgDirDownload, machineDirDownload);
+		setMachinePath(cfgDirArchive, machineDirArchive);
+		setMachinePath(cfgDirError, machineDirError);
+		LocalConfigService.set(cfgArchivePurgeInterval, machineArchivePurgeInterval);
+	}
+
+	public static String getOsSpecificKey(String preference) {
+		return PreferencesUtil.getOsSpecificPreferenceName(CoreUtil.getOperatingSystemType(), preference);
+	}
+
+
+	private static String getGlobalPath(String preference) {
+		String value = ConfigServiceHolder.getGlobal(getOsSpecificKey(preference), null);
+		if (StringUtils.isBlank(value)) {
+			value = ConfigServiceHolder.getGlobal(preference, StringUtils.EMPTY);
+		}
+		return StringUtils.defaultString(value);
+	}
+
+	private static String getMachinePath(String preference) {
+		String value = LocalConfigService.get(getOsSpecificKey(preference), null);
+		if (StringUtils.isBlank(value)) {
+			value = LocalConfigService.get(preference, StringUtils.EMPTY);
+		}
+		return StringUtils.defaultString(value);
+	}
+
+	private static void setGlobalPath(String preference, String value) {
+		ConfigServiceHolder.setGlobal(getOsSpecificKey(preference), value);
+		if (StringUtils.isBlank(value)) {
+			ConfigServiceHolder.setGlobal(preference, value);
+		}
+	}
+
+	private static void setMachinePath(String preference, String value) {
+		LocalConfigService.set(getOsSpecificKey(preference), StringUtils.defaultString(value));
+		if (StringUtils.isBlank(value)) {
+			LocalConfigService.set(preference, StringUtils.EMPTY);
+		}
+	}
+
+	public Optional<File> getDirDownloadFile() {
+		return VirtualFilesystemServiceHolder.get().toLocalFile(getDirDownload());
+	}
+
+	public Optional<File> getDirArchiveFile() {
+		return VirtualFilesystemServiceHolder.get().toLocalFile(getDirArchive());
+	}
+
+	public Optional<File> getDirErrorFile() {
+		return VirtualFilesystemServiceHolder.get().toLocalFile(getDirError());
 	}
 }

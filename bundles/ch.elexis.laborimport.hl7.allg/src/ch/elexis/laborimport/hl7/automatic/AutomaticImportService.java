@@ -22,7 +22,6 @@ import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.laborimport.hl7.command.ImportFileRunnable;
-import ch.elexis.laborimport.hl7.universal.HL7ImportDirectory;
 import ch.elexis.laborimport.hl7.universal.Preferences;
 import ch.rgw.tools.Result;
 
@@ -51,8 +50,7 @@ public class AutomaticImportService {
 		@Override
 		public void run() {
 			if (configService.getLocal(Preferences.CFG_DIRECTORY_AUTOIMPORT, false)) {
-				Optional<IVirtualFilesystemHandle> dir = HL7ImportDirectory.getDirectoryHandle(vfsService,
-						HL7ImportDirectory.getDirectory(configService));
+				Optional<IVirtualFilesystemHandle> dir = Preferences.getDirectoryHandle(configService, vfsService);
 				if (dir.isPresent() && isElexisRunning()) {
 					List<IVirtualFilesystemHandle> importFiles = getImportFiles(dir.get());
 					if (!importFiles.isEmpty()) {

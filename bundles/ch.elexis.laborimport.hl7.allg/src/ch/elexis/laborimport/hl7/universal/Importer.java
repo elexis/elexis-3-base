@@ -25,6 +25,7 @@ import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
@@ -48,7 +49,8 @@ public class Importer extends Action implements IAction {
 			return;
 		}
 
-		Optional<IVirtualFilesystemHandle> directory = HL7ImportDirectory.getDirectoryHandle();
+		Optional<IVirtualFilesystemHandle> directory = Preferences.getDirectoryHandle(ConfigServiceHolder.get(),
+				VirtualFilesystemServiceHolder.get());
 		if (directory.isEmpty()) {
 			SWTHelper.showError("bad directory for import", "Konfigurationsfehler",
 					"Das Transferverzeichnis ist nicht korrekt eingestellt.");

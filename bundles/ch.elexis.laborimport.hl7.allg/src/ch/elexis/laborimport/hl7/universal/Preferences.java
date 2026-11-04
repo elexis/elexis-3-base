@@ -10,6 +10,11 @@
  ******************************************************************************/
 package ch.elexis.laborimport.hl7.universal;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -21,11 +26,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
@@ -33,7 +43,8 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.ComboFieldEditor;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	public static final String CFG_DIRECTORY = HL7ImportDirectory.CFG_DIRECTORY;
+	public static final String CFG_DIRECTORY = "hl7/downloaddir";
+	public static final String CFG_DIRECTORY_GLOBAL = "hl7/downloaddir_global"; //$NON-NLS-1$
 	public static final String CFG_DIRECTORY_AUTOIMPORT = "hl7/autoimport";
 
 	private IDocumentManager docManager;
@@ -55,21 +66,21 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(HL7ImportDirectory.CFG_DIRECTORY_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(CFG_DIRECTORY_GLOBAL,
 				Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(HL7ImportDirectory.CFG_DIRECTORY_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(CFG_DIRECTORY_GLOBAL, global);
 					updateDirectoryStore(global);
 				}
 			}
 		};
 		addField(bStoreGlobal);
 
-		directoryEditor = new URIFieldEditorComposite(HL7ImportDirectory.CFG_DIRECTORY, Messages.Prefs_ImportDirectory,
+		directoryEditor = new URIFieldEditorComposite(CFG_DIRECTORY, Messages.Prefs_ImportDirectory,
 				getFieldEditorParent(), SWT.NONE);
 		directoryEditor.setEmptyStringAllowed(true);
 
@@ -94,7 +105,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updateDirectoryStore(HL7ImportDirectory.isStoreGlobal());
+		updateDirectoryStore(ConfigServiceHolder.getGlobal(CFG_DIRECTORY_GLOBAL, false));
 		return control;
 	}
 
@@ -103,6 +114,25 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			return;
 		}
 		directoryEditor.setPreferenceStore(new ConfigServicePreferenceStore(global ? Scope.GLOBAL : Scope.LOCAL));
+	}
+
+	public static Optional<IVirtualFilesystemHandle> getDirectoryHandle(IConfigService configService,
+			IVirtualFilesystemService vfsService) {
+		String directory = configService.get(CFG_DIRECTORY_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(CFG_DIRECTORY, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(CFG_DIRECTORY, configService);
+		if (StringUtils.isBlank(directory)) {
+			return Optional.empty();
+		}
+		try {
+			IVirtualFilesystemHandle handle = IVirtualFilesystemService.isUrl(directory) ? vfsService.of(directory)
+					: vfsService.of(new File(directory));
+			return handle.exists() && handle.isDirectory() ? Optional.of(handle) : Optional.empty();
+		} catch (IOException e) {
+			LoggerFactory.getLogger(Preferences.class).warn("Could not access HL7 import directory [{}]",
+					IVirtualFilesystemService.hidePasswordInUrlString(directory), e);
+			return Optional.empty();
+		}
 	}
 
 	@Override

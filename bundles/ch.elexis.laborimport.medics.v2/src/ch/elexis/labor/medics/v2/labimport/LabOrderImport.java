@@ -27,6 +27,7 @@ import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabContactResolver;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.ImporterPatientResolver;
@@ -34,7 +35,6 @@ import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImport
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.labor.medics.v2.MedicsPreferencePage;
-import ch.elexis.labor.medics.v2.MedicsSettings;
 import ch.elexis.labor.medics.v2.Messages;
 import ch.elexis.labor.medics.v2.util.MedicsLogger;
 import ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode;
@@ -82,17 +82,19 @@ public class LabOrderImport extends ImporterPage {
 			UpdateLabItemCode.execute();
 		}
 
-		String downloadDirPath = MedicsSettings.getDownloadDirectory();
-		IVirtualFilesystemHandle downloadDir = MedicsSettings.resolveHandle(downloadDirPath).orElse(null);
+		String downloadDirPath = MedicsPreferencePage.getDownloadDir();
 		Result<Object> result = null;
 		MedicsLogger.getLogger().println(MessageFormat.format("HL7 Dateien in Verzeichnis {0} lesen..", //$NON-NLS-1$
 				IVirtualFilesystemService.hidePasswordInUrlString(downloadDirPath)));
-		if (downloadDir != null && downloadDir.isDirectory()) {
-			result = mfParser.importFromHandle(
-					downloadDir, new DefaultImportStrategyFactory()
-							.setPDFImportCategory(MedicsPreferencePage.getDokumentKategorie())
-							.setMoveAfterImport(true),
-					hl7parser, new DefaultPersistenceHandler());
+		if (StringUtils.isNotBlank(downloadDirPath)) {
+			IVirtualFilesystemHandle downloadDir = MedicsPreferencePage.getDirectoryHandle(downloadDirPath);
+			if (downloadDir.isDirectory()) {
+				result = mfParser.importFromHandle(
+						downloadDir, new DefaultImportStrategyFactory()
+								.setPDFImportCategory(MedicsPreferencePage.getDokumentKategorie())
+								.setMoveAfterImport(true),
+						hl7parser, new DefaultPersistenceHandler());
+			}
 		}
 
 		MedicsLogger.getLogger()
@@ -121,7 +123,8 @@ public class LabOrderImport extends ImporterPage {
 		long lastTime = cal.getTime().getTime();
 
 		// Archiv löschen
-		File downloadDir = MedicsSettings.resolveLocalFile(MedicsSettings.getDownloadDirectory()).orElse(null);
+		File downloadDir = VirtualFilesystemServiceHolder.get().toLocalFile(MedicsPreferencePage.getDownloadDir())
+				.orElse(null);
 		if (downloadDir == null) {
 			MedicsLogger.getLogger()
 					.println("Archiv wird nur bei einem lokalen Download Verzeichnis bereinigt."); //$NON-NLS-1$
@@ -171,7 +174,7 @@ public class LabOrderImport extends ImporterPage {
 
 		final Text txtDownloadDir = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
 		txtDownloadDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		String downloadDir = MedicsSettings.getDownloadDirectory();
+		String downloadDir = MedicsPreferencePage.getDownloadDir();
 		if (downloadDir != null) {
 			txtDownloadDir.setText(IVirtualFilesystemService.hidePasswordInUrlString(downloadDir));
 		}

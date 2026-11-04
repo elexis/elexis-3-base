@@ -12,6 +12,7 @@ import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.utils.CoreUtil;
@@ -24,7 +25,6 @@ import ch.elexis.hl7.model.EncapsulatedData;
 import ch.elexis.hl7.model.StringData;
 import ch.elexis.hl7.model.TextData;
 import ch.elexis.labor.medics.v2.MedicsPreferencePage;
-import ch.elexis.labor.medics.v2.MedicsSettings;
 import ch.elexis.labor.medics.v2.Messages;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeSpan;
@@ -251,7 +251,7 @@ public class PatientLabor {
 
 		// Tmp Verzeichnis überprüfen, bei entferntem Download Verzeichnis (z.B. smb)
 		// wird das temporäre Verzeichnis von Elexis verwendet
-		File tmpDir = MedicsSettings.resolveLocalFile(MedicsSettings.getDownloadDirectory())
+		File tmpDir = VirtualFilesystemServiceHolder.get().toLocalFile(MedicsPreferencePage.getDownloadDir())
 				.map(dir -> new File(dir, "tmp")) //$NON-NLS-1$
 				.orElseGet(() -> new File(CoreUtil.getTempDir(), "medics")); //$NON-NLS-1$
 		if (!tmpDir.exists()) {

@@ -1,5 +1,7 @@
 package ch.elexis.labor.medics.v2;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +24,15 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
@@ -33,13 +40,14 @@ import ch.elexis.labor.medics.v2.order.WebAis;
 
 public class MedicsPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String DOWNLOAD_DIR = MedicsSettings.DOWNLOAD_DIR;
-	public static final String UPLOAD_DIR = MedicsSettings.UPLOAD_DIR;
-	public static final String IMED_DIR = MedicsSettings.IMED_DIR;
-	public static final String ARCHIV_DIR = MedicsSettings.ARCHIV_DIR;
-	public static final String ERROR_DIR = MedicsSettings.ERROR_DIR;
+	public static final String DOWNLOAD_DIR = "medics/download"; //$NON-NLS-1$
+	public static final String UPLOAD_DIR = "medics/upload"; //$NON-NLS-1$
+	public static final String IMED_DIR = "medics/uploadimed"; //$NON-NLS-1$
+	public static final String ARCHIV_DIR = "medics/archiv"; //$NON-NLS-1$
+	public static final String ERROR_DIR = "medics/error"; //$NON-NLS-1$
 	public static final String DOKUMENT_CATEGORY = "medics/extern"; //$NON-NLS-1$
 	public static final String DELETE_ARCHIV_DAYS = "medics/del_archiv/days"; //$NON-NLS-1$
+	public static final String PATHS_GLOBAL = "medics/paths_global"; //$NON-NLS-1$
 
 	private static final String DEFAULT_DOWNLOAD = StringUtils.EMPTY;
 	private static final String DEFAULT_UPLOAD = StringUtils.EMPTY;
@@ -84,7 +92,7 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStores(MedicsSettings.isStoreGlobal());
+		updatePathStores(ConfigServiceHolder.getGlobal(PATHS_GLOBAL, false));
 
 		Button btnChangeApi = new Button(container, SWT.PUSH);
 		btnChangeApi.addSelectionListener(new SelectionAdapter() {
@@ -160,14 +168,14 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(MedicsSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(PATHS_GLOBAL,
 				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(MedicsSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(PATHS_GLOBAL, global);
 					updatePathStores(global);
 				}
 			}
@@ -197,7 +205,7 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 	}
 
 	public static String getDownloadDir() {
-		return MedicsSettings.getDownloadDirectory();
+		return getPath(DOWNLOAD_DIR);
 	}
 
 	public static String getDokumentKategorie() {
@@ -209,11 +217,25 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 	}
 
 	public static String getUploadDirimed() {
-		return MedicsSettings.getImedUploadDirectory();
+		return getPath(IMED_DIR);
 	}
 
 	public static String getUploadDir() {
-		return MedicsSettings.getUploadDirectory();
+		return getPath(UPLOAD_DIR);
+	}
+
+	private static String getPath(String preference) {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = configService.get(PATHS_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(preference, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(preference, configService);
+		return StringUtils.defaultString(value);
+	}
+
+	public static IVirtualFilesystemHandle getDirectoryHandle(String pathOrUrl) throws IOException {
+		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
+		return IVirtualFilesystemService.isUrl(pathOrUrl) ? vfsService.of(pathOrUrl)
+				: vfsService.of(new File(pathOrUrl));
 	}
 
 	@Override

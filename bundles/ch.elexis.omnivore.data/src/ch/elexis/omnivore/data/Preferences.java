@@ -18,12 +18,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.activator.CoreHubHelper;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class Preferences {
 
@@ -56,7 +56,7 @@ public class Preferences {
 			if (isGlobal) {
 				fsSettingsStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
 			} else {
-				fsSettingsStore = new SettingsPreferenceStore(CoreHub.localCfg);
+				fsSettingsStore = new ConfigServicePreferenceStore(Scope.LOCAL);
 			}
 		}
 	}
@@ -68,7 +68,13 @@ public class Preferences {
 
 	public static String getBasepath() {
 		initGlobalConfig();
-		return fsSettingsStore.getString(BASEPATH);
+		return StringUtils.defaultString(readPathSetting(BASEPATH));
+	}
+
+	private static String readPathSetting(String preference) {
+		return ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(preference, ConfigServiceHolder.get())
+				: PreferencesUtil.getOsSpecificLocalPreference(preference, ConfigServiceHolder.get());
 	}
 
 	public static boolean getDateModifiable() {
@@ -129,7 +135,7 @@ public class Preferences {
 		if (PREF_SRC_PATTERN[i].equals(StringUtils.EMPTY)) {
 			PREF_SRC_PATTERN[i] = PREFERENCE_SRC_PATTERN + i.toString().trim(); // $NON-NLS-1$
 		}
-		return CoreHub.localCfg.get(PREF_SRC_PATTERN[i], StringUtils.EMPTY).trim();
+		return LocalConfigService.get(PREF_SRC_PATTERN[i], StringUtils.EMPTY).trim();
 	}
 
 	// ----------------------------------------------------------------------------
@@ -161,7 +167,8 @@ public class Preferences {
 		if (PREF_DEST_DIR[i].equals(StringUtils.EMPTY)) {
 			PREF_DEST_DIR[i] = PREFERENCE_DEST_DIR + i.toString().trim(); // $NON-NLS-1$
 		}
-		return CoreHub.localCfg.get(PREF_DEST_DIR[i], StringUtils.EMPTY).trim();
+		initGlobalConfig();
+		return StringUtils.trimToEmpty(readPathSetting(PREF_DEST_DIR[i]));
 	}
 
 	// ----------------------------------------------------------------------------
@@ -178,7 +185,7 @@ public class Preferences {
 	 */
 
 	public static Integer getOmnivoreMax_Filename_Length() {
-		IPreferenceStore preferenceStore = new SettingsPreferenceStore(CoreHub.localCfg);
+		IPreferenceStore preferenceStore = new ConfigServicePreferenceStore(Scope.LOCAL);
 		int ret = preferenceStore.getInt(PREF_MAX_FILENAME_LENGTH);
 		if (ret == 0) {
 			ret = OmnivoreMax_Filename_Length_Default;

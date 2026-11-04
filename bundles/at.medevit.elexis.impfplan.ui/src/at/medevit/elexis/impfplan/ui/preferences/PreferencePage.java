@@ -41,6 +41,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String VAC_SHOW_SIDE = PREFBASE + "showside"; //$NON-NLS-1$
 	public static final String VAC_AUTO_BILL = PREFBASE + "autobill"; //$NON-NLS-1$
 	public static final String VAC_DEFAULT_SIDE = PREFBASE + "defaultside"; //$NON-NLS-1$
+	public static final String PATHS_GLOBAL = PREFBASE + "paths_global"; //$NON-NLS-1$
 
 	private BooleanFieldEditor bStoreGlobal;
 
@@ -69,14 +70,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(ImpfplanSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(PATHS_GLOBAL,
 				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(ImpfplanSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(PATHS_GLOBAL, global);
 					updatePathStore(global);
 				}
 			}
@@ -147,7 +148,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStore(ImpfplanSettings.isStoreGlobal());
+		updatePathStore(ConfigServiceHolder.getGlobal(PATHS_GLOBAL, false));
 		return control;
 	}
 

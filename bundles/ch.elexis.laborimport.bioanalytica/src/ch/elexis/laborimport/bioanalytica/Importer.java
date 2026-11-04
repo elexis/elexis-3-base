@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.FileLocator;
@@ -45,6 +46,10 @@ import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -81,14 +86,14 @@ public class Importer extends ImporterPage {
 	@Override
 	public Composite createPage(Composite parent) {
 		// try to dynamically load the openmedical JAR file
-		String jarPath = CoreHub.localCfg.get(PreferencePage.JAR_PATH, null);
-		if (jarPath != null) {
-			File jar = new File(jarPath);
+		Optional<File> jarFile = getLocalFile(PreferencePage.JAR_PATH);
+		if (jarFile.isPresent()) {
+			File jar = jarFile.get();
 			if (jar.canRead()) {
 				try {
 					URLClassLoader urlLoader = getURLClassLoader(new URL("file", null, jar.getAbsolutePath()));
 
-					Class openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
+					Class<?> openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
 
 					// try to get the download method
 					Method meth;
@@ -120,11 +125,20 @@ public class Importer extends ImporterPage {
 		return ret;
 	}
 
-	private Result importDirect() {
+	private Optional<File> getLocalFile(String preference) {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = configService.get(PreferencePage.PATHS_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(preference, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(preference, configService);
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value);
+	}
+
+	private Result<String> importDirect() {
 		Result<String> result = new Result<String>("OK");
 
-		String downloadDirPath = CoreHub.localCfg.get(PreferencePage.DL_DIR, CoreHub.getTempDir().toString());
-		String iniPath = CoreHub.localCfg.get(PreferencePage.INI_PATH, null);
+		File downloadDir = getLocalFile(PreferencePage.DL_DIR).orElse(CoreHub.getTempDir());
+		String downloadDirPath = downloadDir.getAbsolutePath();
+		String iniPath = getLocalFile(PreferencePage.INI_PATH).map(File::getAbsolutePath).orElse(null);
 
 		int res = -1;
 		if (openmedicalObject != null && iniPath != null) {
@@ -146,7 +160,6 @@ public class Importer extends ImporterPage {
 		}
 		// if (res > 0) {
 		res = 0;
-		File downloadDir = new File(downloadDirPath);
 		if (downloadDir.isDirectory()) {
 			File archiveDir = new File(downloadDir, "archive");
 			if (!archiveDir.exists()) {
@@ -166,7 +179,7 @@ public class Importer extends ImporterPage {
 			Result<String> errors = new Result<>();
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result rs;
+				Result<?> rs;
 				try {
 					rs = hlp.importFile(f, archiveDir, false);
 					if (rs.isOK()) {
@@ -282,7 +295,7 @@ public class Importer extends ImporterPage {
 			bDirect.setText("Direkter Import");
 			bDirect.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
-			int type = CoreHub.localCfg.get("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
+			int type = ConfigServiceHolder.getLocal(getTypeKey(home), FILE);
 			if (openmedicalObject == null) {
 				type = FILE;
 			}
@@ -293,11 +306,10 @@ public class Importer extends ImporterPage {
 				bFile.setSelection(true);
 				bDirect.setSelection(false);
 
-				String filename = CoreHub.localCfg.get("ImporterPage/" + home.getTitle() + "/filename", //$NON-NLS-1$ //$NON-NLS-2$
-						StringUtils.EMPTY);
+				String filename = ConfigServiceHolder.getLocal(getFilenameKey(home), StringUtils.EMPTY);
 				tFilename.setText(filename);
 
-				home.results[0] = new Integer(FILE).toString();
+				home.results[0] = Integer.toString(FILE);
 				home.results[1] = filename;
 			} else {
 				bFile.setSelection(false);
@@ -305,7 +317,7 @@ public class Importer extends ImporterPage {
 
 				tFilename.setText(StringUtils.EMPTY);
 
-				home.results[0] = new Integer(DIRECT).toString();
+				home.results[0] = Integer.toString(DIRECT);
 				home.results[1] = StringUtils.EMPTY;
 			}
 
@@ -333,23 +345,22 @@ public class Importer extends ImporterPage {
 
 						String filename = tFilename.getText();
 
-						home.results[0] = new Integer(FILE).toString();
+						home.results[0] = Integer.toString(FILE);
 						home.results[1] = filename;
 
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", //$NON-NLS-1$//$NON-NLS-2$
-								filename);
+						ConfigServiceHolder.get().setLocal(getTypeKey(home), FILE);
+						ConfigServiceHolder.get().setLocal(getFilenameKey(home), filename);
 					} else {
 						bFile.setSelection(false);
 						bDirect.setSelection(true);
 
 						tFilename.setText(StringUtils.EMPTY);
 
-						home.results[0] = new Integer(DIRECT).toString();
+						home.results[0] = Integer.toString(DIRECT);
 						home.results[1] = StringUtils.EMPTY;
 
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", DIRECT); //$NON-NLS-1$ //$NON-NLS-2$
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", StringUtils.EMPTY); //$NON-NLS-1$
+						ConfigServiceHolder.get().setLocal(getTypeKey(home), DIRECT);
+						ConfigServiceHolder.get().setLocal(getFilenameKey(home), StringUtils.EMPTY);
 					}
 				}
 			};
@@ -373,14 +384,22 @@ public class Importer extends ImporterPage {
 					}
 
 					tFilename.setText(filename);
-					home.results[0] = new Integer(FILE).toString();
+					home.results[0] = Integer.toString(FILE);
 					home.results[1] = filename;
 
-					CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-					CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
+					ConfigServiceHolder.get().setLocal(getTypeKey(home), FILE);
+					ConfigServiceHolder.get().setLocal(getFilenameKey(home), filename);
 				}
 
 			});
+		}
+
+		private String getTypeKey(ImporterPage home) {
+			return "ImporterPage/" + home.getTitle() + "/type"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		private String getFilenameKey(ImporterPage home) {
+			return "ImporterPage/" + home.getTitle() + "/filename"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

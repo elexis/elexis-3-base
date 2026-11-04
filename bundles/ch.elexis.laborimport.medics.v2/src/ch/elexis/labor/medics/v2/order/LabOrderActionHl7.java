@@ -2,7 +2,6 @@ package ch.elexis.labor.medics.v2.order;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.model.util.ElexisIdGenerator;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -33,7 +33,6 @@ import ch.elexis.labor.medics.v2.MedicsPreferencePage;
 import ch.elexis.labor.medics.v2.Messages;
 import ch.elexis.labor.medics.v2.data.KontaktOrderManagement;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.rgw.io.FileTool;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 
@@ -296,10 +295,10 @@ public class LabOrderActionHl7 extends Action {
 
 			// File speichern
 			String filename = new Long(orderNr).toString() + "_" + patient.get(Patient.FLD_PATID) + ".hl7"; //$NON-NLS-1$ //$NON-NLS-2$
-			File hl7File = new File(MedicsPreferencePage.getUploadDir() + File.separator + filename);
-			FileTool.writeFile(hl7File, encodedMessage.getBytes(MedicsActivator.TEXT_ENCODING));
-
-			return hl7File.getPath();
+			IVirtualFilesystemHandle hl7File = MedicsPreferencePage
+					.getDirectoryHandle(MedicsPreferencePage.getUploadDir()).subFile(filename);
+			hl7File.writeAllBytes(encodedMessage.getBytes(MedicsActivator.TEXT_ENCODING));
+			return hl7File.getAbsolutePath();
 		} catch (Exception e) {
 			SWTHelper.showError(
 					MessageFormat.format(Messages.LabOrderAction_errorTitleCannotCreateHL7, omlO21.getVersion()),

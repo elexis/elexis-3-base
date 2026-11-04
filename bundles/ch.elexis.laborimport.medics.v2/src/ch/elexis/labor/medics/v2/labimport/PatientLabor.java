@@ -12,8 +12,10 @@ import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.text.GenericDocument;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
@@ -247,10 +249,11 @@ public class PatientLabor {
 		String category = MedicsPreferencePage.getDokumentKategorie();
 		checkCreateCategory(category);
 
-		String downloadDir = MedicsPreferencePage.getDownloadDir();
-
-		// Tmp Verzeichnis überprüfen
-		File tmpDir = new File(downloadDir + File.separator + "tmp"); //$NON-NLS-1$
+		// Tmp Verzeichnis überprüfen, bei entferntem Download Verzeichnis (z.B. smb)
+		// wird das temporäre Verzeichnis von Elexis verwendet
+		File tmpDir = VirtualFilesystemServiceHolder.get().toLocalFile(MedicsPreferencePage.getDownloadDir())
+				.map(dir -> new File(dir, "tmp")) //$NON-NLS-1$
+				.orElseGet(() -> new File(CoreUtil.getTempDir(), "medics")); //$NON-NLS-1$
 		if (!tmpDir.exists()) {
 			if (!tmpDir.mkdirs()) {
 				throw new IOException(
@@ -258,7 +261,7 @@ public class PatientLabor {
 			}
 		}
 		String filename = data.getName();
-		File tmpPdfFile = new File(downloadDir + File.separator + "tmp" + File.separator + filename); //$NON-NLS-1$
+		File tmpPdfFile = new File(tmpDir, filename);
 		tmpPdfFile.deleteOnExit();
 		FileTool.writeFile(tmpPdfFile, data.getData());
 

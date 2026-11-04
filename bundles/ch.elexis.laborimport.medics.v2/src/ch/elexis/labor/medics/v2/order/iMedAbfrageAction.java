@@ -10,7 +10,6 @@ package ch.elexis.labor.medics.v2.order;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
-import java.io.File;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.model.util.ElexisIdGenerator;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
@@ -40,7 +40,6 @@ import ch.elexis.labor.medics.v2.MedicsActivator;
 import ch.elexis.labor.medics.v2.MedicsPreferencePage;
 import ch.elexis.labor.medics.v2.Messages;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -278,10 +277,10 @@ public class iMedAbfrageAction extends Action {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 			String filename = patient.get(Patient.FLD_PATID) + "_" //$NON-NLS-1$
 					+ sdf.format(Calendar.getInstance().getTime()) + ".hl7"; //$NON-NLS-1$
-			File hl7File = new File(MedicsPreferencePage.getUploadDirimed() + File.separator + filename);
-			FileTool.writeFile(hl7File, encodedMessage.getBytes(MedicsActivator.TEXT_ENCODING));
-
-			return hl7File.getPath();
+			IVirtualFilesystemHandle hl7File = MedicsPreferencePage
+					.getDirectoryHandle(MedicsPreferencePage.getUploadDirimed()).subFile(filename);
+			hl7File.writeAllBytes(encodedMessage.getBytes(MedicsActivator.TEXT_ENCODING));
+			return hl7File.getAbsolutePath();
 		} catch (Exception e) {
 			SWTHelper.showError(
 					MessageFormat.format(Messages.LabOrderAction_errorTitleCannotCreateHL7, omlO21.getVersion()),

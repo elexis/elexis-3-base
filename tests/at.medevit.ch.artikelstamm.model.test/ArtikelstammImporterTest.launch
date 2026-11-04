@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
+    <booleanAttribute key="add_console" value="false"/>
     <booleanAttribute key="append.args" value="true"/>
     <stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
     <booleanAttribute key="askclear" value="false"/>
@@ -90,7 +91,7 @@
         <setEntry value="org.apache.commons.commons-collections4@default:default"/>
         <setEntry value="org.apache.commons.commons-compress*1.27.1@default:default"/>
         <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
-        <setEntry value="org.apache.commons.commons-io*2.18.0@default:default"/>
+        <setEntry value="org.apache.commons.commons-io*2.22.0@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
         <setEntry value="org.apache.commons.logging@default:default"/>
@@ -260,6 +261,7 @@
         <setEntry value="ch.elexis.core.data.tests@default:false"/>
         <setEntry value="ch.elexis.core.data@default:default"/>
         <setEntry value="ch.elexis.core.documents@default:default"/>
+        <setEntry value="ch.elexis.core.ee.openapi@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x.tests@default:false"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.httpclient@default:default"/>

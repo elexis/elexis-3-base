@@ -32,9 +32,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.LocalConfigService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
@@ -527,7 +531,7 @@ public class Tracker extends PersistentObject {
 			date = getLastSequenceDate(p);
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(getImagePath(MolemaxPrefs.BASEDIR)).append(File.separator);
+		ret.append(getImageBaseDirectory()).append(File.separator);
 		String name = p.getDescription1();
 		ret.append(name.length() > 2 ? name.substring(0, 2) : name);
 		String vname = p.getDescription2();
@@ -559,7 +563,7 @@ public class Tracker extends PersistentObject {
 	}
 
 	public static String makeDescriptorImage(final IPatient p) {
-		String basePath = getImagePath(MolemaxPrefs.BASEDIR);
+		String basePath = getImageBaseDirectory();
 		String customPath = getImagePath(MolemaxImagePrefs.CUSTOM_BASEDIR);
 		
 		if (StringUtils.isBlank(basePath) || StringUtils.isBlank(customPath)) {
@@ -703,5 +707,14 @@ public class Tracker extends PersistentObject {
 		} else {
 			return LocalConfigService.get(key, StringUtils.EMPTY);
 		}
+	}
+
+	private static String getImageBaseDirectory() {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = configService.get(MolemaxImagePrefs.STORE_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(MolemaxPrefs.BASEDIR, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(MolemaxPrefs.BASEDIR, configService);
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value).map(File::getAbsolutePath)
+				.orElse(StringUtils.EMPTY);
 	}
 }

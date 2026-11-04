@@ -38,7 +38,8 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
-	public static final String DEF_SOUND_PATH = MessageSoundSettings.DEF_SOUND_PATH;
+	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav"; //$NON-NLS-1$
+	public static final String CFG_SOUND_PATH_GLOBAL = "messages/soundpath_global"; //$NON-NLS-1$
 
 	private URIFieldEditorComposite soundPathEditor;
 	private Button btnSoundOn, btnAnswerAutoclear, btnStoreSoundPathGlobal;
@@ -74,12 +75,12 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 
 		btnStoreSoundPathGlobal = new Button(grpSound, SWT.CHECK);
 		btnStoreSoundPathGlobal.setText(ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal);
-		btnStoreSoundPathGlobal.setSelection(MessageSoundSettings.isStoreGlobal());
+		btnStoreSoundPathGlobal.setSelection(ConfigServiceHolder.getGlobal(CFG_SOUND_PATH_GLOBAL, false));
 		btnStoreSoundPathGlobal.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean global = btnStoreSoundPathGlobal.getSelection();
-				ConfigServiceHolder.setGlobal(MessageSoundSettings.CFG_SOUND_PATH_GLOBAL, global);
+				ConfigServiceHolder.setGlobal(CFG_SOUND_PATH_GLOBAL, global);
 				updateSoundPathStore(global);
 			}
 		});
@@ -88,10 +89,10 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		editorComposite.setLayout(new GridLayout(1, false));
 
-		soundPathEditor = new URIFieldEditorComposite(MessageSoundSettings.CFG_SOUND_PATH, Messages.Prefs_SoundSettings,
+		soundPathEditor = new URIFieldEditorComposite(Preferences.USR_MESSAGES_SOUND_PATH, Messages.Prefs_SoundSettings,
 				editorComposite, SWT.NONE);
 		soundPathEditor.setEmptyStringAllowed(true);
-		updateSoundPathStore(MessageSoundSettings.isStoreGlobal());
+		updateSoundPathStore(ConfigServiceHolder.getGlobal(CFG_SOUND_PATH_GLOBAL, false));
 		updateSoundPathEnablement();
 
 		Group grpDialogConfig = new Group(ret, SWT.NONE);

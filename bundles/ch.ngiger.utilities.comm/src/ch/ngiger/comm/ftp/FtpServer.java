@@ -13,19 +13,19 @@
 
 package ch.ngiger.comm.ftp;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.events.MessageEvent;
 import ch.elexis.core.data.util.FileUtility;
+import ch.elexis.core.events.MessageEvent;
 
 /**
  * This is a basic wrapper around the sun.net.ftp.FtpClient class, which is
@@ -78,6 +78,7 @@ public class FtpServer extends FTPClient {
 	 *
 	 * @name of the file to delete
 	 */
+	@Override
 	public boolean deleteFile(String name) throws IOException {
 		return super.deleteFile(name);
 	}
@@ -109,6 +110,7 @@ public class FtpServer extends FTPClient {
 	/**
 	 * Disconnect from Server
 	 */
+	@Override
 	public void disconnect() throws IOException {
 		if (isConnected()) {
 			super.disconnect();
@@ -118,6 +120,7 @@ public class FtpServer extends FTPClient {
 	/**
 	 * List of filenames on ftp server
 	 */
+	@Override
 	public String[] listNames() throws IOException {
 		String[] files = super.listNames();
 		if (files == null) {
@@ -129,6 +132,7 @@ public class FtpServer extends FTPClient {
 	/**
 	 * List of files on ftp server
 	 */
+	@Override
 	public FTPFile[] listFiles() throws IOException {
 		FTPFile[] files = super.listFiles();
 		if (files == null) {
@@ -201,5 +205,10 @@ public class FtpServer extends FTPClient {
 			MessageEvent.fireError("FTP Semaphore delete error",
 					String.format("Unable to delete semaphore %s on %s", name, serverAddress));
 		}
+	}
+
+	@Override
+	public boolean isConnected() {
+		return super.isConnected();
 	}
 }

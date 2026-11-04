@@ -55,7 +55,9 @@ import ch.elexis.core.data.util.FileUtility;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -130,8 +132,7 @@ public class Importer extends ImporterPage {
 		String ftpHost = ConfigServiceHolder.getGlobal(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
 		String user = ConfigServiceHolder.getGlobal(PreferencePage.FTP_USER, PreferencePage.DEFAULT_FTP_USER);
 		String pwd = ConfigServiceHolder.getGlobal(PreferencePage.FTP_PWD, PreferencePage.DEFAULT_FTP_PWD);
-		String downloadDir = FileUtility
-				.getCorrectPath(ConfigServiceHolder.getGlobal(PreferencePage.DL_DIR, PreferencePage.DEFAULT_DL_DIR));
+		String downloadDir = FileUtility.getCorrectPath(getDownloadDirectory());
 
 		FtpServer ftp = new FtpServer();
 		try {
@@ -235,6 +236,16 @@ public class Importer extends ImporterPage {
 		} catch (Throwable throwable) {
 			return null;
 		}
+	}
+
+	private String getDownloadDirectory() {
+		String configured = PreferencesUtil.getOsSpecificGlobalPreference(PreferencePage.DL_DIR,
+				ConfigServiceHolder.get());
+		if (StringUtils.isBlank(configured)) {
+			configured = PreferencePage.DEFAULT_DL_DIR;
+		}
+		return VirtualFilesystemServiceHolder.get().toLocalFile(configured).orElse(CoreHub.getTempDir())
+				.getAbsolutePath();
 	}
 
 	/**

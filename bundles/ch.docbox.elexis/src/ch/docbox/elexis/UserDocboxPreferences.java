@@ -11,7 +11,6 @@ package ch.docbox.elexis;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
@@ -65,7 +64,6 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -419,22 +417,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 
 	public static Optional<File> getPathFilesAsLocalFile() {
-		String pathOrUri = getPathFiles();
-		if (StringUtils.isBlank(pathOrUri)) {
-			return Optional.empty();
-		}
-		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
-		if (vfsService == null) {
-			return Optional.of(new File(pathOrUri));
-		}
-		try {
-			return vfsService.of(pathOrUri).toFile();
-		} catch (IOException e) {
-			LoggerFactory.getLogger(UserDocboxPreferences.class).debug(
-					"Attachment directory [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
-					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
-			return Optional.of(new File(pathOrUri));
-		}
+		return VirtualFilesystemServiceHolder.get().toLocalFile(getPathFiles());
 	}
 
 	public static String getPathHCardAPI() {

@@ -12,6 +12,7 @@ package at.medevit.ch.artikelstamm.model.importer;
 
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +52,7 @@ import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.SALECDType;
 import at.medevit.ch.artikelstamm.extinfo.ArticleIndicationInfo;
+import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
 import at.medevit.ch.artikelstamm.model.service.ArticlePriceDiffService;
 import at.medevit.ch.artikelstamm.model.service.ModelServiceHolder;
 import ch.elexis.core.common.ElexisEventTopics;
@@ -65,6 +68,7 @@ import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
+import ch.rgw.tools.Money;
 import jakarta.xml.bind.JAXBException;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v6")
@@ -82,15 +86,79 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 	@Reference
 	private ArticlePriceDiffService diffService;
-	
+
+	private final List<PriceChangeListener> priceChangeListeners = new CopyOnWriteArrayList<>();
+
 	private static Gson gson;
 
 	@Activate
 	public void activate() {
 		versionUtil = new VersionUtil(elexisEntityManager);
+		if (diffService instanceof PriceChangeListener listener) {
+			addPriceChangeListener(listener);
+		}
 		if (ArtikelstammImporter.gson == null) {
 			gson = new GsonBuilder().create();
 		}
+	}
+
+	public void addPriceChangeListener(PriceChangeListener listener) {
+		if (listener != null && !priceChangeListeners.contains(listener)) {
+			priceChangeListeners.add(listener);
+		}
+	}
+
+	public void removePriceChangeListener(PriceChangeListener listener) {
+		priceChangeListeners.remove(listener);
+	}
+
+	private void notifyPriceChange(String articleId, Money oldPrice, Money newPrice) {
+		if (oldPrice == null || priceChangeListeners.isEmpty() || oldPrice.getCents() == newPrice.getCents()) {
+			return;
+		}
+		PriceChangeListener.PriceChangeEvent event = new PriceChangeListener.PriceChangeEvent(articleId, oldPrice,
+				newPrice);
+		for (PriceChangeListener listener : priceChangeListeners) {
+			try {
+				listener.onPriceChange(event);
+			} catch (Exception e) {
+				log.warn("PriceChangeListener [{}] failed for article [{}]: {}", listener, articleId, //$NON-NLS-1$
+						e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Computes the selling price of an artikelstamm entity the same way
+	 * {@link at.medevit.ch.artikelstamm.model.ArtikelstammItem#getSellingPrice()}
+	 * does: the public price if set (negated if user-defined), otherwise the
+	 * margin-calculated price from the ex-factory price, otherwise zero.
+	 */
+	private static Money sellingPriceOf(ArtikelstammItem ai) {
+		String ppub = ai.getPpub();
+		if (StringUtils.isNotBlank(ppub)) {
+			try {
+				Money value = new Money(ppub);
+				if (!value.isZero()) {
+					return ppub.startsWith("-") ? value.negate() : value; //$NON-NLS-1$
+				}
+			} catch (ParseException e) {
+				log.debug("Failed to parse ppub [{}] of [{}], falling back to margin calculation.", ppub, //$NON-NLS-1$
+						ai.getId());
+			}
+		}
+		String pexf = ai.getPexf();
+		if (StringUtils.isNotBlank(pexf)) {
+			try {
+				Money purchasePrice = new Money(pexf);
+				if (!purchasePrice.isZero()) {
+					return MargePreference.calculateVKP(purchasePrice);
+				}
+			} catch (ParseException e) {
+				log.debug("Failed to parse pexf [{}] of [{}], treating price as zero.", pexf, ai.getId()); //$NON-NLS-1$
+			}
+		}
+		return new Money();
 	}
 
 	@Override
@@ -138,10 +206,10 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		String bundleVersion = Platform.getBundle("at.medevit.ch.artikelstamm.model").getVersion().toString(); //$NON-NLS-1$
 
 		try {
-			log.info("Starting Artikelstamm update. Capturing old prices...");
-			diffService.captureOldPrices();
+			log.info("Starting Artikelstamm update. Arming price change collection...");
+			diffService.startPriceChangeCollection();
 		} catch (Exception e) {
-			log.warn("Failed to capture old prices. Automatic price update might not work.", e);
+			log.warn("Failed to start price change collection. Automatic price update might not work.", e);
 		}
 
 		subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
@@ -216,10 +284,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		
 		try {
 			log.info("Import finished. Running automatic price adjustment...");
-			diffService.captureNewPrices();
-			Map<IArtikelstammItem, ArticlePriceDiffService.PriceChange> diffs = diffService.compare();
-			ArticlePriceDiffService.UpdateStatistics stats = diffService.updateOpenEncounters(diffs);
-			
+			ArticlePriceDiffService.UpdateStatistics stats = diffService.applyCollectedPriceChanges();
+
 			log.info("Automatic price adjustment finished: {}", stats.toString());
 		} catch (Exception e) {
 			log.error("Error during automatic price adjustment", e);
@@ -390,6 +456,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 					|| (bNonPharma && item.getPHARMATYPE().contentEquals("N"))) { //$NON-NLS-1$
 				boolean keepOverriddenPublicPrice = false;
 				boolean keepOverriddenPkgSize = false;
+				Money oldSellingPrice = (foundItem != null) ? sellingPriceOf(foundItem) : null;
 
 				if (foundItem == null) {
 					String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
@@ -421,6 +488,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 						bNonPharma && item.getPHARMATYPE().contentEquals("N"), foundItem.getId()); //$NON-NLS-1$
 				setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice,
 						keepOverriddenPkgSize);
+				notifyPriceChange(foundItem.getId(), oldSellingPrice, sellingPriceOf(foundItem));
 			}
 			subMonitor.worked(1);
 			if (foundItem != null) {

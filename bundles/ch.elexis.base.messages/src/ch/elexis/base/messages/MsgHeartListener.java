@@ -26,6 +26,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
@@ -33,12 +34,17 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMessage;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 
@@ -57,7 +63,7 @@ public class MsgHeartListener implements HeartListener {
 						if (!isModalShellOpen()) {
 							bSkip = true;
 							if (ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true)) {
-								playSound();
+								playSound(uc);
 							}
 							new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
 							bSkip = false;
@@ -86,21 +92,28 @@ public class MsgHeartListener implements HeartListener {
 	 * "http://stackoverflow.com/questions/26435282/issue-playing-audio-with-stackoverflows-javasound-tag-example">
 	 * Stackoverflow Explanation</a>
 	 */
-	private void playSound() {
+	private void playSound(IContact userContact) {
 		try {
 			AudioInputStream audioInStream;
-			String soundPathValue = MessageSoundSettings.getSoundPath();
+			IConfigService configService = ConfigServiceHolder.get();
+			String soundPathValue = configService.get(MessagePreferences.CFG_SOUND_PATH_GLOBAL, false)
+					? PreferencesUtil.getOsSpecificGlobalPreference(Preferences.USR_MESSAGES_SOUND_PATH, configService)
+					: PreferencesUtil.getOsSpecificContactPreference(Preferences.USR_MESSAGES_SOUND_PATH, userContact,
+							configService);
 
-			if (MessageSoundSettings.DEF_SOUND_PATH.equals(soundPathValue)) {
-				URL sound = getClass().getResource(soundPathValue);
+			if (StringUtils.isBlank(soundPathValue) || MessagePreferences.DEF_SOUND_PATH.equals(soundPathValue)) {
+				URL sound = getClass().getResource(MessagePreferences.DEF_SOUND_PATH);
 				if (sound == null) {
-					log.warn("Default sound resource not found: " + soundPathValue); //$NON-NLS-1$
+					log.warn("Default sound resource not found: " + MessagePreferences.DEF_SOUND_PATH); //$NON-NLS-1$
 					return;
 				}
 				audioInStream = AudioSystem.getAudioInputStream(sound);
 			} else {
-				IVirtualFilesystemHandle handle = MessageSoundSettings.resolveHandle(soundPathValue).orElse(null);
-				if (handle == null) {
+				IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
+				IVirtualFilesystemHandle handle = IVirtualFilesystemService.isUrl(soundPathValue)
+						? vfsService.of(soundPathValue)
+						: vfsService.of(new File(soundPathValue));
+				if (!handle.exists()) {
 					log.warn("Sound file [" + soundPathValue + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}

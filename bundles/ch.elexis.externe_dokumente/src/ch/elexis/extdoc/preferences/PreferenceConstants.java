@@ -13,10 +13,15 @@
 
 package ch.elexis.extdoc.preferences;
 
+import java.io.File;
+
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 
 public class PreferenceConstants {
 	// retour kompatibel
@@ -31,6 +36,7 @@ public class PreferenceConstants {
 	public static final String SELECTED_PATHS = "ch.elexis.externe_dokumente/SelectedPaths"; //$NON-NLS-1$
 	public static final String CONCERNS = "ch.elexis.externe_dokumente/Concerns"; //$NON-NLS-1$
 	public static final String EMAIL_PROGRAM = "ch.elexis.externe_dokumente/Email_app"; //$NON-NLS-1$
+	public static final String PATHS_GLOBAL = "ch.elexis.externe_dokumente/paths_global"; //$NON-NLS-1$
 
 	public static class PathElement {
 		public String prefName;
@@ -41,8 +47,8 @@ public class PreferenceConstants {
 		PathElement(String prefsName, String prefsBaseDirName) {
 			prefName = prefsName;
 			prefBaseDir = prefsBaseDirName;
-			name = CoreHub.localCfg.get(prefName, StringUtils.EMPTY);
-			baseDir = CoreHub.localCfg.get(prefsBaseDirName, StringUtils.EMPTY);
+			name = LocalConfigService.get(prefName, StringUtils.EMPTY);
+			baseDir = getPath(prefsBaseDirName);
 		}
 	}
 
@@ -56,14 +62,23 @@ public class PreferenceConstants {
 
 	public static String[] getActiveBasePaths() {
 		String[] paths = new String[4];
-		paths[0] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, StringUtils.EMPTY);
-		paths[1] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD2, StringUtils.EMPTY);
-		paths[2] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD3, StringUtils.EMPTY);
-		paths[3] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD4, StringUtils.EMPTY);
+		paths[0] = getPath(PreferenceConstants.BASIS_PFAD1);
+		paths[1] = getPath(PreferenceConstants.BASIS_PFAD2);
+		paths[2] = getPath(PreferenceConstants.BASIS_PFAD3);
+		paths[3] = getPath(PreferenceConstants.BASIS_PFAD4);
 		for (int j = 0; j < paths.length; j++)
 			if (!pathIsSelected(j))
 				paths[j] = null;
 		return paths;
+	}
+
+	public static String getPath(String preference) {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = configService.get(PATHS_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(preference, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(preference, configService);
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value).map(File::getAbsolutePath)
+				.orElse(StringUtils.EMPTY);
 	}
 
 	private static int selected = -1;

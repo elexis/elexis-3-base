@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -217,7 +216,7 @@ public class MatchPatientToPath {
 	}
 
 	public static String getSubDirPath(Patient pat) {
-		String s = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, StringUtils.EMPTY) + File.separatorChar
+		String s = PreferenceConstants.getPath(PreferenceConstants.BASIS_PFAD1) + File.separatorChar
 				+ basenameMustBeginWith(pat.getName(), pat.getVorname());
 		return s;
 	}

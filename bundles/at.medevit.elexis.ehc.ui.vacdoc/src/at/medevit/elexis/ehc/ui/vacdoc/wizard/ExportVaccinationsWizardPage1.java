@@ -26,7 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.hl7.fhir.r4.model.Bundle;
 
-import at.medevit.elexis.ehc.ui.preference.EhcSettings;
+import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import at.medevit.elexis.ehc.ui.vacdoc.composite.VaccinationSelectionComposite;
 import at.medevit.elexis.ehc.ui.vacdoc.service.OutboxElementServiceHolder;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
@@ -125,7 +125,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		try {
 			Patient elexisPatient = ElexisEventDispatcher.getSelectedPatient();
 			Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();
-			String outputDir = EhcSettings.getOutputDir();
+			String outputDir = PreferencePage.getOutputDir();
 			VacdocService service = VacdocServiceComponent.getService();
 
 			Bundle document = service.getVacdocDocument(elexisPatient, elexisMandant);

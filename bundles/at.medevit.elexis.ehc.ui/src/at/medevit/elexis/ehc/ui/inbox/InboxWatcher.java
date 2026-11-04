@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
-import at.medevit.elexis.ehc.ui.preference.EhcSettings;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -200,7 +199,7 @@ public class InboxWatcher {
 	public void activeMandator(IMandator mandator) {
 		Display.getDefault().asyncExec(() -> {
 
-			activeInboxString = EhcSettings.getInputDir();
+			activeInboxString = PreferencePage.getInputDir();
 			executor.execute(new DirectoryInitializer());
 			if (watchKeys.get(activeInboxString) == null) {
 				try {

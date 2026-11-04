@@ -22,7 +22,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
@@ -31,6 +36,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	public static String EHC_OUTPUTDIR = "at.medevit.elexis.ehc.ui.output.dir"; //$NON-NLS-1$
 	public static String EHC_INPUTDIR = "at.medevit.elexis.ehc.ui.input.dir"; //$NON-NLS-1$
+	public static final String PATHS_GLOBAL = "at.medevit.elexis.ehc.ui.paths_global"; //$NON-NLS-1$
 
 	private BooleanFieldEditor bStoreGlobal;
 
@@ -68,14 +74,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(EhcSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(PATHS_GLOBAL,
 				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(EhcSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(PATHS_GLOBAL, global);
 					updatePathStores(global);
 				}
 			}
@@ -92,7 +98,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStores(EhcSettings.isStoreGlobal());
+		updatePathStores(ConfigServiceHolder.getGlobal(PATHS_GLOBAL, false));
 		return control;
 	}
 
@@ -112,5 +118,23 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	public static String getDefaultInputDir() {
 		return CoreHub.getWritableUserDir() + File.separator + "eHC" + File.separator + "input"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public static String getOutputDir() {
+		return getPath(EHC_OUTPUTDIR, getDefaultOutputDir());
+	}
+
+	public static String getInputDir() {
+		return getPath(EHC_INPUTDIR, getDefaultInputDir());
+	}
+
+	private static String getPath(String preference, String defaultPath) {
+		IConfigService configService = ConfigServiceHolder.get();
+		IContact activeUser = ContextServiceHolder.get().getActiveUserContact().orElse(null);
+		String value = configService.get(PATHS_GLOBAL, false) || activeUser == null
+				? PreferencesUtil.getOsSpecificGlobalPreference(preference, configService)
+				: PreferencesUtil.getOsSpecificContactPreference(preference, activeUser, configService);
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value).map(File::getAbsolutePath)
+				.orElse(defaultPath);
 	}
 }

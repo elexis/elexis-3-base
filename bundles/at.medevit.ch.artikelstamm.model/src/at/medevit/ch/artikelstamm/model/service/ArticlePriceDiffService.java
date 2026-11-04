@@ -3,9 +3,10 @@ package at.medevit.ch.artikelstamm.model.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.model.history.PriceChangeEntry.EncounterInfo;
+import at.medevit.ch.artikelstamm.model.importer.PriceChangeListener;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
@@ -21,22 +24,20 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQueryCursor;
 import ch.rgw.tools.Money;
 
 /**
- * Compares old and new article master data to find price changes and
+ * Collects price changes reported by the {@link at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter}
+ * during an article master data update (via {@link PriceChangeListener}) and
  * automatically adjusts prices in open encounters of the current month.
- * (Stripped version without History-Logging for PR #2)
  */
 @Component(service = ArticlePriceDiffService.class)
-public class ArticlePriceDiffService {
+public class ArticlePriceDiffService implements PriceChangeListener {
 
 	private static final Logger log = LoggerFactory.getLogger(ArticlePriceDiffService.class);
 	public static final String PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS = "rdus.autoAdjustOpenEncounters"; //$NON-NLS-1$
-	private Map<String, BigDecimal> oldPrices;
-	private Map<String, BigDecimal> newPrices;
+	private final Map<String, PriceChange> collectedChanges = new HashMap<>();
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model)")
 	private IModelService artikelstammModelService;
@@ -49,6 +50,8 @@ public class ArticlePriceDiffService {
 
 	@Reference
 	private IContextService contextService;
+
+	private PriceChangeLogger priceChangeLogger = new PriceChangeLogger();
 
 	/**
 	 * Helper: safely converts {@link Money} to {@link BigDecimal}.
@@ -64,64 +67,71 @@ public class ArticlePriceDiffService {
 		}
 	}
 
-	public void captureOldPrices() {
-		oldPrices = new HashMap<String, BigDecimal>();
-		IQuery<IArtikelstammItem> query = artikelstammModelService.getQuery(IArtikelstammItem.class).and("id", COMPARATOR.NOT_EQUALS, "VERSION");
-		try (IQueryCursor<IArtikelstammItem> cursor = query.executeAsCursor()) {
-			while (cursor.hasNext()) {
-				IArtikelstammItem article = cursor.next();
-				oldPrices.put(article.getId(), toBigDecimal(article.getSellingPrice()));
-			}
-		}
-		log.info("Cached old article master data ({} items).", oldPrices.size()); //$NON-NLS-1$
+	/**
+	 * Starts the collection of price changes. Called before the import runs; the
+	 * importer then reports each price change via {@link #onPriceChange}.
+	 */
+	public void startPriceChangeCollection() {
+		collectedChanges.clear();
+		log.info("Collecting article price changes during import."); //$NON-NLS-1$
 	}
 
-	public void captureNewPrices() {
-		newPrices = new HashMap<String, BigDecimal>();
-		IQuery<IArtikelstammItem> query = artikelstammModelService.getQuery(IArtikelstammItem.class).and("id",
-				COMPARATOR.NOT_EQUALS, "VERSION");
-		try (IQueryCursor<IArtikelstammItem> cursor = query.executeAsCursor()) {
-			while (cursor.hasNext()) {
-				IArtikelstammItem article = cursor.next();
-				newPrices.put(article.getId(), toBigDecimal(article.getSellingPrice()));
-			}
+	@Override
+	public void onPriceChange(PriceChangeEvent event) {
+		if (event.oldPrice() == null) {
+			// newly added article, no old price to compare against
+			return;
 		}
-		log.info("Loaded new article master data ({} items).", newPrices.size()); //$NON-NLS-1$
+		collectedChanges.put(event.articleId(),
+				new PriceChange(toBigDecimal(event.oldPrice()), toBigDecimal(event.newPrice())));
 	}
 
 	/**
-	 * Compares all articles and returns the changes (old → new).
+	 * Applies the price changes collected during the import to all open encounters
+	 * of the current month, logs the performed changes via {@link PriceChangeLogger}
+	 * and releases the collected changes.
 	 */
-	public Map<IArtikelstammItem, PriceChange> compare() {
-		Map<IArtikelstammItem, PriceChange> diffs = new HashMap<>();
-
-		for (String id : newPrices.keySet()) {
-			BigDecimal newPrice = newPrices.get(id);
-			BigDecimal oldPrice = oldPrices.get(id);
-
-			if (oldPrice == null || newPrice == null) {
-				continue;
-			}
-			if (newPrice.compareTo(oldPrice) != 0) {
-				IArtikelstammItem art = artikelstammModelService.load(id, IArtikelstammItem.class)
-						.orElse(null);
-				if (art != null) {
-					diffs.put(art, new PriceChange(oldPrice, newPrice));
-				}
-			}
+	public UpdateStatistics applyCollectedPriceChanges() {
+		Map<String, PriceChange> changes = new HashMap<>(collectedChanges);
+		Map<String, List<EncounterInfo>> updatedEncounters = new HashMap<>();
+		try {
+			log.info("Found {} price changes.", changes.size()); //$NON-NLS-1$
+			UpdateStatistics stats = updateOpenEncounters(changes, updatedEncounters);
+			logCollectedPriceChanges(changes, updatedEncounters);
+			return stats;
+		} finally {
+			collectedChanges.clear();
 		}
-		// release prices maps
-		oldPrices = null;
-		newPrices = null;
-		log.info("Found {} price changes.", diffs.size()); //$NON-NLS-1$
-		return diffs;
+	}
+
+	/**
+	 * Persists the collected price changes and the encounters updated because of
+	 * them via {@link PriceChangeLogger}.
+	 */
+	private void logCollectedPriceChanges(Map<String, PriceChange> changes,
+			Map<String, List<EncounterInfo>> updatedEncounters) {
+		if (changes.isEmpty()) {
+			return;
+		}
+		Map<IArtikelstammItem, PriceChange> byArticle = new HashMap<>();
+		for (Map.Entry<String, PriceChange> e : changes.entrySet()) {
+			artikelstammModelService.load(e.getKey(), IArtikelstammItem.class)
+					.ifPresent(article -> byArticle.put(article, e.getValue()));
+		}
+		boolean autoAdjust = configService.get(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true);
+		try {
+			priceChangeLogger.logPriceChanges(byArticle, updatedEncounters, autoAdjust);
+		} catch (Exception e) {
+			log.warn("Failed to log price changes: {}", e.getMessage()); //$NON-NLS-1$
+		}
 	}
 
 	/**
 	 * Updates prices in all open encounters of the current month and posts UI
 	 * events.
 	 */
-	public UpdateStatistics updateOpenEncounters(Map<IArtikelstammItem, PriceChange> priceChanges) {
+	public UpdateStatistics updateOpenEncounters(Map<String, PriceChange> priceChanges,
+			Map<String, List<EncounterInfo>> updatedEncounters) {
 		UpdateStatistics stats = new UpdateStatistics();
 		boolean autoAdjust = configService.get(PREFERENCE_AUTO_ADJUST_OPEN_ENCOUNTERS, true);
 
@@ -133,9 +143,6 @@ public class ArticlePriceDiffService {
 			log.info("Auto-adjustment is DISABLED via Preference."); //$NON-NLS-1$
 			return stats;
 		}
-
-		Map<String, PriceChange> changeMap = priceChanges.entrySet().stream()
-				.collect(Collectors.toMap(e -> e.getKey().getId(), Map.Entry::getValue));
 
 		YearMonth currentMonth = YearMonth.now();
 		LocalDate firstDayOfMonth = currentMonth.atDay(1);
@@ -151,10 +158,9 @@ public class ArticlePriceDiffService {
 			stats.totalEncounters = cursor.size();
 			while (cursor.hasNext()) {
 				IEncounter encounter = cursor.next();
-				updateEncounterPrices(encounter, changeMap, stats);
+				updateEncounterPrices(encounter, priceChanges, updatedEncounters, stats);
 			}
 		}
-
 
 		contextService.postEvent(ElexisEventTopics.EVENT_RELOAD, IEncounter.class);
 		return stats;
@@ -164,7 +170,7 @@ public class ArticlePriceDiffService {
 	 * Applies price changes for a single encounter.
 	 */
 	private void updateEncounterPrices(IEncounter encounter, Map<String, PriceChange> changeMap,
-			UpdateStatistics stats) {
+			Map<String, List<EncounterInfo>> updatedEncounters, UpdateStatistics stats) {
 		boolean changed = false;
 		for (IBilled billed : encounter.getBilled()) {
 			if (billed.getBillable() instanceof IArtikelstammItem article) {
@@ -175,6 +181,10 @@ public class ArticlePriceDiffService {
 						billed.setPrice(newPrice);
 						changed = true;
 						stats.itemsUpdated++;
+						updatedEncounters.computeIfAbsent(article.getId(), k -> new ArrayList<>())
+								.add(new EncounterInfo(encounter.getId(), String.valueOf(encounter.getDate()),
+										encounter.getPatient() != null ? encounter.getPatient().getLabel() : null,
+										encounter.getMandator() != null ? encounter.getMandator().getLabel() : null));
 						log.debug("Encounter {} ({}): {} — price set from {} to {}.", encounter.getId(), //$NON-NLS-1$
 								encounter.getDate(), article.getName(), priceChange.oldPrice(), priceChange.newPrice());
 						coreModelService.save(billed);

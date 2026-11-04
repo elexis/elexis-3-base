@@ -13,14 +13,11 @@
 package ch.elexis.labor.viollier.v2.data;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.preferences.PreferencesUtil;
-import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
@@ -578,36 +575,15 @@ public class ViollierLaborImportSettings {
 		}
 	}
 
-	public static Optional<File> resolveLocalFile(String pathOrUri) {
-		if (StringUtils.isBlank(pathOrUri)) {
-			return Optional.empty();
-		}
-		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
-		if (vfsService == null) {
-			return Optional.of(new File(pathOrUri));
-		}
-		try {
-			Optional<File> resolved = vfsService.of(pathOrUri).toFile();
-			if (resolved.isPresent()) {
-				return resolved;
-			}
-		} catch (IOException e) {
-			LoggerFactory.getLogger(ViollierLaborImportSettings.class).debug(
-					"Location [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
-					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
-		}
-		return Optional.of(new File(pathOrUri));
-	}
-
 	public Optional<File> getDirDownloadFile() {
-		return resolveLocalFile(getDirDownload());
+		return VirtualFilesystemServiceHolder.get().toLocalFile(getDirDownload());
 	}
 
 	public Optional<File> getDirArchiveFile() {
-		return resolveLocalFile(getDirArchive());
+		return VirtualFilesystemServiceHolder.get().toLocalFile(getDirArchive());
 	}
 
 	public Optional<File> getDirErrorFile() {
-		return resolveLocalFile(getDirError());
+		return VirtualFilesystemServiceHolder.get().toLocalFile(getDirError());
 	}
 }

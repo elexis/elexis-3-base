@@ -39,7 +39,6 @@ import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -126,8 +125,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		try {
 			Patient elexisPatient = ElexisEventDispatcher.getSelectedPatient();
 			Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();
-			String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
-					PreferencePage.getDefaultOutputDir());
+			String outputDir = PreferencePage.getOutputDir();
 			VacdocService service = VacdocServiceComponent.getService();
 
 			Bundle document = service.getVacdocDocument(elexisPatient, elexisMandant);

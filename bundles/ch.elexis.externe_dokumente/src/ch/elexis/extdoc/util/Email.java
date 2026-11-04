@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Patient;
 import ch.elexis.core.services.LocalConfigService;
-import ch.elexis.extdoc.preferences.ExtDocSettings;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 
 @SuppressWarnings("deprecation")
@@ -135,7 +134,7 @@ public class Email {
 		if (subject == null)
 			subject = LocalConfigService.get(PreferenceConstants.CONCERNS, "Überweisung");
 		// quote for programs with white spaces in file
-		String app = ExtDocSettings.getPath(PreferenceConstants.EMAIL_PROGRAM);
+		String app = PreferenceConstants.getPath(PreferenceConstants.EMAIL_PROGRAM);
 		if (StringUtils.isBlank(app)) {
 			app = "mailto:";
 		}

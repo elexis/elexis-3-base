@@ -67,14 +67,14 @@ public class ExterneDokumente extends FieldEditorPreferencePage implements IWork
 	protected void createFieldEditors() {
 		StringFieldEditor sfe;
 
-		bStoreGlobal = new BooleanFieldEditor(ExtDocSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(PreferenceConstants.PATHS_GLOBAL,
 				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(ExtDocSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(PreferenceConstants.PATHS_GLOBAL, global);
 					updatePathStores(global);
 				}
 			}
@@ -140,7 +140,7 @@ public class ExterneDokumente extends FieldEditorPreferencePage implements IWork
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStores(ExtDocSettings.isStoreGlobal());
+		updatePathStores(ConfigServiceHolder.getGlobal(PreferenceConstants.PATHS_GLOBAL, false));
 		return control;
 	}
 

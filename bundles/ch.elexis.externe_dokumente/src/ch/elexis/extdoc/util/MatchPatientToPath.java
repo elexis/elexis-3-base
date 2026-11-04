@@ -25,7 +25,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.dialogs.MoveIntoSubDirsDialog;
-import ch.elexis.extdoc.preferences.ExtDocSettings;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 
 /***
@@ -217,7 +216,7 @@ public class MatchPatientToPath {
 	}
 
 	public static String getSubDirPath(Patient pat) {
-		String s = ExtDocSettings.getPath(PreferenceConstants.BASIS_PFAD1) + File.separatorChar
+		String s = PreferenceConstants.getPath(PreferenceConstants.BASIS_PFAD1) + File.separatorChar
 				+ basenameMustBeginWith(pat.getName(), pat.getVorname());
 		return s;
 	}

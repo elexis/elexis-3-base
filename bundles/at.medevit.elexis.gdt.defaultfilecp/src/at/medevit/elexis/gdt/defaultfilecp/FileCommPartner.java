@@ -1,18 +1,14 @@
 package at.medevit.elexis.gdt.defaultfilecp;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import ch.elexis.core.data.activator.CoreHubHelper;
 import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
@@ -162,35 +158,8 @@ public class FileCommPartner {
 		String value = isFileTransferGlobalConfigured()
 				? PreferencesUtil.getOsSpecificGlobalPreference(preferenceName, configService)
 				: PreferencesUtil.getOsSpecificLocalPreference(preferenceName, configService);
-		return resolveLocalFile(value).map(File::getAbsolutePath).orElse(StringUtils.EMPTY);
-	}
-
-	/**
-	 * Resolve a stored value to a local {@link File}. Handles plain paths, file
-	 * URIs and relative paths.
-	 *
-	 * @param pathOrUri
-	 * @return
-	 */
-	public static Optional<File> resolveLocalFile(String pathOrUri) {
-		if (StringUtils.isBlank(pathOrUri)) {
-			return Optional.empty();
-		}
-		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
-		if (vfsService == null) {
-			return Optional.of(new File(pathOrUri));
-		}
-		try {
-			Optional<File> resolved = vfsService.of(pathOrUri).toFile();
-			if (resolved.isPresent()) {
-				return resolved;
-			}
-		} catch (IOException e) {
-			LoggerFactory.getLogger(FileCommPartner.class).debug(
-					"Location [{}] is not a valid URI, falling back to plain file resolution", //$NON-NLS-1$
-					IVirtualFilesystemService.hidePasswordInUrlString(pathOrUri));
-		}
-		return Optional.of(new File(pathOrUri));
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value).map(File::getAbsolutePath)
+				.orElse(StringUtils.EMPTY);
 	}
 
 	public IPreferenceStore getSettings() {

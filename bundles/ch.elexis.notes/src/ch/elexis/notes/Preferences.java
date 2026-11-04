@@ -34,7 +34,8 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
  *
  */
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	public static final String CFGTREE = NotesSettings.BASEDIR;
+	public static final String CFGTREE = "notes/basedir"; //$NON-NLS-1$
+	public static final String PATHS_GLOBAL = "notes/paths_global"; //$NON-NLS-1$
 
 	private BooleanFieldEditor bStoreGlobal;
 
@@ -47,21 +48,21 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 
 	@Override
 	protected void createFieldEditors() {
-		bStoreGlobal = new BooleanFieldEditor(NotesSettings.CFG_PATHS_GLOBAL,
+		bStoreGlobal = new BooleanFieldEditor(PATHS_GLOBAL,
 				ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal, getFieldEditorParent()) {
 			@Override
 			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
 				super.fireValueChanged(property, oldValue, newValue);
 				if (FieldEditor.VALUE.equals(property)) {
 					boolean global = Boolean.TRUE.equals(newValue);
-					ConfigServiceHolder.setGlobal(NotesSettings.CFG_PATHS_GLOBAL, global);
+					ConfigServiceHolder.setGlobal(PATHS_GLOBAL, global);
 					updatePathStore(global);
 				}
 			}
 		};
 		addField(bStoreGlobal);
 
-		baseDirEditor = new URIFieldEditorComposite(NotesSettings.BASEDIR, Messages.Preferences_basedir,
+		baseDirEditor = new URIFieldEditorComposite(CFGTREE, Messages.Preferences_basedir,
 				getFieldEditorParent(), SWT.NONE);
 		baseDirEditor.setEmptyStringAllowed(true);
 	}
@@ -71,7 +72,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updatePathStore(NotesSettings.isStoreGlobal());
+		updatePathStore(ConfigServiceHolder.getGlobal(PATHS_GLOBAL, false));
 		return control;
 	}
 

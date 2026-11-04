@@ -103,7 +103,7 @@ public class MessagePreferencePage extends FieldEditorPreferencePage implements 
 		Control control = super.createContents(parent);
 		bStoreGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreGlobal.load();
-		updateOutputDirStore(PreferenceUtil.isStoreGlobal());
+		updateOutputDirStore(ConfigServiceHolder.getGlobal(PreferenceUtil.PREF_FILESYSTEM_OUTPUTDIR_GLOBAL, false));
 		return control;
 	}
 

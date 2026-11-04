@@ -61,61 +61,27 @@ public class PreferenceUtil {
 		ConfigServiceHolder.setGlobal(PREF_RECEIVERS, sj.toString());
 	}
 
-	public static boolean isStoreGlobal() {
-		return isStoreGlobal(ConfigServiceHolder.get());
-	}
-
-	public static boolean isStoreGlobal(IConfigService configService) {
-		return configService.get(PREF_FILESYSTEM_OUTPUTDIR_GLOBAL, false);
-	}
-
-	public static String getOutputDirectory() {
-		return getOutputDirectory(ConfigServiceHolder.get());
-	}
-
-	public static String getOutputDirectory(IConfigService configService) {
-		return isStoreGlobal(configService)
+	public static Optional<IVirtualFilesystemHandle> getOutputDirectoryHandle() {
+		IConfigService configService = ConfigServiceHolder.get();
+		String directory = configService.get(PREF_FILESYSTEM_OUTPUTDIR_GLOBAL, false)
 				? PreferencesUtil.getOsSpecificGlobalPreference(PREF_FILESYSTEM_OUTPUTDIR, configService)
 				: PreferencesUtil.getOsSpecificLocalPreference(PREF_FILESYSTEM_OUTPUTDIR, configService);
-	}
-
-	public static Optional<IVirtualFilesystemHandle> getOutputDirectoryHandle() {
-		return getOutputDirectoryHandle(VirtualFilesystemServiceHolder.get(), getOutputDirectory());
-	}
-
-	public static Optional<IVirtualFilesystemHandle> getOutputDirectoryHandle(IVirtualFilesystemService vfsService,
-			String directory) {
 		if (StringUtils.isBlank(directory)) {
 			return Optional.empty();
 		}
+		IVirtualFilesystemService vfsService = VirtualFilesystemServiceHolder.get();
 		try {
-			return toDirectoryHandle(vfsService.of(directory), directory);
-		} catch (IOException e) {
-			LoggerFactory.getLogger(PreferenceUtil.class).debug(
-					"HL7 message output directory [{}] is not a valid URI, falling back to plain file resolution",
+			IVirtualFilesystemHandle handle = IVirtualFilesystemService.isUrl(directory) ? vfsService.of(directory)
+					: vfsService.of(new File(directory));
+			if (handle.exists() && handle.isDirectory()) {
+				return Optional.of(handle);
+			}
+			LoggerFactory.getLogger(PreferenceUtil.class).warn("HL7 message output directory [{}] is not a directory",
 					IVirtualFilesystemService.hidePasswordInUrlString(directory));
-			return getLegacyOutputDirectoryHandle(vfsService, directory);
-		}
-	}
-
-	private static Optional<IVirtualFilesystemHandle> getLegacyOutputDirectoryHandle(
-			IVirtualFilesystemService vfsService, String directory) {
-		try {
-			return toDirectoryHandle(vfsService.of(new File(directory)), directory);
 		} catch (IOException e) {
 			LoggerFactory.getLogger(PreferenceUtil.class).warn("Could not access HL7 message output directory [{}]",
-					directory, e);
-			return Optional.empty();
+					IVirtualFilesystemService.hidePasswordInUrlString(directory), e);
 		}
-	}
-
-	private static Optional<IVirtualFilesystemHandle> toDirectoryHandle(IVirtualFilesystemHandle handle,
-			String directory) throws IOException {
-		if (handle != null && handle.exists() && handle.isDirectory()) {
-			return Optional.of(handle);
-		}
-		LoggerFactory.getLogger(PreferenceUtil.class).warn("HL7 message output directory [{}] is not a directory",
-				IVirtualFilesystemService.hidePasswordInUrlString(directory));
 		return Optional.empty();
 	}
 }

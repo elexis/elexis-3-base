@@ -34,11 +34,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -189,8 +192,8 @@ public class NotesView extends ViewPart implements IRefreshable {
 										StringUtils.EMPTY, null);
 								if (id.open() == Dialog.OK) {
 									String name = id.getValue();
-									String basedir = CoreHub.localCfg.get(Preferences.CFGTREE, null);
-									if (basedir == null) {
+									String basedir = getBaseDirectory();
+									if (StringUtils.isBlank(basedir)) {
 										SWTHelper.alert(Messages.NotesView_badBaseDirectoryTitle,
 												Messages.NotesView_badBaseDirectoryMessage);
 										return;
@@ -251,5 +254,14 @@ public class NotesView extends ViewPart implements IRefreshable {
 				}
 			}
 		}, fMaster);
+	}
+
+	private String getBaseDirectory() {
+		IConfigService configService = ConfigServiceHolder.get();
+		String value = configService.get(Preferences.PATHS_GLOBAL, false)
+				? PreferencesUtil.getOsSpecificGlobalPreference(Preferences.CFGTREE, configService)
+				: PreferencesUtil.getOsSpecificLocalPreference(Preferences.CFGTREE, configService);
+		return VirtualFilesystemServiceHolder.get().toLocalFile(value).map(File::getAbsolutePath)
+				.orElse(StringUtils.EMPTY);
 	}
 }

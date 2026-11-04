@@ -10,18 +10,20 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
-import org.apache.commons.lang3.StringUtils;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 
 /**
  * Object that manage and store the simple MedNet settings
@@ -95,10 +97,6 @@ public class MedNetSettings {
 		return this.exePath;
 	}
 
-	public void setExePath(Path path) {
-		this.exePath = path;
-	}
-
 	public int getArchivePurgeInterval() {
 		return this.archivePurgeInterval;
 	}
@@ -155,15 +153,7 @@ public class MedNetSettings {
 		String logPrefix = "loadSettings() - ";//$NON-NLS-1$
 
 		// Global Settings
-		String exePathString = ConfigServiceHolder.getGlobal(cfgExePath, StringUtils.EMPTY);
-		if (exePathString != null && !exePathString.isEmpty()) {
-			exePath = Paths.get(exePathString);
-			if (!Files.isRegularFile(exePath)) {
-				// If the exe does no more exists
-				LOGGER.error(logPrefix + "MedNet exe path: " + exePath.toString() + " is not a valid file");//$NON-NLS-1$
-				exePath = null;
-			}
-		}
+		loadExePath();
 
 		String cfgFormsArchivePurgeIntervalString = ConfigServiceHolder.getGlobal(cfgFormsArchivePurgeInterval,
 				StringUtils.EMPTY);
@@ -193,15 +183,24 @@ public class MedNetSettings {
 
 	}
 
+	public void loadExePath() {
+		String logPrefix = "loadExePath() - ";//$NON-NLS-1$
+
+		exePath = null;
+		String exePathString = PreferencesUtil.getOsSpecificGlobalPreference(cfgExePath, ConfigServiceHolder.get());
+		if (StringUtils.isNotBlank(exePathString)) {
+			exePath = VirtualFilesystemServiceHolder.get().toLocalFile(exePathString).map(File::toPath).orElse(null);
+			if (exePath == null || !Files.isRegularFile(exePath)) {
+				LOGGER.error(logPrefix + "MedNet exe path: " + exePathString + " is not a valid file");//$NON-NLS-1$
+				exePath = null;
+			}
+		}
+	}
+
 	/**
 	 * Save all settings
 	 */
 	public void saveSettings() {
-
-		// Global Settings
-		if (exePath != null) {
-			ConfigServiceHolder.setGlobal(cfgExePath, exePath.toString());
-		}
 		ConfigServiceHolder.setGlobal(cfgFormsArchivePurgeInterval, archivePurgeInterval);
 		ConfigServiceHolder.setGlobal(cfgDBVersion, dbVersion);
 	}

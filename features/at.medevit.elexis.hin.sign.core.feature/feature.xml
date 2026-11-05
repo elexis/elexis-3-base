@@ -19,18 +19,21 @@
    <plugin
          id="at.medevit.elexis.hin.sign.cli.linux"
          os="linux"
+         ws="gtk"
          arch="x86_64"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.elexis.hin.sign.cli.mac"
          os="macosx"
+         ws="cocoa"
          arch="x86_64"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.elexis.hin.sign.cli.win"
          os="win32"
+         ws="win32"
          arch="x86_64"
          version="0.0.0"/>
 
@@ -41,6 +44,7 @@
    <plugin
          id="at.medevit.elexis.hin.sign.cli.mac.arm"
          os="macosx"
+         ws="cocoa"
          arch="aarch64"
          version="0.0.0"/>
 

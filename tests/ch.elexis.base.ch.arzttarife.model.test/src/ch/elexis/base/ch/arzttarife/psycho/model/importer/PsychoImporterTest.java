@@ -18,7 +18,7 @@ import org.junit.Test;
 import ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieImporterTest;
 import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 
 public class PsychoImporterTest {
@@ -30,7 +30,7 @@ public class PsychoImporterTest {
 				PandemieImporterTest.class.getResourceAsStream("/rsc/20220609_PsyTarif_DE.xlsx"), null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 
 		ICodeElement diagnostic = codeElementService.loadFromString("Psychotherapie", "PA010", null).get();
 		assertNotNull(diagnostic);
@@ -47,6 +47,6 @@ public class PsychoImporterTest {
 		assertTrue(((IPsychoLeistung) percent).getTP().startsWith("%"));
 		assertEquals(LocalDate.of(2022, 7, 1), ((IPsychoLeistung) diagnostic).getValidFrom());
 
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

@@ -23,13 +23,13 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
-import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=complementary")
 public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImporter
@@ -116,7 +116,7 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 			EntityUtil.save(closed);
 			monitor.done();
 			if (newVersion != null) {
-				ConfigServiceHolder.get().get().set(REFERENCEDATA_COMPLEMENTARY_VERSION, newVersion);
+				ConfigServiceHolder.get().set(REFERENCEDATA_COMPLEMENTARY_VERSION, newVersion);
 			}
 			return Status.OK_STATUS;
 		} catch (IOException | CsvValidationException uee) {
@@ -147,7 +147,7 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 	private DateTimeFormatter elexisDateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
 	private void updateIndexForLang() {
-		String lang = ConfigServiceHolder.get().get().get(Preferences.ABL_LANGUAGE, "d").toUpperCase();
+		String lang = ConfigServiceHolder.get().get(Preferences.ABL_LANGUAGE, "d").toUpperCase();
 		int offset = 0;
 		if ("I".equals(lang)) {
 			offset = 2;
@@ -165,7 +165,7 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 
 	@Override
 	public int getCurrentVersion() {
-		return ConfigServiceHolder.get().get().get(REFERENCEDATA_COMPLEMENTARY_VERSION, 0);
+		return ConfigServiceHolder.get().get(REFERENCEDATA_COMPLEMENTARY_VERSION, 0);
 	}
 
 }

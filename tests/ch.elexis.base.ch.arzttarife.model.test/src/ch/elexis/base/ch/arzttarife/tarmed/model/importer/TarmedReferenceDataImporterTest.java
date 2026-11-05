@@ -28,6 +28,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusive;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistungAge;
 import ch.elexis.base.ch.arzttarife.tarmed.model.VersionUtil;
 import ch.rgw.tools.TimeTool;
 

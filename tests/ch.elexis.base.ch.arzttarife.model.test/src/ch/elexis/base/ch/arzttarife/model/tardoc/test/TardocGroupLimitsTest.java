@@ -16,7 +16,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.builder.IEncounterBuilder;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
@@ -132,8 +132,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 
 		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		encounter1.setDate(LocalDate.of(2026, 1, 7));
 		CoreModelServiceHolder.get().save(encounter1);
 		status = billingService.bill(code_AA050010, encounter1, 1);
@@ -146,8 +146,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 
 		IEncounter encounter2 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		encounter2.setDate(LocalDate.of(2026, 1, 14));
 		CoreModelServiceHolder.get().save(encounter2);
 		status = billingService.bill(code_AA050010, encounter2, 1);
@@ -160,8 +160,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 
 		IEncounter encounter3 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		encounter3.setDate(LocalDate.of(2026, 1, 21));
 		CoreModelServiceHolder.get().save(encounter3);
 		status = billingService.bill(code_AA050010, encounter3, 1);
@@ -174,8 +174,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 
 		IEncounter encounter4 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		encounter4.setDate(LocalDate.of(2026, 2, 1));
 		CoreModelServiceHolder.get().save(encounter4);
 		status = billingService.bill(code_AA050010, encounter4, 1);
@@ -188,8 +188,8 @@ public class TardocGroupLimitsTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 
 		IEncounter encounter5 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		encounter5.setDate(LocalDate.of(2026, 2, 7));
 		CoreModelServiceHolder.get().save(encounter5);
 		// 21 in 90 days is not valid

@@ -22,7 +22,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLimitation.LimitationUnit;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
@@ -34,6 +33,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.INativeQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.Result;
 
 public class PsychoLimitation {

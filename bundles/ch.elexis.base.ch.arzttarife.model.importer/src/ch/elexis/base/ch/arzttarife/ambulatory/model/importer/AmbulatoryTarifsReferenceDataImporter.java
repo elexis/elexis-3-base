@@ -28,12 +28,12 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
-import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jpa.entities.AmbulantePauschalen;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=ambulatorytarif")
 public class AmbulatoryTarifsReferenceDataImporter extends AbstractReferenceDataImporter
@@ -128,7 +128,7 @@ public class AmbulatoryTarifsReferenceDataImporter extends AbstractReferenceData
 	}
 
 	private String getLang() {
-		String ret = ConfigServiceHolder.get().get().getLocal(Preferences.ABL_LANGUAGE, "de");//$NON-NLS-1$
+		String ret = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "de");//$NON-NLS-1$
 		if (ret.toLowerCase().equals("d")) {
 			ret = "de";
 		} else if (ret.toLowerCase().equals("f")) {

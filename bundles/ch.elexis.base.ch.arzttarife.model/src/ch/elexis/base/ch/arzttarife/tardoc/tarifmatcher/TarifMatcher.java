@@ -18,11 +18,11 @@ import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowance;
 import ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowanceOptifier;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.oaat_otma.PatientCase;
 import ch.oaat_otma.Service;
@@ -67,14 +67,14 @@ public class TarifMatcher<T extends IBillable> {
 	@SuppressWarnings("unchecked")
 	public Result<IBilled> evaluate(IBilled billed, IEncounter encounter) {
 		if (casemasterService == null) {
-			casemasterService = OsgiServiceUtil.getService(CasemasterService.class).orElseThrow();
+			casemasterService = PortableServiceLoader.getOptional(CasemasterService.class).orElseThrow();
 		}
 		if (patientClassificationSystemService == null) {
-			patientClassificationSystemService = OsgiServiceUtil.getService(PatientClassificationSystemService.class)
-					.orElseThrow();
+			patientClassificationSystemService = PortableServiceLoader
+					.getOptional(PatientClassificationSystemService.class).orElseThrow();
 		}
 		if (mapperService == null) {
-			mapperService = OsgiServiceUtil.getService(MapperService.class).orElseThrow();
+			mapperService = PortableServiceLoader.getOptional(MapperService.class).orElseThrow();
 		}
 
 		Result<IBilled> ret = new Result<IBilled>(billed);
@@ -174,8 +174,7 @@ public class TarifMatcher<T extends IBillable> {
 	}
 
 	private boolean isDuplicate(AmbulatoryAllowance pauschale, IEncounter encounter) {
-		return encounter.getBilled().stream().filter(b -> isSameCode(pauschale.getCode(), b)).findFirst()
-				.isPresent();
+		return encounter.getBilled().stream().filter(b -> isSameCode(pauschale.getCode(), b)).findFirst().isPresent();
 	}
 
 	private boolean isSameCode(String matchCode, IBilled billed) {
@@ -191,9 +190,8 @@ public class TarifMatcher<T extends IBillable> {
 
 	private Map<MapperLogEntryLevel, Integer> logEntrySortMap() {
 		return Map.of(MapperLogEntryLevel.INFO, Integer.MAX_VALUE, MapperLogEntryLevel.WARNING, Integer.MAX_VALUE,
-				MapperLogEntryLevel.MISSING_MASTER, Integer.valueOf(1),
-				MapperLogEntryLevel.TARDOC_VALIDATION_DELETE, Integer.valueOf(2),
-				MapperLogEntryLevel.TARDOC_VALIDATION_UPDATE, Integer.valueOf(2),
+				MapperLogEntryLevel.MISSING_MASTER, Integer.valueOf(1), MapperLogEntryLevel.TARDOC_VALIDATION_DELETE,
+				Integer.valueOf(2), MapperLogEntryLevel.TARDOC_VALIDATION_UPDATE, Integer.valueOf(2),
 				MapperLogEntryLevel.LKAAT_VALIDATION_TRIGGER, Integer.valueOf(3),
 				MapperLogEntryLevel.LKAAT_VALIDATION_NOT_FOUND, Integer.valueOf(3),
 				MapperLogEntryLevel.LKAAT_VALIDATION_DUPLICATE, Integer.valueOf(3));
@@ -212,7 +210,7 @@ public class TarifMatcher<T extends IBillable> {
 					+ " konnte keine passende Hauptleistung gefunden werden.";
 		case TARDOC_VALIDATION_DELETE:
 			if (mapperLogEntry.message != null && mapperLogEntry.message.contains("side")) {
-				return "Bei der Leistung  " +  mapperLogEntry.tardocCode + "  muss die Seite angegeben werden.";
+				return "Bei der Leistung  " + mapperLogEntry.tardocCode + "  muss die Seite angegeben werden.";
 			}
 			if (mapperLogEntry.message != null
 					&& mapperLogEntry.message.toLowerCase().contains("not combinable with")) {

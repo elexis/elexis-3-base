@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import ch.elexis.base.ch.arzttarife.elexis.service.test.IEncounterServiceTest;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ch.BillingLaw;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IBillingSystemService;
 
 @RunWith(Suite.class)
@@ -25,7 +25,7 @@ public class AllTarmedTests {
 	@BeforeClass
 	public static void beforeClass() {
 		// initialize the required billing systems
-		IBillingSystemService billingSystemService = OsgiServiceUtil.getService(IBillingSystemService.class).get();
+		IBillingSystemService billingSystemService = PortableServiceLoader.get(IBillingSystemService.class);
 		billingSystemService.addOrModifyBillingSystem(UVG_NAME, CONST_TARMED_DRUCKER, UVG_REQUIREMENTS, BillingLaw.UVG);
 	}
 

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 
@@ -33,11 +33,11 @@ public class ComplementaryImporterTest {
 				ComplementaryImporterTest.class.getResourceAsStream("/rsc/complementary_171229.csv"), null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement bachFlowers = codeElementService.loadFromString("Komplementärmedizin", "1022", null).get();
 		assertNotNull(bachFlowers);
 		assertNotNull(bachFlowers.getText());
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 		
 		InputStream updateStream = ComplementaryImporterTest.class.getResourceAsStream("/rsc/complementary_v4.csv");
 		if (updateStream != null) {

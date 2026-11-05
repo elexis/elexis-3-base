@@ -32,7 +32,7 @@ import ch.elexis.core.common.DBConnection;
 import ch.elexis.core.common.DBConnection.DBType;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBillingSystemFactor;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IElexisDataSource;
@@ -59,77 +59,72 @@ public class AllTestsSuite {
 			// modify DataSourceConnectionParser#jdbcString to be persistent
 
 			// download and copy tarifs to rsc folder first !
-			IReferenceDataImporter physioImporter = OsgiServiceUtil
+			IReferenceDataImporter physioImporter = PortableServiceLoader
 					.getService(IReferenceDataImporter.class, "(" + IReferenceDataImporter.REFERENCEDATAID + "=physio)")
 					.get();
 			IStatus result = physioImporter.performImport(new NullProgressMonitor(),
 					AllTestsSuite.class.getResourceAsStream("/rsc/physiotarif2018_09_05.csv"), 180905);
-			OsgiServiceUtil.ungetService(physioImporter);
+
 			assertTrue(result.isOK());
 
-			IReferenceDataImporter complementaryImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
-					"(" + IReferenceDataImporter.REFERENCEDATAID + "=complementary)").get();
+			IReferenceDataImporter complementaryImporter = PortableServiceLoader
+					.getService(IReferenceDataImporter.class,
+							"(" + IReferenceDataImporter.REFERENCEDATAID + "=complementary)")
+					.get();
 			result = complementaryImporter.performImport(new NullProgressMonitor(),
 					AllTestsSuite.class.getResourceAsStream("/rsc/complementary_171229.csv"), 180206);
 			assertTrue(result.isOK());
-			OsgiServiceUtil.ungetService(complementaryImporter);
 
-			IReferenceDataImporter tarmedImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+			IReferenceDataImporter tarmedImporter = PortableServiceLoader.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34)").get();
 			result = tarmedImporter.performImport(new NullProgressMonitor(),
 					AllTestsSuite.class.getResourceAsStream("/rsc/TARMED_Datenbank_01.08.00_BR_UVG_IVG_MVG.mdb"),
 					171019);
 			assertTrue(result.isOK());
-			OsgiServiceUtil.ungetService(tarmedImporter);
 
-			tarmedImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+			tarmedImporter = PortableServiceLoader.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmed_kvg_34)").get();
 			result = tarmedImporter.performImport(new NullProgressMonitor(),
 					AllTestsSuite.class.getResourceAsStream("/rsc/TARMED__Datenbank_01.09.00_BR_KVG-27.12.2017.mdb"),
 					171227);
 			assertTrue(result.isOK());
-			OsgiServiceUtil.ungetService(tarmedImporter);
 
-			IReferenceDataImporter tardocImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
-					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tardoc)").get();
+			IReferenceDataImporter tardocImporter = PortableServiceLoader
+					.getService(IReferenceDataImporter.class, "(" + IReferenceDataImporter.REFERENCEDATAID + "=tardoc)")
+					.get();
 			result = tardocImporter.performImport(new NullProgressMonitor(),
 					AllTestsSuite.class.getResourceAsStream("/rsc/Anhang_A2_Katalog_des_TARDOC_1.4c_251128_2.mdb"),
 					250820);
 			assertTrue(result.isOK());
-			OsgiServiceUtil.ungetService(tardocImporter);
 
-			IReferenceDataImporter pauschalenImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+			IReferenceDataImporter pauschalenImporter = PortableServiceLoader.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=ambulatoryallowance)").get();
-			result = pauschalenImporter.performImport(new NullProgressMonitor(),
-					AllTestsSuite.class.getResourceAsStream(
-							"/rsc/250808_Anhang_A1_Katalog_der_Ambulanten_Pauschalen_CSV_v1.1c.csv"),
+			result = pauschalenImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
+					.getResourceAsStream("/rsc/250808_Anhang_A1_Katalog_der_Ambulanten_Pauschalen_CSV_v1.1c.csv"),
 					250820);
 			assertTrue(result.isOK());
-			OsgiServiceUtil.ungetService(pauschalenImporter);
 
-			IReferenceDataImporter tarifImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+			IReferenceDataImporter tarifImporter = PortableServiceLoader.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=ambulatorytarif)").get();
-			result = tarifImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
-					.getResourceAsStream("/rsc/LKAAT_1.0c_251128.CSV"),
-					250820);
+			result = tarifImporter.performImport(new NullProgressMonitor(),
+					AllTestsSuite.class.getResourceAsStream("/rsc/LKAAT_1.0c_251128.CSV"), 250820);
 			assertTrue(result.isOK());
-			OsgiServiceUtil.ungetService(tarifImporter);
 
 			dumpInitialTarifs();
 		}
-		modelService = OsgiServiceUtil.getService(IModelService.class,
+		modelService = PortableServiceLoader.getService(IModelService.class,
 				"(" + IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.arzttarife.model)").get();
-		coreModelService = OsgiServiceUtil
+		coreModelService = PortableServiceLoader
 				.getService(IModelService.class, "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)").get();
-		billingService = OsgiServiceUtil.getService(IBillingService.class).get();
-		entityManager = OsgiServiceUtil.getService(IElexisEntityManager.class).get();
+		billingService = PortableServiceLoader.get(IBillingService.class);
+		entityManager = PortableServiceLoader.get(IElexisEntityManager.class);
 		entityManager.getEntityManager(); // initialize the db
-		encounterService = OsgiServiceUtil.getService(IEncounterService.class).get();
+		encounterService = PortableServiceLoader.get(IEncounterService.class);
 
 		TestDatabaseInitializer tdb = new TestDatabaseInitializer(coreModelService, entityManager);
 		tdb.initializeMandant();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(TestDatabaseInitializer.getMandant());
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(TestDatabaseInitializer.getMandant());
 	}
 
 	/**
@@ -181,7 +176,7 @@ public class AllTestsSuite {
 				}
 			}
 			// reset the datasource
-			IElexisDataSource elexisDataSource = OsgiServiceUtil.getService(IElexisDataSource.class).get();
+			IElexisDataSource elexisDataSource = PortableServiceLoader.get(IElexisDataSource.class);
 			DBConnection dbConnection = new DBConnection();
 			dbConnection.rdbmsType = DBType.H2;
 			dbConnection.databaseName = "arzttarifemodel";
@@ -200,7 +195,7 @@ public class AllTestsSuite {
 	 * Use this method to create a fresh dump of the db after tarif import.
 	 */
 	private static void dumpInitialTarifs() {
-		DataSource dataSource = OsgiServiceUtil.getService(DataSource.class).get();
+		DataSource dataSource = PortableServiceLoader.get(DataSource.class);
 		Connection connection = null;
 		try {
 			connection = dataSource.getConnection();
@@ -218,7 +213,7 @@ public class AllTestsSuite {
 				}
 			}
 		}
-		OsgiServiceUtil.ungetService(dataSource);
+
 	}
 
 	public static IModelService getModelService() {

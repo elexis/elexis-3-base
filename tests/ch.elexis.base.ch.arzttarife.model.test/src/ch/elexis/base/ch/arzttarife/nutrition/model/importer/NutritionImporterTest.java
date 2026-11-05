@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 
 public class NutritionImporterTest {
@@ -26,10 +26,10 @@ public class NutritionImporterTest {
 				NutritionImporterTest.class.getResourceAsStream("/rsc/nutrition2021_11_25.csv"), 211125);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement generalAllowance = codeElementService.loadFromString("Ernährungsberatung", "7811", null).get();
 		assertNotNull(generalAllowance);
 		assertNotNull(generalAllowance.getText());
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

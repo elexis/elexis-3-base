@@ -11,7 +11,7 @@ import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.core.test.AbstractTest;
@@ -28,7 +28,7 @@ public class ComplementaryLeistungTest extends AbstractTest {
 
 	@Test
 	public void loadFromStoreToStringService() {
-		IStoreToStringService storeToStringService = OsgiServiceUtil.getService(IStoreToStringService.class).get();
+		IStoreToStringService storeToStringService = PortableServiceLoader.get(IStoreToStringService.class);
 		Identifiable loadFromString = storeToStringService
 				.loadFromString("ch.elexis.data.ComplementaryLeistung::1134-20140101").get();
 		assertEquals("1134-20140101", loadFromString.getId());
@@ -37,23 +37,23 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		assertEquals(
 				"Beinhaltet Körperreflexzonen, Muskelreflexzonenmassage, sowie Mikrosysteme wie Ohren, Hände und Füsse",
 				((IComplementaryLeistung) loadFromString).getDescription());
-		OsgiServiceUtil.ungetService(storeToStringService);
+		
 	}
 
 	@Test
 	public void loadFromCodeElementService() {
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement loadFromString = codeElementService.loadFromString("Komplementärmedizin", "1111", null).get();
 		assertEquals("1111-20090101", ((Identifiable) loadFromString).getId());
 		assertTrue(loadFromString instanceof IComplementaryLeistung);
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 
 	@Test
 	public void billing() throws ParseException {
 		createEncounter();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IComplementaryLeistung complementaryLeistung = (IComplementaryLeistung) codeElementService
 				.loadFromString("Komplementärmedizin", "1111", null).get();
 		Result<IBilled> result = complementaryLeistung.getOptifier().add(complementaryLeistung, encounter, 1);
@@ -76,6 +76,6 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		assertEquals(billed.getFactor() * 50, billed.getPrice().getAmount(), 0.01);
 
 		assertEquals(encounter, billed.getEncounter());
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

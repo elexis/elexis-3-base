@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
-import ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedLeistungAge;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;

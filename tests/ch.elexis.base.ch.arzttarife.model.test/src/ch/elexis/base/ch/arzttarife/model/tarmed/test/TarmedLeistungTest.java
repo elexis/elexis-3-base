@@ -21,7 +21,7 @@ import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IStoreToStringService;
 
@@ -65,7 +65,7 @@ public class TarmedLeistungTest {
 
 	@Test
 	public void loadFromStoreToStringService() {
-		IStoreToStringService storeToStringService = OsgiServiceUtil.getService(IStoreToStringService.class).get();
+		IStoreToStringService storeToStringService = PortableServiceLoader.get(IStoreToStringService.class);
 		Identifiable loadFromString = storeToStringService
 				.loadFromString("ch.elexis.data.TarmedLeistung::00.0010-20180101-KVG").get();
 		assertEquals("00.0010-20180101-KVG", loadFromString.getId());
@@ -75,7 +75,7 @@ public class TarmedLeistungTest {
 
 	@Test
 	public void loadFromCodeElementService() {
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement loadFromString = codeElementService
 				.loadFromString(ch.elexis.core.jpa.entities.TarmedLeistung.CODESYSTEM_NAME, "00.0056", null).get();
 		assertEquals("00.0056-20180101-KVG", ((Identifiable) loadFromString).getId());

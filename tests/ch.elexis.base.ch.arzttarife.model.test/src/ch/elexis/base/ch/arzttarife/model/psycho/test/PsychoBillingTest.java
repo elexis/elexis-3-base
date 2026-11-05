@@ -27,7 +27,7 @@ import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IBillingSystemService;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.test.AbstractTest;
@@ -38,20 +38,19 @@ public class PsychoBillingTest extends AbstractTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		IReferenceDataImporter tarifImporter = OsgiServiceUtil
+		IReferenceDataImporter tarifImporter = PortableServiceLoader
 				.getService(IReferenceDataImporter.class, "(" + IReferenceDataImporter.REFERENCEDATAID + "=psycho)")
 				.get();
 		IStatus result = tarifImporter.performImport(new NullProgressMonitor(),
 				AllTestsSuite.class.getResourceAsStream("/rsc/20220609_PsyTarif_DE.xlsx"), 1);
 		assertTrue(result.isOK());
-		OsgiServiceUtil.ungetService(tarifImporter);
 
-		IReferenceDataImporter limitImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+		IReferenceDataImporter limitImporter = PortableServiceLoader.getService(IReferenceDataImporter.class,
 				"(" + IReferenceDataImporter.REFERENCEDATAID + "=psycholimitation)").get();
 		result = limitImporter.performImport(new NullProgressMonitor(),
 				AllTestsSuite.class.getResourceAsStream("/rsc/psycho_limit.csv"), 1);
 		assertTrue(result.isOK());
-		OsgiServiceUtil.ungetService(limitImporter);
+
 	}
 
 	private IBillingSystemFactor factor;
@@ -70,7 +69,7 @@ public class PsychoBillingTest extends AbstractTest {
 
 	@Test
 	public void loadFromCodeElementService() {
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement loadFromString = codeElementService.loadFromString("Psychotherapie", "PA010", null).get();
 		assertTrue(loadFromString instanceof IPsychoLeistung);
 	}
@@ -80,9 +79,9 @@ public class PsychoBillingTest extends AbstractTest {
 	public void billing() throws ParseException {
 		createEncounter();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
-		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService
-				.loadFromString("Psychotherapie", "PA010", null).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
+		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PA010", null)
+				.get();
 		Result<IBilled> result = therapy.getOptifier().add(therapy, encounter, 1);
 		assertTrue(result.isOK());
 		assertFalse(encounter.getBilled().isEmpty());
@@ -102,7 +101,7 @@ public class PsychoBillingTest extends AbstractTest {
 	public void limitSession() throws ParseException {
 		createEncounter();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PA010", null)
 				.get();
 		Result<IBilled> result = therapy.getOptifier().add(therapy, encounter, 90);
@@ -118,7 +117,7 @@ public class PsychoBillingTest extends AbstractTest {
 	public void limitExclusive() throws ParseException {
 		createEncounter();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IPsychoLeistung prepare = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PE010", null)
 				.get();
 		Result<IBilled> result = prepare.getOptifier().add(prepare, encounter, 10);
@@ -141,7 +140,7 @@ public class PsychoBillingTest extends AbstractTest {
 	public void limitSessionIncluding() throws ParseException {
 		createEncounter();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PA010", null)
 				.get();
 		Result<IBilled> result = therapy.getOptifier().add(therapy, encounter, 80);
@@ -172,7 +171,7 @@ public class PsychoBillingTest extends AbstractTest {
 		IEncounter pastInRangeEncounter = new IEncounterBuilder(coreModelService, coverage, mandator)
 				.date(LocalDateTime.now().minusDays(89)).buildAndSave();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IPsychoLeistung service = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PE040", null)
 				.get();
 		Result<IBilled> result = service.getOptifier().add(service, pastInRangeEncounter, 80);
@@ -199,7 +198,7 @@ public class PsychoBillingTest extends AbstractTest {
 	public void limitDayPatient() throws ParseException {
 		createEncounter();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PA010", null)
 				.get();
 		Result<IBilled> result = therapy.getOptifier().add(therapy, encounter, 80);
@@ -228,10 +227,9 @@ public class PsychoBillingTest extends AbstractTest {
 		IEncounter pastNotInRangeEncounter = new IEncounterBuilder(coreModelService, coverage, mandator)
 				.date(LocalDateTime.now().minusDays(200)).buildAndSave();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IPsychoLeistung diagnostic = (IPsychoLeistung) codeElementService
-				.loadFromString("Psychotherapie", "PA220", null)
-				.get();
+				.loadFromString("Psychotherapie", "PA220", null).get();
 		Result<IBilled> result = diagnostic.getOptifier().add(diagnostic, pastInRangeEncounter, 120);
 		assertTrue(result.isOK());
 		result = diagnostic.getOptifier().add(diagnostic, pastNotInRangeEncounter, 120);
@@ -247,7 +245,7 @@ public class PsychoBillingTest extends AbstractTest {
 	public void limitExclusion() throws ParseException {
 		createEncounter();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 
 		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PA010", null)
 				.get();
@@ -272,7 +270,7 @@ public class PsychoBillingTest extends AbstractTest {
 				.date(LocalDateTime.now().minusDays(1)).buildAndSave();
 		IEncounter sameDayEncounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 
 		IPsychoLeistung therapy = (IPsychoLeistung) codeElementService.loadFromString("Psychotherapie", "PA010", null)
 				.get();
@@ -293,8 +291,7 @@ public class PsychoBillingTest extends AbstractTest {
 		assertFalse(yesterDayEncounter.getBilled().isEmpty());
 
 		IPsychoLeistung administrativ = (IPsychoLeistung) codeElementService
-				.loadFromString("Psychotherapie", "PN010", null)
-				.get();
+				.loadFromString("Psychotherapie", "PN010", null).get();
 		result = administrativ.getOptifier().add(administrativ, encounter, 15);
 		assertFalse(result.isOK());
 		assertFalse(encounter.getBilled().isEmpty());
@@ -330,10 +327,8 @@ public class PsychoBillingTest extends AbstractTest {
 
 	public void createOtherPatient() {
 		LocalDate dob = LocalDate.of(2017, 9, 1);
-		otherPatient = new IContactBuilder.PatientBuilder(coreModelService, "OtherTestPatient", "OtherTestPatient",
-				dob,
-				Gender.FEMALE)
-				.buildAndSave();
+		otherPatient = new IContactBuilder.PatientBuilder(coreModelService, "OtherTestPatient", "OtherTestPatient", dob,
+				Gender.FEMALE).buildAndSave();
 		assertTrue(otherPatient.isPerson());
 		assertTrue(otherPatient.isPatient());
 		assertFalse(otherPatient.isOrganization());
@@ -342,7 +337,7 @@ public class PsychoBillingTest extends AbstractTest {
 	}
 
 	public void createOtherCoverage() {
-		IBillingSystemService billingSystemService = OsgiServiceUtil.getService(IBillingSystemService.class).get();
+		IBillingSystemService billingSystemService = PortableServiceLoader.get(IBillingSystemService.class);
 		billingSystemService.addOrModifyBillingSystem("Psychotherapie", CONST_TARMED_DRUCKER, KVG_REQUIREMENTS,
 				BillingLaw.KVG);
 
@@ -365,12 +360,11 @@ public class PsychoBillingTest extends AbstractTest {
 
 	@Override
 	public void createCoverage() {
-		IBillingSystemService billingSystemService = OsgiServiceUtil.getService(IBillingSystemService.class).get();
+		IBillingSystemService billingSystemService = PortableServiceLoader.get(IBillingSystemService.class);
 		billingSystemService.addOrModifyBillingSystem("Psychotherapie", CONST_TARMED_DRUCKER, KVG_REQUIREMENTS,
 				BillingLaw.KVG);
 
-		factor = AllTestsSuite.createBillingSystemFactor("Psychotherapie", 2.58,
-				LocalDate.of(2022, 1, 1));
+		factor = AllTestsSuite.createBillingSystemFactor("Psychotherapie", 2.58, LocalDate.of(2022, 1, 1));
 
 		if (patient == null) {
 			createPatient();

@@ -6,14 +6,14 @@ import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.PatientConstants;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class TarmedUtil {
 
@@ -21,7 +21,7 @@ public class TarmedUtil {
 
 	public static boolean getConfigValue(Class<?> requestor, Class<?> configSource, String parameter,
 			boolean fallback) {
-		IContextService contextService = ContextServiceHolder.get().orElse(null);
+		IContextService contextService = ContextServiceHolder.isAvailable() ? ContextServiceHolder.get() : null;
 		if (contextService != null) {
 			IContact contact;
 			if (configSource.equals(IMandator.class)) {
@@ -30,7 +30,7 @@ public class TarmedUtil {
 				contact = contextService.getActiveUser().map(u -> u.getAssignedContact()).orElse(null);
 			}
 			if (contact != null) {
-				IConfigService configService = ConfigServiceHolder.get().orElse(null);
+				IConfigService configService = ConfigServiceHolder.isPresent() ? ConfigServiceHolder.get() : null;
 				if (configService != null) {
 					boolean value = configService.get(contact, parameter, fallback);
 					if (value != fallback) {

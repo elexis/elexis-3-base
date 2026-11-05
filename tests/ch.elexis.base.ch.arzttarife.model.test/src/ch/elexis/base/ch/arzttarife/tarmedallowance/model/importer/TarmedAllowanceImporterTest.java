@@ -17,7 +17,7 @@ import org.junit.Test;
 import ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieImporterTest;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 
 public class TarmedAllowanceImporterTest {
@@ -29,7 +29,7 @@ public class TarmedAllowanceImporterTest {
 				PandemieImporterTest.class.getResourceAsStream("/rsc/tarmedpauschalen.xlsx"), null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 
 		ICodeElement eyeNew = codeElementService.loadFromString("Tarmedpauschalen", "08.0908.01.05", null).get();
 		assertNotNull(eyeNew);
@@ -37,6 +37,6 @@ public class TarmedAllowanceImporterTest {
 		assertTrue(eyeNew.getText().startsWith("Katarakt bei PatientIn mit höherem Risiko für Komplikationen"));
 		assertFalse(eyeNew.getText().contains("\n"));
 		assertEquals(LocalDate.of(2021, 1, 1), ((ITarmedAllowance) eyeNew).getValidFrom());
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

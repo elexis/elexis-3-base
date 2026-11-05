@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.occupational.model.importer.OccupationalImporterTest;
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 
 public class Ps25ImporterTest {
@@ -27,12 +27,12 @@ public class Ps25ImporterTest {
 				OccupationalImporterTest.class.getResourceAsStream("/rsc/PS25_2026-06-19.xlsx"), 1);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 
 		ICodeElement ps25 = codeElementService
 				.loadFromString("PS25", "PS06.110.2", null).get();
 		assertNotNull(ps25);
 		assertNotNull(ps25.getText());
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

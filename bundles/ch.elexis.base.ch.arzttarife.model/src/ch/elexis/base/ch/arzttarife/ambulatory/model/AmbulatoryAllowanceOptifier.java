@@ -2,7 +2,6 @@ package ch.elexis.base.ch.arzttarife.ambulatory.model;
 
 import java.util.Optional;
 
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tardoc.tarifmatcher.TarifMatcher;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
@@ -11,6 +10,7 @@ import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.Result;
 
 public class AmbulatoryAllowanceOptifier extends AbstractOptifier<AmbulatoryAllowance> {

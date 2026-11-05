@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 
 public class AmbulatoryAllowanceImporterTest {
@@ -30,7 +30,7 @@ public class AmbulatoryAllowanceImporterTest {
 				null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 
 		ICodeElement element = codeElementService.loadFromString("Ambulantepauschalen", "C01.50C", null).get();
 		assertNotNull(element);
@@ -38,6 +38,6 @@ public class AmbulatoryAllowanceImporterTest {
 		assertTrue(element.getText().startsWith("Lumbalpunktion"));
 		assertFalse(element.getText().contains("\n"));
 		assertEquals(LocalDate.of(2026, 1, 1), ((IAmbulatoryAllowance) element).getValidFrom());
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

@@ -42,7 +42,7 @@ import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IConfigService;
@@ -162,20 +162,19 @@ public class TarmedOptifierTest {
 		resetKons(konsPeriodEnd);
 
 		// add custom exclusions
-		IReferenceDataImporter customExclusionsImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+		IReferenceDataImporter customExclusionsImporter = PortableServiceLoader.getService(IReferenceDataImporter.class,
 				"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmedcustomexclusions)").get();
 		customExclusionsImporter.performImport(new NullProgressMonitor(),
 				IOUtils.toInputStream("00.0010,00.1345,E\n17.0090,00.0015,E", "UTF-8"), 0);
 
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 	}
 
 	private static void importTarmedReferenceData() throws FileNotFoundException {
 		// Importer not provided we import the raw db; set values that would have
 		// // been set by the importer
-		OsgiServiceUtil.getService(IConfigService.class).get().set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE,
-				true);
+		PortableServiceLoader.get(IConfigService.class).set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, true);
 		// File tarmedFile = new File(System.getProperty("user.dir") + File.separator +
 		// "rsc"
 		// + File.separator + "tarmed.mdb");
@@ -204,9 +203,8 @@ public class TarmedOptifierTest {
 	@Test
 	public void testAddCompatibleAndIncompatible() {
 		clearKons(konsGriss);
-		Result<IBilled> resultGriss = optifier.add(
-				TarmedLeistung.getFromCode("39.3005", LocalDate.of(2025, 12, 31), LAW),
-				konsGriss, 1.0);
+		Result<IBilled> resultGriss = optifier
+				.add(TarmedLeistung.getFromCode("39.3005", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(resultGriss.isOK());
 		resultGriss = optifier.add(TarmedLeistung.getFromCode("39.0020", LocalDate.of(2025, 12, 31), LAW), konsGriss,
 				1.0);
@@ -555,22 +553,22 @@ public class TarmedOptifierTest {
 	public void testSideExclusion() {
 		clearKons(konsGriss);
 
-		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("09.0930", LocalDate.of(2025,12,31), LAW), konsGriss,
-				1.0);
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("09.0930", LocalDate.of(2025, 12, 31), LAW),
+				konsGriss, 1.0);
 		assertTrue(result.isOK());
 
-		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025,12,31), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
 
 		optifier.putContext(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
-		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025,12,31), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertFalse(result.isOK());
 		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
 		optifier.clearContext();
 
 		optifier.putContext(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
-		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025,12,31), LAW), konsGriss, 1.0);
+		result = optifier.add(TarmedLeistung.getFromCode("09.0950", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
 		optifier.clearContext();
 
@@ -585,8 +583,7 @@ public class TarmedOptifierTest {
 		clearKons(konsGriss);
 
 		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("39.3408", LocalDate.of(2025, 12, 31), LAW),
-				konsGriss,
-				1.0);
+				konsGriss, 1.0);
 		assertTrue(result.isOK());
 		assertEquals(1, getLeistungAmount("39.3408", konsGriss));
 
@@ -618,8 +615,7 @@ public class TarmedOptifierTest {
 		clearKons(konsOneYear);
 
 		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.of(2025, 12, 31), LAW),
-				konsOneYear,
-				1.0);
+				konsOneYear, 1.0);
 		assertTrue(result.isOK());
 		assertEquals(1, getLeistungAmount("03.0060", konsOneYear));
 
@@ -671,8 +667,7 @@ public class TarmedOptifierTest {
 		clearKons(konsGriss);
 
 		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.of(2025, 12, 31), LAW),
-				konsGriss,
-				1.0);
+				konsGriss, 1.0);
 		assertEquals("l", result.get().getExtInfo("Seite"));
 		assertTrue(result.isOK());
 		result = optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
@@ -800,8 +795,7 @@ public class TarmedOptifierTest {
 		clearKons(konsGriss);
 
 		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("17.0710", LocalDate.of(2025, 12, 31), LAW),
-				konsGriss,
-				1.0);
+				konsGriss, 1.0);
 		assertTrue(result.isOK());
 		result = optifier.add(TarmedLeistung.getFromCode("17.0740", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
@@ -817,8 +811,7 @@ public class TarmedOptifierTest {
 		clearKons(konsGriss);
 
 		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("00.0010", LocalDate.of(2025, 12, 31), LAW),
-				konsGriss,
-				1.0);
+				konsGriss, 1.0);
 		assertTrue(result.isOK());
 		result = optifier.add(TarmedLeistung.getFromCode("00.0015", LocalDate.of(2025, 12, 31), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());

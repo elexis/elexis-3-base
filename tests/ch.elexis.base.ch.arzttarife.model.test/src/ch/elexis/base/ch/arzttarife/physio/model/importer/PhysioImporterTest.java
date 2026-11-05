@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.physio.model.PhysioLeistung;
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 
@@ -44,7 +44,7 @@ public class PhysioImporterTest {
 				PhysioImporterTest.class.getResourceAsStream("/rsc/physiotarif2025_07_01.csv"), 250701);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 
 		ICodeElement tarif7301 = codeElementService
 				.loadFromString("Physiotherapie", "7301", Map.of(ContextKeys.DATE, LocalDate.of(2018, 10, 1))).get();
@@ -68,6 +68,6 @@ public class PhysioImporterTest {
 		assertNotNull(tarif25110.getText());
 		assertEquals(StringUtils.EMPTY, ((PhysioLeistung) tarif25110).getEntity().getLaw());
 
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

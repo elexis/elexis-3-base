@@ -1,4 +1,4 @@
-package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
+package ch.elexis.base.ch.arzttarife.tardoc.model.importer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,24 +19,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.arzttarife_schweiz.Messages;
-import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
-import ch.elexis.base.ch.arzttarife.tarmed.model.VersionUtil;
+import ch.elexis.base.ch.arzttarife.tardoc.model.VersionUtil;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.importer.div.importers.AccessWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
-@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34")
-public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
+@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=tardoc")
+public class TardocReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
 
-	private static final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
+	private static final Logger logger = LoggerFactory.getLogger(TardocReferenceDataImporter.class);
 
-	public static final String ImportPrefix = "TARMED_IMPORT_";
+	public static final String ImportPrefix = "TARDOC_IMPORT_";
 
 	protected JdbcLink cacheDb = null; // As we have problems parsing dates using the postgresql-JdBC,
 	protected String lang;
@@ -60,7 +60,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 		}
 
 		// init database connection
-		cacheDb = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:tarmed_import", "h2");
+		cacheDb = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:tardoc_import", "h2");
 		cacheDb.connect(StringUtils.EMPTY, StringUtils.EMPTY);
 
 		if (openAccessDatabase(input) != Status.OK_STATUS || deleteCachedAccessTables() != Status.OK_STATUS
@@ -71,7 +71,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 
 		ipm.beginTask(Messages.TarmedImporter_importLstg, chapterCount + servicesCount);
 
-		lang = ConfigServiceHolder.get().get().getLocal(Preferences.ABL_LANGUAGE, "d").toUpperCase();//$NON-NLS-1$
+		lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d").toUpperCase();//$NON-NLS-1$
 		ipm.subTask(Messages.TarmedImporter_connecting);
 
 		IStatus ret = Status.OK_STATUS;
@@ -102,7 +102,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 									} else {
 										VersionUtil.setCurrentVersion(version.toString(), getLaw());
 									}
-									ConfigServiceHolder.get().get().set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE,
+									ConfigServiceHolder.get().set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE,
 											true);
 									ipm.done();
 								}
@@ -112,7 +112,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 				}
 			}
 		} catch (Exception ex) {
-			logger.error("Error importing tarmed", ex);
+			logger.error("Error importing TARDOC", ex);
 			return new Status(Status.ERROR, "ch.elexis.base.ch.arzttarife.model", ex.getMessage(), ex);
 		} finally {
 			if (deleteCachedAccessTables() != Status.OK_STATUS) {
@@ -274,7 +274,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 	}
 
 	private File convertInputStreamToFile(InputStream input) {
-		String prefix = "tarmed_db";
+		String prefix = "tardoc_db";
 		String suffix = "tmp";
 
 		File tmpFile = null;

@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 
 public class OccupationalImporterTest {
@@ -26,11 +26,11 @@ public class OccupationalImporterTest {
 				OccupationalImporterTest.class.getResourceAsStream("/rsc/occupational2023_07_10.xlsx"), 211125);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement generalAllowance = codeElementService
 				.loadFromString("Arbeitsmedizinische Vorsorgeuntersuchungen", "1332.50", null).get();
 		assertNotNull(generalAllowance);
 		assertNotNull(generalAllowance.getText());
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

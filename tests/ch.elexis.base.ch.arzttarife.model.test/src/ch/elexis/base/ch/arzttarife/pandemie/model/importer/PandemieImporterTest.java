@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 
 public class PandemieImporterTest {
@@ -27,7 +27,7 @@ public class PandemieImporterTest {
 				PandemieImporterTest.class.getResourceAsStream("/rsc/PT_20210701.xlsx"), null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement pauschale = codeElementService.loadFromString("Pandemie", "01.01.1050", null).get();
 		assertNotNull(pauschale);
 		assertNotNull(pauschale.getText());
@@ -39,6 +39,6 @@ public class PandemieImporterTest {
 		assertTrue(mulitline.getText().startsWith(
 				"Immunologische Analyse auf Sars-CoV-2 Antigene und Schnelltest zum direkten Nachweis von Sars-CoV-2"));
 		assertFalse(mulitline.getText().contains("\n"));
-		OsgiServiceUtil.ungetService(codeElementService);
+		
 	}
 }

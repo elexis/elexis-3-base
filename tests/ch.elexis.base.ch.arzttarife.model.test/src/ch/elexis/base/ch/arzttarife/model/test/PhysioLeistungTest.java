@@ -16,7 +16,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -40,7 +40,7 @@ public class PhysioLeistungTest extends AbstractTest {
 		query.and(PhysioPackage.Literals.IPHYSIO_LEISTUNG__ZIFFER, COMPARATOR.EQUALS, "7330");
 		Optional<IPhysioLeistung> loaded = query.executeSingleResult();
 
-		IStoreToStringService storeToStringService = OsgiServiceUtil.getService(IStoreToStringService.class).get();
+		IStoreToStringService storeToStringService = PortableServiceLoader.get(IStoreToStringService.class);
 		Optional<String> string = storeToStringService.storeToString(loaded.get());
 		assertTrue(string.isPresent());
 		Identifiable loadFromString = storeToStringService.loadFromString(string.get()).get();
@@ -50,7 +50,7 @@ public class PhysioLeistungTest extends AbstractTest {
 
 	@Test
 	public void loadFromCodeElementService() {
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		ICodeElement loadFromString = codeElementService.loadFromString("Physiotherapie", "7311", null).get();
 		assertTrue(loadFromString instanceof IPhysioLeistung);
 	}
@@ -63,7 +63,7 @@ public class PhysioLeistungTest extends AbstractTest {
 		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor("Physiotherapie", 0.89,
 				LocalDate.of(2000, 1, 1));
 
-		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElementService codeElementService = PortableServiceLoader.get(ICodeElementService.class);
 		IPhysioLeistung sitzungsPauschale = (IPhysioLeistung) codeElementService
 				.loadFromString("Physiotherapie", "7301", null).get();
 		Result<IBilled> result = sitzungsPauschale.getOptifier().add(sitzungsPauschale, encounter, 1);

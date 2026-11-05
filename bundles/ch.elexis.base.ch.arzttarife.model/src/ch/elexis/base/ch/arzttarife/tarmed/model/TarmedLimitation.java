@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
@@ -23,6 +22,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.INativeQuery;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.Result;
 
 public class TarmedLimitation {

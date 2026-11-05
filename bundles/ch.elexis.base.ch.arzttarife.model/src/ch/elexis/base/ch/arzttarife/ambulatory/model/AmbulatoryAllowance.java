@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.base.ch.arzttarife.ambulatory.AmbulantePauschalenTyp;
 import ch.elexis.base.ch.arzttarife.ambulatory.IAmbulatoryAllowance;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.core.jpa.entities.AmbulantePauschalen;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
@@ -20,6 +18,8 @@ import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
 import ch.rgw.tools.Money;
@@ -41,7 +41,7 @@ public class AmbulatoryAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.
 	public IBillableOptifier<AmbulatoryAllowance> getOptifier() {
 		if (optifier == null) {
 			optifier = new AmbulatoryAllowanceOptifier(CoreModelServiceHolder.get(),
-					ContextServiceHolder.get().get());
+					ContextServiceHolder.get());
 		}
 		return optifier;
 	}

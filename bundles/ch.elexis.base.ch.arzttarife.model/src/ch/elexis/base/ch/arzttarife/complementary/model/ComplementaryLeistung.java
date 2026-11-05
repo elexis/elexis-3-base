@@ -6,9 +6,6 @@ import java.util.Optional;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
-import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
@@ -21,6 +18,9 @@ import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class ComplementaryLeistung
@@ -41,7 +41,7 @@ public class ComplementaryLeistung
 	public IBillableOptifier<ComplementaryLeistung> getOptifier() {
 		if (optifier == null) {
 			optifier = new AbstractOptifier<ComplementaryLeistung>(CoreModelServiceHolder.get(),
-					ContextServiceHolder.get().get()) {
+					ContextServiceHolder.get()) {
 
 				@Override
 				protected void setPrice(ComplementaryLeistung billable, IBilled billed) {
@@ -58,11 +58,11 @@ public class ComplementaryLeistung
 				}
 
 				private int getHourlyWage() {
-					if (ContextServiceHolder.get().isPresent()) {
-						Optional<IMandator> activeMandator = ContextServiceHolder.get().get().getActiveMandator();
+					if (ContextServiceHolder.isAvailable()) {
+						Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
 						if (activeMandator.isPresent()) {
-							if (ConfigServiceHolder.get().isPresent()) {
-								String wageString = ConfigServiceHolder.get().get().get(activeMandator.get(),
+							if (ConfigServiceHolder.isPresent()) {
+								String wageString = ConfigServiceHolder.get().get(activeMandator.get(),
 										PreferenceConstants.COMPLEMENTARY_HOURLY_WAGE, "0");
 								return Integer.valueOf(wageString);
 							}

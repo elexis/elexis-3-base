@@ -26,8 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.arzttarife_schweiz.Messages;
-import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation.LimitationUnit;
@@ -51,7 +49,9 @@ import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 import ch.rgw.tools.TimeTool;
@@ -657,7 +657,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 
 	private boolean isReferenceInfoAvailable() {
 		boolean result = false;
-		IConfigService cfgs = ConfigServiceHolder.get().orElse(null);
+		IConfigService cfgs = ConfigServiceHolder.isPresent() ? ConfigServiceHolder.get() : null;
 		if (cfgs != null) {
 			result = cfgs.get(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, false);
 		}

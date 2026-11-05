@@ -24,7 +24,7 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
@@ -58,7 +58,7 @@ public class TardocBillingTest extends AbstractTardocTest {
 		code_000020 = TardocLeistung.getFromCode("AA.00.0020", LocalDate.of(2026, 1, 1), null);
 
 		code_000040 = TardocLeistung.getFromCode("AA.00.0040", LocalDate.of(2026, 1, 1), null);
-		
+
 		code_RG050010 = TardocLeistung.getFromCode("RG.05.0010", LocalDate.of(2026, 1, 1), null);
 		code_RG000040 = TardocLeistung.getFromCode("RG.00.0040", LocalDate.of(2026, 1, 1), null);
 
@@ -79,12 +79,12 @@ public class TardocBillingTest extends AbstractTardocTest {
 		code_AR300130 = TardocLeistung.getFromCode("AR.00.0130", LocalDate.of(2026, 1, 1), null);
 
 		// import custom kumulations
-		IReferenceDataImporter customImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+		IReferenceDataImporter customImporter = PortableServiceLoader.getService(IReferenceDataImporter.class,
 				"(" + IReferenceDataImporter.REFERENCEDATAID + "=tardoccustomkumulations)").get();
 		IStatus importResult = customImporter.performImport(new NullProgressMonitor(),
 				AllTestsSuite.class.getResourceAsStream("/rsc/tardoc_custom_kumulations.csv"), 1);
 		assertTrue(importResult.isOK());
-		OsgiServiceUtil.ungetService(customImporter);
+
 	}
 
 	@Override
@@ -332,7 +332,6 @@ public class TardocBillingTest extends AbstractTardocTest {
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());
 
-
 		assertEquals("0.4", TardocLeistung.getFromCode("KF.10.0130", LocalDate.of(2026, 1, 1), null).getExtension()
 				.getExtInfo(TardocConstants.TardocLeistung.EXT_FLD_F_AL));
 		assertEquals("0.2", TardocLeistung.getFromCode("KF.10.0130", LocalDate.of(2026, 1, 1), null).getExtension()
@@ -420,8 +419,8 @@ public class TardocBillingTest extends AbstractTardocTest {
 		CoreModelServiceHolder.get().save(encounter);
 
 		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		encounter1.setDate(LocalDate.of(2026, 1, 1));
 		CoreModelServiceHolder.get().save(encounter1);
 
@@ -448,8 +447,8 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 
 		IEncounter encounter1 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		encounter1.setDate(LocalDate.of(2026, 1, 7));
 		CoreModelServiceHolder.get().save(encounter1);
 
@@ -465,8 +464,8 @@ public class TardocBillingTest extends AbstractTardocTest {
 				.buildAndSave();
 
 		IEncounter otherEncounter = new IEncounterBuilder(coreModelService, otherCoverage, mandator).buildAndSave();
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveUser(TestDatabaseInitializer.getUser());
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 		otherEncounter.setDate(LocalDate.of(2026, 1, 14));
 		CoreModelServiceHolder.get().save(otherEncounter);
 

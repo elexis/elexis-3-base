@@ -13,9 +13,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
@@ -27,11 +27,11 @@ import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
-import ch.elexis.core.rcp.utils.OsgiServiceUtil;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IEncounterService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -70,7 +70,7 @@ public class IEncounterServiceTest {
 		assertEquals(BillingLaw.KVG, coverage.getBillingSystem().getLaw());
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
 
-		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
+		PortableServiceLoader.get(IContextService.class).setActiveMandator(mandator);
 	}
 
 	@After
@@ -89,7 +89,7 @@ public class IEncounterServiceTest {
 		coreModelService.refresh(encounter);
 		assertEquals(0, encounter.getDiagnoses().size());
 
-		ConfigServiceHolder.get().get().setActiveUserContact(Preferences.USR_DEFDIAGNOSE, "ch.elexis.data.TICode::A1");
+		ConfigServiceHolder.get().setActiveUserContact(Preferences.USR_DEFDIAGNOSE, "ch.elexis.data.TICode::A1");
 		encounterService.addDefaultDiagnosis(encounter);
 		coreModelService.refresh(encounter);
 		assertEquals(1, encounter.getDiagnoses().size());

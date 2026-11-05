@@ -6,8 +6,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
 import ch.elexis.core.jpa.entities.TarmedPauschalen;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -20,6 +18,8 @@ import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.rgw.tools.Money;
 
@@ -40,7 +40,7 @@ public class TarmedAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.core
 	public IBillableOptifier<TarmedAllowance> getOptifier() {
 		if (optifier == null) {
 			optifier = new AbstractOptifier<TarmedAllowance>(CoreModelServiceHolder.get(),
-					ContextServiceHolder.get().get()) {
+					ContextServiceHolder.get()) {
 
 				@Override
 				protected void setPrice(TarmedAllowance billable, IBilled billed) {

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: erxproxy cli mac arm
 Bundle-SymbolicName: at.medevit.elexis.hin.sign.cli.mac.arm
-Bundle-Version: 2.0.6.qualifier
+Bundle-Version: 2.0.9.qualifier
 Eclipse-BundleShape: dir
 Eclipse-PlatformFilter: (& (osgi.ws=cocoa) (osgi.os=macosx) (osgi.arch=aarch64))
 Bundle-Vendor: medevit.at

@@ -10,7 +10,7 @@ Require-Bundle: ch.elexis.core.cdi;bundle-version="3.14.0",
  ch.elexis.core.jpa;bundle-version="[3.14.0,4.0.0)",
  ch.elexis.core.importer.div;bundle-version="[3.14.0,4.0.0)",
  ch.elexis.core.services;bundle-version="[3.14.0,4.0.0)",
- ch.elexis.base.ch.arzttarife.model;bundle-version="3.14.0",
+ ch.elexis.base.ch.arzttarife.model;bundle-version="[3.14.0,4.0.0)",
  jakarta.persistence-api;bundle-version="[3.2.0,4.0.0)",
  com.opencsv;bundle-version="[5.9.0,6.0.0)"
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.ambulatory.model.importer.AmbulatoryAllowanceReferenceDataImporter.xml,

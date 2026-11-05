@@ -29,7 +29,6 @@ import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
-import com.healthmarketscience.jackcess.Table;
 import ch.rgw.tools.TimeTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34")

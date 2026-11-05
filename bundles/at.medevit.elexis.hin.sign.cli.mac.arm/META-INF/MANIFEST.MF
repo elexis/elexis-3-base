@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: erxproxy cli mac arm
+Bundle-SymbolicName: at.medevit.elexis.hin.sign.cli.mac.arm
+Bundle-Version: 2.0.6.qualifier
+Eclipse-BundleShape: dir
+Eclipse-PlatformFilter: (& (osgi.ws=cocoa) (osgi.os=macosx) (osgi.arch=aarch64))
+Bundle-Vendor: medevit.at
+Fragment-Host: at.medevit.elexis.hin.sign.core;bundle-version="1.0.0"
+Automatic-Module-Name: at.medevit.elexis.hin.sign.cli.mac.arm
+Bundle-RequiredExecutionEnvironment: JavaSE-21

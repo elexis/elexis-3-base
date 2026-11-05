@@ -19,20 +19,29 @@
    <plugin
          id="at.medevit.elexis.hin.sign.cli.linux"
          os="linux"
+         arch="x86_64"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.elexis.hin.sign.cli.mac"
          os="macosx"
+         arch="x86_64"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.elexis.hin.sign.cli.win"
          os="win32"
+         arch="x86_64"
          version="0.0.0"/>
 
    <plugin
          id="at.medevit.elexis.hin.sign.core"
+         version="0.0.0"/>
+
+   <plugin
+         id="at.medevit.elexis.hin.sign.cli.mac.arm"
+         os="macosx"
+         arch="aarch64"
          version="0.0.0"/>
 
 </feature>

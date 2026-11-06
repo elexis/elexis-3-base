@@ -25,6 +25,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -34,6 +36,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -46,6 +49,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -76,11 +80,14 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListDialog;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.slf4j.Logger;
@@ -115,6 +122,7 @@ import ch.elexis.omnivore.data.AutomaticBilling;
 import ch.elexis.omnivore.data.Utils;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.Messages;
+import ch.elexis.omnivore.ui.handler.OpenDocumentHandler;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.util.UiUtils;
@@ -150,8 +158,11 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 	private OmnivoreViewerComparator ovComparator;
 
+	public static final String SELECT_DOCUMENTS = ElexisEventTopics.BASE + "omnivore/select"; //$NON-NLS-1$
+
 	private IPatient actPatient;
 	private boolean refreshScheduled;
+	private List<String> pendingSelection = List.of();
 
 	@Inject
 	private IEventBroker eventBroker;
@@ -195,6 +206,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			try {
 				if (isActiveControl(table)) {
 					viewer.refresh();
+					selectPending();
 				}
 			} finally {
 				synchronized (OmnivoreView.this) {
@@ -202,6 +214,32 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				}
 			}
 		});
+	}
+
+	@Optional
+	@Inject
+	void selectDocuments(@UIEventTopic(SELECT_DOCUMENTS) List<?> documentIds) {
+		if (isActiveControl(table)) {
+			pendingSelection = documentIds.stream().map(String::valueOf).toList();
+			scheduleRefresh();
+		}
+	}
+
+	private void selectPending() {
+		List<String> ids = pendingSelection;
+		pendingSelection = List.of();
+		if (ids.isEmpty()) {
+			return;
+		}
+		List<IDocumentHandle> documents = ((ViewContentProvider) viewer.getContentProvider()).documentsByCategory
+				.values().stream().flatMap(List::stream).filter(document -> ids.contains(document.getId())).toList();
+		for (TreeItem item : table.getItems()) {
+			if (item.getData() instanceof IDocumentHandle category && category.isCategory() && documents.stream()
+					.anyMatch(document -> Strings.CI.equals(category.getTitle(), document.getCategory().getName()))) {
+				viewer.setExpandedState(category, true);
+			}
+		}
+		viewer.setSelection(new StructuredSelection(documents), true);
 	}
 
 	@Inject
@@ -671,7 +709,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 		// manager.add(action2);
 		// Other plug-ins can contribute there actions here
-		// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -812,7 +850,12 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 						viewer.expandToLevel(dh, TreeViewer.ALL_LEVELS);
 					}
 				} else {
-					UiUtils.open(dh);
+					try {
+						getSite().getService(IHandlerService.class).executeCommand(OpenDocumentHandler.COMMAND_ID,
+								null);
+					} catch (CommandException e) {
+						log.error("Error on omnivore open", e); //$NON-NLS-1$
+					}
 				}
 			}
 		};

@@ -19,10 +19,13 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
@@ -31,6 +34,7 @@ import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IEncounterService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
@@ -93,6 +97,47 @@ public class IEncounterServiceTest {
 		encounterService.addDefaultDiagnosis(encounter);
 		coreModelService.refresh(encounter);
 		assertEquals(1, encounter.getDiagnoses().size());
+	}
+
+	@Test
+	public void addDiagnosisWithChangedTextCreatesNewReference() {
+		Identifiable p3 = OsgiServiceUtil.getService(IStoreToStringService.class).get()
+				.loadFromString("ch.elexis.data.TICode::P3").orElse(null);
+		assertNotNull(p3);
+		assertTrue(p3 instanceof IDiagnosis);
+		IDiagnosis diagnosis = (IDiagnosis) p3;
+
+		encounter.addDiagnosis(diagnosis);
+		coreModelService.save(encounter);
+		assertEquals(1, encounter.getDiagnoses().size());
+		IDiagnosisReference ref = encounter.getDiagnoses().get(0);
+		assertEquals("P3", ref.getCode());
+		assertEquals(diagnosis.getText(), ref.getText());
+
+		// simulate that the meaning of the code changed since the entry was created
+		ref.setText("changed meaning of P3");
+		coreModelService.save(ref);
+
+		IEncounter encounter2 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter2.addDiagnosis(diagnosis);
+		coreModelService.save(encounter2);
+		assertEquals(1, encounter2.getDiagnoses().size());
+		IDiagnosisReference ref2 = encounter2.getDiagnoses().get(0);
+		assertFalse(ref.getId().equals(ref2.getId()));
+		assertEquals("P3", ref2.getCode());
+		assertEquals(diagnosis.getText(), ref2.getText());
+
+		// adding the same diagnosis again reuses the entry with matching text
+		IEncounter encounter3 = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter3.addDiagnosis(diagnosis);
+		coreModelService.save(encounter3);
+		assertEquals(1, encounter3.getDiagnoses().size());
+		assertEquals(ref2.getId(), encounter3.getDiagnoses().get(0).getId());
+
+		coreModelService.remove(encounter2);
+		coreModelService.remove(encounter3);
+		coreModelService.remove(ref2);
+		coreModelService.remove(ref);
 	}
 
 	@Test

@@ -15,3 +15,4 @@ Require-Bundle: org.junit,
  ch.elexis.core.jpa.datasource;bundle-version="3.9.0",
  ch.elexis.core.model;bundle-version="3.13.0",
  ch.elexis.core.test.context;bundle-version="3.13.0"
+Import-Package: ch.elexis.core.cdi

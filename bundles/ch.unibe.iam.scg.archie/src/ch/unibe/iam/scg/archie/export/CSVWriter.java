@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -121,10 +122,11 @@ public class CSVWriter {
 	 * @throws IOException
 	 */
 	private static void writeRow(OutputStreamWriter writer, Object[] objects) throws IOException {
+		Pattern numericPattern = Pattern.compile("[+-\\.,\\d]+");
 		StringBuffer buf = new StringBuffer();
 		for (Object obj : objects) {
 			String content = obj != null ? obj.toString() : StringUtils.EMPTY;
-			if (content.startsWith("+") || content.startsWith("-")) {
+			if ((content.startsWith("+") || content.startsWith("-")) && !numericPattern.matcher(content).matches()) {
 				content = "'" + content;
 			}
 			buf.append("\"");

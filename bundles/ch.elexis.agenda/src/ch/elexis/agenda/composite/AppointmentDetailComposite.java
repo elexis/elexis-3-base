@@ -539,6 +539,12 @@ public class AppointmentDetailComposite extends Composite {
 		chkTerminLinks = new Button(comp, SWT.CHECK);
 		chkTerminLinks.setText(Messages.Appointment_TrminLinks);
 		chkTerminLinks.setEnabled(false);
+		chkTerminLinks.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dayBar.setAppointmentType(chkTerminLinks.getSelection() ? null : comboType.getText());
+			}
+		});
 	}
 
 	private Combo createCombo(Composite parent, List<String> items) {
@@ -953,8 +959,9 @@ public class AppointmentDetailComposite extends Composite {
 		} else {
 			appointment.setSubjectOrPatient(null);
 		}
-		List<IAppointment> kombiAppointments = appointmentService.getKombiTermineIfApplicable(appointment,
-				getSelectedContact(), comboType.getText(), txtPatSearch.getText());
+		List<IAppointment> kombiAppointments = chkTerminLinks.getSelection() ? Collections.emptyList()
+				: appointmentService.getKombiTermineIfApplicable(appointment, getSelectedContact(),
+						comboType.getText(), txtPatSearch.getText());
 		if (!kombiAppointments.isEmpty()) {
 			for (IAppointment kombi : kombiAppointments) {
 				CoreModelServiceHolder.get().save(kombi);
@@ -971,7 +978,7 @@ public class AppointmentDetailComposite extends Composite {
 		String selectedType = comboType.getText();
 		List<String> kombiTermineList = ConfigServiceHolder.get()
 				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType); //$NON-NLS-1$
-		dayBar.setAppointmentType(selectedType);
+		dayBar.setAppointmentType(chkTerminLinks.getSelection() ? null : selectedType);
 		if (!StringUtils.isBlank(selectedType) && !kombiTermineList.isEmpty()) {
 			chkTerminLinks.setEnabled(true);
 		} else {

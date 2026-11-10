@@ -131,8 +131,8 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	public void setAppointmentType(String type) {
-		refresh();
 		this.appointmentType = type;
+		refresh();
 	}
 
 	/**

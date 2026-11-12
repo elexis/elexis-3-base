@@ -59,8 +59,7 @@ public class Importer extends Action implements IAction {
 
 		IVirtualFilesystemHandle[] hl7Files;
 		try {
-			hl7Files = directory.get().listHandles(handle -> "hl7".equalsIgnoreCase(handle.getExtension())
-					|| "hl7v2".equalsIgnoreCase(handle.getExtension()));
+			hl7Files = directory.get().listHandles(handle -> HL7Parser.isHl7FileExtension(handle.getExtension()));
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).warn("Could not read HL7 import directory", e);
 			hl7Files = null;

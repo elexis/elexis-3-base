@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
@@ -74,7 +75,7 @@ public class AutomaticImportService {
 			List<IVirtualFilesystemHandle> ret = new ArrayList<>();
 			try {
 				IVirtualFilesystemHandle[] handles = dir
-						.listHandles(handle -> "hl7".equalsIgnoreCase(handle.getExtension()));
+						.listHandles(handle -> HL7Parser.isHl7FileExtension(handle.getExtension()));
 				if (handles != null) {
 					for (IVirtualFilesystemHandle handle : handles) {
 						if (isReadyForImport(handle)) {

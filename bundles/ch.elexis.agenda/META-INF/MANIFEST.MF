@@ -28,6 +28,7 @@ Import-Package: ch.elexis.core.mail,
  ch.elexis.core.mail.ui.client,
  ch.elexis.core.tasks.model,
  com.google.common.cache;version="15.0.0",
+ org.apache.commons.codec;version="[1.16.0,2.0.0)",
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.model.application.ui.basic
 Bundle-ActivationPolicy: lazy

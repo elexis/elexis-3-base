@@ -85,6 +85,8 @@ public class ICalTransfer {
 	private static Logger log = LoggerFactory.getLogger(ICalTransfer.class);
 
 	public ICalTransfer() {
+		System.setProperty("net.fortuna.ical4j.timezone.cache.impl", MapTimeZoneCache.class.getName());
+
 		bereiche = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 	}
 
@@ -184,7 +186,6 @@ public class ICalTransfer {
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		protected void okPressed() {
 			if (!lFilename.getText().equals(NOFILESELECTED)) {
@@ -225,11 +226,18 @@ public class ICalTransfer {
 							if (uid != null) {
 								uuid = uid.getValue();
 								termin = Termin.load(uuid);
+								// re-create if termin with uuid was deleted
+								if (termin != null && termin.isDeleted()) {
+									uuid = ElexisIdGenerator.generateId();
+									termin = null;
+								}
 							}
 							if (termin == null || (!termin.exists())) {
 								for (String ber : b) {
 									termin = new Termin(uuid, ber, ttFrom.toString(TimeTool.DATE_COMPACT),
 											Termin.TimeInMinutes(ttFrom), Termin.TimeInMinutes(ttUntil), typ, status);
+									// constructor with custom id does not set deleted, make sure it is set
+									termin.set(Termin.FLD_DELETED, "0");
 									uuid = ElexisIdGenerator.generateId();
 								}
 							} else {
@@ -239,9 +247,7 @@ public class ICalTransfer {
 										new String[] { m, ttFrom.toString(TimeTool.DATE_COMPACT),
 												Integer.toString(Termin.TimeInMinutes(ttFrom)),
 												Integer.toString(ttFrom.secondsTo(ttUntil) / 60), typ, status });
-
 							}
-
 							if (termin == null) {
 								throw new IllegalStateException("termin is null");
 							}

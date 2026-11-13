@@ -166,7 +166,7 @@ public class CliProcess {
 		String path = file.getAbsolutePath();
 		if (CoreUtil.isWindows()) {
 			path = path.replace("\\", "\\\\");
-		} else if (CoreUtil.isLinux()) {
+		} else if (CoreUtil.isLinux() || CoreUtil.isMac()) {
 			Set<PosixFilePermission> perms = new HashSet<>();
 			perms.add(PosixFilePermission.OWNER_READ);
 			perms.add(PosixFilePermission.OWNER_EXECUTE);

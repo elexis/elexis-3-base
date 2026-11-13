@@ -134,7 +134,10 @@ public class CliProcess {
 		} else if (CoreUtil.getOperatingSystemType() == OS.LINUX) {
 			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.linux");
 		} else if (CoreUtil.getOperatingSystemType() == OS.MAC) {
-			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.mac");
+			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.mac.arm");
+			if (fragment == null) {
+				fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.mac");
+			}
 		}
 		if (fragment != null) {
 			Optional<File> bundleLocation = FileLocator.getBundleFileLocation(fragment);

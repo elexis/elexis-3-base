@@ -14,6 +14,7 @@ Bundle-ActivationPolicy: lazy
 Import-Package: at.medevit.elexis.tarmed.model,
  ch.elexis.base.ch.ebanking.esr,
  ch.elexis.core.mail,
+ ch.elexis.core.mail.ui.client,
  ch.fd.invoice450.request,
  ch.fd.invoice500.request,
  com.google.zxing;version="[3.5.0,4.0.0)",

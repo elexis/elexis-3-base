@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.mail.MailAccount;
 import ch.elexis.core.mail.MailAccount.TYPE;
+import ch.elexis.core.mail.ui.client.MailAccountLabelProvider;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.jface.preference.OsPathEditorGroup;
@@ -407,7 +408,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 			ComboViewer accountsViewer = new ComboViewer(composite, SWT.BORDER);
 			accountsViewer.setContentProvider(ArrayContentProvider.getInstance());
-			accountsViewer.setLabelProvider(new LabelProvider());
+			accountsViewer.setLabelProvider(new MailAccountLabelProvider());
 			final List<String> manadantAccounts = getSendMailAccounts(mandant);
 			accountsViewer.setInput(manadantAccounts);
 			accountsViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));

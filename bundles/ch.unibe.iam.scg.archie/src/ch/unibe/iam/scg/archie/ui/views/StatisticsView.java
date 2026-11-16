@@ -54,6 +54,9 @@ public class StatisticsView extends ViewPart {
 
 	@Inject
 	void activeUser(@Optional IUser user) {
+		if (container == null) {
+			return;
+		}
 		Display.getDefault().asyncExec(() -> {
 			if (user != null) {
 				clean();

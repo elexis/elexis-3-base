@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.agenda.Messages;
 import ch.elexis.core.mail.MailAccount.TYPE;
 import ch.elexis.core.mail.MailTextTemplate;
+import ch.elexis.core.mail.ui.client.MailAccountLabelProvider;
 import ch.elexis.core.mail.ui.client.MailClientComponent;
 import ch.elexis.core.model.ITextTemplate;
 import ch.elexis.core.model.agenda.AreaType;
@@ -326,7 +327,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		accountsViewer = new ComboViewer(emailConfirmationsGroup);
 		accountsViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		accountsViewer.setContentProvider(ArrayContentProvider.getInstance());
-		accountsViewer.setLabelProvider(new LabelProvider());
+		accountsViewer.setLabelProvider(new MailAccountLabelProvider());
 		Label emailTemplatesLabel = new Label(emailConfirmationsGroup, SWT.NONE);
 		emailTemplatesLabel.setText(Messages.AgendaStandard_E_Mail_Template);
 		emailTemplatesLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

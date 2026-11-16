@@ -55,6 +55,14 @@
       </uiprovider>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="ch.elexis.omnivore.ui.handler.OpenDocumentHandler"
+            id="ch.elexis.omnivore.ui.command.open"
+            name="Open document">
+      </command>
+   </extension>
+   <extension
          point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
       <ExternalMaintenance
             MaintenanceCode="ch.elexis.omnivore.ui.dbcheck.RebuildFromDirectory">

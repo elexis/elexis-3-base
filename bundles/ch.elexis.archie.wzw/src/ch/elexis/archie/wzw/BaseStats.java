@@ -135,6 +135,9 @@ public abstract class BaseStats extends AbstractTimeSeries {
 		List<IEncounter> ret = new ArrayList<>();
 		try (IQueryCursor<IEncounter> cursor = query.executeAsCursor()) {
 			while (cursor.hasNext()) {
+				if (monitor.isCanceled()) {
+					return new ArrayList<>();
+				}
 				IEncounter encounter = cursor.next();
 				boolean add = true;
 				if (!filters.isEmpty()) {

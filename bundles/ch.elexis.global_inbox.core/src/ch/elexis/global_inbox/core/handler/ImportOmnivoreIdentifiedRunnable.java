@@ -31,6 +31,11 @@ public class ImportOmnivoreIdentifiedRunnable implements IIdentifiedRunnable {
 	}
 
 	@Override
+	public boolean isSingleton() {
+		return true;
+	}
+
+	@Override
 	public synchronized Map<String, Serializable> run(Map<String, Serializable> context,
 			IProgressMonitor progressMonitor, Logger logger) throws TaskException {
 		eventFilePath = null;

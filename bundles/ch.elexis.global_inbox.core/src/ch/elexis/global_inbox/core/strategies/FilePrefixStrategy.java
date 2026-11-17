@@ -42,7 +42,7 @@ public class FilePrefixStrategy implements IImportStrategy {
 		if (matcher.matches()) {
 			String patientNo = matcher.group(1);
 			String fileName = inboxUtil.formatDocumentName(matcher.group(2), deviceName);
-			String documentId = inboxUtil.tryImportForPatient(file, patientNo, fileName);
+			String documentId = inboxUtil.tryImportForPatient(file, patientNo, fileName, deviceName);
 			if (documentId != null) {
 				log.info("Auto imported (FILE_PREFIX) file [{}], document id is [{}]", file, documentId);
 				return true;

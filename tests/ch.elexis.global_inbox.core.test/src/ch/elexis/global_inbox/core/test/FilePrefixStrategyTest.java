@@ -29,6 +29,7 @@ public class FilePrefixStrategyTest {
 		assertTrue("Should be imported", result);
 		assertEquals("12345", stubUtil.capturedPatientId);
 		assertEquals("ScannerA_Befund.pdf", stubUtil.capturedDocumentName);
+		assertEquals("ScannerA", stubUtil.capturedDeviceName);
 	}
 
 	@Test

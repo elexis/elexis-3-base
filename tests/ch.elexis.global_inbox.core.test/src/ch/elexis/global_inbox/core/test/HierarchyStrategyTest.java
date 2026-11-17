@@ -55,5 +55,20 @@ public class HierarchyStrategyTest {
 		assertEquals("777", stubUtil.capturedPatientId);
 
 		assertEquals("DeviceX_Labor_2024_Bericht.txt", stubUtil.capturedDocumentName);
+		assertEquals("DeviceX", stubUtil.capturedDeviceName);
+	}
+
+	@Test
+	public void testDateFolderNotPatient() {
+		StubVirtualFilesystemHandle patFolder = new StubVirtualFilesystemHandle("2222_Armeswesen", null);
+		StubVirtualFilesystemHandle bodyFolder = new StubVirtualFilesystemHandle("Knie", patFolder);
+		StubVirtualFilesystemHandle dateFolder = new StubVirtualFilesystemHandle("2026-11-17", bodyFolder);
+		StubVirtualFilesystemHandle file = new StubVirtualFilesystemHandle("aufnahme.pdf", dateFolder);
+
+		boolean result = strategy.importFile(file);
+
+		assertTrue(result);
+		assertEquals("2222", stubUtil.capturedPatientId);
+		assertEquals("DeviceX_Knie_2026-11-17_aufnahme.pdf", stubUtil.capturedDocumentName);
 	}
 }

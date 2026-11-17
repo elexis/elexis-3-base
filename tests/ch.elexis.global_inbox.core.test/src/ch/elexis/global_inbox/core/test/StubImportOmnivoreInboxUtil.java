@@ -7,6 +7,7 @@ public class StubImportOmnivoreInboxUtil extends ImportOmnivoreInboxUtil {
 
 	public String capturedPatientId;
 	public String capturedDocumentName;
+	public String capturedDeviceName;
 
 	@Override
 	public String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName,
@@ -17,6 +18,7 @@ public class StubImportOmnivoreInboxUtil extends ImportOmnivoreInboxUtil {
 
 		this.capturedPatientId = patientNo;
 		this.capturedDocumentName = fileName;
+		this.capturedDeviceName = deviceName;
 		return "test-document-id";
 	}
 

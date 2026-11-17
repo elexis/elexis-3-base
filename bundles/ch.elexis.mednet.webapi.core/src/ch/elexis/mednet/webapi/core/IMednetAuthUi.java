@@ -9,6 +9,8 @@ public interface IMednetAuthUi {
 
 	public Optional<String> openInputDialog(String title, String message);
 
+	public void showInformation(String title, String message);
+
 	public Object getWithCancelableProgress(String name, Supplier<?> supplier);
 
 }

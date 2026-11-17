@@ -51,7 +51,7 @@ public class TaskManagerHandler {
 				taskDescriptor = taskService.createTaskDescriptor(runnable);
 				taskDescriptor.setReferenceId(referenceId);
 				taskDescriptor.setTriggerType(TaskTriggerType.FILESYSTEM_CHANGE);
-				taskDescriptor.setTriggerParameter(TaskTriggerTypeParameter.CRON.SCHEMA, destinationDir);
+				taskDescriptor.setTriggerParameter(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL, destinationDir);
 				taskDescriptor.setActive(true);
 				taskDescriptor.setRunner(IElexisEnvironmentService.ES_STATION_ID_DEFAULT);
 				Map<String, Serializable> runContext = new HashMap<>();

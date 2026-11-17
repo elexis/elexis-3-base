@@ -43,7 +43,7 @@ public class HierarchyStrategy implements IImportStrategy {
 				if (matcher.matches()) {
 					String patientCandidate = matcher.group(1);
 					String documentName = buildDocumentName(baseFileName, segmentNames);
-					String documentId = inboxUtil.tryImportForPatient(file, patientCandidate, documentName);
+					String documentId = inboxUtil.tryImportForPatient(file, patientCandidate, documentName, deviceName);
 
 					if (documentId != null) {
 						log.info("Auto imported (HIERARCHY) file [{}], document id is [{}]", file, documentId);

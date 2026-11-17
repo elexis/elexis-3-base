@@ -37,7 +37,7 @@ public class PatientFolderStrategy implements IImportStrategy {
 			String patientNo = matcher.group(1);
 			String documentName = inboxUtil.formatDocumentName(file.getName(), deviceName);
 
-			String documentId = inboxUtil.tryImportForPatient(file, patientNo, documentName);
+			String documentId = inboxUtil.tryImportForPatient(file, patientNo, documentName, deviceName);
 			if (documentId != null) {
 				log.info("Auto imported (FOLDER_WITH_NAME) file [{}], document id is [{}]", file, documentId);
 				return true;

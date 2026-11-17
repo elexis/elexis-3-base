@@ -12,6 +12,7 @@ import at.medevit.elexis.inbox.model.IInboxElementService;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.types.DocumentStatus;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 
@@ -25,7 +26,7 @@ public class DocHandleInboxService implements EventHandler {
 	private IConfigService configService;
 
 	private void createInboxElement(IDocumentHandle docHandle) {
-		if (docHandle != null && !docHandle.isCategory()) {
+		if (docHandle != null && !docHandle.isCategory() && !docHandle.getStatus().contains(DocumentStatus.SENT)) {
 			Optional<IMandator> mandator = service
 					.getInboxElementMandator("at.medevit.elexis.omnivore.inbox.uiprovider", docHandle.getPatient());
 			if (mandator.isPresent()) {

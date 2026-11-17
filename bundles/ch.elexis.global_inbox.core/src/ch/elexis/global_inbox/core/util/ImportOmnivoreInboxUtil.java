@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,6 @@ import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.model.MimeType;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.INamedQuery;
@@ -30,7 +30,8 @@ public class ImportOmnivoreInboxUtil {
 	 * @param fileName  the target name of the document
 	 * @return the document ID if the import was successful, otherwise null
 	 */
-	public @Nullable String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName) {
+	public @Nullable String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName,
+			String deviceName) {
 		INamedQuery<IPatient> namedQuery = PortableServiceLoader.getCoreModelService().getNamedQuery(IPatient.class,
 				"code");
 		Optional<IPatient> loaded = namedQuery
@@ -39,9 +40,9 @@ public class ImportOmnivoreInboxUtil {
 		if (loaded.isPresent()) {
 			IDocumentStore documentStore = OmnivoreDocumentStoreServiceHolder.get();
 			IPatient patient = loaded.get();
-			String category = getCategory(file);
+			String category = getCategory(deviceName);
 
-			if (category.equals("-") || category.equals("??")) {
+			if (StringUtils.isBlank(category) || Strings.CS.equalsAny(category, "-", "??")) {
 				category = null;
 			}
 
@@ -55,16 +56,7 @@ public class ImportOmnivoreInboxUtil {
 				}
 
 				IDocument newDocument = documentStore.createDocument(patient.getId(), fileName, category);
-				String extension = getFileExtension(file);
-
-				if (extension != null && (newDocument.getMimeType() == null || newDocument.getMimeType().isEmpty())) {
-					MimeType mimeType = MimeType.getByExtension(extension);
-					if (mimeType != MimeType.undefined) {
-						newDocument.setMimeType(mimeType.getContentType());
-					} else {
-						newDocument.setMimeType(file.getName());
-					}
-				}
+				newDocument.setMimeType(file.getName());
 
 				try (InputStream contentStream = file.openInputStream()) {
 					documentStore.saveDocument(newDocument, contentStream);
@@ -77,15 +69,6 @@ public class ImportOmnivoreInboxUtil {
 			}
 		}
 		return null;
-	}
-
-	private String getFileExtension(IVirtualFilesystemHandle file) {
-		String name = file.getName();
-		int lastIndexOf = name.lastIndexOf(".");
-		if (lastIndexOf == -1 || lastIndexOf == 0) {
-			return StringUtils.EMPTY;
-		}
-		return name.substring(lastIndexOf + 1);
 	}
 
 	/**
@@ -110,31 +93,14 @@ public class ImportOmnivoreInboxUtil {
 	}
 
 	/**
-	 * Determines the category for a given file based on its parent directory.
+	 * Determines the configured omnivore category of a device.
 	 *
-	 * @param file the file to check
-	 * @return the resolved category name
+	 * @param deviceName the name of the device
+	 * @return the configured category name, or null if none is configured
 	 */
-	public String getCategory(IVirtualFilesystemHandle file) {
-		try {
-			String category = PortableServiceLoader.get(IConfigService.class)
-					.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
-			IVirtualFilesystemHandle parent = file.getParent();
-			if (parent == null) {
-				logger.warn("Parent directory for file [{}] is null.", file.getAbsolutePath());
-				return "Error in inbox path";
-			}
-
-			String folderName = parent.getAbsolutePath();
-			if (folderName.startsWith(category)) {
-				return parent.getName();
-			} else {
-				return category;
-			}
-		} catch (Exception ex) {
-			logger.error("Error while determining category for file [{}].", file.getAbsolutePath(), ex);
-			return "Error in category resolution";
-		}
+	public @Nullable String getCategory(String deviceName) {
+		return PortableServiceLoader.get(IConfigService.class).getGlobal(Constants.PREF_CATEGORY_PREFIX + deviceName,
+				null);
 	}
 
 	/**

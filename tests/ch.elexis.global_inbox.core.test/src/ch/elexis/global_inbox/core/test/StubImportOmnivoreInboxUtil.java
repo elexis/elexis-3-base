@@ -9,7 +9,8 @@ public class StubImportOmnivoreInboxUtil extends ImportOmnivoreInboxUtil {
 	public String capturedDocumentName;
 
 	@Override
-	public String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName) {
+	public String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName,
+			String deviceName) {
 		if (patientNo.length() > 5 || patientNo.startsWith("20")) {
 			return null;
 		}

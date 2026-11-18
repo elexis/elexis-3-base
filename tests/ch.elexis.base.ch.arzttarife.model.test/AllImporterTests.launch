@@ -155,6 +155,7 @@
         <setEntry value="slf4j.osgi@default:default"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
+        <setEntry value="ch.elexis.base.ch.arzttarife.model.importer@default:default"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model.test@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model@default:default"/>
         <setEntry value="ch.elexis.base.ch.ticode@default:default"/>

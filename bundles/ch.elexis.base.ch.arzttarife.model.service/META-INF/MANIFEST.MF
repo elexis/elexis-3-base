@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Arzttarife Model Service
+Bundle-SymbolicName: ch.elexis.base.ch.arzttarife.model.service
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: ch.elexis.core.jpa.entities;bundle-version="3.14.0",
+ ch.elexis.core.jpa;bundle-version="3.14.0",
+ ch.elexis.base.ch.arzttarife.model;bundle-version="3.14.0",
+ org.osgi.service.event;bundle-version="[1.4.0,2.0.0)"
+Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model.service
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: jakarta.persistence;version="[3.2.0,4.0.0)",
+ jakarta.persistence.criteria;version="[3.2.0,4.0.0)"
+Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelService.xml

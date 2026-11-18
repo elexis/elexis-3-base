@@ -8,10 +8,10 @@ import java.text.ParseException;
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.core.test.AbstractTest;
@@ -21,7 +21,7 @@ public class ComplementaryLeistungTest extends AbstractTest {
 
 	@Test
 	public void queryLoad() {
-		IComplementaryLeistung loaded = AllTestsSuite.getModelService()
+		IComplementaryLeistung loaded = PortableServiceLoader.getArzttarifeModelService()
 				.load("1134-20140101", IComplementaryLeistung.class).get();
 		assertTrue(loaded instanceof IComplementaryLeistung);
 	}
@@ -37,7 +37,7 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		assertEquals(
 				"Beinhaltet Körperreflexzonen, Muskelreflexzonenmassage, sowie Mikrosysteme wie Ohren, Hände und Füsse",
 				((IComplementaryLeistung) loadFromString).getDescription());
-		
+
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		ICodeElement loadFromString = codeElementService.loadFromString("Komplementärmedizin", "1111", null).get();
 		assertEquals("1111-20090101", ((Identifiable) loadFromString).getId());
 		assertTrue(loadFromString instanceof IComplementaryLeistung);
-		
+
 	}
 
 	@Test
@@ -76,6 +76,6 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		assertEquals(billed.getFactor() * 50, billed.getPrice().getAmount(), 0.01);
 
 		assertEquals(encounter, billed.getEncounter());
-		
+
 	}
 }

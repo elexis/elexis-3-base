@@ -3,16 +3,21 @@ package ch.elexis.base.ch.arzttarife.model.service;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IModelService;
 
-@Component(immediate = true)
+@Component
 public class ArzttarifeModelServiceHolder {
+	private static IModelService modelService;
 
-	@Reference
-	PortableServiceLoader portableServiceLoader;
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.arzttarife.model)")
+	public void setModelService(IModelService modelService) {
+		ArzttarifeModelServiceHolder.modelService = modelService;
+	}
 
 	public static IModelService get() {
-		return PortableServiceLoader.getArzttarifeModelService();
+		if (modelService == null) {
+			throw new IllegalStateException("No IModelService available");
+		}
+		return modelService;
 	}
 }

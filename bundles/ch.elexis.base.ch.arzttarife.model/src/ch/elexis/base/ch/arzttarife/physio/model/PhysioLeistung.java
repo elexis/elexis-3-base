@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -51,7 +50,7 @@ public class PhysioLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 					int points = 0;
 					if (billable.getTP() != null) {
 						try {
-							points = NumberUtils.toInt(StringUtils.trim(billable.getTP()));
+							points = Integer.valueOf(billable.getTP());
 						} catch (NumberFormatException ne) {
 							// ignore ...
 						}

@@ -3,16 +3,21 @@ package ch.elexis.base.ch.arzttarife.model.service;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IElexisEntityManager;
 
-@Component(immediate = true)
+@Component
 public class EntityManagerHolder {
+	private static IElexisEntityManager entityManager;
 
 	@Reference
-	private IElexisEntityManager elexisEntityManager;
+	public void setModelService(IElexisEntityManager entityManager) {
+		EntityManagerHolder.entityManager = entityManager;
+	}
 
 	public static IElexisEntityManager get() {
-		return PortableServiceLoader.get(IElexisEntityManager.class);
+		if (entityManager == null) {
+			throw new IllegalStateException("No IElexisEntityManager available");
+		}
+		return entityManager;
 	}
 }

@@ -33,17 +33,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>ch.elexis.core</groupId>
-			<artifactId>ch.elexis.core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<scope>provided</scope>
-			<version>8.0.0</version>
-		</dependency>
-	</dependencies>
 </project>

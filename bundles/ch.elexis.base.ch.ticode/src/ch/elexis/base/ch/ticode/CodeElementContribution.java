@@ -17,10 +17,7 @@ import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IStoreToStringContribution;
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
 @Component
 public class CodeElementContribution implements ICodeElementServiceContribution, IStoreToStringContribution {
 
@@ -29,8 +26,6 @@ public class CodeElementContribution implements ICodeElementServiceContribution,
 	private TessinerCodeSystem codeSystemKvg;
 	private TessinerCodeSystem codeSystemMtk;
 
-
-	@PostConstruct
 	@Activate
 	public void activate() {
 		this.codeSystemKvg = new TessinerCodeSystem("/rsc/tessiner_code_system.json");

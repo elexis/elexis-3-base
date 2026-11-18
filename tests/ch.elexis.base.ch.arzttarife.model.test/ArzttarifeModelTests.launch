@@ -41,7 +41,7 @@
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ch.elexis.base.ch.arzttarife.model.test"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Delexis.test.mode=true -Dorg.eclipse.gemini.refreshBundles=false -Delexis.skip.ds.activation=true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Delexis.test.mode=true -Dorg.eclipse.gemini.refreshBundles=false  -Delexis.skip.ds.activation=true"/>
     <stringAttribute key="pde.version" value="3.3"/>
     <stringAttribute key="product" value="ch.elexis.core.application.product"/>
     <booleanAttribute key="run_in_ui_thread" value="false"/>
@@ -113,6 +113,7 @@
         <setEntry value="org.apache.poi@default:default"/>
         <setEntry value="org.apache.xmlbeans@default:default"/>
         <setEntry value="org.apache.xmlgraphics@default:default"/>
+        <setEntry value="org.eclipse.angus.jakarta.mail@default:default"/>
         <setEntry value="org.eclipse.ant.core@default:default"/>
         <setEntry value="org.eclipse.core.commands@default:default"/>
         <setEntry value="org.eclipse.core.contenttype@default:default"/>
@@ -145,13 +146,10 @@
         <setEntry value="org.eclipse.e4.ui.swt.gtk@default:false"/>
         <setEntry value="org.eclipse.e4.ui.widgets@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.addons.swt@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.cocoa@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_de@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_de@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench3@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench@default:default"/>
@@ -170,11 +168,8 @@
         <setEntry value="org.eclipse.help@default:default"/>
         <setEntry value="org.eclipse.jdt.junit.runtime@default:default"/>
         <setEntry value="org.eclipse.jdt.junit4.runtime@default:default"/>
-        <setEntry value="org.eclipse.jetty.ee10.osgi.alpn.fragment@default:false"/>
         <setEntry value="org.eclipse.jface.databinding@default:default"/>
         <setEntry value="org.eclipse.jface.nl_de@default:false"/>
-        <setEntry value="org.eclipse.jface.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.jface.nl_it@default:false"/>
         <setEntry value="org.eclipse.jface@default:default"/>
         <setEntry value="org.eclipse.orbit.xml-apis-ext@default:default"/>
         <setEntry value="org.eclipse.osgi.compatibility.state@default:false"/>
@@ -186,15 +181,10 @@
         <setEntry value="org.eclipse.persistence.jpa@default:default"/>
         <setEntry value="org.eclipse.swt.gtk.linux.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.nl_de@default:false"/>
-        <setEntry value="org.eclipse.swt.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
+        <setEntry value="org.eclipse.ui.cocoa@default:false"/>
         <setEntry value="org.eclipse.ui.nl_de@default:false"/>
-        <setEntry value="org.eclipse.ui.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.ui.nl_it@default:false"/>
         <setEntry value="org.eclipse.ui.workbench.nl_de@default:false"/>
-        <setEntry value="org.eclipse.ui.workbench.nl_fr@default:false"/>
-        <setEntry value="org.eclipse.ui.workbench.nl_it@default:false"/>
         <setEntry value="org.eclipse.ui.workbench@default:default"/>
         <setEntry value="org.eclipse.ui@default:default"/>
         <setEntry value="org.eclipse.urischeme@default:default"/>
@@ -239,6 +229,7 @@
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="ch.elexis.base.ch.arzttarife.model.importer@default:default"/>
+        <setEntry value="ch.elexis.base.ch.arzttarife.model.service@default:default"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model.test@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model@3:true"/>
         <setEntry value="ch.elexis.base.ch.ticode@default:default"/>
@@ -248,17 +239,14 @@
         <setEntry value="ch.elexis.core.fhir.model@default:default"/>
         <setEntry value="ch.elexis.core.findings.util@default:default"/>
         <setEntry value="ch.elexis.core.findings@default:default"/>
-        <setEntry value="ch.elexis.core.hl7.v2x.tests@default:false"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.httpclient@default:default"/>
         <setEntry value="ch.elexis.core.importer.div@default:default"/>
-        <setEntry value="ch.elexis.core.jcifs.test@default:false"/>
         <setEntry value="ch.elexis.core.jcifs@default:default"/>
         <setEntry value="ch.elexis.core.jpa.datasource@3:true"/>
-        <setEntry value="ch.elexis.core.jpa.entities.test@default:false"/>
         <setEntry value="ch.elexis.core.jpa.entities@3:true"/>
         <setEntry value="ch.elexis.core.jpa.logging.slf4j@default:false"/>
-        <setEntry value="ch.elexis.core.jpa.test@default:false"/>
+        <setEntry value="ch.elexis.core.jpa.model@default:default"/>
         <setEntry value="ch.elexis.core.jpa@default:default"/>
         <setEntry value="ch.elexis.core.l10n@default:default"/>
         <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
@@ -267,16 +255,16 @@
         <setEntry value="ch.elexis.core.services.rcp@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks.model@default:default"/>
-        <setEntry value="ch.elexis.core.tasks.test@default:false"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.test.context@default:default"/>
+        <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
         <setEntry value="ch.elexis.core.webdav@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.rgw.utility.legacy@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
     </setAttribute>
-    <booleanAttribute key="show_selected_only" value="false"/>
+    <booleanAttribute key="show_selected_only" value="true"/>
     <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>
     <booleanAttribute key="tracing" value="false"/>
     <booleanAttribute key="useCustomFeatures" value="false"/>

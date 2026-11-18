@@ -33,7 +33,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
+<!--	<dependencies>
 		<dependency>
 			<groupId>ch.elexis.core</groupId>
 			<artifactId>ch.elexis.core.jpa.entities</artifactId>
@@ -54,5 +54,5 @@
 			<artifactId>ch.elexis.core.importer.div</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-	</dependencies>
+	</dependencies>-->
 </project>

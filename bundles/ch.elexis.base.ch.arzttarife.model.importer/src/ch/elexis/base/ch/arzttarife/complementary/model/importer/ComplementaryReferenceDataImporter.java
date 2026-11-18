@@ -7,9 +7,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -41,6 +45,9 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 	private int chapternr_index = 4;
 	private int chaptertext_index = 5;
 
+	private int subchapternr_index = -1;
+	private int subchaptertext_index = -1;
+
 	private int code_index = 8;
 	private int codetext_index = 9;
 
@@ -55,6 +62,9 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 					&& line.contains("DATUMVON")) {
 				chapternr_index = line.indexOf("Kapitelziffer");
 				chaptertext_index = line.indexOf("Kapitelbezeichung_D");
+
+				subchapternr_index = line.indexOf("Unterkapitel");
+				subchaptertext_index = line.indexOf("Unterkapitel-Bezeichung_D");
 
 				code_index = line.indexOf("Abrechnungsziffer");
 				codetext_index = line.indexOf("ABRECHNUNGSZIFFERTEXT_D");
@@ -82,8 +92,9 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 
 			monitor.beginTask("Import Complementary", IProgressMonitor.UNKNOWN);
 
-			List<Object> imported = new ArrayList<>();
-			List<Object> closed = new ArrayList<>();
+			Map<String, ComplementaryLeistung> toSave = new HashMap<>();
+			int created = 0;
+			int updated = 0;
 			String[] line = reader.readNext();
 			updateIndexes(Arrays.asList(line));
 			updateIndexForLang();
@@ -100,20 +111,36 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 
 					ComplementaryLeistung existing = getExisting(line[code_index], validFrom);
 					if (existing != null) {
+						if (updateExisting(existing, line)) {
+							addToSave(existing, toSave);
+							updated++;
+						}
 						if ((existing.getValidTo() == null || !existing.getValidTo().equals(validTo))) {
 							// update validto of existing
 							existing.setValidTo(validTo);
-							closed.add(existing);
+							addToSave(existing, toSave);
+							updated++;
 						}
 					} else {
-						imported.add(createComplementary(line, validFrom, validTo));
+						// close previous versions of this code the day before the new one is valid
+						LocalDate dayBeforeValidFrom = validFrom.minusDays(1);
+						for (ComplementaryLeistung previous : getExistingByCode(line[code_index])) {
+							if (previous.getValidFrom() != null && previous.getValidFrom().isBefore(validFrom)
+									&& (previous.getValidTo() == null
+											|| previous.getValidTo().isAfter(dayBeforeValidFrom))) {
+								previous.setValidTo(dayBeforeValidFrom);
+								addToSave(previous, toSave);
+								updated++;
+							}
+						}
+						addToSave(createComplementary(line, validFrom, validTo), toSave);
+						created++;
 					}
 				}
 			}
 			LoggerFactory.getLogger(getClass())
-					.info("Closing " + closed.size() + " and creating " + imported.size() + " tarifs");
-			EntityUtil.save(imported);
-			EntityUtil.save(closed);
+					.info("Updated " + updated + " and created " + created + " tarifs");
+			EntityUtil.save(new ArrayList<>(toSave.values()));
 			monitor.done();
 			if (newVersion != null) {
 				ConfigServiceHolder.get().set(REFERENCEDATA_COMPLEMENTARY_VERSION, newVersion);
@@ -125,8 +152,41 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 		}
 	}
 
+	private boolean updateExisting(ComplementaryLeistung existing, String[] line) {
+		boolean ret = false;
+		if (!Strings.CS.equals(existing.getCodeText(), line[codetext_index])) {
+			existing.setCodeText(line[codetext_index]);
+			ret = true;
+		}
+		if (!Strings.CS.equals(existing.getDescription(), line[description_index])) {
+			existing.setDescription(line[description_index]);
+			ret = true;
+		}
+		return ret;
+	}
+
+	private void addToSave(ComplementaryLeistung complementaryLeistung, Map<String, ComplementaryLeistung> toSave) {
+		if (!toSave.containsKey(complementaryLeistung.getId())) {
+			toSave.put(complementaryLeistung.getId(), complementaryLeistung);
+		} else {
+			ComplementaryLeistung existing = toSave.get(complementaryLeistung.getId());
+			merge(complementaryLeistung, existing);
+		}
+	}
+
+	private void merge(ComplementaryLeistung complementaryLeistung, ComplementaryLeistung existing) {
+		if (!complementaryLeistung.getChapter().equals(existing.getChapter())) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(existing.getChapter() + ", " + complementaryLeistung.getChapter());
+			existing.setChapter(StringUtils.abbreviate(sb.toString(), 255));
+		}
+	}
+
 	private ComplementaryLeistung createComplementary(String[] line, LocalDate validFrom, LocalDate validTo) {
 		String chapterString = line[chapternr_index] + StringUtils.SPACE + line[chaptertext_index];
+		if (StringUtils.isBlank(chapterString) && (subchapternr_index > -1 && subchaptertext_index > -1)) {
+			chapterString = line[subchapternr_index] + StringUtils.SPACE + line[subchaptertext_index];
+		}
 		String id = getId(line[code_index], validFrom);
 		ComplementaryLeistung complementary = new ComplementaryLeistung();
 		complementary.setId(id);
@@ -156,11 +216,20 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 		}
 		codetext_index += offset;
 		chaptertext_index += offset;
+		if (subchaptertext_index > -1) {
+			subchaptertext_index += offset;
+		}
 		description_index += offset;
 	}
 
 	private ComplementaryLeistung getExisting(String code, LocalDate validFrom) {
 		return EntityUtil.load(getId(code, validFrom), ComplementaryLeistung.class);
+	}
+
+	private List<ComplementaryLeistung> getExistingByCode(String code) {
+		Map<String, Object> propertyMap = new LinkedHashMap<>();
+		propertyMap.put("code", code);
+		return EntityUtil.loadByNamedQuery(propertyMap, ComplementaryLeistung.class);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
@@ -52,6 +53,18 @@ public class ComplementaryImporterTest {
 			code1076 = codeElementService.loadFromString("Komplementärmedizin", "1076",
 					Collections.singletonMap(ContextKeys.DATE, LocalDate.of(2022, 12, 30)));
 			assertFalse(code1076.isEmpty());
+		}
+
+		updateStream = ComplementaryImporterTest.class.getResourceAsStream("/rsc/complementary_v7.csv");
+		if (updateStream != null) {
+			retStatus = (Status) importer.performImport(new NullProgressMonitor(), updateStream, Integer.valueOf(4));
+			assertEquals(IStatus.OK, retStatus.getCode());
+			assertEquals(4, importer.getCurrentVersion());
+
+			Optional<ICodeElement> code1052 = codeElementService.loadFromString("Komplementärmedizin", "1052",
+					Collections.singletonMap(ContextKeys.DATE, LocalDate.of(2027, 01, 01)));
+			assertFalse(code1052.isEmpty());
+			assertEquals(LocalDate.of(2027, 01, 01), ((IComplementaryLeistung) code1052.get()).getValidFrom());
 		}
 	}
 }

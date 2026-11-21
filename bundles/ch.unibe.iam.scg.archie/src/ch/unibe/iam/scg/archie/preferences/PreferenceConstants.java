@@ -25,4 +25,9 @@ public class PreferenceConstants {
 	 * Default cohort size
 	 */
 	public static final int DEFAULT_COHORT_SIZE = 5;
+
+	/**
+	 * Statistics marked as favorites by this practice.
+	 */
+	public static final String P_FAVORITE_STATISTICS = "archieFavoriteStatistics"; //$NON-NLS-1$
 }

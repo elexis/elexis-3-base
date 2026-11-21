@@ -28,6 +28,8 @@ public class Messages extends NLS {
 	public static String FormComposite_formId;
 	public static String FormComposite_formName;
 	public static String MednetAuthService_browserAuthorizationPrompt;
+	public static String MednetAuthService_sessionExpiredTitle;
+	public static String MednetAuthService_sessionExpiredMessage;
 	public static String MedNetMainComposite_formWithPatientData;
 	public static String MedNetMainComposite_showPatients;
 	public static String MedNetMainComposite_browserError;

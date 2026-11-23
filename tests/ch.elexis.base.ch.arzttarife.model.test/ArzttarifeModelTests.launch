@@ -258,6 +258,7 @@
         <setEntry value="ch.elexis.core.jpa.entities.test@default:false"/>
         <setEntry value="ch.elexis.core.jpa.entities@3:true"/>
         <setEntry value="ch.elexis.core.jpa.logging.slf4j@default:false"/>
+        <setEntry value="ch.elexis.core.jpa.model@default:default"/>
         <setEntry value="ch.elexis.core.jpa.test@default:false"/>
         <setEntry value="ch.elexis.core.jpa@default:default"/>
         <setEntry value="ch.elexis.core.l10n@default:default"/>

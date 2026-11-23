@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.program.Program;
@@ -41,6 +42,12 @@ public class MednetAuthUi implements IMednetAuthUi {
 			}
 		});
 		return Optional.ofNullable(inputValue);
+	}
+
+	@Override
+	public void showInformation(String title, String message) {
+		Display.getDefault().syncExec(() -> MessageDialog.openInformation(Display.getDefault().getActiveShell(), title,
+				message));
 	}
 
 	@Override

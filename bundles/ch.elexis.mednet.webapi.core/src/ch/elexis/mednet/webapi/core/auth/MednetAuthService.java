@@ -57,9 +57,15 @@ public class MednetAuthService implements IMednetAuthService {
 
 		String tokenGroup = (String) parameters.get(PreferenceConstants.TOKEN_GROUP);
 		if (StringUtils.isNotBlank(tokenGroup)) {
+			boolean hadRefreshToken = StringUtils.isNotBlank(
+					configService.getActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + tokenGroup, null));
 			Optional<String> existingToken = validateToken(
 					configService.getActiveMandator(PreferenceConstants.PREF_TOKEN + tokenGroup, null), tokenGroup);
 			if (existingToken.isEmpty() && authUi != null) {
+				if (hadRefreshToken) {
+					authUi.showInformation(Messages.MednetAuthService_sessionExpiredTitle,
+							Messages.MednetAuthService_sessionExpiredMessage);
+				}
 				return getToken(tokenGroup, authUi);
 			} else if (existingToken.isPresent()) {
 				return existingToken;
@@ -80,7 +86,7 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getOauthRestUrl() {
-		return configService.get(PreferenceConstants.PREF_RESTBASEURL, ApiConstants.getBaseUri());
+		return configService.get(PreferenceConstants.PREF_RESTBASEURL, ApiConstants.getBaseUri(StringUtils.isNotBlank(getScope())));
 	}
 
 	private Optional<String> getAccessTokenWithRefresh(String tokenGroup, String refreshToken, String oauthRestUrl) {
@@ -89,6 +95,10 @@ public class MednetAuthService implements IMednetAuthService {
 		parameters.put("refresh_token", refreshToken); //$NON-NLS-1$
 		parameters.put("client_id", getClientId()); //$NON-NLS-1$
 		parameters.put("client_secret", getClientSecret()); //$NON-NLS-1$
+		String scope = getScope();
+		if (StringUtils.isNotBlank(scope)) {
+			parameters.put("scope", scope); //$NON-NLS-1$
+		}
 		String form = parameters.entrySet().stream()
 				.map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8)) //$NON-NLS-1$
 				.collect(Collectors.joining("&")); //$NON-NLS-1$
@@ -168,12 +178,11 @@ public class MednetAuthService implements IMednetAuthService {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(oauthRestUrl);
-		sb.append("connect/authorize?"); //$NON-NLS-1$
+		sb.append("authorize?"); //$NON-NLS-1$
 		sb.append("response_type=code"); //$NON-NLS-1$
 		sb.append("&client_id=").append(URLEncoder.encode(getClientId(), StandardCharsets.UTF_8)); //$NON-NLS-1$
 		sb.append("&redirect_uri=").append(URLEncoder.encode(getRedirectUri(), StandardCharsets.UTF_8)); //$NON-NLS-1$
-		sb.append("&scope=").append(URLEncoder.encode("openid profile mednet-web is-api email role offline_access", //$NON-NLS-1$ //$NON-NLS-2$
-				StandardCharsets.UTF_8));
+		sb.append("&scope=").append(URLEncoder.encode(StringUtils.defaultIfBlank(getScope(), ApiConstants.IDSRV_SCOPE), StandardCharsets.UTF_8)); //$NON-NLS-1$
 		sb.append("&state=").append(URLEncoder.encode(stateValue, StandardCharsets.UTF_8)); //$NON-NLS-1$
 		sb.append("&code_challenge=").append(URLEncoder.encode(codeChallenge, StandardCharsets.UTF_8)); //$NON-NLS-1$
 		sb.append("&code_challenge_method=S256"); //$NON-NLS-1$
@@ -205,6 +214,10 @@ public class MednetAuthService implements IMednetAuthService {
 		parameters.put("client_id", getClientId()); //$NON-NLS-1$
 		parameters.put("client_secret", getClientSecret()); //$NON-NLS-1$
 		parameters.put("code_verifier", this.currentCodeVerifier); //$NON-NLS-1$
+		String scope = getScope();
+		if (StringUtils.isNotBlank(scope)) {
+			parameters.put("scope", scope); //$NON-NLS-1$
+		}
 		String form = parameters.entrySet().stream()
 				.map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8)) //$NON-NLS-1$
 				.collect(Collectors.joining("&")); //$NON-NLS-1$
@@ -303,6 +316,24 @@ public class MednetAuthService implements IMednetAuthService {
 		return StringUtils.EMPTY;
 	}
 
+	private String getScope() {
+		String mode = configService.get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV"); //$NON-NLS-1$
+		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) { //$NON-NLS-1$
+			if (properties != null) {
+				Properties idProps = new Properties();
+				idProps.load(properties);
+				if ("PRODUKTIV".equals(mode)) { //$NON-NLS-1$
+					return idProps.getProperty("scope_prod"); //$NON-NLS-1$
+				} else {
+					return idProps.getProperty("scope_demo"); //$NON-NLS-1$
+				}
+			}
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e); //$NON-NLS-1$
+		}
+		return StringUtils.EMPTY;
+	}
+
 	private Optional<String> validateToken(String existingToken, String tokenGroup) {
 		String tokenExpires = configService.getActiveMandator(PreferenceConstants.PREF_TOKEN_EXPIRES + tokenGroup,
 				null);
@@ -345,6 +376,6 @@ public class MednetAuthService implements IMednetAuthService {
 	private String buildTokenEndpoint(String base) {
 		if (!base.endsWith("/")) //$NON-NLS-1$
 			base += "/"; //$NON-NLS-1$
-		return base + "connect/token"; //$NON-NLS-1$
+		return base + "token"; //$NON-NLS-1$
 	}
 }

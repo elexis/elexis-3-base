@@ -28,19 +28,21 @@ public class ApiConstants {
 		return "https://www.mednet.swiss/web/api/v1/external";
 	}
 
-	public static String getBaseUri() {
+	public static String getBaseUri(boolean azure) {
 
 		Optional<IConfigService> configService = OsgiServiceUtil.getServiceWait(IConfigService.class, 5000);
 		if (configService.isPresent()) {
 			String mode = configService.get().get(PreferenceConstants.MEDNET_MODE, "PRODUKTIV");
 			if ("PRODUKTIV".equals(mode)) {
-				return "https://www.mednetpatient.swiss/idsrv";
+				return azure ? "https://www.mednet.swiss/web/v1/oauth" : "https://www.mednetpatient.swiss/idsrv/connect";
 			} else {
-				return "https://demo.mednetpatient.swiss/idsrv";
+				return azure ? "https://demo.mednet.swiss/web/v1/oauth" : "https://demo.mednetpatient.swiss/idsrv/connect";
 			}
 		}
-		return "https://www.mednetpatient.swiss/idsrv";
+		return azure ? "https://www.mednet.swiss/web/v1/oauth" : "https://www.mednetpatient.swiss/idsrv/connect";
 	}
+
+	public static final String IDSRV_SCOPE = "openid profile mednet-web is-api email role offline_access";
 
 	public static final String BASE_REDERICT_URI = "https://tools.medelexis.ch/mednet/ac";
 	public static final String BASE_REDERICT_URI_OBTAIN = "https://tools.medelexis.ch/mednet/ac-obtain/";

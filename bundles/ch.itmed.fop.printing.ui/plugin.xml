@@ -100,7 +100,11 @@
            <commandParameter
                  id="orderentry_label_entries"
                  name="Order entries"
-                 optional="false"/>
+                 optional="true"/>
+           <commandParameter
+                 id="stockentry_label_entries"
+                 name="Stock entries"
+                 optional="true"/>
         </command>
         <command
               defaultHandler="ch.itmed.fop.printing.handlers.SelectedAppointmentCardHandler"

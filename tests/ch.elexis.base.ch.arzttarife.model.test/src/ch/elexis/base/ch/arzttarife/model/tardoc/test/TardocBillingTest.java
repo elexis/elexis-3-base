@@ -17,6 +17,7 @@ import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocConstants;
 import ch.elexis.base.ch.arzttarife.tardoc.model.TardocLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
@@ -24,7 +25,6 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
-import ch.elexis.core.cdi.PortableServiceLoader;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
@@ -382,6 +382,24 @@ public class TardocBillingTest extends AbstractTardocTest {
 		assertTrue(status.getMessages().toString(), status.isOK());
 		// allow combination of AA.30.0080 and AA.30.0090
 		status = billingService.bill(TardocLeistung.getFromCode("AA.30.0090", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// do not allow WA.00.0010
+		status = billingService.bill(TardocLeistung.getFromCode("WA.00.0010", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertFalse(status.getMessages().toString(), status.isOK());
+
+		// clear to test new combinations
+		encounter.getBilled().forEach(b -> billingService.removeBilled(b, encounter));
+
+		status = billingService.bill(TardocLeistung.getFromCode("AA.30.0100", LocalDate.of(2026, 1, 1), null),
+				encounter, 1);
+		billed = status.get();
+		assertTrue(status.getMessages().toString(), status.isOK());
+		// allow combination of AA.30.0100 and AA.30.0110
+		status = billingService.bill(TardocLeistung.getFromCode("AA.30.0110", LocalDate.of(2026, 1, 1), null),
 				encounter, 1);
 		billed = status.get();
 		assertTrue(status.getMessages().toString(), status.isOK());

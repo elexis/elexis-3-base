@@ -708,7 +708,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			// backward compatibility
 			billed.setPrimaryScale((int) (alFactor * 100));
 		} else {
-			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL_SCALE, Integer.toString((int) (1.0 * 100)));
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_AL_SCALE, Integer.toString(0));
 		}
 		Double tlFactor = getFactorValue(code, TardocConstants.TardocLeistung.EXT_FLD_F_TL);
 		if (tlFactor > 0.0) {
@@ -725,7 +725,7 @@ public class TardocOptifier implements IBillableOptifier<TardocLeistung> {
 			// separate scaling info
 			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL_SCALE, Integer.toString((int) (tlFactor * 100)));
 		} else {
-			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL_SCALE, Integer.toString((int) (1.0 * 100)));
+			billed.setExtInfo(Verrechnet.EXT_VERRRECHNET_TL_SCALE, Integer.toString(0));
 		}
 	}
 

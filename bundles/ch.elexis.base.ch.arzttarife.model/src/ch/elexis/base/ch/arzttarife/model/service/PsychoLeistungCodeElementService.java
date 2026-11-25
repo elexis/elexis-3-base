@@ -20,14 +20,18 @@ import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IStoreToStringContribution;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
+@ApplicationScoped
 @Component
 public class PsychoLeistungCodeElementService implements ICodeElementServiceContribution, IStoreToStringContribution {
 
+	@Inject
 	@Reference(target = "(id=default)")
-	private IElexisEntityManager entityManager;
+	IElexisEntityManager entityManager;
 
 	@Override
 	public String getSystem() {

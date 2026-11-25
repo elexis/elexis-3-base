@@ -23,14 +23,19 @@ import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IStoreToStringContribution;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
+@ApplicationScoped
 @Component
-public class AmbulatoryAllowanceCodeElementService implements ICodeElementServiceContribution, IStoreToStringContribution {
+public class AmbulatoryAllowanceCodeElementService
+		implements ICodeElementServiceContribution, IStoreToStringContribution {
 
+	@Inject
 	@Reference(target = "(id=default)")
-	private IElexisEntityManager entityManager;
+	IElexisEntityManager entityManager;
 
 	@Override
 	public String getSystem() {
@@ -94,8 +99,8 @@ public class AmbulatoryAllowanceCodeElementService implements ICodeElementServic
 	public List<ICodeElement> getElements(Map<Object, Object> context) {
 		Class<? extends EntityWithId> clazz = ch.elexis.core.jpa.entities.AmbulantePauschalen.class;
 		EntityManager em = (EntityManager) entityManager.getEntityManager();
-		TypedQuery<? extends EntityWithId> query = em.createQuery("SELECT entity FROM " + clazz.getSimpleName()
-				+ " entity WHERE entity.id <> 'Version'", clazz);
+		TypedQuery<? extends EntityWithId> query = em.createQuery(
+				"SELECT entity FROM " + clazz.getSimpleName() + " entity WHERE entity.id <> 'Version'", clazz);
 		List<? extends EntityWithId> found = query.getResultList();
 		if (!found.isEmpty()) {
 			ArzttarifeModelAdapterFactory adapterFactory = ArzttarifeModelAdapterFactory.getInstance();
@@ -140,9 +145,8 @@ public class AmbulatoryAllowanceCodeElementService implements ICodeElementServic
 
 	@Override
 	public List<Identifiable> loadFromStringWithIdPart(String partialStoreToString) {
-		if (!partialStoreToString
-				.startsWith(ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowance.STS_CLASS
-						+ StringConstants.DOUBLECOLON)) {
+		if (!partialStoreToString.startsWith(ch.elexis.base.ch.arzttarife.ambulatory.model.AmbulatoryAllowance.STS_CLASS
+				+ StringConstants.DOUBLECOLON)) {
 			return Collections.emptyList();
 		}
 

@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.mediorder.MediorderLabelCode;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
@@ -18,6 +19,8 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.OrderServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.itmed.fop.printing.print.LabelPrintService;
@@ -66,21 +69,27 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 		Optional<IPrescription> prescriptionOpt = findPrescriptionByBilledId(iBilled.getId().toString(), medications);
 		double doubleAmount = iBilled.getAmount();
 		int intAmount = (int) Math.ceil(doubleAmount);
+		// empty if the article is not of a patient order or already handed out ->
+		// standard label
+		List<String> mediorderBarcodes = MediorderLabelCode.encodeReprint(iBilled, intAmount,
+				CoreModelServiceHolder.get(), OrderServiceHolder.get());
 		if (prescriptionOpt.isPresent() && LabelPrintService.hasDoseOrRemark(prescriptionOpt.get())) {
-			LabelPrintService.printMedicationLabels(prescriptionOpt.get(), patient, intAmount, false);
+			LabelPrintService.printMedicationLabels(prescriptionOpt.get(), patient, intAmount, false,
+					mediorderBarcodes);
 		} else {
-			handleAlternativePrescriptionOrDefault(article, patient, medications, intAmount);
+			handleAlternativePrescriptionOrDefault(article, patient, medications, intAmount, mediorderBarcodes);
 		}
 	}
 
 	private void handleAlternativePrescriptionOrDefault(IArticle article, IPatient patient,
-			List<IPrescription> medications, int amount) throws Exception {
+			List<IPrescription> medications, int amount, List<String> mediorderBarcodes) throws Exception {
 		Optional<IPrescription> alternativePrescription = findAlternativePrescription(article, medications);
 
 		if (alternativePrescription.isPresent()) {
-			LabelPrintService.printMedicationLabels(alternativePrescription.get(), patient, amount, false);
+			LabelPrintService.printMedicationLabels(alternativePrescription.get(), patient, amount, false,
+					mediorderBarcodes);
 		} else {
-			LabelPrintService.printArticleLabels(article, patient, amount, false);
+			LabelPrintService.printArticleLabels(article, patient, amount, false, mediorderBarcodes);
 		}
 	}
 

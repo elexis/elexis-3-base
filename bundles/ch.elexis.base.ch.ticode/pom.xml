@@ -16,12 +16,6 @@
 		<name>elexis.info</name>
 	</organization>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>rsc/</directory>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>io.smallrye</groupId>
@@ -39,16 +33,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-			<groupId>ch.elexis.core</groupId>
-			<artifactId>ch.elexis.core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.elexis.core</groupId>
-			<artifactId>ch.elexis.core.findings.util</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>

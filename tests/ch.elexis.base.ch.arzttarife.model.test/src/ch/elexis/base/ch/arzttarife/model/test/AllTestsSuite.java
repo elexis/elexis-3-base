@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import ch.elexis.base.ch.arzttarife.model.physio.test.PhysioBillingTest;
 import ch.elexis.base.ch.arzttarife.model.psycho.test.PsychoBillingTest;
 import ch.elexis.base.ch.arzttarife.model.tardoc.test.AllTardocTests;
 import ch.elexis.base.ch.arzttarife.model.tarmed.test.AllTarmedTests;
@@ -42,7 +43,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 
 @RunWith(Suite.class)
-@SuiteClasses({ PsychoBillingTest.class, AllTardocTests.class, PhysioLeistungTest.class,
+@SuiteClasses({ PsychoBillingTest.class, PhysioBillingTest.class, AllTardocTests.class, PhysioLeistungTest.class,
 		ComplementaryLeistungTest.class, AllTarmedTests.class })
 public class AllTestsSuite {
 
